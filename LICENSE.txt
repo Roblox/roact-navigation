@@ -1,0 +1,4 @@
+Copyright (c) 2019 Roblox Corporation. All Rights Reserved.
+
+The files in this project are proprietary and confidential to Roblox Corporation.
+Unauthorized copying of any files in this project is strictly prohibited.
