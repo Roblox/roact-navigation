@@ -7,6 +7,7 @@ return function()
 			expect(NavigationActions.Init).to.equal(NavigationActions.Init)
 			expect(NavigationActions.Navigate).to.equal(NavigationActions.Navigate)
 			expect(NavigationActions.SetParams).to.equal(NavigationActions.SetParams)
+			expect(NavigationActions.CompleteTransition).to.equal(NavigationActions.CompleteTransition)
 		end)
 
 		it("should return matching string names for symbols", function()
@@ -14,6 +15,7 @@ return function()
 			expect(tostring(NavigationActions.Init)).to.equal("INIT")
 			expect(tostring(NavigationActions.Navigate)).to.equal("NAVIGATE")
 			expect(tostring(NavigationActions.SetParams)).to.equal("SET_PARAMS")
+			expect(tostring(NavigationActions.CompleteTransition)).to.equal("COMPLETE_TRANSITION")
 		end)
 	end)
 
@@ -62,6 +64,17 @@ return function()
 			expect(setParamsTable.type).to.equal(NavigationActions.SetParams)
 			expect(setParamsTable.key).to.equal("key")
 			expect(setParamsTable.params).to.equal("foo")
+		end)
+
+		it("should return a complete transition action with matching data for call to completeTransition()", function()
+			local completeTransitionTable = NavigationActions.completeTransition({
+				key = "key",
+				toChildKey = "toChildKey",
+			})
+
+			expect(completeTransitionTable.type).to.equal(NavigationActions.CompleteTransition)
+			expect(completeTransitionTable.key).to.equal("key")
+			expect(completeTransitionTable.toChildKey).to.equal("toChildKey")
 		end)
 	end)
 end

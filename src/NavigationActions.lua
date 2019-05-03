@@ -4,6 +4,7 @@ local BACK_TOKEN = NavigationSymbol("BACK")
 local INIT_TOKEN = NavigationSymbol("INIT")
 local NAVIGATE_TOKEN = NavigationSymbol("NAVIGATE")
 local SET_PARAMS_TOKEN = NavigationSymbol("SET_PARAMS")
+local COMPLETE_TRANSITION_TOKEN = NavigationSymbol("COMPLETE_TRANSITION")
 
 --[[
 	NavigationActions provides shared constants and methods to construct
@@ -14,6 +15,7 @@ local NavigationActions = {
 	Init = INIT_TOKEN,
 	Navigate = NAVIGATE_TOKEN,
 	SetParams = SET_PARAMS_TOKEN,
+	CompleteTransition = COMPLETE_TRANSITION_TOKEN,
 }
 
 NavigationActions.__index = NavigationActions
@@ -54,6 +56,17 @@ function NavigationActions.setParams(payload)
 		type = SET_PARAMS_TOKEN,
 		key = payload.key,
 		params = payload.params,
+	}
+end
+
+-- For internal use. Triggers completion of a transition animation, if needed by the router.
+-- This would be sent on e.g. didMount of the new page, so the router knows that the new screen
+-- is ready to be displayed before it animates it in place.
+function NavigationActions.completeTransition(payload)
+	return {
+		type = COMPLETE_TRANSITION_TOKEN,
+		key = payload.key,
+		toChildKey = payload.toChildKey,
 	}
 end
 

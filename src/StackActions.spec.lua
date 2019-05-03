@@ -8,7 +8,6 @@ return function()
 			expect(StackActions.Push).to.equal(StackActions.Push)
 			expect(StackActions.Reset).to.equal(StackActions.Reset)
 			expect(StackActions.Replace).to.equal(StackActions.Replace)
-			expect(StackActions.CompleteTransition).to.equal(StackActions.CompleteTransition)
 		end)
 
 		it("should return matching string names for symbols", function()
@@ -17,7 +16,6 @@ return function()
 			expect(tostring(StackActions.Push)).to.equal("PUSH")
 			expect(tostring(StackActions.Reset)).to.equal("RESET")
 			expect(tostring(StackActions.Replace)).to.equal("REPLACE")
-			expect(tostring(StackActions.CompleteTransition)).to.equal("COMPLETE_TRANSITION")
 		end)
 	end)
 
@@ -60,6 +58,25 @@ return function()
 			expect(resetTable.type).to.equal(StackActions.Reset)
 			expect(resetTable.index).to.equal("index")
 			expect(resetTable.key).to.equal("key")
+		end)
+
+		it("should return a replace action for replace()", function()
+			local replaceTable = StackActions.replace({
+				key = "key",
+				newKey = "newKey",
+				routeName = "routeName",
+				params = "params",
+				action = "action",
+				immediate = "immediate",
+			})
+
+			expect(replaceTable.type).to.equal(StackActions.Replace)
+			expect(replaceTable.key).to.equal("key")
+			expect(replaceTable.newKey).to.equal("newKey")
+			expect(replaceTable.routeName).to.equal("routeName")
+			expect(replaceTable.params).to.equal("params")
+			expect(replaceTable.action).to.equal("action")
+			expect(replaceTable.immediate).to.equal("immediate")
 		end)
 	end)
 end

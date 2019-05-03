@@ -1,4 +1,3 @@
-local CoreGui = game:GetService("CoreGui")
 local Roact = require(script.Parent.Parent.Parent.Roact)
 local AppNavigationContext = require(script.Parent.AppNavigationContext)
 local NavigationEvents = require(script.Parent.Parent.NavigationEvents)

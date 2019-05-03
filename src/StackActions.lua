@@ -5,7 +5,6 @@ local POP_TO_TOP_TOKEN = NavigationSymbol("POP_TO_TOP")
 local PUSH_TOKEN = NavigationSymbol("PUSH")
 local RESET_TOKEN = NavigationSymbol("RESET")
 local REPLACE_TOKEN = NavigationSymbol("REPLACE")
-local COMPLETE_TRANSITION_TOKEN = NavigationSymbol("COMPLETE_TRANSITION")
 
 --[[
 	StackActions provides shared constants and methods to construct
@@ -19,7 +18,6 @@ local StackActions = {
 	Push = PUSH_TOKEN,
 	Reset = RESET_TOKEN,
 	Replace = REPLACE_TOKEN,
-	CompleteTransition = COMPLETE_TRANSITION_TOKEN,
 }
 
 StackActions.__index = StackActions
@@ -70,17 +68,6 @@ function StackActions.replace(payload)
 		params = payload.params,
 		action = payload.action,
 		immediate = payload.immediate,
-	}
-end
-
--- For internal use. Triggers completion of a transition animation, if needed by the router.
--- This would be sent on e.g. didMount of  the new page, so the router knows that the new screen
--- is ready to be displayed before it animates it in place.
-function StackActions.completeTransition(payload)
-	return {
-		type = COMPLETE_TRANSITION_TOKEN,
-		key = payload.key,
-		toChildKey = payload.toChildKey,
 	}
 end
 
