@@ -35,6 +35,13 @@ return function()
 		expect(type(RoactNavigation.withNavigation)).to.equal("function")
 	end)
 
+	it("should return an appropriate table for NavigationContext", function()
+		expect(type(RoactNavigation.NavigationContext)).to.equal("table")
+		expect(type(RoactNavigation.NavigationContext.Provider)).to.equal("table")
+		expect(type(RoactNavigation.NavigationContext.Consumer)).to.equal("table")
+		expect(type(RoactNavigation.NavigationContext.connect)).to.equal("function")
+	end)
+
 	it("should return a valid component for EventsAdapter", function()
 		expect(RoactNavigation.EventsAdapter.render).to.never.equal(nil)
 

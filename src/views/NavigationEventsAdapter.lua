@@ -1,7 +1,6 @@
 local Roact = require(script.Parent.Parent.Parent.Roact)
 local AppNavigationContext = require(script.Parent.AppNavigationContext)
 local NavigationEvents = require(script.Parent.Parent.NavigationEvents)
-local withNavigation = require(script.Parent.withNavigation)
 
 local eventSymbolToPropNameMap = {
 	[NavigationEvents.WillFocus] = "onWillFocus",
@@ -47,7 +46,7 @@ local eventSymbolToPropNameMap = {
 local NavigationEventsAdapter = Roact.Component:extend("NavigationEventsAdapter")
 
 function NavigationEventsAdapter:didMount()
-	local navigation = self.props.navigation or self._context[AppNavigationContext]
+	local navigation = self.props.navigation
 	assert(navigation ~= nil, "NavigationEventsAdapter can only be used within the view hierarchy of a navigator.")
 
 	self.subscriptions = {}
@@ -78,4 +77,4 @@ function NavigationEventsAdapter:render()
 	return Roact.oneChild(self.props[Roact.Children])
 end
 
-return withNavigation(NavigationEventsAdapter)
+return AppNavigationContext.connect(NavigationEventsAdapter)

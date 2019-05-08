@@ -3,68 +3,32 @@ return function()
 	local withNavigation = require(script.Parent.withNavigation)
 	local AppNavigationContext = require(script.Parent.AppNavigationContext)
 
-	it("should fill navigation prop from _context[AppNavigationContext] if not already set", function()
-		local mockContext = {}
-		local testComponentNavigationProp = nil
+	it("should throw if no renderProp is provided", function()
+		local status, err = pcall(function()
+			withNavigation(nil)
+		end)
 
-		local mockNavProvider = Roact.Component:extend("mockNavProvider")
-		function mockNavProvider:init()
-			self._context[AppNavigationContext] = mockContext
-		end
-		function mockNavProvider:render()
-			return Roact.oneChild(self.props[Roact.Children])
-		end
-
-		local testComponent = Roact.Component:extend("testComponent")
-		function testComponent:didMount()
-			testComponentNavigationProp = self.props.navigation
-		end
-		function testComponent:render()
-			return nil
-		end
-
-		local treeRoot = Roact.createElement(mockNavProvider, nil, {
-			TestComponent = Roact.createElement(withNavigation(testComponent))
-		})
-
-		local instance = Roact.mount(treeRoot)
-
-		expect(testComponentNavigationProp).to.equal(mockContext)
-
-		Roact.unmount(instance)
+		expect(status).to.equal(false)
+		expect(string.find(err, "withNavigation must be passed a render prop")).to.never.equal(nil)
 	end)
 
-	it("should use navigation prop if set", function()
-		local mockContext = {}
-		local mockContextOverride = {}
-		local testComponentNavigationProp = nil
+	it("should extract navigation object from provider and pass it through", function()
+		local testNavigation = {}
+		local extractedNavigation = nil
 
-		local mockNavProvider = Roact.Component:extend("mockNavProvider")
-		function mockNavProvider:init()
-			self._context[AppNavigationContext] = mockContext
-		end
-		function mockNavProvider:render()
-			return Roact.oneChild(self.props[Roact.Children])
-		end
-
-		local testComponent = Roact.Component:extend("testComponent")
-		function testComponent:didMount()
-			testComponentNavigationProp = self.props.navigation
-		end
-		function testComponent:render()
-			return nil
-		end
-
-		local treeRoot = Roact.createElement(mockNavProvider, nil, {
-			TestComponent = Roact.createElement(withNavigation(testComponent), {
-				navigation = mockContextOverride
-			})
+		local rootElement = Roact.createElement(AppNavigationContext.Provider, {
+			navigation = testNavigation,
+		}, {
+			Child = Roact.createElement(function()
+				return withNavigation(function(nav)
+					extractedNavigation = nav
+				end)
+			end)
 		})
 
-		local instance = Roact.mount(treeRoot)
+		local rootInstance = Roact.mount(rootElement)
+		Roact.unmount(rootInstance)
 
-		expect(testComponentNavigationProp).to.equal(mockContextOverride)
-
-		Roact.unmount(instance)
+		expect(extractedNavigation).to.equal(testNavigation)
 	end)
 end
