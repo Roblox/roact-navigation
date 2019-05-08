@@ -1,5 +1,4 @@
 return function()
-	local CoreGui = game:GetService("CoreGui")
 	local RoactNavigation = require(script.Parent)
 	local Roact = require(script.Parent.Parent.Roact)
 

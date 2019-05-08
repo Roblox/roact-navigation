@@ -4,8 +4,8 @@
 -- Repo name: roact-navigation
 
 return {
-	createTopBarStackNavigator = require(script.createTopBarStackNavigator),
-	createBottomTabNavigator = require(script.createBottomTabNavigator),
+	createTopBarStackNavigator = require(script.navigators.createTopBarStackNavigator),
+	createBottomTabNavigator = require(script.navigators.createBottomTabNavigator),
 
 	EventsAdapter = require(script.views.NavigationEventsAdapter),
 

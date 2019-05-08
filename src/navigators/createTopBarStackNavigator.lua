@@ -1,6 +1,6 @@
-local Roact = require(script.Parent.Parent.Roact)
+local Roact = require(script.Parent.Parent.Parent.Roact)
 
-local StubComponent = Roact.Component:extend("BottomTabNavigator")
+local StubComponent = Roact.Component:extend("TopBarStackNavigator")
 
 function StubComponent.render()
 	return Roact.createElement("Frame", {
