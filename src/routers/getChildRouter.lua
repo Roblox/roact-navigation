@@ -10,6 +10,11 @@ return function(router, routeName)
 
 	validate(type(router.getComponentForRouteName) == "function",
 		"router.getComponentForRouteName must be a function if no child routers are specified")
-	return router.getComponentForRouteName(routeName).router
+	local component = router.getComponentForRouteName(routeName)
+	if type(component) == "table" then
+		return component.router
+	else
+		return nil
+	end
 end
 

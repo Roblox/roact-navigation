@@ -5,6 +5,7 @@ local DID_FOCUS_TOKEN = NavigationSymbol("DID_FOCUS")
 local WILL_BLUR_TOKEN = NavigationSymbol("WILL_BLUR")
 local DID_BLUR_TOKEN = NavigationSymbol("DID_BLUR")
 local ACTION_TOKEN = NavigationSymbol("ACTION")
+local REFOCUS_TOKEN = NavigationSymbol("REFOCUS")
 
 --[[
 	NavigationEvents provides shared constants that are used to register
@@ -16,4 +17,5 @@ return {
 	WillBlur = WILL_BLUR_TOKEN,
 	DidBlur = DID_BLUR_TOKEN,
 	Action = ACTION_TOKEN,
+	Refocus = REFOCUS_TOKEN,
 }

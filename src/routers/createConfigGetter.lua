@@ -21,6 +21,7 @@ end
 
 return function(routeConfigs, navigatorScreenConfig)
 	return function(navigation, screenProps)
+		screenProps = screenProps or {}
 		local route = navigation.state
 
 		validate(type(route) == "table", "navigation.state must be a table")
@@ -34,11 +35,12 @@ return function(routeConfigs, navigatorScreenConfig)
 			routeScreenConfig = routeConfig.navigationOptions
 		end
 
-		local componentScreenConfig = component.navigationOptions
+		local componentScreenConfig = type(component) == "table"
+			and component.navigationOptions or {}
 
 		local configOptions = {
 			navigation = navigation,
-			screenProps = screenProps or {}
+			screenProps = screenProps,
 		}
 
 		local outputConfig = applyConfig(navigatorScreenConfig, {}, configOptions)

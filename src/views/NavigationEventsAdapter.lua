@@ -1,13 +1,7 @@
 local Roact = require(script.Parent.Parent.Parent.Roact)
 local AppNavigationContext = require(script.Parent.AppNavigationContext)
 local NavigationEvents = require(script.Parent.Parent.NavigationEvents)
-
-local eventSymbolToPropNameMap = {
-	[NavigationEvents.WillFocus] = "onWillFocus",
-	[NavigationEvents.DidFocus] = "onDidFocus",
-	[NavigationEvents.WillBlur] = "onWillBlur",
-	[NavigationEvents.DidBlur] = "onDidBlur",
-}
+local validate = require(script.Parent.Parent.utils.validate)
 
 --[[
 	NavigationEventsAdapter providers a wrapper component that allows you to subscribe
@@ -29,10 +23,10 @@ local eventSymbolToPropNameMap = {
 	function MyComponent:render()
 		-- Note that you must capture the self reference lexically, if you need it.
 		return Roact.createElement(RoactNavigation.EventsAdapter, {
-			onWillFocus = self.willFocus,
-			onDidFocus = self.didFocus,
-			onWillBlur = self.willBlur,
-			onDidBlur = self.didBlur,
+			[NavigationEvents.WillFocus] = self.willFocus,
+			[NavigationEvents.DidFocus] = self.didFocus,
+			[NavigationEvents.WillBlur] = self.willBlur,
+			[NavigationEvents.DidBlur] = self.didBlur,
 		}, <remainder of component tree> )
 	end
 
@@ -53,10 +47,10 @@ function NavigationEventsAdapter:didMount()
 
 	-- Register all navigation listeners on mount to ensure listener stability across re-render.
 	-- Tip taken from React's NavigationEvents.js.
-	for symbol, propName in pairs(eventSymbolToPropNameMap) do
-		local callback = self.props[propName]
-
+	for _, symbol in pairs(NavigationEvents) do
+		local callback = self.props[symbol] or nil
 		if callback then
+			validate(type(callback) == "function", "Value for event '%s' must be a function callback", tostring(symbol))
 			self.subscriptions[symbol] = navigation:addListener(symbol, function(...)
 				return callback(...) or nil
 			end)
@@ -65,7 +59,7 @@ function NavigationEventsAdapter:didMount()
 end
 
 function NavigationEventsAdapter:willUnmount()
-	for symbol, _ in pairs(eventSymbolToPropNameMap) do
+	for _, symbol in pairs(NavigationEvents) do
 		local sub = self.subscriptions[symbol]
 		if sub then
 			sub:disconnect()

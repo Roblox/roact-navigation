@@ -26,10 +26,10 @@ return function()
 
 		local adapter = Roact.createElement(NavigationEventsAdapter, {
 			navigation = mockNavContext,
-			onWillFocus = mockNavContext:makeHandler(NavigationEvents.WillFocus),
-			onDidFocus = mockNavContext:makeHandler(NavigationEvents.DidFocus),
-			onWillBlur = mockNavContext:makeHandler(NavigationEvents.WillBlur),
-			onDidBlur = mockNavContext:makeHandler(NavigationEvents.DidBlur),
+			[NavigationEvents.WillFocus] = mockNavContext:makeHandler(NavigationEvents.WillFocus),
+			[NavigationEvents.DidFocus] = mockNavContext:makeHandler(NavigationEvents.DidFocus),
+			[NavigationEvents.WillBlur] = mockNavContext:makeHandler(NavigationEvents.WillBlur),
+			[NavigationEvents.DidBlur] = mockNavContext:makeHandler(NavigationEvents.DidBlur),
 		})
 
 		local instance = Roact.mount(adapter)

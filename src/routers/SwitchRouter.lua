@@ -47,7 +47,7 @@ end
 
 local function getParamsForRoute(routeConfigs, routeName, initialParams)
 	local routeConfig = routeConfigs[routeName]
-	if routeConfig and routeConfig.params then
+	if type(routeConfig) == "table" and routeConfig.params then
 		return Cryo.Dictionary.join(routeConfig.params, initialParams)
 	else
 		return initialParams

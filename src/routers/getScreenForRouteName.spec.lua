@@ -25,7 +25,7 @@ return function()
 		end)
 
 		expect(status).to.equal(false)
-		expect(string.find(err, "routeName 'myRoute' must be a table within routeConfigs")).to.never.equal(nil)
+		expect(string.find(err, "There is no route defined for key 'myRoute'.")).to.never.equal(nil)
 	end)
 
 	it("should return raw table if screen and getScreen are not props", function()
@@ -71,6 +71,19 @@ return function()
 		expect(status).to.equal(false)
 		expect(string.find(err, "The getScreen function defined for route 'myRoute'" ..
 			" did not return a valid screen or navigator")).to.never.equal(nil)
+	end)
+
+	it("should throw if screen is not a valid Roact element", function()
+		local status, err = pcall(function()
+			getScreenForRouteName({
+				myRoute = {
+					screen = 5,
+				}
+			}, "myRoute")
+		end)
+
+		expect(status).to.equal(false)
+		expect(string.find(err, "screen param for key 'myRoute' must be a valid Roact component.")).to.never.equal(nil)
 	end)
 end
 
