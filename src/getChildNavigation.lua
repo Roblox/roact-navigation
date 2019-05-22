@@ -7,15 +7,7 @@ local getChildrenNavigationCache = require(script.Parent.getChildrenNavigationCa
 local function createParamGetter(route)
 	return function(paramName, defaultValue)
 		local params = route.params
-		if params then
-			for key, value in pairs(params) do
-				if key == paramName then
-					return value
-				end
-			end
-		end
-
-		return defaultValue
+		return params and params[paramName] or defaultValue
 	end
 end
 
@@ -55,10 +47,10 @@ local function getChildNavigation(navigation, childKey, getCurrentParentNavigati
 	childRouter.getActionCreators(focusedGrandChildRoute, childRoute.key) or {}
 
 	local actionCreators = Cryo.Dictionary.join(
-		navigation.actions,
-		navigation.router.getActionCreators(childRoute, navigation.state.key),
-		childRouterActionCreators,
-		getNavigationActionCreators(childRoute))
+		navigation.actions or {},
+		navigation.router.getActionCreators(childRoute, navigation.state.key) or {},
+		childRouterActionCreators or {},
+		getNavigationActionCreators(childRoute) or {})
 
 	local actionHelpers = {}
 	for key, creator in pairs(actionCreators) do

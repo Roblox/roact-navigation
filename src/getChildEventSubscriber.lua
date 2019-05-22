@@ -20,7 +20,7 @@ return function(addListener, key, initialLastFocusEvent)
 		[NavigationEvents.Refocus] = {},
 	}
 
-	local function removeAll()
+	local function disconnectAll()
 		for _, subscriberList in pairs(subscriberMap) do
 			for x in pairs(subscriberList) do
 				subscriberList[x] = nil
@@ -29,7 +29,7 @@ return function(addListener, key, initialLastFocusEvent)
 
 		for _, subs in pairs(upstreamSubscribers) do
 			if subs then
-				subs.remove()
+				subs.disconnect()
 			end
 		end
 	end
@@ -39,7 +39,7 @@ return function(addListener, key, initialLastFocusEvent)
 	end
 
 	local function emit(type, payload)
-		local payloadWithType = Cryo.Dictionary.join(payload, { type = type })
+		local payloadWithType = Cryo.Dictionary.join(payload or {}, { type = type })
 		local subscribers = getChildSubscribers(type)
 		if subscribers then
 			for _, subs in ipairs(subscribers) do
@@ -48,7 +48,7 @@ return function(addListener, key, initialLastFocusEvent)
 		end
 	end
 
-	-- lastFocusEvent keeps frack of focus state for one route. We assume that we are initially
+	-- lastFocusEvent keeps track of focus state for one route. We assume that we are initially
 	-- in blurred state. If we are focused on initialization, then the first NavigationEvents.Action
 	-- will cause onFocus+willFocus wil lfire because we started off 'blurred'.
 	local lastFocusEvent = initialLastFocusEvent
@@ -71,18 +71,22 @@ return function(addListener, key, initialLastFocusEvent)
 			local isChildFocused = focusKey == key
 
 			local lastRoute = nil
-			for _, route in ipairs(lastRoutes) do
-				if route.key == key then
-					lastRoute = route
-					break
+			if lastRoutes then
+				for _, route in ipairs(lastRoutes) do
+					if route.key == key then
+						lastRoute = route
+						break
+					end
 				end
 			end
 
 			local newRoute = nil
-			for _, route in ipairs(routes) do
-				if route.key == key then
-					newRoute = route
-					break;
+			if routes then
+				for _, route in ipairs(routes) do
+					if route.key == key then
+						newRoute = route
+						break
+					end
 				end
 			end
 
@@ -105,7 +109,9 @@ return function(addListener, key, initialLastFocusEvent)
 					lastFocusEvent = NavigationEvents.WillFocus
 					emit(lastFocusEvent, childPayload)
 				end
-			elseif lastFocusEvent == NavigationEvents.WillFocus then
+			end
+
+			if lastFocusEvent == NavigationEvents.WillFocus then
 				-- We are mid-focus. Look for didFocus conditions. If state.isTransitioning is false
 				-- then we know this child event happens immediately after willFocus
 				if (eventType == NavigationEvents.DidFocus or eventType == NavigationEvents.Action)
@@ -113,7 +119,9 @@ return function(addListener, key, initialLastFocusEvent)
 					lastFocusEvent = NavigationEvents.DidFocus
 					emit(lastFocusEvent, childPayload)
 				end
-			elseif lastFocusEvent == NavigationEvents.DidFocus then
+			end
+
+			if lastFocusEvent == NavigationEvents.DidFocus then
 				-- The child is currently focused. Look for blurring events.
 				if not isChildFocused or eventType == NavigationEvents.WillBlur then
 					lastFocusEvent = NavigationEvents.WillBlur
@@ -123,23 +131,27 @@ return function(addListener, key, initialLastFocusEvent)
 					-- While focused, pass action events to children to be handled by focused grandchildren
 					emit(NavigationEvents.Action, childPayload)
 				end
-			elseif lastFocusEvent == NavigationEvents.WillBlur then
+			end
+
+			if lastFocusEvent == NavigationEvents.WillBlur then
 				-- The child is mid-blur. Wait for transition to end.
 				if eventType == NavigationEvents.Action and not isChildFocused and not isTransitioning then
 					-- Child is done blurring because transitioning ended or there is no transition to do
 					lastFocusEvent = NavigationEvents.DidBlur
 					emit(lastFocusEvent, childPayload)
 				elseif eventType == NavigationEvents.DidBlur then
-					-- Pass through parent's didBlur event
-					lastFocusEvent = NavigationEvents.didBlur
+					-- Pass through parent's DidBlur event
+					lastFocusEvent = NavigationEvents.DidBlur
 					emit(lastFocusEvent, childPayload)
 				elseif eventType == NavigationEvents.Action and isChildFocused and isTransitioning then
 					lastFocusEvent = NavigationEvents.WillFocus
 					emit(lastFocusEvent, childPayload)
 				end
-			elseif lastFocusEvent == NavigationEvents.DidBlur and not newRoute then
-				-- Page is dead, remove subscribers
-				removeAll()
+			end
+
+			if lastFocusEvent == NavigationEvents.DidBlur and not newRoute then
+				-- Page is dead, disconnect subscribers
+				disconnectAll()
 			end
 		end)
 	end
@@ -148,9 +160,11 @@ return function(addListener, key, initialLastFocusEvent)
 		addListener = function(eventType, eventHandler)
 			local subscribers = getChildSubscribers(eventType)
 			validate(subscribers ~= nil, "Invalid event type '%s'", tostring(eventType))
+			validate(type(eventHandler) == "function",
+				"eventHandler for '%s' must be a function", tostring(eventType))
 			table.insert(subscribers, eventHandler)
 			return {
-				remove = function()
+				disconnect = function()
 					for idx, subs in ipairs(subscribers) do
 						if subs == eventHandler then
 							table.remove(subscribers, idx)
@@ -161,8 +175,10 @@ return function(addListener, key, initialLastFocusEvent)
 			}
 		end,
 		emit = function(eventType, payload)
-			validate(eventType ~= NavigationEvents.Refocus,
+			validate(eventType == NavigationEvents.Refocus,
 				"navigation.emit only supports NavigationEvents.Refocus currently.")
+			validate(payload == nil or type(payload) == "table",
+				"navigation.emit payloads must be a table or nil")
 			emit(eventType, payload)
 		end,
 	}

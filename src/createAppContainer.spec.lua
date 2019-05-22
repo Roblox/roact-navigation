@@ -18,9 +18,57 @@ return function()
 		local TestApp = createAppContainer(TestNavigator)
 		local element = Roact.createElement(TestApp)
 		local instance = Roact.mount(element)
+
 		Roact.unmount(instance)
 	end)
 
 	-- TODO: Implement mounting tests for other navigators
+
+	it("should throw when navigator has both navigation and container props", function()
+		local TestAppComponent = Roact.Component:extend("TestAppComponent")
+		function TestAppComponent:render() end
+
+		local element = Roact.createElement(createAppContainer(TestAppComponent), {
+			navigation = {},
+			somePropThatShouldNotBeHere = true,
+		})
+
+		local status, err = pcall(function()
+			Roact.mount(element)
+		end)
+
+		expect(status).to.equal(false)
+		expect(string.find(err, "This navigator has both 'navigation' and container props.")).to.never.equal(nil)
+	end)
+
+	it("should connect and disconnect from backActionSignal", function()
+		local TestNavigator = createSwitchNavigator({
+			routes = {
+				Foo = function() end,
+			},
+			initialRouteName = "Foo",
+		})
+
+		local backHandler = nil
+		local backSignal = {
+			connect = function(handler)
+				backHandler = handler
+				return {
+					disconnect = function()
+						backHandler = nil
+					end
+				}
+			end
+		}
+
+		local element = Roact.createElement(createAppContainer(TestNavigator), {
+			backActionSignal = backSignal,
+		})
+
+		local instance = Roact.mount(element)
+		expect(backHandler).to.never.equal(nil)
+		Roact.unmount(instance)
+		expect(backHandler).to.equal(nil)
+	end)
 end
 

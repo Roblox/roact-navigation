@@ -17,7 +17,7 @@ local function validateProps(props)
 		"container props or don't pass a 'navigation' prop."
 
 	for key in pairs(props) do
-		validate(key ~= "screenProps", errStr)
+		validate(key == "screenProps" or key == "navigation", errStr)
 	end
 end
 
@@ -126,7 +126,34 @@ return function(AppComponent)
 			return
 		end
 
+		local action = self._initialAction
+		local startupState =  self.state.nav
 
+		if not startupState then
+			startupState = AppComponent.router.getStateForAction(action)
+		end
+
+		local function dispatchActions()
+			-- _actionEventSubscribers is a table(handler, true), e.g. a Set container
+			for subscriber in pairs(self._actionEventSubscribers) do
+				subscriber({
+					type = NavigationEvents.Action,
+					action = action,
+					state = self.state.nav,
+					-- there is no lastState for initial mounting
+				})
+			end
+		end
+
+		if startupState == self.state.nav then
+			dispatchActions()
+		else
+			self.setState({
+				nav = startupState
+			})
+
+			dispatchActions()
+		end
 	end
 
 	function NavigationContainer:willUnmount()
@@ -135,7 +162,7 @@ return function(AppComponent)
 		-- TODO: Disconnect from from URL listener once implemented
 
 		if self.subs then
-			self.subs.remove()
+			self.subs.disconnect()
 			self.subs = nil
 		end
 	end
@@ -190,7 +217,7 @@ return function(AppComponent)
 					type = NavigationEvents.Action,
 					action = action,
 					state = navState,
-					lsatState = lastNavState,
+					lastState = lastNavState,
 				})
 			end
 		end
