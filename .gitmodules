@@ -10,3 +10,6 @@
 [submodule "modules/roact"]
 	path = modules/roact
 	url = git@github.com:Roblox/roact.git
+[submodule "modules/otter"]
+	path = modules/otter
+	url = git@github.com:Roblox/otter.git

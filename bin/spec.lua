@@ -12,6 +12,7 @@ local LOAD_MODULES = {
 	{"modules/roact/lib", "Roact"},
 	{"modules/testez/lib", "TestEZ"},
 	{"modules/cryo/src", "Cryo"},
+	{"modules/otter/lib", "Otter"},
 }
 
 -- This makes sure we can load libraries that depend on init.lua, like Lemur.

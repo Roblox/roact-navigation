@@ -1,3 +1,4 @@
 /luacov.*
 /site
+/*.rbxl
 .DS_Store

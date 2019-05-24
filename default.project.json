@@ -1,0 +1,30 @@
+{
+  "name": "roact-navigation",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+        "$className": "ReplicatedStorage",
+
+        "RoactNavigation": {
+            "$path": "src"
+        },
+
+        "RoactNavigation-Storybook": {
+            "$path": "Storybook"
+        },
+
+        "Roact": {
+            "$path": "modules/roact/lib"
+        },
+
+        "Cryo": {
+            "$path": "modules/cryo/src"
+        },
+
+        "Otter": {
+            "$path": "modules/otter/lib"
+        }
+    }
+  }
+}
