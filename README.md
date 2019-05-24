@@ -23,17 +23,21 @@ https://confluence.rbx.com/display/MOBAPP/Roact+Navigation
 ## Installation
 
 ### Filesystem
-* Add this repository as a Git submodule or copy it into your project
-* Use a plugin like [Rojo](https://github.com/LPGhatguy/rojo) to sync the `src` folder into a place
+* Add this repository as a Git submodule or copy it into your project.
+* Sync the required submodules. `git submodule update --init --recursive`
+* Set up your project to import the files under the "src" folder.
 
-### Model File
-* Download the `rbxmx` model file attached to the latest release from the [GitHub releases page](https://github.com/Roblox/roact-navigation/releases)
-* Insert the model into Studio into a place like `ReplicatedStorage`
-
-## Running Tests
+## Running the unit tests
 * Set up your system with Lua 5.1.
 * Install dependencies for [Lemur](https://github.com/LPGhatguy/lemur).
 * Run `lua bin/spec.lua`.
+
+## Running the Storybooks
+* Install a [Rust](https://www.rust-lang.org) compiler toolchain and runtime.
+* Install Rojo `cargo install rojo --version 0.5.0-alpha.4`. Do NOT install the latest 0.5.0-alpha.9; it does not build!
+* Build Rojo project `rojo build -o roactnavigation.rbxl`.
+* Serve the Rojo project to Roblox Studio `rojo serve` so it can do dynamic updates when you edit files.
+* Launch Studio and follow the [Horsecat](https://github.com/Roblox/horsecat/blob/master/docs/index.md) docs to open the storybooks in ReplicatedStorage/RoactNavigation-Storybook.
 
 ## License
 Roact Navigation is closed source, for the time being. All rights are reserved to Roblox.
