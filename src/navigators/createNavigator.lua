@@ -36,24 +36,23 @@ return function(navigatorViewComponent, router, navigationConfig)
 			if prevDescriptors and prevDescriptors[route.key] and
 				route == prevDescriptors[route.key].state and
 				screenProps == prevState.screenProps then
-				descriptors[route.key] = prevDescriptors.route.key
-				return
+				descriptors[route.key] = prevDescriptors[route.key]
+			else
+				local getComponent = function()
+					return router.getComponentForRouteName(route.routeName)
+				end
+
+				local childNavigation = navigation.getChildNavigation(route.key)
+				local options = router.getScreenOptions(childNavigation, screenProps)
+
+				descriptors[route.key] = {
+					key = route.key,
+					getComponent = getComponent,
+					options = options,
+					state = route,
+					navigation = childNavigation,
+				}
 			end
-
-			local getComponent = function()
-				return router.getComponentForRouteName(route.routeName)
-			end
-
-			local childNavigation = navigation.getChildNavigation(route.key)
-			local options = router.getScreenOptions(childNavigation, screenProps)
-
-			descriptors[route.key] = {
-				key = route.key,
-				getComponent = getComponent,
-				options = options,
-				state = route,
-				navigation = childNavigation,
-			}
 		end
 
 		return {

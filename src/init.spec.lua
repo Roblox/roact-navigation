@@ -73,6 +73,10 @@ return function()
 		expect(type(RoactNavigation.StackActions)).to.equal("table")
 	end)
 
+	it("should return a table for BackBehavior", function()
+		expect(type(RoactNavigation.BackBehavior)).to.equal("table")
+	end)
+
 	it("should return a table for Events", function()
 		expect(type(RoactNavigation.Events)).to.equal("table")
 	end)

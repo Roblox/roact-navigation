@@ -95,9 +95,13 @@ return function(AppComponent)
 				self._navigation = getNavigation(
 					AppComponent.router,
 					navState,
-					self.dispatch,
+					function(...)
+						self:dispatch(...)
+					end,
 					self._actionEventSubscribers,
-					self._getScreenProps,
+					function(...)
+						self:_getScreenProps(...)
+					end,
 					function()
 						return self._navigation
 					end
@@ -145,15 +149,13 @@ return function(AppComponent)
 			end
 		end
 
-		if startupState == self.state.nav then
-			dispatchActions()
-		else
-			self.setState({
+		if startupState ~= self.state.nav then
+			self:setState({
 				nav = startupState
 			})
-
-			dispatchActions()
 		end
+
+		dispatchActions()
 	end
 
 	function NavigationContainer:willUnmount()
@@ -236,7 +238,7 @@ return function(AppComponent)
 				nav = navState
 			})
 
-			self._onNavigationStateChange(lastNavState, navState, action)
+			self:_onNavigationStateChange(lastNavState, navState, action)
 			dispatchActionEvents()
 			-- TODO: Add call to persist navigation state here, if we ever implement it.
 			return true
