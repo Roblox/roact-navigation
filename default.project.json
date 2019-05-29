@@ -10,7 +10,7 @@
             "$path": "src"
         },
 
-        "RoactNavigation-Storybook": {
+        "RoactNavigationStorybook": {
             "$path": "Storybook"
         },
 

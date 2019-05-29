@@ -6,13 +6,21 @@ return function(target)
 
     function FirstPage:render()
         local navigation = self.props.navigation
+
+        local extraTitle = navigation.getParam("extraTitle")
+
+        local text = "Hello, Roact-Navigation page 1!"
+        if extraTitle and #extraTitle > 0 then
+            text = text .. " (" .. extraTitle .. ")"
+        end
+
         return Roact.createElement("TextButton", {
             AnchorPoint = Vector2.new(0.5, 0.5),
             BackgroundColor3 = Color3.new(1,1,1),
             Font = Enum.Font.Gotham,
             Position = UDim2.new(0.5,0,0.5,0),
             Size = UDim2.new(0.5,0,0.25,0),
-            Text = "Hello, Roact-Navigation page 1!",
+            Text = text,
             TextColor3 = Color3.new(0,0,0),
             TextSize = 18,
             [Roact.Event.Activated] = function()
@@ -41,6 +49,12 @@ return function(target)
 
     function ThirdPage:render()
         local navigation = self.props.navigation
+        local extraTitle = navigation.getParam("extraTitle")
+
+        local text = "Hello, Roact-Navigation page 3A!"
+        if extraTitle and #extraTitle > 0 then
+            text = text .. " (" .. extraTitle .. ")"
+        end
 
         return Roact.createElement("TextButton", {
             AnchorPoint = Vector2.new(0.5, 0.5),
@@ -48,7 +62,7 @@ return function(target)
             Font = Enum.Font.Gotham,
             Position = UDim2.new(0.5,0,0.5,0),
             Size = UDim2.new(0.5,0,0.25,0),
-            Text = "Hello, Roact-Navigation page 3A!",
+            Text = text,
             TextColor3 = Color3.new(0,0,0),
             TextSize = 18,
             [Roact.Event.Activated] = function()
@@ -70,7 +84,9 @@ return function(target)
             TextColor3 = Color3.new(0,0,0),
             TextSize = 18,
             [Roact.Event.Activated] = function()
-                navigation.navigate("Page1")
+                navigation.navigate("Page1", {
+                    extraTitle = "take 2",
+                })
             end,
         })
     end
@@ -81,6 +97,9 @@ return function(target)
             Page3B = FourthPage,
         },
         initialRouteName = "Page3A",
+        initialRouteParams = {
+            extraTitle = "extra title",
+        },
     })
 
     local rootNavigator = RoactNavigation.createSwitchNavigator({
