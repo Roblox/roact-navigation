@@ -51,7 +51,7 @@ function NavigationEventsAdapter:didMount()
 		local callback = self.props[symbol] or nil
 		if callback then
 			validate(type(callback) == "function", "Value for event '%s' must be a function callback", tostring(symbol))
-			self.subscriptions[symbol] = navigation:addListener(symbol, function(...)
+			self.subscriptions[symbol] = navigation.addListener(symbol, function(...)
 				return callback(...) or nil
 			end)
 		end
@@ -62,7 +62,7 @@ function NavigationEventsAdapter:willUnmount()
 	for _, symbol in pairs(NavigationEvents) do
 		local sub = self.subscriptions[symbol]
 		if sub then
-			sub:disconnect()
+			sub.disconnect()
 		end
 	end
 end
