@@ -15,11 +15,11 @@ return function()
 			end
 		end
 
-		function mockNavContext:addListener(symbol, callback)
-			self.subscribedHandlers[symbol] = callback
+		function mockNavContext.addListener(symbol, callback)
+			mockNavContext.subscribedHandlers[symbol] = callback
 			return {
 				disconnect = function()
-					self.subscribedHandlers[symbol] = nil
+					mockNavContext.subscribedHandlers[symbol] = nil
 				end
 			}
 		end
