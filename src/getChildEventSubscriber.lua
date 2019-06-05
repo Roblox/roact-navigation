@@ -34,13 +34,9 @@ return function(addListener, key, initialLastFocusEvent)
 		end
 	end
 
-	local function getChildSubscribers(eventSymbol)
-		return subscriberMap[eventSymbol] or nil
-	end
-
 	local function emit(type, payload)
 		local payloadWithType = Cryo.Dictionary.join(payload or {}, { type = type })
-		local subscribers = getChildSubscribers(type)
+		local subscribers = subscriberMap[type]
 		if subscribers then
 			for _, subs in ipairs(subscribers) do
 				subs(payloadWithType)
@@ -50,7 +46,7 @@ return function(addListener, key, initialLastFocusEvent)
 
 	-- lastFocusEvent keeps track of focus state for one route. We assume that we are initially
 	-- in blurred state. If we are focused on initialization, then the first NavigationEvents.Action
-	-- will cause onFocus+willFocus wil lfire because we started off 'blurred'.
+	-- will cause onFocus+willFocus to fire because we started off 'blurred'.
 	local lastFocusEvent = initialLastFocusEvent
 
 	for eventType in pairs(subscriberMap) do
@@ -158,7 +154,7 @@ return function(addListener, key, initialLastFocusEvent)
 
 	return {
 		addListener = function(eventType, eventHandler)
-			local subscribers = getChildSubscribers(eventType)
+			local subscribers = subscriberMap[eventType]
 			validate(subscribers ~= nil, "Invalid event type '%s'", tostring(eventType))
 			validate(type(eventHandler) == "function",
 				"eventHandler for '%s' must be a function", tostring(eventType))

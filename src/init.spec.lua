@@ -84,7 +84,11 @@ return function()
 	it("should return a valid component for EventsAdapter", function()
 		expect(RoactNavigation.EventsAdapter.render).never.to.equal(nil)
 		local instance = Roact.mount(Roact.createElement(RoactNavigation.EventsAdapter, {
-			navigation = {}
+			navigation = {
+				addListener = function()
+					return { disconnect = function() end }
+				end
+			}
 		}))
 		Roact.unmount(instance)
 	end)

@@ -96,11 +96,11 @@ return function(AppComponent)
 					AppComponent.router,
 					navState,
 					function(...)
-						self:dispatch(...)
+						return self:dispatch(...)
 					end,
 					self._actionEventSubscribers,
 					function(...)
-						self:_getScreenProps(...)
+						return self:_getScreenProps(...)
 					end,
 					function()
 						return self._navigation
@@ -214,7 +214,8 @@ return function(AppComponent)
 		end
 
 		local function dispatchActionEvents()
-			for _, subscriber in ipairs(self._actionEventSubscribers) do
+			-- _actionEventSubscribers is a table(handler, true), e.g. a Set container
+			for subscriber in pairs(self._actionEventSubscribers) do
 				subscriber({
 					type = NavigationEvents.Action,
 					action = action,
@@ -234,6 +235,10 @@ return function(AppComponent)
 		if navState ~= lastNavState then
 			-- Update cache to ensure that subsequent calls do not discard this change
 			self._navState = navState
+
+			-- TODO: We have to dispatch events before or after setState (which mounts/unmounts components)
+			-- based upon the specific event type, to ensure that pages get them in the correct order...
+
 			self:setState({
 				nav = navState
 			})

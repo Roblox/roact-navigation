@@ -48,13 +48,14 @@ function NavigationEventsAdapter:didMount()
 	-- Register all navigation listeners on mount to ensure listener stability across re-render.
 	-- Tip taken from React's NavigationEvents.js.
 	for _, symbol in pairs(NavigationEvents) do
-		local callback = self.props[symbol] or nil
-		if callback then
-			validate(type(callback) == "function", "Value for event '%s' must be a function callback", tostring(symbol))
-			self.subscriptions[symbol] = navigation.addListener(symbol, function(...)
-				return callback(...) or nil
-			end)
-		end
+		self.subscriptions[symbol] = navigation.addListener(symbol, function(...)
+			-- Retrieve callback from props each time, in case props change.
+			local callback = self.props[symbol] or nil
+			if callback then
+				validate(type(callback) == "function", "Value for event '%s' must be a function callback", tostring(symbol))
+				callback(...)
+			end
+		end)
 	end
 end
 
@@ -63,6 +64,7 @@ function NavigationEventsAdapter:willUnmount()
 		local sub = self.subscriptions[symbol]
 		if sub then
 			sub.disconnect()
+			self.subscriptions[symbol] = nil
 		end
 	end
 end

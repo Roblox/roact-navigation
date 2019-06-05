@@ -102,7 +102,6 @@ local function getChildNavigation(navigation, childKey, getCurrentParentNavigati
 			end,
 			dispatch = navigation.dispatch,
 			getScreenProps = navigation.getScreenProps,
-			dangerouslyGetParent = getCurrentParentNavigation,
 			addListener = childSubscriber.addListener,
 			emit = childSubscriber.emit,
 		})
