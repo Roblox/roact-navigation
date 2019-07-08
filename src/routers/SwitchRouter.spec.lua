@@ -556,10 +556,10 @@ return function()
 				initialRouteName = "Foo",
 			})
 
-			local newState = router.getStateForAction(NavigationActions.setParams{
+			local newState = router.getStateForAction(NavigationActions.setParams({
 				key = "Foo", -- By default, key == routeName
 				params = { a = 1 },
-			})
+			}))
 
 			expect(newState.routes[newState.index].params.a).to.equal(1)
 		end)
