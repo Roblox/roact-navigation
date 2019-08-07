@@ -4,22 +4,19 @@ local validate = require(script.Parent.Parent.utils.validate)
 
 local SCENE_KEY_PREFIX = "scene_"
 
--- Compare two route keys
-local function compareKey(a, b)
-	local delta = #a - #b
-	if delta == 0 then
-		return a > b
-	else
-		return delta > 0
-	end
-end
-
 -- Compare two scenes based upon index and view key.
 local function compareScenes(a, b)
 	if a.index == b.index then
-		return compareKey(a.key, b.key)
+		-- compare the route keys
+		local delta = #a.key - #b.key
+		if delta == 0 then
+			return a.key < b.key
+		else
+			return delta < 0
+		end
 	else
-		return a.index > b.index
+		-- rank by index first
+		return a.index < b.index
 	end
 end
 
@@ -186,7 +183,7 @@ return function(scenes, nextState, prevState, descriptors)
 		end
 	end
 
-	validate(activeScenesCount == 1, "There should only be on active scene, not %d", activeScenesCount)
+	validate(activeScenesCount == 1, "There should only be one active scene, not %d", activeScenesCount)
 
 	-- Conditionally return nextScenes based upon shallow comparison, for performance
 	if #nextScenes ~= #scenes then
