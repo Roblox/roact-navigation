@@ -1,14 +1,12 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
+local Cryo = require(script.Parent.Parent.Parent.Cryo)
+local createNavigator = require(script.Parent.createNavigator)
+local StackRouter = require(script.Parent.Parent.routers.StackRouter)
+local StackView = require(script.Parent.Parent.views.StackView.StackView)
 
-local StubComponent = Roact.Component:extend("TopBarStackNavigator")
-
-function StubComponent.render()
-	return Roact.createElement("Frame", {
-		Size = UDim2.new(1, 0, 1, 0)
-	})
+return function(config)
+	local router = StackRouter(config)
+	return createNavigator(StackView, router, Cryo.Dictionary.join(config, {
+		routes = Cryo.None, -- navigator config doesn't need routes
+	}))
 end
 
-return function(--[[routeConfigs, navigatorConfig]])
-	-- TODO: Implement me.
-	return StubComponent
-end

@@ -1,6 +1,10 @@
 return function()
 	local RoactNavigation = require(script.Parent)
 	local Roact = require(script.Parent.Parent.Roact)
+	local EdgeInsets = require(script.Parent.EdgeInsets)
+	local StackHeaderMode = require(script.Parent.views.StackView.StackHeaderMode)
+	local StackPresentationStyle = require(script.Parent.views.StackView.StackPresentationStyle)
+	local NoneSymbol = require(script.Parent.NoneSymbol)
 
 	it("should load", function()
 		require(script.Parent)
@@ -37,20 +41,12 @@ return function()
 		expect(type(RoactNavigation.withNavigation)).to.equal("function")
 	end)
 
-	it("should return a valid component when calling createTopBarStackNavigator", function()
-		local component = RoactNavigation.createTopBarStackNavigator()
-		expect(component.render).never.to.equal(nil)
-
-		local instance = Roact.mount(Roact.createElement(component))
-		Roact.unmount(instance)
+	it("should return a function for createTopBarStackNavigator", function()
+		expect(type(RoactNavigation.createTopBarStackNavigator)).to.equal("function")
 	end)
 
-	it("should return a valid component when calling createBottomTabNavigator", function()
-		local component = RoactNavigation.createBottomTabNavigator()
-		expect(component.render).never.to.equal(nil)
-
-		local instance = Roact.mount(Roact.createElement(component))
-		Roact.unmount(instance)
+	it("should return a function for createBottomTabNavigator", function()
+		expect(type(RoactNavigation.createBottomTabNavigator)).to.equal("function")
 	end)
 
 	it("should return a function for StackRouter", function()
@@ -91,6 +87,22 @@ return function()
 			}
 		}))
 		Roact.unmount(instance)
+	end)
+
+	it("should return EdgeInsets", function()
+		expect(RoactNavigation.EdgeInsets).to.equal(EdgeInsets)
+	end)
+
+	it("should return StackPresentationStyle", function()
+		expect(RoactNavigation.StackPresentationStyle).to.equal(StackPresentationStyle)
+	end)
+
+	it("should return StackHeaderMode", function()
+		expect(RoactNavigation.StackHeaderMode).to.equal(StackHeaderMode)
+	end)
+
+	it("should return NoneSymbol", function()
+		expect(RoactNavigation.None).to.equal(NoneSymbol)
 	end)
 
 	it("should return a valid component for SceneView", function()

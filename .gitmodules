@@ -1,9 +1,9 @@
 [submodule "modules/lemur"]
 	path = modules/lemur
-	url = https://github.com/LPGhatguy/lemur.git
+	url = git@github.com:LPGhatguy/lemur.git
 [submodule "modules/testez"]
 	path = modules/testez
-	url = https://github.com/Roblox/testez.git
+	url = git@github.com:Roblox/testez.git
 [submodule "modules/cryo"]
 	path = modules/cryo
 	url = git@github.com:Roblox/cryo.git

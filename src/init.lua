@@ -37,9 +37,19 @@ return {
 	Events = require(script.NavigationEvents),
 	EventsAdapter = require(script.views.NavigationEventsAdapter),
 
+	-- Additional Types
+	EdgeInsets = require(script.EdgeInsets),
+	StackPresentationStyle = require(script.views.StackView.StackPresentationStyle),
+	StackHeaderMode = require(script.views.StackView.StackHeaderMode),
+	None = require(script.NoneSymbol),
+
 	-- Views
 	SceneView = require(script.views.SceneView),
 	SwitchView = require(script.views.SwitchView),
+	TopBar = require(script.views.TopBar.TopBar),
+	TopBarBackButton = require(script.views.TopBar.TopBarBackButton),
+	TopBarTitleContainer = require(script.views.TopBar.TopBarTitleContainer),
+	StackHeaderMode = require(script.views.StackView.StackHeaderMode),
 
 	-- Utilities
 	createConfigGetter = require(script.routers.createConfigGetter),
