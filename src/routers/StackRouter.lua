@@ -8,6 +8,7 @@ local createConfigGetter = require(script.Parent.createConfigGetter)
 local validateRouteConfigMap = require(script.Parent.validateRouteConfigMap)
 local validate = require(script.Parent.Parent.utils.validate)
 local NavigationSymbol = require(script.Parent.Parent.NavigationSymbol)
+local NoneSymbol = require(script.Parent.Parent.NoneSymbol)
 
 local STACK_ROUTER_ROOT_KEY = "StackRouterRoot"
 local CHILD_IS_SCREEN = NavigationSymbol("CHILD_IS_SCREEN")
@@ -20,7 +21,7 @@ local function behavesLikePushAction(action)
 end
 
 local function isResetToRootStack(action)
-	return action.type == StackActions.Reset and action.key == nil
+	return action.type == StackActions.Reset and action.key == NoneSymbol
 end
 
 local function shallowCopyDictionary(data)
@@ -231,7 +232,7 @@ return function(config)
 
 				if childRouter ~= nil and childRouter ~= CHILD_IS_SCREEN then
 					local nextRouteState = childRouter.getStateForAction(childAction, childRoute)
-					if nextRouteState ~= nil or nextRouteState ~= childRoute then
+					if nextRouteState == nil or nextRouteState ~= childRoute then
 						local newState = StateUtils.replaceAndPrune(
 							state,
 							nextRouteState and nextRouteState.key or childRoute.key,
@@ -504,7 +505,10 @@ return function(config)
 			local backRouteIndex = state.index -- index to go back *FROM*
 			if action.type == StackActions.Pop and n ~= nil then
 				backRouteIndex = math.max(1, state.index - n + 1)
-			elseif key then
+			elseif key and key ~= NoneSymbol then
+				-- If key is specified and is not ours, we should NOT try to navigate back
+				-- because it might be intended for our parent! (So clear the backRouteIndex.)
+				backRouteIndex = 0
 				for idx, route in ipairs(state.routes) do
 					if route.key == key then
 						backRouteIndex = idx
