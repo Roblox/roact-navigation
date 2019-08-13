@@ -49,7 +49,6 @@ return {
 	TopBar = require(script.views.TopBar.TopBar),
 	TopBarBackButton = require(script.views.TopBar.TopBarBackButton),
 	TopBarTitleContainer = require(script.views.TopBar.TopBarTitleContainer),
-	StackHeaderMode = require(script.views.StackView.StackHeaderMode),
 
 	-- Utilities
 	createConfigGetter = require(script.routers.createConfigGetter),

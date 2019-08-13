@@ -23,10 +23,10 @@ local validate = require(script.Parent.Parent.utils.validate)
 	function MyComponent:render()
 		-- Note that you must capture the self reference lexically, if you need it.
 		return Roact.createElement(RoactNavigation.EventsAdapter, {
-			[NavigationEvents.WillFocus] = self.willFocus,
-			[NavigationEvents.DidFocus] = self.didFocus,
-			[NavigationEvents.WillBlur] = self.willBlur,
-			[NavigationEvents.DidBlur] = self.didBlur,
+			[RoactNavigation.Events.WillFocus] = self.willFocus,
+			[RoactNavigation.Events.DidFocus] = self.didFocus,
+			[RoactNavigation.Events.WillBlur] = self.willBlur,
+			[RoactNavigation.Events.DidBlur] = self.didBlur,
 		}, <remainder of component tree> )
 	end
 
@@ -34,8 +34,7 @@ local validate = require(script.Parent.Parent.utils.validate)
 	component. If you navigate away from a component and then come back later, it will receive
 	willBlur/didBlur and then willFocus/didFocus events.
 
-	Also be aware that the on<event>() handlers are passed as props. You must capture
-	your 'self' reference lexically if you want to use it.
+	Also remember that your event handlers must capture any self reference lexically, if necessary.
 ]]
 local NavigationEventsAdapter = Roact.Component:extend("NavigationEventsAdapter")
 
