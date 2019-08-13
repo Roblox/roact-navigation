@@ -22,10 +22,9 @@ return function()
 		Roact.unmount(instance)
 	end)
 
-	-- TODO: Implement mounting tests for other navigators
-
 	it("should throw when navigator has both navigation and container props", function()
 		local TestAppComponent = Roact.Component:extend("TestAppComponent")
+		TestAppComponent.router = {}
 		function TestAppComponent:render() end
 
 		local element = Roact.createElement(createAppContainer(TestAppComponent), {
@@ -39,6 +38,30 @@ return function()
 
 		expect(status).to.equal(false)
 		expect(string.find(err, "This navigator has both 'navigation' and container props.")).to.never.equal(nil)
+	end)
+
+	it("should throw when not passed a table for AppComponent", function()
+		local TestAppComponent = 5
+
+		local status, err = pcall(function()
+			createAppContainer(TestAppComponent)
+		end)
+
+		expect(status).to.equal(false)
+		expect(string.find(err, "AppComponent must be a navigator or a stateful Roact " ..
+			"component with a 'router' field")).to.never.equal(nil)
+	end)
+
+	it("should throw when passed a stateful component without router field", function()
+		local TestAppComponent = Roact.Component:extend("TestAppComponent")
+
+		local status, err = pcall(function()
+			createAppContainer(TestAppComponent)
+		end)
+
+		expect(status).to.equal(false)
+		expect(string.find(err, "AppComponent must be a navigator or a stateful Roact " ..
+			"component with a 'router' field")).to.never.equal(nil)
 	end)
 
 	it("should connect and disconnect from backActionSignal", function()

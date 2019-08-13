@@ -23,17 +23,24 @@ end
 
 --[[
 	Construct a container Roact component that will host the navigation hierarchy
-	specified by your main AppComponent. Additional props:
+	specified by your main AppComponent. AppComponent must be a navigator created by
+	a Roact-Navigation helper function, or a stateful Roact component
 
-	renderLoading    	- 	Roact component to render while the app is loading.
-	backActionSignal 	- 	Signal that allows the container to listen to external
-							back action events (e.g. Android back button).
+	If you are using a custom stateful Roact component, make sure to set the 'router'
+	field so that it can be hooked into the navigation system. You must also pass your
+	'navigation' prop to any child navigators.
+
+	Additional props:
+		renderLoading    	- 	Roact component to render while the app is loading.
+		backActionSignal 	- 	Signal that allows the container to listen to external
+								back action events (e.g. Android back button).
 ]]
 return function(AppComponent)
+	validate(type(AppComponent) == "table" and AppComponent.router ~= nil,
+		"AppComponent must be a navigator or a stateful Roact component with a 'router' field")
+
 	local containerName = string.format("NavigationContainer(%s)", tostring(AppComponent))
 	local NavigationContainer = Roact.Component:extend(containerName)
-
-	NavigationContainer.router = AppComponent.router
 
 	function NavigationContainer.getDerivedStateFromProps(nextProps)
 		validateProps(nextProps)
