@@ -4,12 +4,3 @@
 [submodule "modules/testez"]
 	path = modules/testez
 	url = git@github.com:Roblox/testez.git
-[submodule "modules/cryo"]
-	path = modules/cryo
-	url = git@github.com:Roblox/cryo.git
-[submodule "modules/roact"]
-	path = modules/roact
-	url = git@github.com:Roblox/roact.git
-[submodule "modules/otter"]
-	path = modules/otter
-	url = git@github.com:Roblox/otter.git

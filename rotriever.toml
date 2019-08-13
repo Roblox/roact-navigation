@@ -1,0 +1,10 @@
+[package]
+name = "roact-navigation"
+version = "0.1.0"
+author = "David Brooks"
+content_root = "src"
+
+[dependencies]
+Roact = { git = "https://github.com/Roblox/roact", rev = "roblox" }
+Cryo = { git = "https://github.com/Roblox/cryo", rev = "roblox" }
+Otter = { git = "https://github.com/Roblox/Otter", rev = "master" }

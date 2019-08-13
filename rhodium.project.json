@@ -2,24 +2,22 @@
     "name": "Roact-Navigation Rhodium",
     "tree": {
         "$className": "Folder",
-        "RoactNavigation": {
-            "$path": "src"
+
+        "Packages": {
+            "$path": "Packages",
+
+            "RoactNavigation": {
+                "$path": "src"
+            },
+
+            "Tests": {
+                "$path": "RhodiumTests"
+            },
+            "TestEZ": {
+                "$path": "modules/testez/lib"
+            }
         },
-        "Roact": {
-            "$path": "modules/roact/lib"
-        },
-        "Cryo": {
-            "$path": "modules/cryo/src"
-        },
-        "Otter": {
-            "$path": "modules/otter/lib"
-        },
-        "Tests": {
-            "$path": "RhodiumTests"
-        },
-        "TestEZ": {
-            "$path": "modules/testez/lib"
-        },
+
         "run-rhodium-test": {
             "$path": "run-rhodium-tests.server.lua"
         }

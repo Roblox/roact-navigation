@@ -6,24 +6,16 @@
     "ReplicatedStorage": {
         "$className": "ReplicatedStorage",
 
-        "RoactNavigation": {
-            "$path": "src"
-        },
+        "Packages": {
+            "$path": "Packages",
 
-        "RoactNavigationStorybook": {
-            "$path": "Storybook"
-        },
+            "RoactNavigation": {
+                "$path": "src"
+            },
 
-        "Roact": {
-            "$path": "modules/roact/lib"
-        },
-
-        "Cryo": {
-            "$path": "modules/cryo/src"
-        },
-
-        "Otter": {
-            "$path": "modules/otter/lib"
+            "RoactNavigationStorybook": {
+                "$path": "Storybook"
+            }
         }
     }
   }
