@@ -38,7 +38,7 @@ https://confluence.rbx.com/display/MOBAPP/Roact+Navigation
 
 ## Running the Storybooks
 * Install a [Rust](https://www.rust-lang.org) compiler toolchain and runtime.
-* Install Rojo `cargo install rojo --version 0.5.0-alpha.4`. Do NOT install the latest 0.5.0-alpha.9; it does not build!
+* Install Rojo `cargo install rojo --version 0.5.0-alpha.12`.
 * Build Rojo project `rojo build -o roactnavigation.rbxl`.
 * Serve the Rojo project to Roblox Studio `rojo serve` so it can do dynamic updates when you edit files.
 * Launch Studio and follow the [Horsecat](https://github.com/Roblox/horsecat/blob/master/docs/index.md) docs to open the storybooks in ReplicatedStorage/RoactNavigation-Storybook.
