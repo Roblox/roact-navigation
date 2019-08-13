@@ -2,5 +2,6 @@
 /site
 /*.rbxl
 /*.rbxm
+/rotriever.lock
+/Packages
 .DS_Store
-Packages

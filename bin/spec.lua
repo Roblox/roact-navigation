@@ -6,13 +6,10 @@
 	using TestEZ.
 ]]
 
--- If you add any dependencies, add them to this table so they'll be loaded!
+-- If you add any non-Rotriever dependencies, add them to this table so they'll be loaded!
 local LOAD_MODULES = {
 	{"src", "RoactNavigation"},
-	{"modules/roact/lib", "Roact"},
 	{"modules/testez/lib", "TestEZ"},
-	{"modules/cryo/src", "Cryo"},
-	{"modules/otter/lib", "Otter"},
 }
 
 -- This makes sure we can load libraries that depend on init.lua, like Lemur.
@@ -24,20 +21,26 @@ local lemur = require("modules.lemur")
 -- A Habitat is an emulated DataModel from Lemur
 local habitat = lemur.Habitat.new()
 
-local Modules = lemur.Instance.new("Folder")
-Modules.Name = "Modules"
-Modules.Parent = habitat.game:GetService("ReplicatedStorage")
+-- Load Rotriever packages
+local Packages = habitat:loadFromFs("Packages")
+Packages.Name = "Packages"
+Packages.Parent = habitat.game:GetService("ReplicatedStorage")
 
 for _, module in ipairs(LOAD_MODULES) do
 	local container = habitat:loadFromFs(module[1])
 	container.Name = module[2]
-	container.Parent = Modules
+	container.Parent = Packages
 end
 
-local TestEZ = habitat:require(Modules.TestEZ)
+-- Load RoactNavigation source into Packages folder so it's next to Roact as expected
+local RoactNavigation = habitat:loadFromFs("src")
+RoactNavigation.Name = "RoactNavigation"
+RoactNavigation.Parent = Packages
+
+local TestEZ = habitat:require(Packages.TestEZ)
 
 -- Run all tests, collect results, and report to stdout.
-local results = TestEZ.TestBootstrap:run({ Modules.RoactNavigation }, TestEZ.Reporters.TextReporter)
+local results = TestEZ.TestBootstrap:run({ Packages.RoactNavigation }, TestEZ.Reporters.TextReporter)
 
 if results.failureCount > 0 then
 	-- If something went wrong, explicitly terminate with a failure error code
