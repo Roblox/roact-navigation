@@ -13,6 +13,20 @@ local defaultNavigationConfig = {
 
 local StackView = Roact.Component:extend("StackView")
 
+function StackView:init()
+	self._doRender = function(...)
+		return self:_render(...)
+	end
+
+	self._doConfigureTransition = function(...)
+		return self:_configureTransition(...)
+	end
+
+	self._doOnTransitionEnd = function(...)
+		return self:_onTransitionEnd(...)
+	end
+end
+
 function StackView:render()
 	local screenProps = self.props.screenProps
 	local navigation = self.props.navigation
@@ -23,19 +37,13 @@ function StackView:render()
 	-- Transitioner handles setting up the animation motors and making that data
 	-- available to the lower layer.
 	return Roact.createElement(Transitioner, {
-		render = function(...)
-			return self:_render(...)
-		end,
-		configureTransition = function(...)
-			return self:_configureTransition(...)
-		end,
+		render = self._doRender,
+		configureTransition = self._doConfigureTransition,
 		screenProps = screenProps,
 		navigation = navigation,
 		descriptors = descriptors,
 		onTransitionStart = onTransitionStart,
-		onTransitionEnd = function(...)
-			return self:_onTransitionEnd(...)
-		end,
+		onTransitionEnd = self._doOnTransitionEnd,
 	})
 end
 

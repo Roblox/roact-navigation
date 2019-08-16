@@ -32,7 +32,7 @@ function StackViewCard:init()
 	self._positionLastValue = self.props.navigation.state.index
 
 	self.state = {
-		visible = self.props.scene.isActive,
+		visible = self.props.scene.isActive and not self.props.forceHidden,
 	}
 
 	local selfRef = Roact.createRef()
@@ -44,6 +44,7 @@ end
 function StackViewCard:render()
 	local visible = self.state.visible
 
+	local initialPosition = self.props.initialPosition
 	local scene = self.props.scene
 	local renderScene = self.props.renderScene
 	local overlayTransparency = self.props.overlayTransparency
@@ -52,6 +53,7 @@ function StackViewCard:render()
 	validate(type(renderScene) == "function", "renderScene must be a function")
 
 	return Roact.createElement("Frame", {
+		Position = initialPosition,
 		Size = UDim2.new(1, 0, 1, 0),
 		BackgroundTransparency = overlayTransparency,
 		BackgroundColor3 = overlayColor3,
@@ -104,7 +106,7 @@ function StackViewCard.getDerivedStateFromProps(props, state)
 	return {
 		-- change to visible if isActive changes to true, otherwise leave it
 		-- at last value. This matches with _onPositionStep, below.
-		visible = props.scene.isActive or state.visible,
+		visible = (props.scene.isActive or state.visible) and not props.forceHidden,
 	}
 end
 
@@ -113,6 +115,7 @@ function StackViewCard:_onPositionStep(value)
 		return
 	end
 
+	local forceHidden = self.props.forceHidden
 	local positionStep = self.props.positionStep
 	local index = self.props.scene.index
 	local isActive = self.props.scene.isActive
@@ -123,7 +126,7 @@ function StackViewCard:_onPositionStep(value)
 	end
 
 	-- Note that isActive is also part of calculus for getDerivedStateFromProps!
-	local visible = isActive or cardInVisibleRange
+	local visible = (isActive or cardInVisibleRange) and not forceHidden
 	if visible ~= self.state.visible then
 		spawn(function()
 			if self._isMounted then

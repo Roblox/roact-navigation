@@ -19,6 +19,10 @@ local StackViewLayout = Roact.Component:extend("StackViewLayout")
 function StackViewLayout:init()
 	self._isMounted = false
 	self._scenesContainerRef = Roact.createRef()
+
+	self._renderScene = function(scene)
+		return self:_renderInnerScene(scene)
+	end
 end
 
 function StackViewLayout:_getHeaderMode()
@@ -126,13 +130,20 @@ end
 
 function StackViewLayout:_renderCard(scene, index)
 	local transitionProps = self.props.transitionProps -- Core animation info from Transitioner.
+	local lastTransitionProps = self.props.lastTransitionProps -- Previous transition info.
 	local transitionConfig = self.state.transitionConfig -- State based info from scene config.
+
+	local initialPositionValue = transitionProps.scene.index
+	if lastTransitionProps then
+		initialPositionValue = lastTransitionProps.scene.index
+	end
 
 	local cardInterpolationProps = {}
 	local screenInterpolator = transitionConfig.screenInterpolator
 	if screenInterpolator then
 		cardInterpolationProps = screenInterpolator(
 			Cryo.Dictionary.join(transitionProps, {
+				initialPositionValue = initialPositionValue,
 				scene = scene,
 			})
 		)
@@ -144,9 +155,7 @@ function StackViewLayout:_renderCard(scene, index)
 			ZIndex = index, -- later stack entries should render on top for animation purposes
 			key = "card_" .. tostring(scene.key),
 			scene = scene,
-			renderScene = function()
-				return self:_renderInnerScene(scene)
-			end
+			renderScene = self._renderScene,
 		})
 	)
 end

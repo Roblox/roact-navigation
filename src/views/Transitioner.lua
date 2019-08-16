@@ -69,6 +69,10 @@ function Transitioner:init()
 		scenes = ScenesReducer({}, navigationState, nil, descriptors),
 	}
 
+	self._doOnAbsoluteSizeChanged = function(...)
+		return self:_onAbsoluteSizeChanged(...)
+	end
+
 	self._positionLastValue = navigationState.index
 
 	self._prevTransitionProps = nil
@@ -128,9 +132,7 @@ function Transitioner:render()
 		BackgroundTransparency = 1,
 		BorderSizePixel = 0,
 		ClipsDescendants = true,
-		[Roact.Change.AbsoluteSize] = function(...)
-			self:_onAbsoluteSizeChanged(...)
-		end,
+		[Roact.Change.AbsoluteSize] = self._doOnAbsoluteSizeChanged,
 	}, {
 		["$InnerComponent"] = self.props.render(
 			self._transitionProps, self._prevTransitionProps),
