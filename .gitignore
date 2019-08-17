@@ -1,6 +1,7 @@
 /luacov.*
 /site
 /*.rbxl
+/*.rbxlx
 /*.rbxm
 /rotriever.lock
 /Packages

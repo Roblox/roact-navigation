@@ -69,7 +69,7 @@ function NavigationEventsAdapter:willUnmount()
 end
 
 function NavigationEventsAdapter:render()
-	return Roact.oneChild(self.props[Roact.Children])
+	return Roact.createElement("Folder", nil, self.props[Roact.Children])
 end
 
 return AppNavigationContext.connect(NavigationEventsAdapter)

@@ -41,6 +41,10 @@ return function()
 		expect(type(RoactNavigation.withNavigation)).to.equal("function")
 	end)
 
+	it("should return a function for withNavigationFocus", function()
+		expect(type(RoactNavigation.withNavigationFocus)).to.equal("function")
+	end)
+
 	it("should return a function for createTopBarStackNavigator", function()
 		expect(type(RoactNavigation.createTopBarStackNavigator)).to.equal("function")
 	end)

@@ -15,7 +15,7 @@ return {
 	connect = require(script.views.AppNavigationContext).connect,
 
 	withNavigation = require(script.views.withNavigation),
-	-- TODO: withNavigationFocus = require(script.views.withNavigationFocus),
+	withNavigationFocus = require(script.views.withNavigationFocus),
 
 	-- Navigators
 	createTopBarStackNavigator = require(script.navigators.createTopBarStackNavigator),

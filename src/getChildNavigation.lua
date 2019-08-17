@@ -91,14 +91,16 @@ local function getChildNavigation(navigation, childKey, getCurrentParentNavigati
 					return false
 				end
 
-				local routes = currentNavigation.state.routes
-				local index = currentNavigation.state.index
+				local state = currentNavigation.state
+				local routes = state.routes
+				local index = state.index
 
 				if not currentNavigation.isFocused() then
 					return false
 				end
 
-				return routes[index].key == childKey or false
+				-- If we're transitioning to this state then we are NOT focused until the transition is over.
+				return (routes[index].key == childKey and state.isTransitioning ~= true) or false
 			end,
 			dispatch = navigation.dispatch,
 			getScreenProps = navigation.getScreenProps,

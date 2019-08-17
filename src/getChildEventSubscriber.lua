@@ -63,7 +63,7 @@ return function(addListener, key, initialLastFocusEvent)
 			local lastRoutes = lastState and lastState.routes
 			local routes = state and state.routes
 
-			local focusKey = routes and routes[state.index].key
+			local focusKey = routes and routes[state.index].key or nil
 			local isChildFocused = focusKey == key
 
 			local lastRoute = nil

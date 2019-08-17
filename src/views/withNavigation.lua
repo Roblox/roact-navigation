@@ -1,5 +1,6 @@
 local Roact = require(script.Parent.Parent.Parent.Roact)
 local AppNavigationContext = require(script.Parent.AppNavigationContext)
+local validate = require(script.Parent.Parent.utils.validate)
 
 --[[
 	withNavigation() is a convenience function that you can use in your component's
@@ -16,7 +17,7 @@ local AppNavigationContext = require(script.Parent.AppNavigationContext)
 	end
 ]]
 return function(renderProp)
-	assert(renderProp ~= nil, "withNavigation must be passed a render prop")
+	validate(renderProp ~= nil, "withNavigation must be passed a render prop")
 	return Roact.createElement(AppNavigationContext.Consumer, {
 		render = renderProp
 	})

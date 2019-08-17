@@ -3,7 +3,7 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 
 --[[
 	This story demonstrates how to build a basic StackNavigator-based UI. It creates
-	the following hierarhcy:
+	the following hierarchy:
 
 	AppContainer
 		StackNavigator
