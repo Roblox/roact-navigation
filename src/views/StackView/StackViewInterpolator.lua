@@ -142,7 +142,7 @@ local function forVertical(props)
 		if positionValue < first then
 			return height
 		elseif positionValue < index then
-			return lerp(height, 0, positionValue / (index - first))
+			return lerp(height, 0, (positionValue - first) / (index - first))
 		else
 			return 0
 		end
