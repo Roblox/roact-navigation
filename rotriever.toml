@@ -5,6 +5,6 @@ author = "David Brooks"
 content_root = "src"
 
 [dependencies]
-Roact = { git = "https://github.com/Roblox/roact", rev = "roblox" }
+Roact = { git = "https://github.rbx.com/pdoyle/roact-1x-migration" }
 Cryo = { git = "https://github.com/Roblox/cryo", rev = "roblox" }
 Otter = { git = "https://github.com/Roblox/Otter", rev = "master" }
