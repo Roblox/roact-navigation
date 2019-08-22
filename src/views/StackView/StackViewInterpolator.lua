@@ -23,7 +23,6 @@
 
 	The props table may contain other changes, depending on the requirements of the animation.
 ]]
-local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
 local getSceneIndicesForInterpolationInputRange = require(
 	script.Parent.Parent.Parent.utils.getSceneIndicesForInterpolationInputRange)
 
@@ -43,7 +42,7 @@ local function forInitial(props)
 	return {
 		forceHidden = forceHidden,
 		initialPosition = UDim2.new(0, translate, 0, translate),
-		positionStep = Roact.None,
+		positionStep = nil,
 	}
 end
 
@@ -65,7 +64,7 @@ local function forHorizontal(props)
 		return {
 			forceHidden = true,
 			initialPosition = UDim2.new(0, 100000, 0, 100000),
-			positionStep = Roact.None,
+			positionStep = nil,
 		}
 	end
 
@@ -129,7 +128,7 @@ local function forVertical(props)
 		return {
 			forceHidden = true,
 			initialPosition = UDim2.new(0, 100000, 0, 100000),
-			positionStep = Roact.None,
+			positionStep = nil,
 		}
 	end
 

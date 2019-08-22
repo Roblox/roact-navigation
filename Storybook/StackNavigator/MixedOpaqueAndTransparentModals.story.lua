@@ -2,13 +2,14 @@ local Roact = require(script.Parent.Parent.Parent.Roact)
 local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 
 --[[
-	This story demonstrates how to build modal dialogs using a StackNavigator.
-	It creates the following hierarchy:
+	This story demonstrates the combination of transparent (overlayEnabled)
+	modals mixed with opaque modals to show how they interact.
 
 	AppContainer
 		StackNavigator(Modal)
 			MainContent
-			ExampleModalDialog
+			OpaqueModalDialog
+			TransparentModalDialog
 ]]
 return function(target)
 	local function MainContent(props)
@@ -23,26 +24,43 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			showModalButton = Roact.createElement("TextButton", {
+			showOpaqueModalButton = Roact.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
 				Position = UDim2.new(0.5, 0, 0.6, 0),
-				Size = UDim2.new(0, 160, 0, 30),
-				Text = "Show the Modal",
+				Size = UDim2.new(0, 220, 0, 30),
+				Text = "Show Opaque Modal",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
-					navigation.navigate("ModalDialog")
+					navigation.navigate("OpaqueModalDialog")
 				end
-			})
+			}),
+			showTransparentModalButton = Roact.createElement("TextButton", {
+				AnchorPoint = Vector2.new(0.5, 0),
+				BackgroundColor3 = Color3.new(1, 1, 1),
+				Font = Enum.Font.Gotham,
+				Position = UDim2.new(0.5, 0, 0.6, 30),
+				Size = UDim2.new(0, 220, 0, 30),
+				Text = "Show Transparent Modal",
+				TextColor3 = Color3.new(0, 0, 0),
+				TextSize = 18,
+				[Roact.Event.Activated] = function()
+					navigation.navigate("TransparentModalDialog")
+				end
+			}),
 		})
 	end
 
+	-- Note that we are sharing the ModalDialog component and getting different behavior
+	-- using different route configs!
 	local function ModalDialog(props)
 		local navigation = props.navigation
 		local dialogCount = navigation.getParam("dialogCount", 0)
 
+		-- Note that we are NOT making the screen component itself opaque.
+		-- The opaque background comes from cardColor3 in navigationOptions!
 		return Roact.createElement("Frame", {
 			Size = UDim2.new(0.5, 0, 0.5, 0),
 			AnchorPoint = Vector2.new(0.5, 0.5),
@@ -56,21 +74,36 @@ return function(target)
 				BackgroundTransparency = 1,
 				Font = Enum.Font.Gotham,
 				Size = UDim2.new(0.5, 0, 0.5, 0),
-				Text = "Modal Dialog " .. tostring(dialogCount),
+				Text = "Dialog " .. tostring(dialogCount),
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
 			}, {
-				pushAnotherModalButton = Roact.createElement("TextButton", {
+				pushOpaqueModalButton = Roact.createElement("TextButton", {
 					AnchorPoint = Vector2.new(0.5, 0),
 					BackgroundColor3 = Color3.new(1, 1, 1),
 					Font = Enum.Font.Gotham,
 					Position = UDim2.new(0.5, 0, 0.6, 0),
-					Size = UDim2.new(0, 160, 0, 30),
-					Text = "Push Another",
+					Size = UDim2.new(0, 220, 0, 30),
+					Text = "Push Opaque Modal",
 					TextColor3 = Color3.new(0, 0, 0),
 					TextSize = 18,
 					[Roact.Event.Activated] = function()
-						navigation.push("ModalDialog", {
+						navigation.push("OpaqueModalDialog", {
+							dialogCount = dialogCount + 1,
+						})
+					end,
+				}),
+				pushTransparentModalButton = Roact.createElement("TextButton", {
+					AnchorPoint = Vector2.new(0.5, 0),
+					BackgroundColor3 = Color3.new(1, 1, 1),
+					Font = Enum.Font.Gotham,
+					Position = UDim2.new(0.5, 0, 0.6, 30),
+					Size = UDim2.new(0, 220, 0, 30),
+					Text = "Push Transparent Modal",
+					TextColor3 = Color3.new(0, 0, 0),
+					TextSize = 18,
+					[Roact.Event.Activated] = function()
+						navigation.push("TransparentModalDialog", {
 							dialogCount = dialogCount + 1,
 						})
 					end,
@@ -79,8 +112,8 @@ return function(target)
 					AnchorPoint = Vector2.new(0.5, 0),
 					BackgroundColor3 = Color3.new(1, 1, 1),
 					Font = Enum.Font.Gotham,
-					Position = UDim2.new(0.5, 0, 0.6, 30),
-					Size = UDim2.new(0, 160, 0, 30),
+					Position = UDim2.new(0.5, 0, 0.6, 60),
+					Size = UDim2.new(0, 220, 0, 30),
 					Text = "Pop to Top",
 					TextColor3 = Color3.new(0, 0, 0),
 					TextSize = 18,
@@ -92,8 +125,8 @@ return function(target)
 					AnchorPoint = Vector2.new(0.5, 0),
 					BackgroundColor3 = Color3.new(1, 1, 1),
 					Font = Enum.Font.Gotham,
-					Position = UDim2.new(0.5, 0, 0.6, 60),
-					Size = UDim2.new(0, 160, 0, 30),
+					Position = UDim2.new(0.5, 0, 0.6, 90),
+					Size = UDim2.new(0, 220, 0, 30),
 					Text = "Dismiss",
 					TextColor3 = Color3.new(0, 0, 0),
 					TextSize = 18,
@@ -108,22 +141,23 @@ return function(target)
 		})
 	end
 
-	-- When you want to show modal dialogs, you create a top-level StackNavigator
-	-- with mode=StackPresentationStyle.Modal. Your main app content goes inside
-	-- a Page or navigator at this level. Note that to hide the automatic top bar
-	-- for the root stack navigator, you have to set headerMode=StackHeaderMode.None.
 	local rootNavigator = RoactNavigation.createTopBarStackNavigator({
 		routes = {
 			MainContent = MainContent,
-			ModalDialog = {
+			OpaqueModalDialog = {
+				screen = ModalDialog,
+				navigationOptions = function(navProps)
+					local dialogCount = navProps.navigation.getParam("dialogCount", 0)
+					return {
+						cardColor3 = Color3.fromRGB(0, 0, 255 - 15*dialogCount),
+					}
+				end,
+			},
+			TransparentModalDialog = {
 				screen = ModalDialog,
 				navigationOptions = {
-					-- Draw an overlay effect under this page.
-					-- You may use overlayColor3 to set a custom overlay color, and
-					-- overlayTransparency to set a custom darkening amount if you
-					-- need specific settings.
 					overlayEnabled = true,
-				},
+				}
 			},
 		},
 		initialRouteName = "MainContent",

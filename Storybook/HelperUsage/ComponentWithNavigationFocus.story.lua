@@ -48,7 +48,7 @@ return function(target)
 		return RoactNavigation.withNavigationFocus(function(navigation, focused)
 			return Roact.createElement("Frame", {
 				Size = UDim2.new(1, 0, 1, 0),
-				BackgroundColor3 = focused and Color3.new(255,0,0) or Color3.new(0,255,0),
+				BackgroundColor3 = focused and Color3.new(1, 0, 0) or Color3.new(0, 1, 0),
 			})
 		end)
 	end

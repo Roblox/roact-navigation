@@ -3,7 +3,6 @@ local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
 local Otter = require(script.Parent.Parent.Parent.Parent.Otter)
 local AppNavigationContext = require(script.Parent.Parent.AppNavigationContext)
 local NavigationActions = require(script.Parent.Parent.Parent.NavigationActions)
-local StackActions = require(script.Parent.Parent.Parent.StackActions)
 local StackHeaderMode = require(script.Parent.StackHeaderMode)
 local StackPresentationStyle = require(script.Parent.StackPresentationStyle)
 local NoneSymbol = require(script.Parent.Parent.Parent.NoneSymbol)
@@ -14,11 +13,25 @@ local TopBar = require(script.Parent.Parent.TopBar.TopBar)
 local ContentHeightFitFrame = require(script.Parent.Parent.ContentHeightFitFrame)
 local validate = require(script.Parent.Parent.Parent.utils.validate)
 
+local defaultScreenOptions = {
+	overlayEnabled = false,
+	overlayColor3 = Color3.new(0, 0, 0),
+	overlayTransparency = 0.7,
+	-- cardColor3 default not needed; we use the engine's default frame color
+}
+
+-- Helper interpolates t with range [0,1] into the range [a,b].
+local function lerp(a, b, t)
+	return a * (1 - t) + b * t
+end
+
 local StackViewLayout = Roact.Component:extend("StackViewLayout")
 
 function StackViewLayout:init()
 	self._isMounted = false
 	self._scenesContainerRef = Roact.createRef()
+
+	self._overlayFrameRefs = {} -- map of scene indexes to refs
 
 	self._renderScene = function(scene)
 		return self:_renderInnerScene(scene)
@@ -38,7 +51,7 @@ function StackViewLayout:_getHeaderMode()
 end
 
 function StackViewLayout:_renderHeader(scene, headerMode)
-	local options = scene.descriptor.options
+	local options = Cryo.Dictionary.join(defaultScreenOptions, scene.descriptor.options or {})
 	local header = options.header
 
 	validate(type(header) ~= "string",
@@ -74,15 +87,15 @@ function StackViewLayout:_renderHeader(scene, headerMode)
 	})
 end
 
-function StackViewLayout:_reset(resetToIndex, duration)
+function StackViewLayout:_reset(resetToIndex, frequency)
 	local position = self.props.transitionProps.position
 
 	position:setGoal(Otter.spring(resetToIndex, {
-		frequency = 1 / duration,
+		frequency,
 	}))
 end
 
-function StackViewLayout:_goBack(backFromIndex, duration)
+function StackViewLayout:_goBack(backFromIndex, frequency)
 	local navigation = self.props.transitionProps.navigation
 	local position = self.props.transitionProps.position
 	local scenes = self.props.transitionProps.scenes
@@ -111,12 +124,12 @@ function StackViewLayout:_goBack(backFromIndex, duration)
 				immediate = true,
 			}))
 
-			navigation.dispatch(StackActions.completeTransition())
+			navigation.dispatch(NavigationActions.completeTransition())
 		end
 	end)
 
 	position:setGoal(Otter.spring(toValue, {
-		frequency = 1 / duration,
+		frequency = frequency,
 	}))
 end
 
@@ -132,6 +145,11 @@ function StackViewLayout:_renderCard(scene, index)
 	local transitionProps = self.props.transitionProps -- Core animation info from Transitioner.
 	local lastTransitionProps = self.props.lastTransitionProps -- Previous transition info.
 	local transitionConfig = self.state.transitionConfig -- State based info from scene config.
+
+	local navigationOptions = Cryo.Dictionary.join(defaultScreenOptions, scene.descriptor.options or {})
+
+	local cardColor3 = navigationOptions.cardColor3
+	local overlayEnabled = navigationOptions.overlayEnabled
 
 	local initialPositionValue = transitionProps.scene.index
 	if lastTransitionProps then
@@ -152,10 +170,11 @@ function StackViewLayout:_renderCard(scene, index)
 	-- Merge down the various prop packages to be applied to StackViewCard.
 	return Roact.createElement(StackViewCard, Cryo.Dictionary.join(
 		transitionProps, cardInterpolationProps, {
-			ZIndex = index, -- later stack entries should render on top for animation purposes
 			key = "card_" .. tostring(scene.key),
 			scene = scene,
 			renderScene = self._renderScene,
+			transparent = overlayEnabled,
+			cardColor3 = cardColor3,
 		})
 	)
 end
@@ -220,8 +239,8 @@ end
 function StackViewLayout:render()
 	local headerMode = self:_getHeaderMode()
 	local transitionProps = self.props.transitionProps
+	local topMostOpaqueSceneIndex = self.state.topMostOpaqueSceneIndex
 	local scenes = transitionProps.scenes
-
 	local floatingHeader = nil
 
 	if headerMode == StackHeaderMode.Float then
@@ -239,7 +258,40 @@ function StackViewLayout:render()
 	end
 
 	local renderedScenes = Cryo.List.map(scenes, function(scene, idx)
-		return self:_renderCard(scene, idx)
+		-- The card is obscured if:
+		-- 	It's not the active card (e.g. we're transitioning TO it).
+		-- 	It's hidden underneath an opaque card that is NOT currently transitioning.
+		--	It's completely off-screen.
+		local cardObscured = idx < topMostOpaqueSceneIndex - 1 -- make allowance for transitioning page
+
+		cardObscured = cardObscured and not scene.isActive -- active scene is always visible!
+
+		local navigationOptions = Cryo.Dictionary.join(defaultScreenOptions, scene.descriptor.options or {})
+		local overlayColor3 = navigationOptions.overlayColor3
+
+		-- Each scene gets its own overlay frame whose transparency must be managed.
+		local overlayFrameRef = self._overlayFrameRefs[idx]
+		if not overlayFrameRef then
+			overlayFrameRef = Roact.createRef()
+			self._overlayFrameRefs[idx] = overlayFrameRef
+		end
+
+		-- Wrap all cards in a TextButton so we can control hidden state and ZIndex without bleeding props.
+		-- This button also provides the card's overlay effect when required and prevents pass-through of
+		-- stray touches.
+		return Roact.createElement("TextButton", {
+			Size = UDim2.new(1, 0, 1, 0),
+			BackgroundColor3 = overlayColor3,
+			BackgroundTransparency = 1, -- Modals start transparent, opaque cards stay transparent
+			AutoButtonColor = false,
+			BorderSizePixel = 0,
+			Text = " ",
+			ZIndex = idx,
+			Visible = not cardObscured,
+			[Roact.Ref] = overlayFrameRef,
+		}, {
+			card = self:_renderCard(scene, idx),
+		})
 	end)
 
 	return Roact.createElement("Frame", {
@@ -260,21 +312,85 @@ function StackViewLayout:render()
 end
 
 function StackViewLayout.getDerivedStateFromProps(nextProps, lastState)
+	local transitionProps = nextProps.transitionProps
+	local scenes = transitionProps.scenes
+	local state = transitionProps.navigation.state
+	local isTransitioning = state.isTransitioning
+	local topMostIndex = #scenes
+
+	-- Find the last opaque scene in a modal stack so that we can optimize rendering.
+	local topMostOpaqueSceneIndex = 0
+	if nextProps.mode == StackPresentationStyle.Modal or nextProps.mode == StackPresentationStyle.Overlay then
+		for idx = topMostIndex, 1, -1 do
+			local scene = scenes[idx]
+			local navigationOptions = Cryo.Dictionary.join(defaultScreenOptions, scene.descriptor.options or {})
+
+			-- Card covers other pages if it's not an overlay and it's not the top-most index while transitioning.
+			if not navigationOptions.overlayEnabled and not (isTransitioning and idx == topMostIndex) then
+				topMostOpaqueSceneIndex = idx
+				break
+			end
+		end
+	end
+
 	return {
+		topMostOpaqueSceneIndex = topMostOpaqueSceneIndex,
 		transitionConfig = StackViewTransitionConfigs.getTransitionConfig(
 			nextProps.transitionConfig,
 			nextProps.transitionProps,
 			nextProps.lastTransitionProps,
-			nextProps.mode == StackPresentationStyle.Modal)
+			nextProps.mode == StackPresentationStyle.Modal),
 	}
 end
 
 function StackViewLayout:didMount()
 	self._isMounted = true
+
+	self._positionDisconnector = self.props.transitionProps.position:onStep(function(...)
+		self:_onPositionStep(...)
+	end)
 end
 
 function StackViewLayout:willUnmount()
 	self._isMounted = false
+
+	if self._positionDisconnector then
+		self._positionDisconnector()
+		self._positionDisconnector = nil
+	end
+end
+
+function StackViewLayout:didUpdate(oldProps)
+	local position = self.props.transitionProps.position
+
+	if position ~= oldProps.transitionProps.position then
+		self._positionDisconnector()
+		self._positionDisconnector = position:onStep(function(...)
+			self:_onPositionStep(...)
+		end)
+	end
+end
+
+function StackViewLayout:_onPositionStep(value)
+	if self._isMounted then
+		local transitionProps = self.props.transitionProps
+		local scenes = transitionProps.scenes
+
+		for idx, scene in ipairs(scenes) do
+			local navigationOptions = Cryo.Dictionary.join(defaultScreenOptions, scene.descriptor.options or {})
+			local overlayEnabled = navigationOptions.overlayEnabled
+
+			local frameRef = self._overlayFrameRefs[idx]
+			local frameInstance = frameRef and frameRef.current
+			if overlayEnabled and frameInstance then
+				local overlayTransparency = navigationOptions.overlayTransparency
+				local pRange = math.max(math.min(1 + value - idx, 1), 0)
+				frameInstance.BackgroundTransparency = lerp(1, overlayTransparency, pRange)
+			else
+				frameInstance.BackgroundTransparency = 1
+			end
+		end
+	end
 end
 
 return StackViewLayout

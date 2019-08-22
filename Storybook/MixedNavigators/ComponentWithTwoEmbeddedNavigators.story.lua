@@ -24,7 +24,7 @@ return function(target)
 				OneA = function(aProps)
 					return Roact.createElement("Frame", {
 						Size = UDim2.new(1, 0, 1, 0),
-						BackgroundColor3 = Color3.new(255, 0, 0),
+						BackgroundColor3 = Color3.new(1, 0, 0),
 					}, {
 						detailButton = Roact.createElement("TextButton", {
 							AnchorPoint = Vector2.new(0.5, 0.5),
@@ -43,7 +43,7 @@ return function(target)
 				OneB = function()
 					return Roact.createElement("Frame", {
 						Size = UDim2.new(1, 0, 1, 0),
-						BackgroundColor3 = Color3.new(0, 255, 0),
+						BackgroundColor3 = Color3.new(0, 1, 0),
 					})
 				end,
 			},
@@ -58,7 +58,7 @@ return function(target)
 				TwoA = function(aProps)
 					return Roact.createElement("Frame", {
 						Size = UDim2.new(1, 0, 1, 0),
-						BackgroundColor3 = Color3.new(0, 0, 255),
+						BackgroundColor3 = Color3.new(0, 0, 1),
 					}, {
 						detailButton = Roact.createElement("TextButton", {
 							AnchorPoint = Vector2.new(0.5, 0.5),
@@ -77,7 +77,7 @@ return function(target)
 				TwoB = function()
 					return Roact.createElement("Frame", {
 						Size = UDim2.new(1, 0, 1, 0),
-						BackgroundColor3 = Color3.new(255, 255, 0),
+						BackgroundColor3 = Color3.new(1, 1, 0),
 					})
 				end,
 			},
@@ -89,7 +89,7 @@ return function(target)
 
 		return Roact.createElement("Frame", {
 			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundColor3 = Color3.new(200, 200, 200),
+			BackgroundColor3 = Color3.new(0.75, 0.75, 0.75),
 		}, {
 			StackOneFrame = Roact.createElement("Frame", {
 				Size = UDim2.new(1, 0, 0.5, 0),

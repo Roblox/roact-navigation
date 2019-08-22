@@ -2,38 +2,33 @@ local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
 local validate = require(script.Parent.Parent.Parent.utils.validate)
 
 --[[
-	Render a scene inside a card for use in StackView. The content will be placed
-	inside a floating colored card that sits above a customizable transparent
-	background.
+	Render a scene as a card for use in a StackView. This component is
+	responsible for correctly positioning the scene content in relation
+	to the other scenes. The content will be rendered inside a completely
+	transparent Frame whose position and size are controlled by the
+	transition logic. Any additional visual effects must be supplied by
+	the container or the child element created by renderScene().
 
 	Props:
 		renderScene(scene)	-- Render prop to draw the scene inside the card.
 		positionStep 		-- Stepper function from StackViewInterpolator.
 		position			-- Otter motor for the position of the card.
 		scene				-- Scene that the card is to render.
-
-		overlayColor3		-- Color of the background overlay (default: black).
-		overlayTransparency -- Transparency of the background overlay (default: 0.3).
-		cardColor3			-- Color of the card (default: white).
-		cardTransparency 	-- Transparency of the card (default: 0).
+		forceHidden			-- Forcibly disable card rendering (e.g. animated off-screen).
+		transparent			-- Card allows underlying content to show through (default: false).
+		cardColor3			-- Color of the card background if it's not transparent (default: engine setting).
 ]]
 local StackViewCard = Roact.Component:extend("StackViewCard")
 
 StackViewCard.defaultProps = {
-	overlayColor3 = Color3.new(0, 0, 0),
-	overlayTransparency = 0.3,
-	cardColor3 = Color3.new(255, 255, 255),
-	cardTransparency = 0,
+	transparent = false,
 }
 
 function StackViewCard:init()
+	local currentNavIndex = self.props.navigation.state.index
+
 	self._isMounted = false
-
-	self._positionLastValue = self.props.navigation.state.index
-
-	self.state = {
-		visible = self.props.scene.isActive and not self.props.forceHidden,
-	}
+	self._positionLastValue = currentNavIndex
 
 	local selfRef = Roact.createRef()
 	self._getRef = function()
@@ -42,24 +37,23 @@ function StackViewCard:init()
 end
 
 function StackViewCard:render()
-	local visible = self.state.visible
-
+	local forceHidden = self.props.forceHidden
+	local cardColor3 = self.props.cardColor3
+	local transparent = self.props.transparent
 	local initialPosition = self.props.initialPosition
-	local scene = self.props.scene
 	local renderScene = self.props.renderScene
-	local overlayTransparency = self.props.overlayTransparency
-	local overlayColor3 = self.props.overlayColor3
+	local scene = self.props.scene
 
 	validate(type(renderScene) == "function", "renderScene must be a function")
 
 	return Roact.createElement("Frame", {
 		Position = initialPosition,
 		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundTransparency = overlayTransparency,
-		BackgroundColor3 = overlayColor3,
+		BackgroundColor3 = cardColor3 or nil,
+		BackgroundTransparency = transparent and 1 or nil,
 		BorderSizePixel = 0,
 		ClipsDescendants = true,
-		Visible = visible,
+		Visible = not forceHidden,
 		[Roact.Ref] = self:_getRef(),
 	}, {
 		["$content"] = renderScene(scene),
@@ -102,39 +96,15 @@ function StackViewCard:didUpdate(oldProps)
 	end
 end
 
-function StackViewCard.getDerivedStateFromProps(props, state)
-	return {
-		-- change to visible if isActive changes to true, otherwise leave it
-		-- at last value. This matches with _onPositionStep, below.
-		visible = (props.scene.isActive or state.visible) and not props.forceHidden,
-	}
-end
-
 function StackViewCard:_onPositionStep(value)
 	if not self._isMounted then
 		return
 	end
 
-	local forceHidden = self.props.forceHidden
 	local positionStep = self.props.positionStep
-	local index = self.props.scene.index
-	local isActive = self.props.scene.isActive
-	local cardInVisibleRange = value < index + 1
 
 	if positionStep then
 		positionStep(self:_getRef(), value)
-	end
-
-	-- Note that isActive is also part of calculus for getDerivedStateFromProps!
-	local visible = (isActive or cardInVisibleRange) and not forceHidden
-	if visible ~= self.state.visible then
-		spawn(function()
-			if self._isMounted then
-				self:setState({
-					visible = visible
-				})
-			end
-		end)
 	end
 
 	self._positionLastValue = value

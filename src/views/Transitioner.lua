@@ -239,18 +239,18 @@ function Transitioner:_startTransition(props, nextProps)
 		spawn(function()
 			if self._isMounted then
 				self:setState(nextState)
-			end
 
-			if nextProps.onTransitionStart then
-				nextProps.onTransitionStart(self._transitionProps, self._prevTransitionProps)
-			end
+				if nextProps.onTransitionStart then
+					nextProps.onTransitionStart(self._transitionProps, self._prevTransitionProps)
+				end
 
-			if indexHasChanged then
-				position:setGoal(Otter.instant(toValue))
-				-- motor will call end for us
-			else
-				-- motor not running, need to end manually
-				self:_onTransitionEnd()
+				if indexHasChanged then
+					position:setGoal(Otter.instant(toValue))
+					-- motor will call end for us
+				else
+					-- motor not running, need to end manually
+					self:_onTransitionEnd()
+				end
 			end
 		end)
 	elseif isTransitioning then

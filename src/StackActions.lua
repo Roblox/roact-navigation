@@ -24,9 +24,10 @@ StackActions.__index = StackActions
 
 -- Pop the top-most item off the route stack, if any.
 function StackActions.pop(payload)
+	local data = payload or {}
 	return {
 		type = POP_TOKEN,
-		n = payload.n,
+		n = data.n,
 	}
 end
 
@@ -39,35 +40,38 @@ end
 
 -- Push a new item onto the route stack.
 function StackActions.push(payload)
+	local data = payload or {}
 	return {
 		type = PUSH_TOKEN,
-		routeName = payload.routeName,
-		params = payload.params,
-		action = payload.action,
+		routeName = data.routeName,
+		params = data.params,
+		action = data.action,
 	}
 end
 
 -- Reset the route stack and replace it with a new stack,
 -- specified by a list of actions to be applied.
 function StackActions.reset(payload)
+	local data = payload or {}
 	return {
 		type = RESET_TOKEN,
-		index = payload.index,
-		actions = payload.actions,
-		key = payload.key,
+		index = data.index,
+		actions = data.actions,
+		key = data.key,
 	}
 end
 
 -- Replace the route for the given key with a new route.
 function StackActions.replace(payload)
+	local data = payload or {}
 	return {
 		type = REPLACE_TOKEN,
-		key = payload.key,
-		newKey = payload.newKey,
-		routeName = payload.routeName,
-		params = payload.params,
-		action = payload.action,
-		immediate = payload.immediate,
+		key = data.key,
+		newKey = data.newKey,
+		routeName = data.routeName,
+		params = data.params,
+		action = data.action,
+		immediate = data.immediate,
 	}
 end
 
