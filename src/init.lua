@@ -9,9 +9,9 @@ return {
 	getNavigation = require(script.getNavigation),
 
 	-- Context Access
-	NavigationContext = require(script.views.AppNavigationContext),
-	NavigationProvider = require(script.views.AppNavigationContext).Provider,
-	NavigationConsumer = require(script.views.AppNavigationContext).Consumer,
+	Context = require(script.views.AppNavigationContext),
+	Provider = require(script.views.AppNavigationContext).Provider,
+	Consumer = require(script.views.AppNavigationContext).Consumer,
 	connect = require(script.views.AppNavigationContext).connect,
 
 	withNavigation = require(script.views.withNavigation),
