@@ -262,9 +262,7 @@ function StackViewLayout:render()
 		-- 	It's not the active card (e.g. we're transitioning TO it).
 		-- 	It's hidden underneath an opaque card that is NOT currently transitioning.
 		--	It's completely off-screen.
-		local cardObscured = idx < topMostOpaqueSceneIndex - 1 -- make allowance for transitioning page
-
-		cardObscured = cardObscured and not scene.isActive -- active scene is always visible!
+		local cardObscured = idx < topMostOpaqueSceneIndex and not scene.isActive
 
 		local navigationOptions = Cryo.Dictionary.join(defaultScreenOptions, scene.descriptor.options or {})
 		local overlayColor3 = navigationOptions.overlayColor3
@@ -318,15 +316,25 @@ function StackViewLayout.getDerivedStateFromProps(nextProps, lastState)
 	local isTransitioning = state.isTransitioning
 	local topMostIndex = #scenes
 
+	local isOverlayMode = nextProps.mode == StackPresentationStyle.Modal or
+		nextProps.mode == StackPresentationStyle.Overlay
+
 	-- Find the last opaque scene in a modal stack so that we can optimize rendering.
 	local topMostOpaqueSceneIndex = 0
-	if nextProps.mode == StackPresentationStyle.Modal or nextProps.mode == StackPresentationStyle.Overlay then
+	if isOverlayMode then
 		for idx = topMostIndex, 1, -1 do
 			local scene = scenes[idx]
 			local navigationOptions = Cryo.Dictionary.join(defaultScreenOptions, scene.descriptor.options or {})
 
 			-- Card covers other pages if it's not an overlay and it's not the top-most index while transitioning.
 			if not navigationOptions.overlayEnabled and not (isTransitioning and idx == topMostIndex) then
+				topMostOpaqueSceneIndex = idx
+				break
+			end
+		end
+	else
+		for idx = topMostIndex, 1, -1 do
+			if not (isTransitioning and idx == topMostIndex) then
 				topMostOpaqueSceneIndex = idx
 				break
 			end
