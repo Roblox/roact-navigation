@@ -1,5 +1,5 @@
-local TestEZ = require(script.Parent.TestEZ)
-local Tests = script.Parent.Tests
+local TestEZ = require(script.Parent.Packages.TestEZ)
+local Tests = script.Parent.Packages.Tests
 
 local dockWidgetInfo = DockWidgetPluginGuiInfo.new(
 	Enum.InitialDockState.Left,
