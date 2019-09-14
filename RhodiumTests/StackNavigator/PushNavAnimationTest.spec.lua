@@ -37,20 +37,20 @@ return function()
 			})
 
 			local rootPath = XPath.new("game.CoreGui.RootContainer.AppContainer.$InnerComponent.scenesContainer")
-			local scene1Path = rootPath:cat(XPath.new("1.card.$content.sceneWrapper.scene"))
-			local scene2Path = rootPath:cat(XPath.new("2.card.$content.sceneWrapper.scene"))
+			local scene1Path = rootPath:cat(XPath.new("1.*.$content.sceneWrapper.scene"))
+			local scene2Path = rootPath:cat(XPath.new("1.*.$content.sceneWrapper.scene"))
 
 			local rootInstance = Roact.mount(appContainer, CoreGui, "RootContainer")
 
-			local buttonElement = Element.new(scene1Path)
-			expect(buttonElement:waitForRbxInstance(1)).to.be.ok()
-			expect(buttonElement:getText()).to.equal("PageOne")
+			local button1Element = Element.new(scene1Path)
+			expect(button1Element:waitForRbxInstance(1)).to.be.ok()
+			expect(button1Element:getText()).to.equal("PageOne")
 
-			buttonElement:click()
+			button1Element:click()
 
-			local newButtonElement = Element.new(scene2Path)
-			expect(newButtonElement:waitForRbxInstance(1)).to.be.ok()
-			expect(newButtonElement:getText()).to.equal("PageTwo")
+			local scene2ButtonElement = Element.new(scene2Path)
+			expect(scene2ButtonElement:waitForRbxInstance(1)).to.be.ok()
+			expect(scene2ButtonElement:getText()).to.equal("PageTwo")
 
 			Roact.unmount(rootInstance)
 		end)
