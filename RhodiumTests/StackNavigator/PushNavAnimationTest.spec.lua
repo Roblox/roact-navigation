@@ -38,7 +38,7 @@ return function()
 
 			local rootPath = XPath.new("game.CoreGui.RootContainer.AppContainer.$InnerComponent.scenesContainer")
 			local scene1Path = rootPath:cat(XPath.new("1.*.$content.sceneWrapper.scene"))
-			local scene2Path = rootPath:cat(XPath.new("1.*.$content.sceneWrapper.scene"))
+			local scene2Path = rootPath:cat(XPath.new("2.*.$content.sceneWrapper.scene"))
 
 			local rootInstance = Roact.mount(appContainer, CoreGui, "RootContainer")
 
