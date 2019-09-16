@@ -45,12 +45,16 @@ return function()
 		expect(type(RoactNavigation.withNavigationFocus)).to.equal("function")
 	end)
 
+	it("should return a function for createSwitchNavigator", function()
+		expect(type(RoactNavigation.createSwitchNavigator)).to.equal("function")
+	end)
+
 	it("should return a function for createTopBarStackNavigator", function()
 		expect(type(RoactNavigation.createTopBarStackNavigator)).to.equal("function")
 	end)
 
-	it("should return a function for createBottomTabNavigator", function()
-		expect(type(RoactNavigation.createBottomTabNavigator)).to.equal("function")
+	it("should return a function for createNavigator", function()
+		expect(type(RoactNavigation.createNavigator)).to.equal("function")
 	end)
 
 	it("should return a function for StackRouter", function()
@@ -142,6 +146,18 @@ return function()
 			navigation = testNavigation,
 		}))
 		Roact.unmount(instance)
+	end)
+
+	it("should return a table for TopBar", function()
+		expect(type(RoactNavigation.TopBar)).to.equal("table")
+	end)
+
+	it("should return a table for TopBarBackButton", function()
+		expect(type(RoactNavigation.TopBarBackButton)).to.equal("table")
+	end)
+
+	it("should return a table for TopBarTitleContainer", function()
+		expect(type(RoactNavigation.TopBarTitleContainer)).to.equal("table")
 	end)
 
 	it("should return a function for createConfigGetter", function()
