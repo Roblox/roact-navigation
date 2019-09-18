@@ -170,11 +170,9 @@ function Transitioner:_onAbsoluteSizeChanged(rbx)
 
 	self._transitionProps = buildTransitionProps(self.props, nextState)
 
-	spawn(function()
-		if self._isMounted then
-			self:setState(nextState)
-		end
-	end)
+	self:setState({
+		layout = layout,
+	})
 end
 
 function Transitioner:_computeScenes(props, nextProps)
