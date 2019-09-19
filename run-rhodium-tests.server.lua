@@ -3,7 +3,7 @@ local Tests = script.Parent.Packages.Tests
 
 local dockWidgetInfo = DockWidgetPluginGuiInfo.new(
 	Enum.InitialDockState.Left,
-	true, false, 400, 300, 200, 300
+	true, false, 100, 100, 100, 100
 )
 
 local dockWidget = plugin:CreateDockWidgetPluginGui("RoactNavigationRhodiumRunner", dockWidgetInfo)
