@@ -175,7 +175,7 @@ return function(config)
 			reset = function(actions, index)
 				local resetIndex = index
 				if index == nil then
-					resetIndex = #actions - 1
+					resetIndex = #actions
 				end
 
 				return StackActions.reset({
