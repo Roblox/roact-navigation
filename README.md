@@ -17,7 +17,12 @@ Roact Navigation provides a declarative navigation system for App UI, built on t
 
 <div>&nbsp;</div>
 
-Roact Navigation documentation is available internally on Roblox Confluence, here:
+## Documentation
+
+We are in the process of migrating documentation to GitHub Pages for more convenient access, here:
+https://pages.github.rbx.com/Roblox/roact-navigation/
+
+Until the migration is complete, you can view the original documentation on Roblox's internal Confluence, here:
 https://confluence.rbx.com/display/MOBAPP/Roact+Navigation
 
 ## Installation
