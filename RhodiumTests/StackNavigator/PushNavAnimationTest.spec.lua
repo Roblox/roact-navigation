@@ -22,11 +22,11 @@ return function()
 		end
 	end
 
-	describe("TopBarStackNavigator Tests", function()
+	describe("StackNavigator Tests", function()
 		it("should animate page change on navigate operation", function()
 			local appContainer = Roact.createElement("ScreenGui", nil, {
 				AppContainer = Roact.createElement(RoactNavigation.createAppContainer(
-					RoactNavigation.createTopBarStackNavigator({
+					RoactNavigation.createStackNavigator({
 						routes = {
 							PageOne = createButtonPage("PageOne", "PageTwo"),
 							PageTwo = createButtonPage("PageTwo", "PageOne"),
@@ -36,9 +36,9 @@ return function()
 				))
 			})
 
-			local rootPath = XPath.new("game.CoreGui.RootContainer.AppContainer.$InnerComponent.scenesContainer")
-			local scene1Path = rootPath:cat(XPath.new("1.*.$content.sceneWrapper.scene"))
-			local scene2Path = rootPath:cat(XPath.new("2.*.$content.sceneWrapper.scene"))
+			local rootPath = XPath.new("game.CoreGui.RootContainer.AppContainer.TransitionerScenes")
+			local scene1Path = rootPath:cat(XPath.new("1.*.Content"))
+			local scene2Path = rootPath:cat(XPath.new("2.*.Content"))
 
 			local rootInstance = Roact.mount(appContainer, CoreGui, "RootContainer")
 

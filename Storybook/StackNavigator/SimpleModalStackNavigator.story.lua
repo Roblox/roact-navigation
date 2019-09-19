@@ -112,7 +112,7 @@ return function(target)
 	-- with mode=StackPresentationStyle.Modal. Your main app content goes inside
 	-- a Page or navigator at this level. Note that to hide the automatic top bar
 	-- for the root stack navigator, you have to set headerMode=StackHeaderMode.None.
-	local rootNavigator = RoactNavigation.createTopBarStackNavigator({
+	local rootNavigator = RoactNavigation.createStackNavigator({
 		routes = {
 			MainContent = MainContent,
 			ModalDialog = {
@@ -128,7 +128,6 @@ return function(target)
 		},
 		initialRouteName = "MainContent",
 		mode = RoactNavigation.StackPresentationStyle.Modal,
-		headerMode = RoactNavigation.StackHeaderMode.None,
 	})
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
 	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)

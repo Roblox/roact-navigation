@@ -30,14 +30,28 @@ return function(target)
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
 				Position = UDim2.new(0.5, 0, 0.6, 0),
-				Size = UDim2.new(0, 160, 0, 30),
+				Size = UDim2.new(0, 200, 0, 30),
 				Text = "Switch to Sub Page B",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("SubDetailB")
 				end
-			})
+			}),
+			goToMasterButton = Roact.createElement("TextButton", {
+				AnchorPoint = Vector2.new(0.5, 0),
+				BackgroundColor3 = Color3.new(1, 1, 1),
+				Font = Enum.Font.Gotham,
+				Position = UDim2.new(0.5, 0, 0.6, 30),
+				Size = UDim2.new(0, 200, 0, 30),
+				Text = "Go to Master",
+				TextColor3 = Color3.new(0, 0, 0),
+				TextSize = 18,
+				[Roact.Event.Activated] = function()
+					-- Since we're in an embedded switch navigator, goBack() won't take us up the chain!
+					navigation.navigate("Master")
+				end,
+			}),
 		})
 	end
 
@@ -57,14 +71,28 @@ return function(target)
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
 				Position = UDim2.new(0.5, 0, 0.6, 0),
-				Size = UDim2.new(0, 160, 0, 30),
-				Text = "Switch to Sub Page B",
+				Size = UDim2.new(0, 200, 0, 30),
+				Text = "Switch to Sub Page A",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("SubDetailA")
 				end
-			})
+			}),
+			goToMasterButton = Roact.createElement("TextButton", {
+				AnchorPoint = Vector2.new(0.5, 0),
+				BackgroundColor3 = Color3.new(1, 1, 1),
+				Font = Enum.Font.Gotham,
+				Position = UDim2.new(0.5, 0, 0.6, 30),
+				Size = UDim2.new(0, 200, 0, 30),
+				Text = "Go to Master",
+				TextColor3 = Color3.new(0, 0, 0),
+				TextSize = 18,
+				[Roact.Event.Activated] = function()
+					-- Since we're in an embedded switch navigator, goBack() won't take us up the chain!
+					navigation.navigate("Master")
+				end,
+			}),
 		})
 	end
 
@@ -78,9 +106,6 @@ return function(target)
 	})
 
 	local DetailPage = Roact.Component:extend("DetailPage")
-	DetailPage.navigationOptions = {
-		title = "Detail",
-	}
 
 	-- When creating a navigator that draws within a sub-area of another screen,
 	-- you must manually pass the router up so the navigation system can be
@@ -132,7 +157,7 @@ return function(target)
 		})
 	end
 
-	local rootNavigator = RoactNavigation.createTopBarStackNavigator({
+	local rootNavigator = RoactNavigation.createStackNavigator({
 		routes = {
 			Master = MasterPage,
 			Detail = DetailPage,

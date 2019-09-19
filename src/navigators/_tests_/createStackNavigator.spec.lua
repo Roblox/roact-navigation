@@ -1,10 +1,10 @@
 return function()
 	local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
-	local createTopBarStackNavigator = require(script.Parent.Parent.createTopBarStackNavigator)
+	local createStackNavigator = require(script.Parent.Parent.createStackNavigator)
 	local getChildNavigation = require(script.Parent.Parent.Parent.getChildNavigation)
 
 	it("should return a mountable Roact component", function()
-		local navigator = createTopBarStackNavigator({
+		local navigator = createStackNavigator({
 			routes = {
 				Foo = function() end
 			},

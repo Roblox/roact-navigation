@@ -18,7 +18,7 @@ return {
 	withNavigationFocus = require(script.views.withNavigationFocus),
 
 	-- Navigators
-	createTopBarStackNavigator = require(script.navigators.createTopBarStackNavigator),
+	createStackNavigator = require(script.navigators.createStackNavigator),
 	createSwitchNavigator = require(script.navigators.createSwitchNavigator),
 	createNavigator = require(script.navigators.createNavigator),
 
@@ -37,20 +37,13 @@ return {
 	EventsAdapter = require(script.views.NavigationEventsAdapter),
 
 	-- Additional Types
-	EdgeInsets = require(script.EdgeInsets),
 	StackPresentationStyle = require(script.views.StackView.StackPresentationStyle),
-	StackHeaderMode = require(script.views.StackView.StackHeaderMode),
 	None = require(script.NoneSymbol),
 
 	-- Screen Views
 	SceneView = require(script.views.SceneView),
 	SwitchView = require(script.views.SwitchView),
 	StackView = require(script.views.StackView.StackView),
-
-	-- Top Bar Components
-	TopBar = require(script.views.TopBar.TopBar),
-	TopBarBackButton = require(script.views.TopBar.TopBarBackButton),
-	TopBarTitleContainer = require(script.views.TopBar.TopBarTitleContainer),
 
 	-- Utilities
 	createConfigGetter = require(script.routers.createConfigGetter),

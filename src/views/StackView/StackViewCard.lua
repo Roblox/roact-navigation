@@ -57,7 +57,7 @@ function StackViewCard:render()
 		Visible = not forceHidden,
 		[Roact.Ref] = self:_getRef(),
 	}, {
-		["$content"] = renderScene(scene),
+		Content = renderScene(scene),
 	})
 end
 

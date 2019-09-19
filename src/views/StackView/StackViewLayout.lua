@@ -1,17 +1,11 @@
 local Cryo = require(script.Parent.Parent.Parent.Parent.Cryo)
 local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
 local Otter = require(script.Parent.Parent.Parent.Parent.Otter)
-local AppNavigationContext = require(script.Parent.Parent.AppNavigationContext)
 local NavigationActions = require(script.Parent.Parent.Parent.NavigationActions)
-local StackHeaderMode = require(script.Parent.StackHeaderMode)
 local StackPresentationStyle = require(script.Parent.StackPresentationStyle)
-local NoneSymbol = require(script.Parent.Parent.Parent.NoneSymbol)
 local StackViewTransitionConfigs = require(script.Parent.StackViewTransitionConfigs)
 local StackViewCard = require(script.Parent.StackViewCard)
 local SceneView = require(script.Parent.Parent.SceneView)
-local TopBar = require(script.Parent.Parent.TopBar.TopBar)
-local ContentHeightFitFrame = require(script.Parent.Parent.ContentHeightFitFrame)
-local validate = require(script.Parent.Parent.Parent.utils.validate)
 
 local defaultScreenOptions = {
 	overlayEnabled = false,
@@ -45,7 +39,6 @@ function StackViewLayout:init()
 	local startingIndex = self.props.transitionProps.navigation.state.index
 
 	self._isMounted = false
-	self._scenesContainerRef = Roact.createRef()
 
 	self._overlayFrameRefs = {} -- map of scene indexes to refs
 
@@ -54,55 +47,6 @@ function StackViewLayout:init()
 	self._renderScene = function(scene)
 		return self:_renderInnerScene(scene)
 	end
-end
-
-function StackViewLayout:_getHeaderMode()
-	if self.props.headerMode then
-		return self.props.headerMode
-	elseif self.props.mode == StackPresentationStyle.Modal then
-		return StackHeaderMode.Screen
-	else
-		-- TODO: Change back to Float when TopBar implements it
-		-- return StackHeaderMode.Float
-		return StackHeaderMode.Screen
-	end
-end
-
-function StackViewLayout:_renderHeader(scene, headerMode)
-	local options = Cryo.Dictionary.join(defaultScreenOptions, scene.descriptor.options or {})
-	local header = options.header
-
-	validate(type(header) ~= "string",
-		"header must be a valid Roact component, RoactNavigation.None, or nil, not a string")
-
-	-- If HeaderMode is Screen and no header was explicitly removed from
-	-- navigationOptions, then we do NOT want to render a header for this screen!
-	if header == NoneSymbol and headerMode == StackHeaderMode.Screen then
-		return nil
-	end
-
-	-- We will use header component if supplied, otherwise use default TopBar.
-	local headerComponent = header ~= NoneSymbol and header or function(headerProps)
-		return Roact.createElement(TopBar, headerProps)
-	end
-
-	local transitionProps = self.props.transitionProps or {}
-	local passProps = Cryo.Dictionary.join(self.props, {
-		transitionProps = Cryo.None,
-	})
-
-	return Roact.createElement(AppNavigationContext.Provider, {
-		navigation = scene.descriptor.navigation,
-	}, {
-		["$header"] = Roact.createElement(headerComponent, Cryo.Dictionary.join(
-			passProps,
-			transitionProps, -- transitionProps override directly passed props
-			{
-				scene = scene,
-				mode = headerMode,
-			})
-		)
-	})
 end
 
 function StackViewLayout:_reset(resetToIndex, frequency)
@@ -151,14 +95,6 @@ function StackViewLayout:_goBack(backFromIndex, frequency)
 	}))
 end
 
-function StackViewLayout:_onFloatingHeaderHeightChanged(height)
-	local scenesContainer = self._scenesContainerRef.current
-	if self._isMounted and scenesContainer then
-		scenesContainer.Position = UDim2.new(0, 0, 0, height)
-		scenesContainer.Size = UDim2.new(1, 0, 1, -height)
-	end
-end
-
 function StackViewLayout:_renderCard(scene, index)
 	local transitionProps = self.props.transitionProps -- Core animation info from Transitioner.
 	local lastTransitionProps = self.props.lastTransitionProps -- Previous transition info.
@@ -203,77 +139,17 @@ function StackViewLayout:_renderInnerScene(scene)
 	local sceneComponent = scene.descriptor.getComponent()
 	local screenProps = self.props.screenProps
 
-	local sceneElement = Roact.createElement(SceneView, {
+	return Roact.createElement(SceneView, {
 		screenProps = screenProps,
 		navigation = navigation,
 		component = sceneComponent,
 	})
-
-	local headerMode = self:_getHeaderMode()
-	if headerMode == StackHeaderMode.Screen then
-		--[[
-			This ref is used to change the scene container size whenever the header changes height.
-			It's not too expensive to create one every time this thing is rendered, and since it's
-			not being set on the actual scene element then it won't trigger a bunch of reconciling
-			beyond this immediate layer. Its lifetime is the same as the onSizeChanged callback.
-		]]
-		local sceneWrapperRef = Roact.createRef()
-
-		return Roact.createElement("Frame", {
-			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundTransparency = 1,
-			ClipsDescendants = true,
-			BorderSizePixel = 0,
-		}, {
-			screenHeader = Roact.createElement(ContentHeightFitFrame, {
-				BackgroundTransparency = 1,
-				ClipsDescendants = true,
-				BorderSizePixel = 0,
-				onHeightChanged = function(height)
-					local sceneWrapper = sceneWrapperRef.current
-					if self._isMounted and sceneWrapper then
-						sceneWrapper.Position = UDim2.new(0, 0, 0, height)
-						sceneWrapper.Size = UDim2.new(1, 0, 1, -height)
-					end
-				end
-			}, {
-				headerContent = self:_renderHeader(scene, headerMode)
-			}),
-			sceneWrapper = Roact.createElement("Frame", {
-				Size = UDim2.new(1, 0, 1, 0),
-				BackgroundTransparency = 1,
-				ClipsDescendants = true,
-				BorderSizePixel = 0,
-				[Roact.Ref] = sceneWrapperRef,
-			}, {
-				scene = sceneElement,
-			})
-		})
-	else
-		return sceneElement
-	end
 end
 
 function StackViewLayout:render()
-	local headerMode = self:_getHeaderMode()
 	local transitionProps = self.props.transitionProps
 	local topMostOpaqueSceneIndex = self.state.topMostOpaqueSceneIndex
 	local scenes = transitionProps.scenes
-	local floatingHeader = nil
-
-	if headerMode == StackHeaderMode.Float then
-		local scene = transitionProps.scene
-		floatingHeader = Roact.createElement(ContentHeightFitFrame, {
-			BackgroundTransparency = 1,
-			ClipsDescendants = true,
-			BorderSizePixel = 0,
-			onHeightChanged = function(...)
-				self:_onFloatingHeaderHeightChanged(...)
-			end
-		}, {
-			headerContent = self:_renderHeader(scene, headerMode)
-		})
-	end
 
 	local renderedScenes = Cryo.List.map(scenes, function(scene, idx)
 		-- The card is obscured if:
@@ -317,16 +193,7 @@ function StackViewLayout:render()
 		BackgroundTransparency = 1,
 		ClipsDescendants = true,
 		BorderSizePixel = 0,
-	}, {
-		floatingHeader = floatingHeader or nil,
-		scenesContainer = Roact.createElement("Frame", {
-			Size = UDim2.new(1, 0, 1, 0), -- Overridden by _onFloatingHeaderHeightChanged
-			BackgroundTransparency = 1,
-			ClipsDescendants = true,
-			BorderSizePixel = 0,
-			[Roact.Ref] = self._scenesContainerRef,
-		}, renderedScenes),
-	})
+	}, renderedScenes)
 end
 
 function StackViewLayout.getDerivedStateFromProps(nextProps, lastState)

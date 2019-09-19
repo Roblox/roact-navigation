@@ -99,20 +99,10 @@ return function(target)
 		})
 	end
 
-	local ModalNavigator = RoactNavigation.createTopBarStackNavigator({
+	local ModalNavigator = RoactNavigation.createStackNavigator({
 		routes = {
-			PageOne = {
-				screen = PageOne,
-				navigationOptions = {
-					title = "Modal Page 1",
-				},
-			},
-			PageTwo = {
-				screen = PageTwo,
-				navigationOptions = {
-					title = "Modal Page 2",
-				}
-			},
+			PageOne = PageOne,
+			PageTwo = PageTwo,
 		},
 		initialRouteName = "PageOne",
 	})
@@ -120,14 +110,13 @@ return function(target)
 	-- When you want to show modal dialogs, you create a top-level StackNavigator
 	-- with mode=StackPresentationStyle.Modal. Your main app content goes inside
 	-- a Page or navigator at this level.
-	local rootNavigator = RoactNavigation.createTopBarStackNavigator({
+	local rootNavigator = RoactNavigation.createStackNavigator({
 		routes = {
 			MainContent = MainContent,
 			ModalDialog = ModalNavigator,
 		},
 		initialRouteName = "MainContent",
 		mode = RoactNavigation.StackPresentationStyle.Modal,
-		headerMode = RoactNavigation.StackHeaderMode.None,
 	})
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
 	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)

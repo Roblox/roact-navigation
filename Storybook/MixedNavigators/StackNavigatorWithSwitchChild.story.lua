@@ -164,21 +164,10 @@ return function(target)
 		})
 	end
 
-	local subDetailNavigator = RoactNavigation.createTopBarStackNavigator({
+	local subDetailNavigator = RoactNavigation.createStackNavigator({
 		routes = {
-			SubA = {
-				screen = SubPageA,
-				navigationOptions = {
-					title = "SubPage A",
-				}
-			},
-			SubB = {
-				screen = SubPageB,
-				navigationOptions = {
-					title = "SubPage B",
-					headerSubtitle = "This is a subtitle",
-				}
-			},
+			SubA = SubPageA,
+			SubB = SubPageB,
 		},
 		initialRouteName = "SubA",
 		defaultNavigationOptions = {
@@ -194,20 +183,14 @@ return function(target)
 			Two = subDetailNavigator,
 		},
 		initialRouteName = "One",
-		navigationOptions = {
-			title = "Detail",
-		},
 	})
 
-	local rootNavigator = RoactNavigation.createTopBarStackNavigator({
+	local rootNavigator = RoactNavigation.createStackNavigator({
 		routes = {
 			Master = MasterPage,
 			Detail = detailSwitchNavigator,
 		},
 		initialRouteName = "Master",
-		defaultNavigationOptions = {
-			title = "Master",
-		},
 	})
 
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)

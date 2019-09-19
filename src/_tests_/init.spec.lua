@@ -1,8 +1,6 @@
 return function()
 	local RoactNavigation = require(script.Parent.Parent)
 	local Roact = require(script.Parent.Parent.Parent.Roact)
-	local EdgeInsets = require(script.Parent.Parent.EdgeInsets)
-	local StackHeaderMode = require(script.Parent.Parent.views.StackView.StackHeaderMode)
 	local StackPresentationStyle = require(script.Parent.Parent.views.StackView.StackPresentationStyle)
 	local NoneSymbol = require(script.Parent.Parent.NoneSymbol)
 
@@ -49,8 +47,8 @@ return function()
 		expect(type(RoactNavigation.createSwitchNavigator)).to.equal("function")
 	end)
 
-	it("should return a function for createTopBarStackNavigator", function()
-		expect(type(RoactNavigation.createTopBarStackNavigator)).to.equal("function")
+	it("should return a function for createStackNavigator", function()
+		expect(type(RoactNavigation.createStackNavigator)).to.equal("function")
 	end)
 
 	it("should return a function for createNavigator", function()
@@ -97,16 +95,8 @@ return function()
 		Roact.unmount(instance)
 	end)
 
-	it("should return EdgeInsets", function()
-		expect(RoactNavigation.EdgeInsets).to.equal(EdgeInsets)
-	end)
-
 	it("should return StackPresentationStyle", function()
 		expect(RoactNavigation.StackPresentationStyle).to.equal(StackPresentationStyle)
-	end)
-
-	it("should return StackHeaderMode", function()
-		expect(RoactNavigation.StackHeaderMode).to.equal(StackHeaderMode)
 	end)
 
 	it("should return NoneSymbol", function()
@@ -146,18 +136,6 @@ return function()
 			navigation = testNavigation,
 		}))
 		Roact.unmount(instance)
-	end)
-
-	it("should return a table for TopBar", function()
-		expect(type(RoactNavigation.TopBar)).to.equal("table")
-	end)
-
-	it("should return a table for TopBarBackButton", function()
-		expect(type(RoactNavigation.TopBarBackButton)).to.equal("table")
-	end)
-
-	it("should return a table for TopBarTitleContainer", function()
-		expect(type(RoactNavigation.TopBarTitleContainer)).to.equal("table")
 	end)
 
 	it("should return a function for createConfigGetter", function()

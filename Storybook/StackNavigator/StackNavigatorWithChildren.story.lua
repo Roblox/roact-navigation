@@ -14,9 +14,6 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 ]]
 return function(target)
 	local MasterPage = Roact.Component:extend("MasterPage")
-	MasterPage.navigationOptions = {
-		title = "Master",
-	}
 
 	function MasterPage:render()
 		local navigation = self.props.navigation
@@ -100,28 +97,15 @@ return function(target)
 		})
 	end
 
-	local DetailPageNavigator = RoactNavigation.createTopBarStackNavigator({
+	local DetailPageNavigator = RoactNavigation.createStackNavigator({
 		routes = {
-			SubDetailA = {
-				screen = SubDetailPageA,
-				navigationOptions = {
-					title = "Sub Detail A",
-				},
-			},
-			SubDetailB = {
-				screen = SubDetailPageB,
-				navigationOptions = {
-					title = "Sub Detail B",
-				},
-			},
+			SubDetailA = SubDetailPageA,
+			SubDetailB = SubDetailPageB,
 		},
 		initialRouteName = "SubDetailA",
-		navigationOptions = {
-			title = "Detail",
-		},
 	})
 
-	local rootNavigator = RoactNavigation.createTopBarStackNavigator({
+	local rootNavigator = RoactNavigation.createStackNavigator({
 		routes = {
 			Master = MasterPage,
 			Detail = DetailPageNavigator,

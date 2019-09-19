@@ -140,7 +140,7 @@ function Transitioner:render()
 		ClipsDescendants = true,
 		[Roact.Change.AbsoluteSize] = self._doOnAbsoluteSizeChanged,
 	}, {
-		["$InnerComponent"] = self.props.render(
+		["TransitionerScenes"] = self.props.render(
 			self._transitionProps, self._prevTransitionProps),
 	})
 end

@@ -19,16 +19,17 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 ]]
 return function(target)
 	local function RootComponent(props)
-		local stackOneNavigator = RoactNavigation.createTopBarStackNavigator({
+		local stackOneNavigator = RoactNavigation.createStackNavigator({
 			routes = {
 				OneA = function(aProps)
-					return Roact.createElement("Frame", {
+					return Roact.createElement("TextLabel", {
 						Size = UDim2.new(1, 0, 1, 0),
 						BackgroundColor3 = Color3.new(1, 0, 0),
+						Text = "Page OneA",
 					}, {
 						detailButton = Roact.createElement("TextButton", {
 							AnchorPoint = Vector2.new(0.5, 0.5),
-							Position = UDim2.new(0.5, 0, 0.5, 0),
+							Position = UDim2.new(0.5, 0, 0.5, 30),
 							Size = UDim2.new(0.5, 0, 0, 30),
 							BackgroundColor3 = Color3.new(1, 1, 1),
 							TextColor3 = Color3.new(0, 0, 0),
@@ -40,29 +41,41 @@ return function(target)
 						}),
 					})
 				end,
-				OneB = function()
-					return Roact.createElement("Frame", {
+				OneB = function(bProps)
+					return Roact.createElement("TextLabel", {
 						Size = UDim2.new(1, 0, 1, 0),
 						BackgroundColor3 = Color3.new(0, 1, 0),
+						Text = "Page OneB",
+					}, {
+						backButton = Roact.createElement("TextButton", {
+							AnchorPoint = Vector2.new(0.5, 0.5),
+							BackgroundColor3 = Color3.new(1, 1, 1),
+							Size = UDim2.new(0, 160, 0, 30),
+							Position = UDim2.new(0.5, 0, 0.5, 30),
+							Text = "Go Back",
+							TextColor3 = Color3.new(0, 0, 0),
+							TextSize = 18,
+							[Roact.Event.Activated] = function()
+								bProps.navigation.goBack()
+							end
+						})
 					})
 				end,
 			},
 			initialRouteName = "OneA",
-			defaultNavigationOptions = {
-				title = "Stack One",
-			},
 		})
 
-		local stackTwoNavigator = RoactNavigation.createTopBarStackNavigator({
+		local stackTwoNavigator = RoactNavigation.createStackNavigator({
 			routes = {
 				TwoA = function(aProps)
-					return Roact.createElement("Frame", {
+					return Roact.createElement("TextLabel", {
 						Size = UDim2.new(1, 0, 1, 0),
 						BackgroundColor3 = Color3.new(0, 0, 1),
+						Text = "Page TwoA",
 					}, {
 						detailButton = Roact.createElement("TextButton", {
 							AnchorPoint = Vector2.new(0.5, 0.5),
-							Position = UDim2.new(0.5, 0, 0.5, 0),
+							Position = UDim2.new(0.5, 0, 0.5, 30),
 							Size = UDim2.new(0.5, 0, 0, 30),
 							BackgroundColor3 = Color3.new(1, 1, 1),
 							TextColor3 = Color3.new(0, 0, 0),
@@ -74,17 +87,28 @@ return function(target)
 						}),
 					})
 				end,
-				TwoB = function()
-					return Roact.createElement("Frame", {
+				TwoB = function(bProps)
+					return Roact.createElement("TextLabel", {
 						Size = UDim2.new(1, 0, 1, 0),
 						BackgroundColor3 = Color3.new(1, 1, 0),
+						Text = "Page TwoB",
+					}, {
+						backButton = Roact.createElement("TextButton", {
+							AnchorPoint = Vector2.new(0.5, 0.5),
+							BackgroundColor3 = Color3.new(1, 1, 1),
+							Size = UDim2.new(0, 160, 0, 30),
+							Position = UDim2.new(0.5, 0, 0.5, 30),
+							Text = "Go Back",
+							TextColor3 = Color3.new(0, 0, 0),
+							TextSize = 18,
+							[Roact.Event.Activated] = function()
+								bProps.navigation.goBack()
+							end
+						})
 					})
 				end,
 			},
 			initialRouteName = "TwoA",
-			defaultNavigationOptions = {
-				title = "Stack Two",
-			},
 		})
 
 		return Roact.createElement("Frame", {

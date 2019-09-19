@@ -94,20 +94,10 @@ return function(target)
 		})
 	end
 
-	local AppMainStackNavigator = RoactNavigation.createTopBarStackNavigator({
+	local AppMainStackNavigator = RoactNavigation.createStackNavigator({
 		routes = {
-			One = {
-				screen = PageOne,
-				navigationOptions = {
-					title = "Page One Title",
-				},
-			},
-			Two = {
-				screen = PageTwo,
-				navigationOptions = {
-					title = "Page Two Title",
-				},
-			},
+			One = PageOne,
+			Two = PageTwo,
 		},
 		initialRouteName = "One",
 	})

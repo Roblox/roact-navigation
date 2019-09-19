@@ -8,9 +8,6 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 ]]
 return function(target)
 	local MasterPage = Roact.Component:extend("MasterPage")
-	MasterPage.navigationOptions = {
-		title = "Master",
-	}
 
 	function MasterPage:render()
 		local navigation = self.props.navigation
@@ -135,18 +132,10 @@ return function(target)
 		})
 	end
 
-	local rootNavigator = RoactNavigation.createTopBarStackNavigator({
+	local rootNavigator = RoactNavigation.createStackNavigator({
 		routes = {
 			Master = MasterPage,
-			Detail = {
-				screen = DetailPage,
-				navigationOptions = function(navProps)
-					local pushCount = navProps.navigation.getParam("pushCount", 0)
-					return {
-						title = "Detail " .. tostring(pushCount)
-					}
-				end,
-			},
+			Detail = DetailPage,
 		},
 		initialRouteName = "Master",
 	})

@@ -12,9 +12,6 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 ]]
 return function(target)
 	local MasterPage = Roact.Component:extend("MasterPage")
-	MasterPage.navigationOptions = {
-		title = "Master",
-	}
 
 	function MasterPage:render()
 		local navigation = self.props.navigation
@@ -91,20 +88,10 @@ return function(target)
 
 	-- This is the top-level navigator. Note that child navigators are just Roact
 	-- Components attached like any other route.
-	local rootNavigator = RoactNavigation.createTopBarStackNavigator({
+	local rootNavigator = RoactNavigation.createStackNavigator({
 		routes = {
 			Master = MasterPage,
-			Detail = {
-				screen = DetailPage,
-				-- Navigation options can be part of the tree description too!
-				-- (Though this logic is best embedded into a tabular Component.)
-				navigationOptions = function(navProps)
-					local pushCount = navProps.navigation.getParam("pushCount", 0)
-					return {
-						title = "Detail " .. tostring(pushCount)
-					}
-				end,
-			},
+			Detail = DetailPage,
 		},
 		initialRouteName = "Master",
 	})

@@ -141,7 +141,7 @@ return function(target)
 		})
 	end
 
-	local rootNavigator = RoactNavigation.createTopBarStackNavigator({
+	local rootNavigator = RoactNavigation.createStackNavigator({
 		routes = {
 			MainContent = MainContent,
 			OpaqueModalDialog = {
@@ -162,7 +162,6 @@ return function(target)
 		},
 		initialRouteName = "MainContent",
 		mode = RoactNavigation.StackPresentationStyle.Modal,
-		headerMode = RoactNavigation.StackHeaderMode.None,
 	})
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
 	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
