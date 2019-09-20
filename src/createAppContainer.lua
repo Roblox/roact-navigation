@@ -162,7 +162,8 @@ return function(AppComponent)
 			})
 		end
 
-		dispatchActionEvents()
+		-- This must be spawned until we get async setState callback handler in Roact
+		spawn(dispatchActionEvents)
 	end
 
 	function NavigationContainer:willUnmount()
@@ -250,13 +251,18 @@ return function(AppComponent)
 				nav = navState
 			})
 
-			self:_onNavigationStateChange(lastNavState, navState, action)
-			dispatchActionEvents()
-			-- TODO: Add call to persist navigation state here, if we ever implement it.
+			-- Must be spawned until we get async setState callback handler in Roact.
+			spawn(function()
+				self:_onNavigationStateChange(lastNavState, navState, action)
+				dispatchActionEvents()
+				-- TODO: Add call to persist navigation state here, if we ever implement it.
+			end)
+
 			return true
 		end
 
-		dispatchActionEvents()
+		spawn(dispatchActionEvents)
+
 		return false
 	end
 

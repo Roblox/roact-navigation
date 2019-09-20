@@ -226,24 +226,30 @@ function Transitioner:_startTransition(props, nextProps)
 		-- positions via setState.
 		self:setState(nextState)
 
-		if nextProps.onTransitionStart then
-			nextProps.onTransitionStart(self._transitionProps, self._prevTransitionProps)
-		end
+		-- Must be spawned until we get async setState callback handler in Roact.
+		spawn(function()
+			if nextProps.onTransitionStart then
+				nextProps.onTransitionStart(self._transitionProps, self._prevTransitionProps)
+			end
 
-		if indexHasChanged then
-			position:setGoal(Otter.instant(toValue))
-			-- motor will call end for us
-		else
-			-- motor not running, need to end manually
-			self:_onTransitionEnd()
-		end
+			if indexHasChanged then
+				position:setGoal(Otter.instant(toValue))
+				-- motor will call end for us
+			else
+				-- motor not running, need to end manually
+				self:_onTransitionEnd()
+			end
+		end)
 	elseif isTransitioning then
 		self._isTransitionRunning = true
 		self:setState(nextState)
 
-		if nextProps.onTransitionStart then
-			nextProps.onTransitionStart(self._transitionProps, self._prevTransitionProps)
-		end
+		-- Must be spawned until we get async setState callback handler in Roact.
+		spawn(function()
+			if nextProps.onTransitionStart then
+				nextProps.onTransitionStart(self._transitionProps, self._prevTransitionProps)
+			end
+		end)
 
 		-- get transition spec
 		local transitionUserSpec = {}
@@ -279,18 +285,21 @@ function Transitioner:_onTransitionEnd()
 
 	self:setState(nextState)
 
-	if self.props.onTransitionEnd then
-		self.props.onTransitionEnd(self._transitionProps, prevTransitionProps)
-	end
+	-- Must be spawned until we get async setState callback handler in Roact.
+	spawn(function()
+		if self.props.onTransitionEnd then
+			self.props.onTransitionEnd(self._transitionProps, prevTransitionProps)
+		end
 
-	local firstQueuedTransition = self._transitionQueue[1]
-	if firstQueuedTransition then
-		local prevProps = firstQueuedTransition.prevProps
-		self._transitionQueue = Cryo.List.removeIndex(self._transitionQueue, 1)
-		self:_startTransition(prevProps, self.props)
-	else
-		self._isTransitionRunning = false
-	end
+		local firstQueuedTransition = self._transitionQueue[1]
+		if firstQueuedTransition then
+			local prevProps = firstQueuedTransition.prevProps
+			self._transitionQueue = Cryo.List.removeIndex(self._transitionQueue, 1)
+			self:_startTransition(prevProps, self.props)
+		else
+			self._isTransitionRunning = false
+		end
+	end)
 end
 
 return Transitioner
