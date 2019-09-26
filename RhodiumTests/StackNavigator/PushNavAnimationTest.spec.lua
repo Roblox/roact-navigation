@@ -37,8 +37,8 @@ return function()
 			})
 
 			local rootPath = XPath.new("game.CoreGui.RootContainer.AppContainer.TransitionerScenes")
-			local scene1Path = rootPath:cat(XPath.new("1.*.Content"))
-			local scene2Path = rootPath:cat(XPath.new("2.*.Content"))
+			local scene1Path = rootPath:cat(XPath.new("1.DynamicContent.*.Content"))
+			local scene2Path = rootPath:cat(XPath.new("2.DynamicContent.*.Content"))
 
 			local rootInstance = Roact.mount(appContainer, CoreGui, "RootContainer")
 

@@ -4,10 +4,11 @@ local validate = require(script.Parent.Parent.Parent.utils.validate)
 --[[
 	Render a scene as a card for use in a StackView. This component is
 	responsible for correctly positioning the scene content in relation
-	to the other scenes. The content will be rendered inside a completely
-	transparent Frame whose position and size are controlled by the
-	transition logic. Any additional visual effects must be supplied by
-	the container or the child element created by renderScene().
+	to the other scenes. The content will be rendered inside a Frame
+	whose position and size are controlled by the transition logic. The
+	frame may either be transparent or a solid color, depending upon props.
+	Any additional visual effects must be supplied by the container or the
+	child element created by renderScene().
 
 	Props:
 		renderScene(scene)	-- Render prop to draw the scene inside the card.
@@ -17,12 +18,13 @@ local validate = require(script.Parent.Parent.Parent.utils.validate)
 		scene				-- Scene that the card is to render.
 		forceHidden			-- Forcibly disable card rendering (e.g. animated off-screen).
 		transparent			-- Card allows underlying content to show through (default: false).
-		cardColor3			-- Color of the card background if it's not transparent (default: engine setting).
+		cardColor3			-- Color of the card background if it's not transparent (default: white).
 ]]
 local StackViewCard = Roact.Component:extend("StackViewCard")
 
 StackViewCard.defaultProps = {
 	transparent = false,
+	cardColor3 = Color3.new(1, 1, 1),
 }
 
 function StackViewCard:init()
@@ -50,7 +52,7 @@ function StackViewCard:render()
 	return Roact.createElement("Frame", {
 		Position = initialPosition,
 		Size = UDim2.new(1, 0, 1, 0),
-		BackgroundColor3 = cardColor3 or nil,
+		BackgroundColor3 = cardColor3,
 		BackgroundTransparency = transparent and 1 or nil,
 		BorderSizePixel = 0,
 		ClipsDescendants = true,

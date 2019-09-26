@@ -25,11 +25,7 @@
 ]]
 local getSceneIndicesForInterpolationInputRange = require(
 	script.Parent.Parent.Parent.utils.getSceneIndicesForInterpolationInputRange)
-
--- Helper interpolates t with range [0,1] into the range [a,b].
-local function lerp(a, b, t)
-	return a * (1 - t) + b * t
-end
+local lerp = require(script.Parent.Parent.Parent.utils.lerp)
 
 -- Render initial style when layout hasn't been measured yet.
 local function forInitial(props)

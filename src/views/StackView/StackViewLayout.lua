@@ -1,35 +1,29 @@
 local Cryo = require(script.Parent.Parent.Parent.Parent.Cryo)
 local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
-local Otter = require(script.Parent.Parent.Parent.Parent.Otter)
-local NavigationActions = require(script.Parent.Parent.Parent.NavigationActions)
 local StackPresentationStyle = require(script.Parent.StackPresentationStyle)
 local StackViewTransitionConfigs = require(script.Parent.StackViewTransitionConfigs)
+local StackViewOverlayFrame = require(script.Parent.StackViewOverlayFrame)
 local StackViewCard = require(script.Parent.StackViewCard)
 local SceneView = require(script.Parent.Parent.SceneView)
 
 local defaultScreenOptions = {
+	absorbInput = true,
 	overlayEnabled = false,
 	overlayColor3 = Color3.new(0, 0, 0),
 	overlayTransparency = 0.7,
-	-- cardColor3 default not needed; we use the engine's default frame color
+	-- cardColor3 default is provided by StackViewCard
+	renderOverlay = function(navigationOptions, initialTransitionValue, transitionChangedSignal)
+		-- NOTE: renderOverlay will not be called if sceneOptions.overlayEnabled evaluates false
+		return Roact.createElement(StackViewOverlayFrame, {
+			navigationOptions = navigationOptions,
+			initialTransitionValue = initialTransitionValue,
+			transitionChangedSignal = transitionChangedSignal,
+		})
+	end,
 }
 
--- Helper interpolates t with range [0,1] into the range [a,b].
-local function lerp(a, b, t)
-	return a * (1 - t) + b * t
-end
-
-local function calculateFadeTransparency(scene, index, positionValue)
-	local navigationOptions = Cryo.Dictionary.join(defaultScreenOptions, scene.descriptor.options or {})
-	local overlayEnabled = navigationOptions.overlayEnabled
-	local overlayTransparency = navigationOptions.overlayTransparency
-
-	if overlayEnabled then
-		local pRange = math.max(math.min(1 + positionValue - index, 1), 0)
-		return lerp(1, overlayTransparency, pRange)
-	else
-		return 1
-	end
+local function calculateTransitionValue(index, position)
+	return math.max(math.min(1 + position - index, 1), 0)
 end
 
 
@@ -39,63 +33,23 @@ function StackViewLayout:init()
 	local startingIndex = self.props.transitionProps.navigation.state.index
 
 	self._isMounted = false
-
-	self._overlayFrameRefs = {} -- map of scene indexes to refs
-
 	self._positionLastValue = startingIndex
 
 	self._renderScene = function(scene)
 		return self:_renderInnerScene(scene)
 	end
+
+	self._subscribeToOverlayUpdates = function(callback)
+		local position = self.props.transitionProps.position
+		local index = self.props.transitionProps.scene.index
+
+		return position:onStep(function(value)
+			callback(calculateTransitionValue(index, value))
+		end)
+	end
 end
 
-function StackViewLayout:_reset(resetToIndex, frequency)
-	local position = self.props.transitionProps.position
-
-	position:setGoal(Otter.spring(resetToIndex, {
-		frequency,
-	}))
-end
-
-function StackViewLayout:_goBack(backFromIndex, frequency)
-	local navigation = self.props.transitionProps.navigation
-	local position = self.props.transitionProps.position
-	local scenes = self.props.transitionProps.scenes
-
-	local toValue = math.max(backFromIndex - 1, 1)
-
-	-- Set up temporary completion handler
-	local onCompleteDisconnector
-	onCompleteDisconnector = position:onComplete(function()
-		if onCompleteDisconnector then
-			onCompleteDisconnector()
-			onCompleteDisconnector = nil
-		end
-
-		local backFromScene
-		for _, scene in ipairs(scenes) do
-			if scene.index == toValue + 1 then
-				backFromScene = scene
-				break
-			end
-		end
-
-		if backFromScene then
-			navigation.dispatch(NavigationActions.back({
-				key = backFromScene.route.key,
-				immediate = true,
-			}))
-
-			navigation.dispatch(NavigationActions.completeTransition())
-		end
-	end)
-
-	position:setGoal(Otter.spring(toValue, {
-		frequency = frequency,
-	}))
-end
-
-function StackViewLayout:_renderCard(scene, index)
+function StackViewLayout:_renderCard(scene)
 	local transitionProps = self.props.transitionProps -- Core animation info from Transitioner.
 	local lastTransitionProps = self.props.lastTransitionProps -- Previous transition info.
 	local transitionConfig = self.state.transitionConfig -- State based info from scene config.
@@ -151,40 +105,58 @@ function StackViewLayout:render()
 	local topMostOpaqueSceneIndex = self.state.topMostOpaqueSceneIndex
 	local scenes = transitionProps.scenes
 
-	local renderedScenes = Cryo.List.map(scenes, function(scene, idx)
+	local renderedScenes = Cryo.List.map(scenes, function(scene)
 		-- The card is obscured if:
 		-- 	It's not the active card (e.g. we're transitioning TO it).
 		-- 	It's hidden underneath an opaque card that is NOT currently transitioning.
 		--	It's completely off-screen.
-		local cardObscured = idx < topMostOpaqueSceneIndex and not scene.isActive
+		local cardObscured = scene.index < topMostOpaqueSceneIndex and not scene.isActive
 
-		local navigationOptions = Cryo.Dictionary.join(defaultScreenOptions, scene.descriptor.options or {})
-		local overlayColor3 = navigationOptions.overlayColor3
+		local screenOptions = Cryo.Dictionary.join(defaultScreenOptions, scene.descriptor.options or {})
+		local overlayEnabled = screenOptions.overlayEnabled
+		local absorbInput = screenOptions.absorbInput
+		local renderOverlay = screenOptions.renderOverlay
 
-		-- Each scene gets its own overlay frame whose transparency must be managed.
-		local overlayFrameRef = self._overlayFrameRefs[idx]
-		if not overlayFrameRef then
-			overlayFrameRef = Roact.createRef()
-			self._overlayFrameRefs[idx] = overlayFrameRef
+		local stationaryContent = nil
+		if overlayEnabled then
+			stationaryContent = Roact.createElement("Frame", {
+				Size = UDim2.new(1, 0, 1, 0),
+				BackgroundTransparency = 1,
+				ClipsDescendants = true,
+				BorderSizePixel = 0,
+				ZIndex = 1,
+			}, {
+				Overlay = renderOverlay(
+					screenOptions,
+					calculateTransitionValue(scene.index, self._positionLastValue),
+					self._subscribeToOverlayUpdates)
+			})
 		end
 
-		-- Wrap all cards in a TextButton so we can control hidden state and ZIndex without bleeding props.
-		-- This button also provides the card's overlay effect when required and prevents pass-through of
-		-- stray touches.
+		-- Wrapper frame holds default/custom card background and the card content.
 		return Roact.createElement("TextButton", {
 			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundColor3 = overlayColor3,
-			BackgroundTransparency = calculateFadeTransparency(scene, idx, self._positionLastValue),
+			BackgroundTransparency = 1,
 			AutoButtonColor = false,
 			BorderSizePixel = 0,
+			ClipsDescendants = true,
 			Text = " ",
-			ZIndex = idx,
+			ZIndex = scene.index,
 			Visible = not cardObscured,
-			[Roact.Ref] = overlayFrameRef,
+			Active = not cardObscured and absorbInput,
 		}, {
-			-- Cards need to have unique keys so that instances of the same components are not
-			-- reused for different scenes. (Could lead to unanticipated lifecycle problems).
-			["card_" .. scene.key] = self:_renderCard(scene, idx),
+			StationaryContent = stationaryContent,
+			DynamicContent = Roact.createElement("Frame", {
+				Size = UDim2.new(1, 0, 1, 0),
+				BackgroundTransparency = 1,
+				ClipsDescendants = true,
+				BorderSizePixel = 0,
+				ZIndex = 2,
+			}, {
+				-- Cards need to have unique keys so that instances of the same components are not
+				-- reused for different scenes. (Could lead to unanticipated lifecycle problems).
+				["card_" .. scene.key] = self:_renderCard(scene),
+			})
 		})
 	end)
 
@@ -268,18 +240,6 @@ end
 
 function StackViewLayout:_onPositionStep(value)
 	if self._isMounted then
-		local transitionProps = self.props.transitionProps
-		local scenes = transitionProps.scenes
-
-		for idx, scene in ipairs(scenes) do
-			local frameRef = self._overlayFrameRefs[idx]
-			local frameInstance = frameRef and frameRef.current
-
-			if frameInstance then
-				frameInstance.BackgroundTransparency = calculateFadeTransparency(scene, idx, value)
-			end
-		end
-
 		self._positionLastValue = value
 	end
 end
