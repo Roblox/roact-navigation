@@ -1,11 +1,11 @@
 [package]
-name = "roact-navigation"
+name = "Roblox/roact-navigation"
 version = "0.2.0"
-author = "David Brooks"
+author = "Roblox"
 content_root = "src"
 
 [dependencies]
 Roact = { git = "https://github.com/Roblox/Roact", rev = "master" }
 Cryo = { git = "https://github.com/Roblox/cryo", rev = "master" }
 Otter = { git = "https://github.com/Roblox/Otter", rev = "master" }
-
+StateTable = { git = "https://github.com/Roblox/state-table", rev = "master" }

@@ -170,7 +170,7 @@ return function()
 			end
 
 			local childSubscriber = getChildEventSubscriber(
-				testAddUpstreamListener, SIMPLE_TEST_KEY, NavigationEvents.DidBlur)
+				testAddUpstreamListener, SIMPLE_TEST_KEY, "Blurred")
 
 			childSubscriber.addListener(NavigationEvents.Action, function() end)
 
@@ -201,8 +201,7 @@ return function()
 				}
 			end
 
-			local childSubscriber = getChildEventSubscriber(
-				testAddUpstreamListener, SIMPLE_TEST_KEY, NavigationEvents.DidBlur)
+			local childSubscriber = getChildEventSubscriber(testAddUpstreamListener, SIMPLE_TEST_KEY, "Blurred")
 
 			childSubscriber.addListener(NavigationEvents.Action, function() end)
 
@@ -303,7 +302,7 @@ return function()
 
 		it("should emit DidFocus on DidFocus event when previous event was WillFocus and child is current index", function()
 			local bundle = makeListenerBundle()
-			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, NavigationEvents.WillFocus)
+			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, "Focusing")
 
 			local didFocusCalled = false
 			childSubscriber.addListener(NavigationEvents.DidFocus, function()
@@ -317,7 +316,7 @@ return function()
 
 		it("should emit DidFocus on Action event when previous event was WillFocus and child is current index", function()
 			local bundle = makeListenerBundle()
-			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, NavigationEvents.WillFocus)
+			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, "Focusing")
 
 			local didFocusCalled = false
 			childSubscriber.addListener(NavigationEvents.DidFocus, function()
@@ -331,7 +330,7 @@ return function()
 
 		it("should NOT emit DidFocus on DidFocus event when previous event was WillFocus while transitioning", function()
 			local bundle = makeListenerBundle()
-			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, NavigationEvents.WillFocus)
+			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, "Focusing")
 
 			local didFocusCalled = false
 			childSubscriber.addListener(NavigationEvents.DidFocus, function()
@@ -356,7 +355,7 @@ return function()
 
 		it("should emit WillBlur on WillBlur event when previous event was DidFocus", function()
 			local bundle = makeListenerBundle()
-			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, NavigationEvents.DidFocus)
+			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, "Focused")
 
 			local willBlurCalled = false
 			childSubscriber.addListener(NavigationEvents.WillBlur, function()
@@ -370,7 +369,7 @@ return function()
 
 		it("should emit Action on Action event when previous event was DidFocus", function()
 			local bundle = makeListenerBundle()
-			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, NavigationEvents.DidFocus)
+			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, "Focused")
 
 			local actionCalled = false
 			childSubscriber.addListener(NavigationEvents.Action, function()
@@ -384,7 +383,7 @@ return function()
 
 		it("should emit DidBlur on DidBlur event when previous event was WillBlur", function()
 			local bundle = makeListenerBundle()
-			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, NavigationEvents.WillBlur)
+			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, "Blurring")
 
 			local didBlurCalled = false
 			childSubscriber.addListener(NavigationEvents.DidBlur, function()
@@ -398,7 +397,7 @@ return function()
 
 		it("should emit DidBlur on Action event when previous event was WillBlur and we've finished transitioning", function()
 			local bundle = makeListenerBundle()
-			local childSubscriber = getChildEventSubscriber(bundle.addListener, "Foo", NavigationEvents.WillBlur)
+			local childSubscriber = getChildEventSubscriber(bundle.addListener, "Foo", "Blurring")
 
 			local didBlurCalled = false
 			childSubscriber.addListener(NavigationEvents.DidBlur, function()
@@ -430,7 +429,7 @@ return function()
 
 		it("should emit WillFocus on Action event when previois event was WillBlur, while transitioning to child", function()
 			local bundle = makeListenerBundle()
-			local childSubscriber = getChildEventSubscriber(bundle.addListener, "Bar", NavigationEvents.WillBlur)
+			local childSubscriber = getChildEventSubscriber(bundle.addListener, "Bar", "Blurring")
 
 			local willFocusCalled = false
 			childSubscriber.addListener(NavigationEvents.WillFocus, function()
@@ -459,6 +458,41 @@ return function()
 			})
 
 			expect(willFocusCalled).to.equal(true)
+		end)
+
+		it("should disconnect from input events after finalizing blur if removed from nav state", function()
+			local bundle = makeListenerBundle()
+			local childSubscriber = getChildEventSubscriber(bundle.addListener, "Bar", "Blurring")
+
+			local didBlurCalled = false
+			childSubscriber.addListener(NavigationEvents.DidBlur, function()
+				didBlurCalled = true
+			end)
+
+			bundle.listenerMap[NavigationEvents.Action]({
+				state = {
+					routes = {
+						{ key = "Foo" },
+					},
+					index = 1,
+					isTransitioning = false,
+				},
+				lastState = {
+					routes = {
+						{ key = "Foo" },
+						{ key = "Bar" }, -- Transitioning away from this route.
+					},
+					index = 1,
+					isTransitioning = true,
+				},
+				action = {
+					type = "SomeAction"
+				},
+			})
+
+			expect(bundle.listenerMap[NavigationEvents.Action]).to.equal(nil)
+			expect(bundle.listenerMap[NavigationEvents.Refocus]).to.equal(nil)
+			expect(didBlurCalled).to.equal(true) -- Event should still be propagated!
 		end)
 	end)
 end

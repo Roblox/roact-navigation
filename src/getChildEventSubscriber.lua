@@ -1,13 +1,19 @@
 local Cryo = require(script.Parent.Parent.Cryo)
 local NavigationEvents = require(script.Parent.NavigationEvents)
+local createSubscriberEventsStateTable = require(script.Parent.utils.createSubscriberEventsStateTable)
 local validate = require(script.Parent.utils.validate)
 
 --[[
 	This utility will fire focus and blur events for the child based upon action events
 	and the current navigation state.
+
+	Args:
+		addListener		- Functor to add an event listener to navigation dispatch system.
+		key				- The key for the subscribing child.
+		initialState	- Initial state to set for the child event monitor (optional).
 ]]
-return function(addListener, key, initialLastFocusEvent)
-	initialLastFocusEvent = initialLastFocusEvent or NavigationEvents.DidBlur
+return function(addListener, key, initialState)
+	initialState = initialState or "Blurred"
 
 	local upstreamSubscribers = {}
 
@@ -19,6 +25,16 @@ return function(addListener, key, initialLastFocusEvent)
 		[NavigationEvents.DidBlur] = {},
 		[NavigationEvents.Refocus] = {},
 	}
+
+	local function emit(type, payload)
+		local payloadWithType = Cryo.Dictionary.join(payload or {}, { type = type })
+		local subscribers = subscriberMap[type]
+		if subscribers then
+			for _, subs in ipairs(subscribers) do
+				subs(payloadWithType)
+			end
+		end
+	end
 
 	local function disconnectAll()
 		for _, subscriberList in pairs(subscriberMap) do
@@ -34,25 +50,18 @@ return function(addListener, key, initialLastFocusEvent)
 		end
 	end
 
-	local function emit(type, payload)
-		local payloadWithType = Cryo.Dictionary.join(payload or {}, { type = type })
-		local subscribers = subscriberMap[type]
-		if subscribers then
-			for _, subs in ipairs(subscribers) do
-				subs(payloadWithType)
-			end
-		end
-	end
-
-	-- lastFocusEvent keeps track of focus state for one route. We assume that we are initially
-	-- in blurred state. If we are focused on initialization, then the first NavigationEvents.Action
-	-- will cause onFocus+willFocus to fire because we started off 'blurred'.
-	local lastFocusEvent = initialLastFocusEvent
+	-- Each event subscriber (e.g. screen) has its own state table that tracks the events which
+	-- drive focused/unfocused transitions. Screens all start life blurred, including the initial pages
+	-- displayed by a navigator. The latter need special treatment so they still receive their
+	-- willFocus+didFocus events.
+	local eventStateTable = createSubscriberEventsStateTable(key, initialState, emit, disconnectAll)
 
 	for eventType in pairs(subscriberMap) do
 		upstreamSubscribers[eventType] = addListener(eventType, function(payload)
+			-- Refocus events don't use a specialized child payload or T/A event key marks. Propagate immediately.
+			-- We also allow arbitrary payloads with Refocus so we do not want to try to parse the table.
 			if eventType == NavigationEvents.Refocus then
-				emit(eventType, payload)
+				eventStateTable:handleEvent(tostring(NavigationEvents.Refocus), payload)
 				return
 			end
 
@@ -60,11 +69,12 @@ return function(addListener, key, initialLastFocusEvent)
 			local lastState = payload.lastState
 			local action = payload.action
 
-			local lastRoutes = lastState and lastState.routes
 			local routes = state and state.routes
+			local lastRoutes = lastState and lastState.routes
 
 			local focusKey = routes and routes[state.index].key or nil
 			local isChildFocused = focusKey == key
+			local isTransitioning = state and state.isTransitioning or false
 
 			local lastRoute = nil
 			if lastRoutes then
@@ -94,60 +104,19 @@ return function(addListener, key, initialLastFocusEvent)
 				type = eventType,
 			}
 
-			local isTransitioning = state and state.isTransitioning or false
+			-- State table figures out all the details of what conditions lead to event propagation based
+			-- upon a string eventKey.
+			local activeKey = isChildFocused and "A" or ""
+			local transitioningKey = isTransitioning and "T" or ""
+			local eventKey = tostring(eventType) .. activeKey .. transitioningKey
 
-			local previouslyLastFocusEvent = lastFocusEvent
+			eventStateTable:handleEvent(eventKey, childPayload)
 
-			if lastFocusEvent == NavigationEvents.DidBlur then
-				-- Child is currently blurred; look for willFocus conditions
-				if isChildFocused and (eventType == NavigationEvents.WillFocus
-					or eventType == NavigationEvents.Action) then
-					lastFocusEvent = NavigationEvents.WillFocus
-					emit(lastFocusEvent, childPayload)
-				end
-			end
-
-			if lastFocusEvent == NavigationEvents.WillFocus then
-				-- We are mid-focus. Look for didFocus conditions. If state.isTransitioning is false
-				-- then we know this child event happens immediately after willFocus
-				if (eventType == NavigationEvents.DidFocus or eventType == NavigationEvents.Action)
-					and isChildFocused and not isTransitioning then
-					lastFocusEvent = NavigationEvents.DidFocus
-					emit(lastFocusEvent, childPayload)
-				end
-			end
-
-			if lastFocusEvent == NavigationEvents.DidFocus then
-				-- The child is currently focused. Look for blurring events.
-				if not isChildFocused or eventType == NavigationEvents.WillBlur then
-					lastFocusEvent = NavigationEvents.WillBlur
-					emit(lastFocusEvent, childPayload)
-				elseif eventType == NavigationEvents.Action
-					and previouslyLastFocusEvent == NavigationEvents.DidFocus then
-					-- While focused, pass action events to children to be handled by focused grandchildren
-					emit(NavigationEvents.Action, childPayload)
-				end
-			end
-
-			if lastFocusEvent == NavigationEvents.WillBlur then
-				-- The child is mid-blur. Wait for transition to end.
-				if eventType == NavigationEvents.Action and not isChildFocused and not isTransitioning then
-					-- Child is done blurring because transitioning ended or there is no transition to do
-					lastFocusEvent = NavigationEvents.DidBlur
-					emit(lastFocusEvent, childPayload)
-				elseif eventType == NavigationEvents.DidBlur then
-					-- Pass through parent's DidBlur event
-					lastFocusEvent = NavigationEvents.DidBlur
-					emit(lastFocusEvent, childPayload)
-				elseif eventType == NavigationEvents.Action and isChildFocused and isTransitioning then
-					lastFocusEvent = NavigationEvents.WillFocus
-					emit(lastFocusEvent, childPayload)
-				end
-			end
-
-			if lastFocusEvent == NavigationEvents.DidBlur and not newRoute then
-				-- Page is dead, disconnect subscribers
-				disconnectAll()
+			-- Regardless of what state transition we've propagated earlier, shut down the state machine
+			-- if the route has been removed from the nav history because that means the page is gone.
+			-- (This also disconnects the event listeners.)
+			if not newRoute then
+				eventStateTable.events.shutdown()
 			end
 		end)
 	end
