@@ -59,8 +59,6 @@ function Transitioner:init()
 		-- Layout is passed to StackViewLayout in order to allow it to
 		-- sync animations.
 		layout = {
-			height = Otter.createSingleMotor(0),
-			width = Otter.createSingleMotor(0),
 			initWidth = 0,
 			initHeight = 0,
 			isMeasured = false,
@@ -91,7 +89,11 @@ function Transitioner:init()
 	end)
 
 	self._stepSignalDisconnector = self.state.position:onStep(function(value)
-		self._positionLastValue = value
+		spawn(function()
+			if self._isMounted then
+				self:_onPositionStep(value)
+			end
+		end)
 	end)
 end
 
@@ -160,9 +162,6 @@ function Transitioner:_onAbsoluteSizeChanged(rbx)
 		initHeight = height,
 		isMeasured = true,
 	})
-
-	layout.width:setGoal(Otter.instant(width))
-	layout.height:setGoal(Otter.instant(height))
 
 	local nextState = Cryo.Dictionary.join(self.state, {
 		layout = layout,
@@ -300,6 +299,18 @@ function Transitioner:_onTransitionEnd()
 			self._isTransitionRunning = false
 		end
 	end)
+end
+
+function Transitioner:_onPositionStep(value)
+	self._positionLastValue = value
+
+	local startingIndex = self._prevTransitionProps.index
+	local targetIndex = self._transitionProps.index
+
+	if self.props.onTransitionStep and startingIndex ~= targetIndex then
+		local transitionValue = (value - startingIndex) / (targetIndex - startingIndex)
+		self.props.onTransitionStep(self._transitionProps, self._prevTransitionProps, transitionValue)
+	end
 end
 
 return Transitioner

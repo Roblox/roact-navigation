@@ -49,12 +49,10 @@ function StackViewLayout:init()
 	end
 end
 
-function StackViewLayout:_renderCard(scene)
+function StackViewLayout:_renderCard(scene, navigationOptions)
 	local transitionProps = self.props.transitionProps -- Core animation info from Transitioner.
 	local lastTransitionProps = self.props.lastTransitionProps -- Previous transition info.
 	local transitionConfig = self.state.transitionConfig -- State based info from scene config.
-
-	local navigationOptions = Cryo.Dictionary.join(defaultScreenOptions, scene.descriptor.options or {})
 
 	local cardColor3 = navigationOptions.cardColor3
 	local overlayEnabled = navigationOptions.overlayEnabled
@@ -155,7 +153,7 @@ function StackViewLayout:render()
 			}, {
 				-- Cards need to have unique keys so that instances of the same components are not
 				-- reused for different scenes. (Could lead to unanticipated lifecycle problems).
-				["card_" .. scene.key] = self:_renderCard(scene),
+				["card_" .. scene.key] = self:_renderCard(scene, screenOptions),
 			})
 		})
 	end)
