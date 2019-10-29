@@ -31,7 +31,19 @@ return function()
 			validateRouteConfigMap({
 				myRoute = 5,
 			})
-		end, "The component for route 'myRoute' must be a Roact component or table with 'getScreen'%.")
+		end, "The component for route 'myRoute' must be a Roact Function/Stateful component or table with 'getScreen'." ..
+			"getScreen function must return Roact Function/Stateful component.")
+	end)
+
+	it("should throw if getScreen returns invalid Roact element", function()
+		expectError(function()
+			validateRouteConfigMap({
+				myRoute = {
+					getScreen = function() end,
+				},
+			})
+		end, "The component for route 'myRoute' must be a Roact Function/Stateful component or table with 'getScreen'." ..
+			"getScreen function must return Roact Function/Stateful component.")
 	end)
 
 	it("should throw when both screen and getScreen are provided for same component", function()
@@ -39,20 +51,21 @@ return function()
 			validateRouteConfigMap({
 				myRoute = {
 					screen = "TheScreen",
-					getScreen = function() end,
+					getScreen = function() return TestComponent end,
 				}
 			})
 		end, "Route 'myRoute' should provide 'screen' or 'getScreen', but not both%.")
 	end)
 
-	it("should throw for a simple table where screen is not a Roact component", function()
+	it("should throw for a simple table where screen is not a Roact Function/Stateful component", function()
 		expectError(function()
 			validateRouteConfigMap({
 				myRoute = {
 					screen = {},
 				}
 			})
-		end, "The component for route 'myRoute' must be a Roact component or table with 'getScreen'%.")
+		end, "The component for route 'myRoute' must be a Roact Function/Stateful component or table with 'getScreen'." ..
+			"getScreen function must return Roact Function/Stateful component.")
 	end)
 
 	it("should throw for a non-function getScreen", function()
@@ -62,15 +75,26 @@ return function()
 					getScreen = 5
 				}
 			})
-		end, "The component for route 'myRoute' must be a Roact component or table with 'getScreen'%.")
+		end, "The component for route 'myRoute' must be a Roact Function/Stateful component or table with 'getScreen'." ..
+			"getScreen function must return Roact Function/Stateful component.")
 	end)
+
+	it("should throw for a Host Component", function()
+		expectError(function()
+			validateRouteConfigMap({
+				myRoute = {
+					aFrame = "Frame"
+				}
+			})
+		end, "The component for route 'myRoute' must be a Roact Function/Stateful component or table with 'getScreen'." ..
+			"getScreen function must return Roact Function/Stateful component.")
+	end)
+
 
 	it("should pass for valid basic routeConfigs", function()
 		validateRouteConfigMap({
 			basicComponentRoute = TestComponent,
 			functionalComponentRoute = function() end,
-			stringNameComponentRoute = "Frame",
-			portalComponentRoute = Roact.Portal,
 		})
 	end)
 
@@ -82,19 +106,13 @@ return function()
 			functionalComponentRoute = {
 				screen = function() end,
 			},
-			stringNameComponentRoute = {
-				screen = "Frame",
-			},
-			portalComponentRoute = {
-				screen = Roact.Portal,
-			},
 		})
 	end)
 
 	it("should pass for valid getScreen route configs", function()
 		validateRouteConfigMap({
 			getScreenRoute = {
-				getScreen = function() end,
+				getScreen = function() return TestComponent end,
 			}
 		})
 	end)
