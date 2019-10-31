@@ -5,7 +5,7 @@ author = "Roblox"
 content_root = "src"
 
 [dependencies]
-Roact = { git = "https://github.com/Roblox/Roact", rev = "master" }
-Cryo = { git = "https://github.com/Roblox/cryo", rev = "master" }
-Otter = { git = "https://github.com/Roblox/Otter", rev = "master" }
-StateTable = { git = "https://github.com/Roblox/state-table", rev = "master" }
+Roact = "roblox/roact@1.2"
+Cryo = "roblox/cryo@1.0"
+Otter = "roblox/otter@0.1"
+StateTable = "roblox/state-table@0.1"

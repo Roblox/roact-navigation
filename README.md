@@ -19,8 +19,7 @@ Roact Navigation provides a declarative navigation system for App UI, built on t
 
 ## Documentation
 
-We are in the process of migrating documentation to GitHub Pages for more convenient access, here:
-https://pages.github.rbx.com/Roblox/roact-navigation/
+We are in the process of migrating documentation to GitHub Wiki for more convenient access.
 
 Until the migration is complete, you can view the original documentation on Roblox's internal Confluence, here:
 https://confluence.rbx.com/display/MOBAPP/Roact+Navigation
@@ -29,7 +28,7 @@ https://confluence.rbx.com/display/MOBAPP/Roact+Navigation
 
 ### As a dependency
 * Add a \[dependencies\] entry to your rotriever.toml file, ex:
-`RoactNavigation = { git = "https://github.rbx.com/Roblox/roact-navigation", rev = "master" }`
+`RoactNavigation = "roblox/roact-navigation@0.2"
 * Run `rotrieve install`
 
 ### For development
@@ -45,10 +44,25 @@ https://confluence.rbx.com/display/MOBAPP/Roact+Navigation
 
 ## Running the Storybooks
 * Install a [Rust](https://www.rust-lang.org) compiler toolchain and runtime.
-* Install Rojo `cargo install rojo --version 0.5.0-alpha.12`.
-* Build Rojo project `rojo build -o roactnavigation.rbxl`.
-* Serve the Rojo project to Roblox Studio `rojo serve` so it can do dynamic updates when you edit files.
-* Launch Studio and follow the [Horsecat](https://github.com/Roblox/horsecat/blob/master/docs/index.md) docs to open the storybooks in ReplicatedStorage/RoactNavigation-Storybook.
+* Install Rojo `cargo install rojo --version 0.5.3`.
+* Install the [Horsecat](https://github.com/Roblox/horsecat/blob/master/docs/index.md) plugin.
+* Build Rojo storybook project `rojo build -o roactnavigation.rbxlx storybook.project.json`.
+* Serve the Rojo project to Roblox Studio `rojo serve storybook.project.json` so it can do dynamic updates when you edit files.
+* Launch Roblox Studio and open roactnavigation.rbxlx.
+* Go to Game Settings/Options and turn on "Allow HTTP Requests".
+* Connect to Rojo server on localhost via Plugins/Connect, usually localhost/34872.
+* Open the storybook in ReplicatedStorage/Packages/RoactNavigationStorybook.
+
+## Running the Rhodium tests
+* Perform Rust and Rojo setup steps as per "Running the Storybooks"
+* Build the Rhodium project `rojo build -o RoactNavigationRhodiumTestRunner.rbxm rhodium.project.json`.
+* Copy the test runner rbxm to your Roblox Studio installation's BuiltInPlugins directory.
+* Open any placefile (the storybook one is probably best).
+* Start game, and then click the "Run Tests" button that shows up in the left panel.
+
+## Building the rbxm library module
+* Perform Rust and Rojo setup steps as per "Running the Storybooks"
+* Build Rojo project `rojo build -o RoactNavigation.rbxm`.
 
 ## Caveats/Concerns
 * Roact-Navigation is designed to work with pre-1.0 Roact (no bindings) to preserve maximum compatibility.

@@ -19,6 +19,7 @@ synchronize any navigation UI animations with Roact Navigation's internal change
 * From this version the only valid Screen Components are:
 	* Roact Function Component and
 	* Roact Stateful Component
+* Roact Navigation now uses Rotriever registry dependencies.
 ___
 ### v0.1.3          Roact Navigation v0.1.3
 Changes:
