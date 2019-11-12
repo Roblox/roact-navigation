@@ -2,10 +2,20 @@
 
 ## master
 ___
+### v0.2.1			Roact Navigation v0.2.1
+
+Changes:
+
+* Update some files and tests so that they play nice when Roact Navigation
+is imported as a dependency under arbitrary folder paths. (Previously it
+only worked correctly when the top-level folder name was "RoactNavigation".)
+
+___
 ### v0.2.0          Roact Navigation v0.2.0
 ___This is an API breaking change!___
 
 Changes:
+
 * createTopBarStackNavigator and createBottomBarSwitchNavigator have been
 removed. It is now the responsibility of higher-level libraries to manage
 the visual aspects of navigation UI. This decision was made because most
@@ -23,6 +33,7 @@ synchronize any navigation UI animations with Roact Navigation's internal change
 ___
 ### v0.1.3          Roact Navigation v0.1.3
 Changes:
+
 * This version fixes compatibility problems with Roact 1.x. From 0.1.0 to
 0.1.1, we regressed a bugfix for complex navigator hierarchies when
 running against Roact 1.x. (The new async setState in Roact 1.x changes
@@ -35,6 +46,7 @@ old-style APIs for navigation bars and require Roact 1.x compatibility.
 ___
 ### v0.1.2          New hotfix release of Roact Navigation 0.1.x
 Changes:
+
 * Fixed setState timing bugs in StackView where programmatically
 navigating during initial mounting would lead to bad visual state.
 * Cleaned up public API of unusable bottom bar components.
@@ -45,12 +57,14 @@ internal inconsistency error.
 ___
 ### v0.1.1          Version 0.1.1 of Roact Navigation
 Summary:
+
 This version of Roact Navigation is the last update before all of the
 visual adornments are moved out of the core implementation into a
 separate repository so that they can take advantage of other libraries
 like UIBlox.
 
 Changes:
+
 * Alleviated bugs with DidFocus not firing for the last screen if the
 user navigates while a transition is already ongoing, or the developer
 mistakenly writes in multiple navigation action calls in response to a
@@ -58,7 +72,7 @@ button click.
 * Missing entrypoints for stack navigator related views were added to
 init.lua.
 * Bottom bar elements are removed.
-* Unit tests are now in __tests_ subdirectories.
+* Unit tests are now in \_tests\_ subdirectories.
 * Git submodules use https links to make it easier to download
 dependencies via Github app tokens.
 
@@ -71,10 +85,11 @@ completeness:
 * Bottom Tab Navigator
 * Side Tab Navigator
 * Blur support for modal/overlay stack navigation
-* Comprehensive documentation\
+* Comprehensive documentation
 
 The following features are considered functionally complete, but may
 have bugs or are lacking in polish:
+
 * App Container (host for nav other nav components)
 * Switch Navigator (flat page list without extra UI)
 * Stack Navigator (left-right, modal, and overlay modes)
