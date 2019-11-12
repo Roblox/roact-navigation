@@ -8,7 +8,7 @@
 
 -- If you add any non-Rotriever dependencies, add them to this table so they'll be loaded!
 local LOAD_MODULES = {
-	{"src", "RoactNavigation"},
+	{"src", "roact-navigation"},
 	{"modules/testez/lib", "TestEZ"},
 }
 
@@ -34,13 +34,13 @@ end
 
 -- Load RoactNavigation source into Packages folder so it's next to Roact as expected
 local RoactNavigation = habitat:loadFromFs("src")
-RoactNavigation.Name = "RoactNavigation"
+RoactNavigation.Name = "roact-navigation"
 RoactNavigation.Parent = Packages
 
 local TestEZ = habitat:require(Packages.TestEZ)
 
 -- Run all tests, collect results, and report to stdout.
-local results = TestEZ.TestBootstrap:run({ Packages.RoactNavigation }, TestEZ.Reporters.TextReporter)
+local results = TestEZ.TestBootstrap:run({ Packages["roact-navigation"] }, TestEZ.Reporters.TextReporter)
 
 if results.failureCount > 0 then
 	-- If something went wrong, explicitly terminate with a failure error code

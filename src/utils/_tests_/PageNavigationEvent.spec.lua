@@ -1,4 +1,4 @@
-local RoactNavigation = require(script.Parent.Parent.Parent.Parent.RoactNavigation)
+local RoactNavigation = require(script.Parent.Parent.Parent)
 local PageNavigationEvent = require(script.Parent.Parent.PageNavigationEvent)
 
 return function()

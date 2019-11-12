@@ -1,6 +1,6 @@
 local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
-local NavigationEventsAdapter = require(script.Parent.Parent.Parent.RoactNavigation.views.NavigationEventsAdapter)
+local RoactNavigation = require(script.Parent.Parent)
+local NavigationEventsAdapter = require(script.Parent.Parent.views.NavigationEventsAdapter)
 local validate = require(script.Parent.validate)
 local PageNavigationEvent = require(script.Parent.PageNavigationEvent)
 
