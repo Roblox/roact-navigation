@@ -1,6 +1,13 @@
 # Roact Navigation Version History
 
 ## master
+
+### Work in progress, to be added to next release notes
+
+Changes:
+
+* fixed a typo in SceneReducer, to allow proper update of scene descriptors.
+
 ___
 ### v0.2.1			Roact Navigation v0.2.1
 
