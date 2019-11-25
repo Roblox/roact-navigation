@@ -20,7 +20,7 @@ function TopBar:_getTopBarTitleString(scene)
 	end
 	if options.title and type(options.title) ~= "string" then
 		error("Invalid title for route" .. scene.route.routeName ..
-		" - title must be string or nil, instead it was of type " .. type(options.title))
+			" - title must be string or nil, instead it was of type " .. type(options.title))
 	end
 	return options.title
 end
@@ -153,7 +153,6 @@ function TopBar:render()
 	local scene = self.props.scene
 
 	if mode == StackHeaderMode.Float then
-		error("TODO: implement support for Float")
 		local scenesByIndex = {}
 		for _, s in ipairs(self.props.scenes) do
 			scenesByIndex[scene.index] = s
@@ -166,6 +165,7 @@ function TopBar:render()
 			}
 		end)
 		appBar = Cryo.List.map(scenesProps, self._renderHeader)
+		error("TODO: implement support for Float")
 	else
 		local headerProps = {
 			scene = self.props.scene,
@@ -210,7 +210,7 @@ local function validateProps(props)
 	end
 	if renderHeaderBackButton then
 		validate(isValidRoactElementType(renderHeaderBackButton),
-		"renderHeaderBackButton must be a valid Roact element type.")
+			"renderHeaderBackButton must be a valid Roact element type.")
 	end
 end
 
