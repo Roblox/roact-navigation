@@ -62,6 +62,13 @@ calculating the wrong index, which leads to what is essentially an
 internal inconsistency error.
 
 ___
+### v0.1.1b          Version 0.1.1b of Roact Navigation
+Summary:
+
+This is a special re-release of v0.1.1 with linter fixes contributed by
+[~jtaylor]. No other code changes are included.
+
+___
 ### v0.1.1          Version 0.1.1 of Roact Navigation
 Summary:
 
