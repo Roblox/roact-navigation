@@ -6,7 +6,8 @@
 
 Changes:
 
-* fixed a typo in SceneReducer, to allow proper update of scene descriptors.
+* Fixed a typo in SceneReducer, to allow proper update of scene descriptors.
+* Linter fixes submitted by [~jtaylor].
 
 ___
 ### v0.2.1			Roact Navigation v0.2.1
