@@ -6,6 +6,7 @@
 
 Changes:
 
+* Add keepVisitedScreensMounted feature to SwitchNavigator.
 * Fixed a typo in SceneReducer, to allow proper update of scene descriptors.
 * Linter fixes submitted by [~jtaylor].
 
