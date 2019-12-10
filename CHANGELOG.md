@@ -2,7 +2,10 @@
 
 ## master
 
-### Work in progress, to be added to next release notes
+Work in progress, to be added to next release notes.
+
+___
+### v0.2.2			Roact Navigation v0.2.2
 
 Changes:
 
