@@ -4,6 +4,12 @@
 
 Work in progress, to be added to next release notes.
 
+Changes:
+
+* ***API BREAKING:*** AppContainer.backActionSignal removed!
+* Added AppContainer.externalDispatchConnector feature to allow arbitrary
+navigation actions to be injected by external code.
+
 ___
 ### v0.2.2			Roact Navigation v0.2.2
 
