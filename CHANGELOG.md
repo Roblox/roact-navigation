@@ -1,26 +1,30 @@
 # Roact Navigation Version History
 
-## master
+### master
 
 Work in progress, to be added to next release notes.
 
+___
+### v0.2.3
+
+___This is an API breaking change!___
+
 Changes:
 
-* ***API BREAKING:*** AppContainer.backActionSignal removed!
-* Added AppContainer.externalDispatchConnector feature to allow arbitrary
-navigation actions to be injected by external code.
+* Replaced AppContainer.backActionSignal with AppContainer.externalDispatchConnector
+to allow external code to inject arbitrary navigation actions.
 
 ___
-### v0.2.2			Roact Navigation v0.2.2
+### v0.2.2
 
 Changes:
 
 * Add keepVisitedScreensMounted feature to SwitchNavigator.
 * Fixed a typo in SceneReducer, to allow proper update of scene descriptors.
-* Linter fixes submitted by [~jtaylor].
+* Linter fixes submitted by `jtaylor`.
 
 ___
-### v0.2.1			Roact Navigation v0.2.1
+### v0.2.1
 
 Changes:
 
@@ -29,7 +33,8 @@ is imported as a dependency under arbitrary folder paths. (Previously it
 only worked correctly when the top-level folder name was "RoactNavigation".)
 
 ___
-### v0.2.0          Roact Navigation v0.2.0
+### v0.2.0
+
 ___This is an API breaking change!___
 
 Changes:
@@ -48,8 +53,9 @@ synchronize any navigation UI animations with Roact Navigation's internal change
 	* Roact Function Component and
 	* Roact Stateful Component
 * Roact Navigation now uses Rotriever registry dependencies.
+
 ___
-### v0.1.3          Roact Navigation v0.1.3
+### v0.1.3
 Changes:
 
 * This version fixes compatibility problems with Roact 1.x. From 0.1.0 to
@@ -62,7 +68,8 @@ are not compatible. You should uptake 0.1.3 if you need to use the
 old-style APIs for navigation bars and require Roact 1.x compatibility.
 
 ___
-### v0.1.2          New hotfix release of Roact Navigation 0.1.x
+### v0.1.2
+
 Changes:
 
 * Fixed setState timing bugs in StackView where programmatically
@@ -73,15 +80,13 @@ calculating the wrong index, which leads to what is essentially an
 internal inconsistency error.
 
 ___
-### v0.1.1b          Version 0.1.1b of Roact Navigation
-Summary:
+### v0.1.1b
 
 This is a special re-release of v0.1.1 with linter fixes contributed by
-[~jtaylor]. No other code changes are included.
+`jtaylor`. No other code changes are included.
 
 ___
-### v0.1.1          Version 0.1.1 of Roact Navigation
-Summary:
+### v0.1.1
 
 This version of Roact Navigation is the last update before all of the
 visual adornments are moved out of the core implementation into a
@@ -102,7 +107,8 @@ init.lua.
 dependencies via Github app tokens.
 
 ___
-### v0.1.0          Tagging version 0.1.0 of roact-navigation
+### v0.1.0
+
 This tag represents the first version of roact-navigation that is
 considered to be relatively stable. It is currently missing the
 following major features that are required for functional
