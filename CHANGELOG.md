@@ -4,6 +4,8 @@
 
 Work in progress, to be added to next release notes.
 
+- Code docs for navigators/createSwitchNavigator.
+
 ___
 ### v0.2.3
 
