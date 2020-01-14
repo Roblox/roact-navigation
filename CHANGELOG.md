@@ -4,6 +4,10 @@
 
 Work in progress, to be added to next release notes.
 
+___
+### v0.2.4
+
+- Fix for Transitioner race condition that causes Lua errors in complex configurations.
 - Code docs for navigators/createSwitchNavigator.
 
 ___
