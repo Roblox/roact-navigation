@@ -64,6 +64,9 @@ https://confluence.rbx.com/display/MOBAPP/Roact+Navigation
 * Perform Rust and Rojo setup steps as per "Running the Storybooks"
 * Build Rojo project `rojo build -o RoactNavigation.rbxm`.
 
+## Propagating changes from git to Perforce
+Documented in [Publish Roact-Navigation - From Git to Perforce](docs/PublishRoactNavigationFromGitToPerforce.md)
+
 ## Caveats/Concerns
 * Roact-Navigation is designed to work with pre-1.0 Roact (no bindings) to preserve maximum compatibility.
 * Otter version [9ad129e](https://github.com/Roblox/otter/commit/9ad129e70e103d0de71232a0d0e7a1527da7a51a) or later is required to avoid the motor:start() timing bugs.
