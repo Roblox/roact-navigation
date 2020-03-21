@@ -1,11 +1,11 @@
 [package]
 name = "roblox/roact-navigation"
-version = "0.2.4"
+version = "0.2.5"
 author = "Roblox"
 content_root = "src"
 
 [dependencies]
-Roact = "roblox/roact@1.2"
-Cryo = "roblox/cryo@1.0"
-Otter = "roblox/otter@0.1"
-StateTable = "roblox/state-table@0.1"
+Roact = "github.com/roblox/roact@1.2"
+Cryo = "github.com/roblox/cryo@1.0"
+Otter = "github.com/roblox/otter@0.1"
+StateTable = "github.com/roblox/state-table@0.1"
