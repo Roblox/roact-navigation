@@ -32,7 +32,7 @@ https://confluence.rbx.com/display/MOBAPP/Roact+Navigation
 * Run `rotrieve install`
 
 ### For development
-* Clone the repository, ex: `git clone https://github.rbx.com/Roblox/roact-navigation`.
+* Clone the repository, ex: `git clone https://github.com/Roblox/roact-navigation.git`.
 * Sync the required dev dependencies via submodules:  `git submodule update --init --recursive`
 * Run `rotrieve install` to sync the runtime dependencies.
 
