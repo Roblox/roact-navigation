@@ -5,6 +5,12 @@
 Work in progress, to be added to next release notes.
 
 ___
+### v0.2.5
+
+- Updated dependencies to switch to Rotriever 0.4.x's url dependencies
+- No changes to any functionality
+
+___
 ### v0.2.4
 
 - Fix for Transitioner race condition that causes Lua errors in complex configurations.
