@@ -1,10 +1,10 @@
 [package]
 name = "roact-navigation"
-version = "0.1.0"
+version = "0.1.1-linter-fix"
 author = "David Brooks"
 content_root = "src"
 
 [dependencies]
-Roact = { git = "https://github.rbx.com/pdoyle/roact-1x-migration" }
-Cryo = { git = "https://github.com/Roblox/cryo", rev = "roblox" }
-Otter = { git = "https://github.com/Roblox/Otter", rev = "master" }
+Roact = "github.com/roblox/roact@1.2"
+Cryo = "github.com/roblox/cryo@1.0"
+Otter = "github.com/roblox/otter@0.1"
