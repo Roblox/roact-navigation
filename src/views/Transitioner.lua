@@ -226,47 +226,36 @@ function Transitioner:_startTransition(props, nextProps)
 		-- positions via setState.
 		self:setState(nextState)
 
-		-- Must be spawned until we get async setState callback handler in Roact.
-		spawn(function()
-			if nextProps.onTransitionStart then
-				nextProps.onTransitionStart(self._transitionProps, self._prevTransitionProps)
-			end
+		if nextProps.onTransitionStart then
+			nextProps.onTransitionStart(self._transitionProps, self._prevTransitionProps)
+		end
 
-			if indexHasChanged then
-				position:setGoal(Otter.instant(toValue))
-				-- motor will call end for us
-			else
-				-- motor not running, need to end manually
-				self:_onTransitionEnd()
-			end
-		end)
+		-- motor will call _endTransition for us
+		position:setGoal(Otter.instant(toValue))
 	elseif isTransitioning then
 		self._isTransitionRunning = true
 		self:setState(nextState)
 
-		-- Must be spawned until we get async setState callback handler in Roact.
-		spawn(function()
-			if nextProps.onTransitionStart then
-				nextProps.onTransitionStart(self._transitionProps, self._prevTransitionProps)
-			end
-		end)
-
-		-- get transition spec
-		local transitionUserSpec = {}
-		if nextProps.configureTransition then
-			transitionUserSpec = nextProps.configureTransition(
-				self._transitionProps, self._prevTransitionProps) or {}
+		if nextProps.onTransitionStart then
+			nextProps.onTransitionStart(self._transitionProps, self._prevTransitionProps)
 		end
-
-		local transitionSpec = Cryo.Dictionary.join(DEFAULT_TRANSITION_SPEC, transitionUserSpec)
 
 		local positionHasChanged = self._positionLastValue ~= toValue
 		if indexHasChanged and positionHasChanged then
+			-- get transition spec
+			local transitionUserSpec = {}
+			if nextProps.configureTransition then
+				transitionUserSpec = nextProps.configureTransition(
+					self._transitionProps, self._prevTransitionProps) or {}
+			end
+
+			local transitionSpec = Cryo.Dictionary.join(DEFAULT_TRANSITION_SPEC, transitionUserSpec)
+
+			-- motor will call _endTransition for us
 			position:setGoal(Otter.spring(nextProps.navigation.state.index, transitionSpec))
-			-- motor will call end transition
 		else
-			-- motor not running, end transition manually
-			self:_onTransitionEnd()
+			-- Set motor to current state to trigger _endTransition call with correct sequencing.
+			position:setGoal(Otter.instant(nextProps.navigation.state.index))
 		end
 	end
 end
@@ -285,28 +274,30 @@ function Transitioner:_onTransitionEnd()
 
 	self:setState(nextState)
 
-	-- Must be spawned until we get async setState callback handler in Roact.
-	spawn(function()
-		if self.props.onTransitionEnd then
-			self.props.onTransitionEnd(self._transitionProps, prevTransitionProps)
-		end
+	if self.props.onTransitionEnd then
+		self.props.onTransitionEnd(self._transitionProps, prevTransitionProps)
+	end
 
-		local firstQueuedTransition = self._transitionQueue[1]
-		if firstQueuedTransition then
-			local prevProps = firstQueuedTransition.prevProps
-			self._transitionQueue = Cryo.List.removeIndex(self._transitionQueue, 1)
-			self:_startTransition(prevProps, self.props)
-		else
-			self._isTransitionRunning = false
-		end
-	end)
+	local firstQueuedTransition = self._transitionQueue[1]
+	if firstQueuedTransition then
+		local prevProps = firstQueuedTransition.prevProps
+		self._transitionQueue = Cryo.List.removeIndex(self._transitionQueue, 1)
+		self:_startTransition(prevProps, self.props)
+	else
+		self._isTransitionRunning = false
+	end
 end
 
 function Transitioner:_onPositionStep(value)
 	self._positionLastValue = value
 
-	local startingIndex = self._prevTransitionProps.index
 	local targetIndex = self._transitionProps.index
+
+	-- _prevTransitionProps can be nil, so guard against it.
+	local startingIndex = targetIndex
+	if self._prevTransitionProps then
+		startingIndex = self._prevTransitionProps.index
+	end
 
 	if self.props.onTransitionStep and startingIndex ~= targetIndex then
 		local transitionValue = (value - startingIndex) / (targetIndex - startingIndex)
