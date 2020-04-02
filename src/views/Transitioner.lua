@@ -81,6 +81,10 @@ function Transitioner:init()
 	self._transitionQueue = {}
 
 	self._completeSignalDisconnector = self.state.position:onComplete(function()
+		-- This spawn is required because of this Otter bug: https://github.com/Roblox/otter/issues/26
+		-- Otter.SingleMotor's step function calls onComplete before it calls stop(). This leaves their
+		-- __running=true, and the setGoal() in our _onTransitionEnd() does nothing. So the whole queue
+		-- handling just stops cold, and the transition never actually happens!
 		spawn(function()
 			if self._isMounted then
 				self:_onTransitionEnd()
@@ -89,11 +93,9 @@ function Transitioner:init()
 	end)
 
 	self._stepSignalDisconnector = self.state.position:onStep(function(value)
-		spawn(function()
-			if self._isMounted then
-				self:_onPositionStep(value)
-			end
-		end)
+		if self._isMounted then
+			self:_onPositionStep(value)
+		end
 	end)
 end
 
