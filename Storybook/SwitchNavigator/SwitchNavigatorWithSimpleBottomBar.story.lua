@@ -20,7 +20,7 @@ return function(target)
 	end
 
 	local function BarButtonItem(props)
-		local onActivated = props[Roact.Event.Activated]
+		local onActivated = props.onActivated
 		local selected = props.selected
 		local totalCount = props.totalCount
 		local index = props.index
@@ -63,7 +63,7 @@ return function(target)
 				totalCount = #tabOrder,
 				index = idx,
 				selected = idx == navigation.state.index,
-				[Roact.Event.Activated] = function()
+				onActivated = function()
 					navigation.navigate(pageName)
 				end,
 			}))
