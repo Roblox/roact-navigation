@@ -65,8 +65,6 @@ return function(target)
 		})
 	end
 
-	-- This is the top-level navigator. Note that child navigators are just Roact
-	-- Components attached like any other route.
 	local InnerNavigator = RoactNavigation.createStackNavigator({
 		routes = {
 			Master = {
@@ -86,10 +84,10 @@ return function(target)
 		initialRouteName = "Master",
 	})
 
-	local SimpleTopBackStackNavigator = Roact.Component:extend("SimpleTopBackStackNavigator")
-	SimpleTopBackStackNavigator.router = InnerNavigator.router
+	local SimpleTopBarStackNavigator = Roact.Component:extend("SimpleTopBarStackNavigator")
+	SimpleTopBarStackNavigator.router = InnerNavigator.router
 
-	function SimpleTopBackStackNavigator:render()
+	function SimpleTopBarStackNavigator:render()
 		local navigation = self.props.navigation
 		local options = RoactNavigation.getActiveChildNavigationOptions(navigation)
 		local activeKey = navigation.state.routes[navigation.state.index].key
@@ -127,7 +125,7 @@ return function(target)
 		})
 	end
 
-	local appContainer = RoactNavigation.createAppContainer(SimpleTopBackStackNavigator)
+	local appContainer = RoactNavigation.createAppContainer(SimpleTopBarStackNavigator)
 	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
 
 	return function()
