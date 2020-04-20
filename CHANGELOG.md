@@ -5,6 +5,8 @@ ___
 
 Work in progress, to be added to next release notes.
 
+* Fixed bug with navigationOptions.absorbInput on desktop.
+
 ___
 ### v0.2.6
 
