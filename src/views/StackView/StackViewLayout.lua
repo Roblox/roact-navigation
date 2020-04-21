@@ -132,17 +132,29 @@ function StackViewLayout:render()
 		end
 
 		-- Wrapper frame holds default/custom card background and the card content.
-		return Roact.createElement("TextButton", {
+		-- We MUST change from TextButton to Frame here when absorbInput=false because
+		-- of legacy behavior on desktop  for GuiObject.Active=false blocking mouse clicks
+		-- from falling through. (Active=false DOES work on mobile, but not desktop).
+		local sceneWrapperComponent = "Frame"
+		local sceneWrapperProps = {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundTransparency = 1,
-			AutoButtonColor = false,
 			BorderSizePixel = 0,
 			ClipsDescendants = true,
-			Text = " ",
 			ZIndex = scene.index,
 			Visible = not cardObscured,
-			Active = not cardObscured and absorbInput,
-		}, {
+		}
+
+		if not cardObscured and absorbInput then
+			sceneWrapperComponent = "TextButton"
+			sceneWrapperProps = Cryo.Dictionary.join(sceneWrapperProps, {
+				AutoButtonColor = false,
+				Text = " ",
+				Active = true,
+			})
+		end
+
+		return Roact.createElement(sceneWrapperComponent, sceneWrapperProps, {
 			StationaryContent = stationaryContent,
 			DynamicContent = Roact.createElement("Frame", {
 				Size = UDim2.new(1, 0, 1, 0),
