@@ -115,9 +115,6 @@ function StackViewLayout:render()
 		local absorbInput = screenOptions.absorbInput
 		local renderOverlay = screenOptions.renderOverlay
 
-		print("StackViewLayout: scene=" .. tostring(scene.descriptor.state.routeName) ..
-			", absorbInput=" .. tostring(absorbInput))
-
 		local stationaryContent = nil
 		if overlayEnabled then
 			stationaryContent = Roact.createElement("Frame", {
