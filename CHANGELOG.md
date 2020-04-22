@@ -6,6 +6,7 @@ ___
 Work in progress, to be added to next release notes.
 
 * Fixed bug with navigationOptions.absorbInput on desktop.
+* Fixed bug with passing arguments to getScreenProps() helper.
 
 ___
 ### v0.2.6
