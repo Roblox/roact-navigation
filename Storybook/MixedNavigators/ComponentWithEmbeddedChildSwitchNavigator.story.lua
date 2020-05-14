@@ -127,25 +127,65 @@ return function(target)
 					navigation = self.props.navigation,
 				}),
 			}),
+			backButton = Roact.createElement("TextButton", {
+				AnchorPoint = Vector2.new(0, 0),
+				BackgroundColor3 = Color3.new(1, 1, 1),
+				Font = Enum.Font.Gotham,
+				Position = UDim2.new(0, 10, 0, 0),
+				Size = UDim2.new(0, 100, 0.1, 0),
+				Text = "Back",
+				TextColor3 = Color3.new(0, 0, 0),
+				TextSize = 18,
+				[Roact.Event.Activated] = function()
+					self.props.navigation.goBack()
+				end,
+			}),
+			goToMasterButton = Roact.createElement("TextButton", {
+				AnchorPoint = Vector2.new(1, 0),
+				BackgroundColor3 = Color3.new(1, 1, 1),
+				Font = Enum.Font.Gotham,
+				Position = UDim2.new(1, -10, 0, 0),
+				Size = UDim2.new(0, 150, 0.1, 0),
+				Text = "Go to Master",
+				TextColor3 = Color3.new(0, 0, 0),
+				TextSize = 18,
+				[Roact.Event.Activated] = function()
+					self.props.navigation.navigate("Master")
+				end,
+			}),
 		})
 	end
 
 	local function MasterPage(props)
 		local navigation = props.navigation
+		local value = navigation.getParam("value", 0)
 		return Roact.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
 			Font = Enum.Font.Gotham,
-			Text = "Master Page",
+			Text = "Master Page: "..value,
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			detailButton = Roact.createElement("TextButton", {
+			masterButton = Roact.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
 				Position = UDim2.new(0.5, 0, 0.6, 0),
+				Size = UDim2.new(0, 160, 0, 30),
+				Text = "Go to Master",
+				TextColor3 = Color3.new(0, 0, 0),
+				TextSize = 18,
+				[Roact.Event.Activated] = function()
+					navigation.navigate("Master", { value = value + 1 })
+				end
+			}),
+			detailButton = Roact.createElement("TextButton", {
+				AnchorPoint = Vector2.new(0.5, 0),
+				BackgroundColor3 = Color3.new(1, 1, 1),
+				Font = Enum.Font.Gotham,
+				Position = UDim2.new(0.5, 0, 0.6, 30),
 				Size = UDim2.new(0, 160, 0, 30),
 				Text = "Go to Detail",
 				TextColor3 = Color3.new(0, 0, 0),

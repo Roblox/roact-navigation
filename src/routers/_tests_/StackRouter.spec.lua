@@ -867,6 +867,178 @@ return function()
 			expect(resultState.routes[2].params.a).to.equal(1)
 		end)
 
+		it("should jump to existing entry in stack if one exists already, on navigate, with empty params", function()
+			local router = StackRouter({
+				routes = {
+					Foo = function() end,
+					Bar = function() end,
+					City = function() end,
+				},
+				initialRouteName = "Foo",
+			})
+
+			local initialState = {
+				key = "root",
+				routes = {
+					[1] = {
+						routeName = "Foo",
+						key = "Foo",
+					},
+					[2] = {
+						routeName = "Bar",
+						key = "Bar",
+					},
+					[3] = {
+						routeName = "City",
+						key = "City",
+					},
+				},
+				index = 3,
+			}
+
+			local resultState = router.getStateForAction(NavigationActions.navigate({ routeName = "Bar" }), initialState)
+			expect(#resultState.routes).to.equal(2)
+			expect(resultState.index).to.equal(2)
+			expect(resultState.routes[2].routeName).to.equal("Bar")
+			expect(resultState.routes[2].params).to.equal(nil)
+		end)
+
+		it("should jump to existing entry in stack with existing params if params is not provided, on navigate", function()
+			local router = StackRouter({
+				routes = {
+					Foo = function() end,
+					Bar = function() end,
+					City = function() end,
+				},
+				initialRouteName = "Foo",
+			})
+
+			local initialState = {
+				key = "root",
+				routes = {
+					[1] = {
+						routeName = "Foo",
+						key = "Foo",
+					},
+					[2] = {
+						routeName = "Bar",
+						key = "Bar",
+						params = { a = 1 },
+					},
+					[3] = {
+						routeName = "City",
+						key = "City",
+					},
+				},
+				index = 3,
+			}
+
+			local resultState = router.getStateForAction(NavigationActions.navigate({ routeName = "Bar" }), initialState)
+			expect(#resultState.routes).to.equal(2)
+			expect(resultState.index).to.equal(2)
+			expect(resultState.routes[2].routeName).to.equal("Bar")
+			expect(resultState.routes[2].params.a).to.equal(1)
+		end)
+
+		it("should jump to existing entry in stack with updated params if params is provided, on navigate", function()
+			local router = StackRouter({
+				routes = {
+					Foo = function() end,
+					Bar = function() end,
+					City = function() end,
+				},
+				initialRouteName = "Foo",
+			})
+
+			local initialState = {
+				key = "root",
+				routes = {
+					[1] = {
+						routeName = "Foo",
+						key = "Foo",
+					},
+					[2] = {
+						routeName = "Bar",
+						key = "Bar",
+						params = { a = 1 },
+					},
+					[3] = {
+						routeName = "City",
+						key = "City",
+					},
+				},
+				index = 3,
+			}
+
+			local resultState = router.getStateForAction(NavigationActions.navigate({
+				routeName = "Bar",
+				params = { a = 2 },
+			}), initialState)
+			expect(#resultState.routes).to.equal(2)
+			expect(resultState.index).to.equal(2)
+			expect(resultState.routes[2].routeName).to.equal("Bar")
+			expect(resultState.routes[2].params.a).to.equal(2)
+		end)
+
+		it("should stay at current route in stack if navigate with different params", function()
+			local router = StackRouter({
+				routes = {
+					Foo = function() end,
+				},
+				initialRouteName = "Foo",
+			})
+
+			local initialState = {
+				key = "root",
+				routes = {
+					[1] = {
+						routeName = "Foo",
+						key = "Foo",
+					},
+				},
+				index = 1,
+			}
+
+			local resultState = router.getStateForAction(NavigationActions.navigate({
+				routeName = "Foo",
+				params = { a = 1 },
+			}), initialState)
+			expect(#resultState.routes).to.equal(1)
+			expect(resultState.index).to.equal(1)
+			expect(resultState.routes[1].routeName).to.equal("Foo")
+			expect(resultState.routes[1].params.a).to.equal(1)
+		end)
+
+		it("should stay at current route with existing params if navigate with empty params", function()
+			local router = StackRouter({
+				routes = {
+					Foo = function() end,
+				},
+				initialRouteName = "Foo",
+			})
+
+			local initialState = {
+				key = "root",
+				routes = {
+					[1] = {
+						routeName = "Foo",
+						key = "Foo",
+						params = { a = 1 },
+					},
+				},
+				index = 1,
+			}
+
+			local resultState = router.getStateForAction(NavigationActions.navigate({
+				routeName = "Foo",
+				params = {},
+			}), initialState)
+			expect(#resultState.routes).to.equal(1)
+			expect(resultState.index).to.equal(1)
+			expect(resultState.routes[1].routeName).to.equal("Foo")
+			expect(resultState.routes[1].params.a).to.equal(1)
+		end)
+
 		it("should always push new entry on push action even with pre-existing instance of that screen", function()
 			local router = StackRouter({
 				routes = {
@@ -959,6 +1131,27 @@ return function()
 			}))
 
 			expect(newState.routes[newState.index].params.a).to.equal(1)
+		end)
+
+		it("should set params on route for setParams action with empty params", function()
+			local router = StackRouter({
+				routes = {
+					Foo = {
+						screen = function() end,
+						params = { a = 1 },
+					},
+					Bar = { render = function() end },
+				},
+				initialRouteName = "Foo",
+				initialRouteKey = "FooKey",
+			})
+
+			local newState = router.getStateForAction(NavigationActions.setParams({
+				key = "FooKey",
+				params = {},
+			}))
+
+			expect(newState.routes[newState.index].params.a).to.equal(nil)
 		end)
 
 		it("should combine params from action and route config", function()
