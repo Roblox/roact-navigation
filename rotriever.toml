@@ -1,6 +1,6 @@
 [package]
 name = "roblox/roact-navigation"
-version = "0.2.6"
+version = "0.2.7"
 author = "Roblox"
 content_root = "src"
 

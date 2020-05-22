@@ -3,9 +3,9 @@
 	1. Update the CHANGELOG.md to list all the changes since the last tag
 	2. Create new annotated tag:
 		1. `$ cd roact-navigation `
-		2. `$ git tag -a v.0.x.y `
+		2. `$ git tag -a v0.x.y ` (Could do `$ git tag -l` to see what the most recent tags are)
 		3. list the information about all the changes since the last tag
-		4. `$ git push origin v.0.x.y `
+		4. `$ git push origin v0.x.y `
 2. **Build and Publish**
 	1. go to: https://teamcity.simulpong.com
 	2. select  **Projects** in top left corner
