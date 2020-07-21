@@ -3,6 +3,7 @@ return function()
 	local Element = require(game.CoreGui.RobloxGui.Modules.Rhodium.Element)
 	local XPath = require(game.CoreGui.RobloxGui.Modules.Rhodium.XPath)
 
+	local Cryo = require(script.Parent.Parent.Parent.Cryo)
 	local Roact = require(script.Parent.Parent.Parent.Roact)
 	local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 
@@ -105,14 +106,25 @@ return function()
 
 		-- wait for expected events to fire
 		trackNavigationEvents:waitForNumberEventsMaxWaitTime(4, 1)
-		-- did events occur in the expected order
-		expect(trackNavigationEvents:equalTo({
-			PageNavigationEvent.new(pageOneName, willBlurEvent),
-			PageNavigationEvent.new(pageTwoName, willFocusEvent),
-			PageNavigationEvent.new(pageOneName, didBlurEvent),
-			PageNavigationEvent.new(pageTwoName, didFocusEvent),
-		})).to.be.equal(true)
 
+		-- Did events occur in the expected order? There is no guarantee of order between
+		-- willFocus/willBlur or didFocus/didBlur because of Lua table order semantics, but
+		-- the "did" events should always land after the "will" events are both done.
+		local willEvents = Cryo.List.removeRange(trackNavigationEvents:getNavigationEvents(), 3, 4)
+		willEvents = Cryo.List.sort(willEvents, function(a, b)
+			return tostring(a.event) < tostring(b.event)
+		end)
+		expect(willEvents[1]:equalTo(PageNavigationEvent.new(pageOneName, willBlurEvent))).to.equal(true)
+		expect(willEvents[2]:equalTo(PageNavigationEvent.new(pageTwoName, willFocusEvent))).to.equal(true)
+
+		local didEvents = Cryo.List.removeRange(trackNavigationEvents:getNavigationEvents(), 1, 2)
+		didEvents = Cryo.List.sort(didEvents, function(a, b)
+			return tostring(a.event) < tostring(b.event)
+		end)
+		expect(didEvents[1]:equalTo(PageNavigationEvent.new(pageOneName, didBlurEvent))).to.equal(true)
+		expect(didEvents[2]:equalTo(PageNavigationEvent.new(pageTwoName, didFocusEvent))).to.equal(true)
+
+		-- Wait for new page to mount
 		local scene2ButtonElement = Element.new(scene2Path)
 		expect(scene2ButtonElement:waitForRbxInstance(1)).to.be.ok()
 		expect(scene2ButtonElement:getText()).to.equal(pageTwoName)
