@@ -6,6 +6,14 @@ ___
 Work in progress, to be added to next release notes.
 
 ___
+### v0.2.8
+
+* Fixed bug with nested child transitions where trying to animate more than one screen at 
+a time could result in errors.
+* Fixed bug that caused scenes to be spuriously remounted in stack navigation under some
+circumstances.
+
+___
 ### v0.2.7
 
 * Fixed bug with navigationOptions.absorbInput on desktop.
