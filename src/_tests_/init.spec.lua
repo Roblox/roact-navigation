@@ -18,17 +18,17 @@ return function()
 
 	it("should return an appropriate table for Context", function()
 		expect(type(RoactNavigation.Context)).to.equal("table")
-		expect(type(RoactNavigation.Context.Provider)).to.equal("table")
-		expect(type(RoactNavigation.Context.Consumer)).to.equal("table")
+		expect(type(RoactNavigation.Context.Provider)).to.equal("function")
+		expect(type(RoactNavigation.Context.Consumer)).to.equal("function")
 		expect(type(RoactNavigation.Context.connect)).to.equal("function")
 	end)
 
-	it("should return a table for Provider", function()
-		expect(type(RoactNavigation.Provider)).to.equal("table")
+	it("should return a function for Provider", function()
+		expect(type(RoactNavigation.Provider)).to.equal("function")
 	end)
 
-	it("should return a table for Consumer", function()
-		expect(type(RoactNavigation.Consumer)).to.equal("table")
+	it("should return a function for Consumer", function()
+		expect(type(RoactNavigation.Consumer)).to.equal("function")
 	end)
 
 	it("should return a function for connect", function()

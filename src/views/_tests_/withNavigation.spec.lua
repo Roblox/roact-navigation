@@ -31,4 +31,36 @@ return function()
 
 		expect(extractedNavigation).to.equal(testNavigation)
 	end)
+
+	it("should update with new navigation when navigation is updated", function()
+		local testNavigation = {}
+		local testNavigation2 = {}
+		local extractedNavigation = nil
+
+		local function Comp()
+			return withNavigation(function(nav)
+				extractedNavigation = nav
+			end)
+		end
+
+		local rootElement = Roact.createElement(AppNavigationContext.Provider, {
+			navigation = testNavigation,
+		}, {
+			Child = Roact.createElement(Comp)
+		})
+
+		local rootInstance = Roact.mount(rootElement)
+
+		local rootElement2 = Roact.createElement(AppNavigationContext.Provider, {
+			navigation = testNavigation2,
+		}, {
+			Child = Roact.createElement(Comp)
+		})
+
+		Roact.update(rootInstance, rootElement2)
+
+		Roact.unmount(rootInstance)
+
+		expect(extractedNavigation).to.equal(testNavigation2)
+	end)
 end

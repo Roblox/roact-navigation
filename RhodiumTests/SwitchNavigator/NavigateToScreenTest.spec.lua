@@ -40,7 +40,7 @@ return function()
 
 			local rootInstance = Roact.mount(appContainer, CoreGui, "RootContainer")
 
-			local buttonPath = XPath.new("game.CoreGui.RootContainer.AppContainer.card_PageOne.Content")
+			local buttonPath = XPath.new("game.CoreGui.RootContainer.AppComponent.card_PageOne.Scene")
 			local buttonElement = Element.new(buttonPath)
 
 			expect(buttonElement:waitForRbxInstance(1)).to.be.ok()
@@ -49,7 +49,7 @@ return function()
 			buttonElement:click()
 			wait()
 
-			local button2Path = XPath.new("game.CoreGui.RootContainer.AppContainer.card_PageTwo.Content")
+			local button2Path = XPath.new("game.CoreGui.RootContainer.AppComponent.card_PageTwo.Scene")
 			local newButtonElement = Element.new(button2Path)
 			expect(newButtonElement:waitForRbxInstance(1)).to.be.ok()
 			expect(newButtonElement:getText()).to.equal("PageTwo")

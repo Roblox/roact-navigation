@@ -1,35 +1,29 @@
 local Roact = require(script.Parent.Parent.Parent.Roact)
 local Cryo = require(script.Parent.Parent.Parent.Cryo)
-local NavigationSymbol = require(script.Parent.Parent.NavigationSymbol)
 local validate = require(script.Parent.Parent.utils.validate)
 
-local APP_NAVIGATION_CONTEXT = NavigationSymbol("APP_NAVIGATION_CONTEXT")
+local AppNavigationContext = Roact.createContext(nil)
 
 -- Provider
-local NavigationProvider = Roact.Component:extend("NavigationProvider")
-
-function NavigationProvider:init()
-	local navigation = self.props.navigation
-	validate(navigation ~= nil, "AppNavigationContext.Provider requires a 'navigation' prop.")
-	self._context[APP_NAVIGATION_CONTEXT] = { navigation = navigation }
-end
-
-function NavigationProvider:render()
-	return Roact.oneChild(self.props[Roact.Children])
+local function NavigationProvider(props)
+	validate(props.navigation ~= nil, "AppNavigationContext.Provider requires a 'navigation' prop.")
+	return Roact.createElement(AppNavigationContext.Provider,  {
+		value = props.navigation
+	}, props[Roact.Children])
 end
 
 -- Consumer
-local NavigationConsumer = Roact.Component:extend("NavigationConsumer")
+local function NavigationConsumer(props)
+	return Roact.createElement(AppNavigationContext.Consumer, {
+		render = function(navigation)
+			navigation = props.navigation or navigation
 
-function NavigationConsumer:render()
-	local renderProp = self.props.render
-	local context = self._context[APP_NAVIGATION_CONTEXT] or {}
-	local navigation = self.props.navigation or context.navigation
+			validate(props.render ~= nil, "AppNavigationContext.Consumer requires 'render' prop.")
+			validate(navigation ~= nil, "AppNavigationContext.Consumer requires a navigation prop or context entry.")
 
-	validate(renderProp ~= nil, "AppNavigationContext.Consumer requires 'render' prop.")
-	validate(navigation ~= nil, "AppNavigationContext.Consumer requires a navigation prop or context entry.")
-
-	return renderProp(navigation)
+			return props.render(navigation)
+		end,
+	})
 end
 
 -- Static connector
