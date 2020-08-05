@@ -9,3 +9,7 @@ Roact = "github.com/roblox/roact@1.2"
 Cryo = "github.com/roblox/cryo@1.0"
 Otter = "github.com/roblox/otter@0.1"
 StateTable = "github.com/roblox/state-table@0.1"
+
+[dev_dependencies]
+TestEZ = "github.com/roblox/testez@0.3"
+Rhodium = "github.com/roblox/rhodium@0.2.4"

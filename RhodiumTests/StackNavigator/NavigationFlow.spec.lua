@@ -1,14 +1,16 @@
 return function()
-	local CoreGui = game.CoreGui
-	local Element = require(game.CoreGui.RobloxGui.Modules.Rhodium.Element)
-	local XPath = require(game.CoreGui.RobloxGui.Modules.Rhodium.XPath)
+	local CoreGui = game:GetService("CoreGui")
+	local Element = Rhodium.Element
+	local XPath = Rhodium.XPath
 
-	local Cryo = require(script.Parent.Parent.Parent.Cryo)
-	local Roact = require(script.Parent.Parent.Parent.Roact)
-	local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+	local Packages = script.Parent.Parent.Parent.Packages
 
-	local TrackNavigationEvents = require(script.Parent.Parent.Parent.RoactNavigation.utils.TrackNavigationEvents)
-	local PageNavigationEvent = require(script.Parent.Parent.Parent.RoactNavigation.utils.PageNavigationEvent)
+	local Cryo = require(Packages.Cryo)
+	local Roact = require(Packages.Roact)
+	local RoactNavigation = require(Packages.RoactNavigation)
+
+	local TrackNavigationEvents = require(Packages.RoactNavigation.utils.TrackNavigationEvents)
+	local PageNavigationEvent = require(Packages.RoactNavigation.utils.PageNavigationEvent)
 
 	local pageOneName = "Page One"
 	local pageTwoName = "Page Two"

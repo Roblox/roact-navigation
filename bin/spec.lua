@@ -9,7 +9,6 @@
 -- If you add any non-Rotriever dependencies, add them to this table so they'll be loaded!
 local LOAD_MODULES = {
 	{"src", "roact-navigation"},
-	{"modules/testez/lib", "TestEZ"},
 }
 
 -- This makes sure we can load libraries that depend on init.lua, like Lemur.
@@ -37,7 +36,7 @@ local RoactNavigation = habitat:loadFromFs("src")
 RoactNavigation.Name = "roact-navigation"
 RoactNavigation.Parent = Packages
 
-local TestEZ = habitat:require(Packages.TestEZ)
+local TestEZ = habitat:require(Packages.Dev.TestEZ)
 
 -- Run all tests, collect results, and report to stdout.
 local results = TestEZ.TestBootstrap:run({ Packages["roact-navigation"] }, TestEZ.Reporters.TextReporter)

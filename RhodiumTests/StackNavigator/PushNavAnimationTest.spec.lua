@@ -1,10 +1,12 @@
 return function()
-	local CoreGui = game.CoreGui
-	local Element = require(game.CoreGui.RobloxGui.Modules.Rhodium.Element)
-	local XPath = require(game.CoreGui.RobloxGui.Modules.Rhodium.XPath)
+	local CoreGui = game:GetService("CoreGui")
+	local Element = Rhodium.Element
+	local XPath = Rhodium.XPath
 
-	local Roact = require(script.Parent.Parent.Parent.Roact)
-	local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+	local Packages = script.Parent.Parent.Parent.Packages
+
+	local Roact = require(Packages.Roact)
+	local RoactNavigation = require(Packages.RoactNavigation)
 
 	local function createButtonPage(pageName, clickTargetPageName)
 		return function(props)

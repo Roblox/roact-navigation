@@ -8,14 +8,11 @@
 
             "RoactNavigation": {
                 "$path": "src"
-            },
-
-            "Tests": {
-                "$path": "RhodiumTests"
-            },
-            "TestEZ": {
-                "$path": "modules/testez/lib"
             }
+        },
+
+        "Tests": {
+            "$path": "RhodiumTests"
         },
 
         "run-rhodium-test": {

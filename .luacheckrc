@@ -27,6 +27,7 @@ stds.testez = {
 		"it", "itFOCUS", "itSKIP",
 		"FOCUS", "SKIP", "HACK_NO_XPCALL",
 		"expect",
+		"Rhodium",
 	}
 }
 

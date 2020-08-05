@@ -1,9 +1,10 @@
-local TestEZ = require(script.Parent.Packages.TestEZ)
-local Tests = script.Parent.Packages.Tests
+local Packages = script.Parent.Packages
+local TestEZ = require(Packages.Dev.TestEZ)
+local Tests = script.Parent.Tests
 
 local dockWidgetInfo = DockWidgetPluginGuiInfo.new(
 	Enum.InitialDockState.Left,
-	true, false, 100, 100, 100, 100
+	true, true, 100, 100, 100, 100
 )
 
 local dockWidget = plugin:CreateDockWidgetPluginGui("RoactNavigationRhodiumRunner", dockWidgetInfo)
@@ -17,13 +18,14 @@ runButton.TextSize = 32
 runButton.Text = "Run Test"
 runButton.Parent = dockWidget
 
-local function runTest()
-	TestEZ.TestBootstrap:run({
-		Tests,
-	},
-	TestEZ.Reporters.TextReporter,
-	{
+local function runRhodiumTests()
+	local Rhodium = require(Packages.Dev.Rhodium)
+
+	TestEZ.TestBootstrap:run({Tests}, TestEZ.Reporters.TextReporter, {
 		noXpcallByDefault = true,
+		extraEnvironment = {
+			Rhodium = Rhodium,
+		}
 	})
 end
 
@@ -33,7 +35,7 @@ runButton.Activated:connect(function()
 
 	isRunning = true
 	runButton.Text = "Test running..."
-	runTest()
+	runRhodiumTests()
 	isRunning = false
 	runButton.Text = "Run Test"
 end)

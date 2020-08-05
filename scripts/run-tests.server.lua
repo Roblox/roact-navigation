@@ -1,7 +1,7 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local TestEZ = require(ReplicatedStorage.Modules.TestEZ)
+local TestEZ = require(ReplicatedStorage.Packages.Dev.TestEZ)
 
-local RoactNavigation = ReplicatedStorage.Modules.RoactNavigation
+local RoactNavigation = ReplicatedStorage.Packages.RoactNavigation
 
 TestEZ.TestBootstrap:run({ RoactNavigation }, TestEZ.Reporters.TextReporter)

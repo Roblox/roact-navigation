@@ -56,9 +56,9 @@ https://confluence.rbx.com/display/MOBAPP/Roact+Navigation
 ## Running the Rhodium tests
 * Perform Rust and Rojo setup steps as per "Running the Storybooks"
 * Build the Rhodium project `rojo build -o RoactNavigationRhodiumTestRunner.rbxm rhodium.project.json`.
-* Copy the test runner rbxm to your Roblox Studio installation's BuiltInPlugins directory.
-* Open any placefile (the storybook one is probably best).
-* Start game, and then click the "Run Tests" button that shows up in the left panel.
+* Copy the test runner rbxm to your Roblox Studio installation's BuiltInPlugins directory. Make sure the plugin is [signed](https://confluence.rbx.com/pages/viewpage.action?spaceKey=DEVSRVC&title=Signing+built-in+plugins+locally+on+your+development+machine)
+* Open any placefile.
+* Click the "Run Tests" button that shows up in the left panel.
 
 ## Building the rbxm library module
 * Perform Rust and Rojo setup steps as per "Running the Storybooks"
