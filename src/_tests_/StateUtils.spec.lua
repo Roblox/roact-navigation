@@ -4,7 +4,7 @@ return function()
 	local StateUtils = require(script.Parent.Parent.StateUtils)
 
 	local utils = script.Parent.Parent.utils
-	local assertDeepEqual = require(utils.assertDeepEqual)
+	local expectDeepEqual = require(utils.expectDeepEqual)
 
 	local routeName = "Anything"
 
@@ -20,7 +20,7 @@ return function()
 				},
 			}
 
-			assertDeepEqual(
+			expectDeepEqual(
 				StateUtils.get(state, "a"),
 				{
 					key = "a",
@@ -75,7 +75,7 @@ return function()
 				},
 			}
 
-			assertDeepEqual(
+			expectDeepEqual(
 				StateUtils.push(state, { key = "b", routeName = routeName }),
 				newState
 			)
@@ -109,7 +109,7 @@ return function()
 				isTransitioning = false,
 			}
 
-			assertDeepEqual(StateUtils.pop(state), newState)
+			expectDeepEqual(StateUtils.pop(state), newState)
 		end)
 
 		-- WILLFIX(deviation)
@@ -120,7 +120,7 @@ return function()
 				isTransitioning = false,
 			}
 
-			assertDeepEqual(
+			expectDeepEqual(
 				StateUtils.pop(state),
 				state
 			)
@@ -144,11 +144,11 @@ return function()
 				isTransitioning = false,
 			}
 
-			assertDeepEqual(
+			expectDeepEqual(
 				StateUtils.jumpToIndex(state, 1),
 				state
 			)
-			assertDeepEqual(
+			expectDeepEqual(
 				StateUtils.jumpToIndex(state, 2),
 				newState
 			)
@@ -188,11 +188,11 @@ return function()
 				isTransitioning = false,
 			}
 
-			assertDeepEqual(
+			expectDeepEqual(
 				StateUtils.jumpTo(state, "a"),
 				state
 			)
-			assertDeepEqual(
+			expectDeepEqual(
 				StateUtils.jumpTo(state, "b"),
 				newState
 			)
@@ -231,11 +231,11 @@ return function()
 				isTransitioning = false,
 			}
 
-			assertDeepEqual(
+			expectDeepEqual(
 				StateUtils.back(state),
 				newState
 			)
-			assertDeepEqual(
+			expectDeepEqual(
 				StateUtils.back(newState),
 				newState
 			)
@@ -258,11 +258,11 @@ return function()
 				},
 				isTransitioning = false,
 			}
-			assertDeepEqual(
+			expectDeepEqual(
 				StateUtils.forward(state),
 				newState
 			)
-			assertDeepEqual(
+			expectDeepEqual(
 				StateUtils.forward(newState),
 				newState
 			)
@@ -286,7 +286,7 @@ return function()
 				isTransitioning = false,
 			}
 
-			assertDeepEqual(
+			expectDeepEqual(
 				StateUtils.replaceAt(state, "b", { key = "c", routeName = routeName }),
 				newState
 			)
@@ -310,7 +310,7 @@ return function()
 				isTransitioning = false,
 			}
 
-			assertDeepEqual(
+			expectDeepEqual(
 				StateUtils.replaceAtIndex(state, 2, { key = "c", routeName = routeName }),
 				newState
 			)
@@ -326,7 +326,7 @@ return function()
 				isTransitioning = false,
 			}
 
-			assertDeepEqual(
+			expectDeepEqual(
 				StateUtils.replaceAtIndex(state, 2, state.routes[2]),
 				{
 					index = 2,
@@ -358,7 +358,7 @@ return function()
 				isTransitioning = false,
 			}
 
-			assertDeepEqual(
+			expectDeepEqual(
 				StateUtils.reset(state, {
 					{ key = "x", routeName = routeName },
 					{ key = "y", routeName = routeName },
@@ -389,7 +389,7 @@ return function()
 				isTransitioning = false,
 			}
 
-			assertDeepEqual(
+			expectDeepEqual(
 				StateUtils.reset(state, {
 					{ key = "x", routeName = routeName },
 					{ key = "y", routeName = routeName },
