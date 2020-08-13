@@ -61,6 +61,71 @@ function TableUtilities.ShallowEqual(A, B, ignore)
 	return true
 end
 
+local function formatDeepEqualMessage(message, level)
+	if level ~= 0 then
+		return message
+	end
+
+	return message
+		:gsub("{1}", "first")
+		:gsub("{2}", "second")
+end
+
+--[[
+	Takes two tables A and B, returns if they have the same key-value pairs recursively
+]]
+function TableUtilities.DeepEqual(a, b, level)
+	level = level or 0
+	if a == b then
+		return true
+	end
+
+	if typeof(a) ~= typeof(b) then
+		local message = ("{1} is of type %s, but {2} is of type %s"):format(
+			typeof(a),
+			typeof(b)
+		)
+
+		return false, formatDeepEqualMessage(message, level)
+	end
+
+	if typeof(a) == "table" then
+		local visitedKeys = {}
+
+		for key, value in pairs(a) do
+			visitedKeys[key] = true
+
+			local success, innerMessage = TableUtilities.DeepEqual(value, b[key], level + 1)
+			if not success then
+				local message = innerMessage
+					:gsub("{1}", ("{1}[%s]"):format(tostring(key)))
+					:gsub("{2}", ("{2}[%s]"):format(tostring(key)))
+
+				return false, formatDeepEqualMessage(message, level)
+			end
+		end
+
+		for key, value in pairs(b) do
+			if not visitedKeys[key] then
+				local success, innerMessage = TableUtilities.DeepEqual(value, a[key], level + 1)
+
+				if not success then
+					local message = innerMessage
+						:gsub("{1}", ("{1}[%s]"):format(tostring(key)))
+						:gsub("{2}", ("{2}[%s]"):format(tostring(key)))
+
+					return false, formatDeepEqualMessage(message, level)
+				end
+			end
+		end
+
+		return true
+	end
+
+	local message = "{1} ~= {2}"
+	return false, formatDeepEqualMessage(message, level)
+end
+
 --[[
 	Takes two tables A, B and a key, returns if two tables have the same value at key
 ]]
