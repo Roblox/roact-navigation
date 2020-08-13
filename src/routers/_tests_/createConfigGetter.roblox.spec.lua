@@ -4,7 +4,7 @@ return function()
 
 	it("should return a function", function()
 		local result = createConfigGetter({}, {})
-		expect(type(result)).to.equal("function")
+		expect(result).to.be.a("function")
 	end)
 
 	it("should return a screen config when called", function()
