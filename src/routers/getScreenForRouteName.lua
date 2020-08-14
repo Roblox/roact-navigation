@@ -8,7 +8,22 @@ return function(routeConfigs, routeName)
 	validate(type(routeName) == "string", "routeName must be a string")
 
 	local routeConfig = routeConfigs[routeName]
-	validate(routeConfig ~= nil, "There is no route defined for key '%s'.", routeName)
+
+	if routeConfig == nil then
+		local possibleRoutes = {}
+		local possibleRouteCount = 0
+
+		for name in pairs(routeConfigs) do
+			possibleRouteCount = possibleRouteCount + 1
+			possibleRoutes[possibleRouteCount] = ("'%s'"):format(name)
+		end
+
+		local message = ("There is no route defined for key %s.\nMust be one of: %s"):format(
+			routeName,
+			table.concat(possibleRoutes, ",")
+		)
+		error(message, 2)
+	end
 
 	local routeConfigType = type(routeConfig)
 

@@ -18,14 +18,15 @@ return function()
 	end)
 
 	it("should throw if requested route is not present within table", function()
-		local status, err = pcall(function()
+		local function shouldThrow()
 			getScreenForRouteName({
 				notMyRoute = function() return "foo" end
 			}, "myRoute")
-		end)
+		end
 
-		expect(status).to.equal(false)
-		expect(string.find(err, "There is no route defined for key 'myRoute'.")).to.never.equal(nil)
+		expect(shouldThrow).to.throw(
+			"There is no route defined for key myRoute.\nMust be one of: 'notMyRoute'"
+		)
 	end)
 
 	it("should return raw table if screen and getScreen are not props", function()
