@@ -104,5 +104,12 @@ return function()
 			expect(successA).to.equal(false)
 			expect(successB).to.equal(false)
 		end)
+
+		it("should give the appropriate message if the second table has extra fields", function()
+			local success, message = TableUtilities.DeepEqual({}, { foo = 1 })
+
+			expect(success).to.equal(false)
+			expect(message).to.equal("first[foo] is of type nil, but second[foo] is of type number")
+		end)
 	end)
 end

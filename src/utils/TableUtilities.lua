@@ -107,7 +107,7 @@ function TableUtilities.DeepEqual(a, b, level)
 
 		for key, value in pairs(b) do
 			if not visitedKeys[key] then
-				local success, innerMessage = TableUtilities.DeepEqual(value, a[key], level + 1)
+				local success, innerMessage = TableUtilities.DeepEqual(a[key], value, level + 1)
 
 				if not success then
 					local message = innerMessage
