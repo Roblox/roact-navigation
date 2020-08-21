@@ -165,11 +165,11 @@ return function()
 		expect(sceneTwo.isActive).to.be.equal(false)
 		expect(sceneTwo.isStale).to.be.equal(false)
 
-		local sceneTwo = scenes[3]
-		expect(sceneTwo.route).to.be.equal(thirdRoute)
-		expect(sceneTwo.index).to.be.equal(3)
-		expect(sceneTwo.isActive).to.be.equal(true)
-		expect(sceneTwo.isStale).to.be.equal(false)
+		local sceneThree = scenes[3]
+		expect(sceneThree.route).to.be.equal(thirdRoute)
+		expect(sceneThree.index).to.be.equal(3)
+		expect(sceneThree.isActive).to.be.equal(true)
+		expect(sceneThree.isStale).to.be.equal(false)
 
 		thirdScenes = scenes
 	end)

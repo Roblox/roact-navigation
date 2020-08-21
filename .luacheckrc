@@ -37,6 +37,8 @@ ignore = {
 
 std = "lua51+roblox"
 
+max_comment_line_length = false
+
 files["**/*.spec.lua"] = {
 	std = "+testez",
 }

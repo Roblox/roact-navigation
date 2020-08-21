@@ -39,7 +39,10 @@ RoactNavigation.Parent = Packages
 local TestEZ = habitat:require(Packages.Dev.TestEZ)
 
 -- Run all tests, collect results, and report to stdout.
-local results = TestEZ.TestBootstrap:run({ Packages["roact-navigation"] }, TestEZ.Reporters.TextReporter)
+local results = TestEZ.TestBootstrap:run(
+	{ Packages["roact-navigation"] },
+	TestEZ.Reporters.TextReporterQuiet
+)
 
 if results.failureCount > 0 then
 	-- If something went wrong, explicitly terminate with a failure error code

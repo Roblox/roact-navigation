@@ -36,8 +36,11 @@ return function()
 		end
 
 		local testPageNavigationEvent = PageNavigationEvent.new(testPage, willFocusEvent)
-		expect(testPageNavigationEvent:equalTo(PageNavigationEvent.new(testPage, willFocusEvent))).to.be.equal(true)
-		expect(testPageNavigationEvent:equalTo(PageNavigationEvent.new(testPage .. "bogus", willFocusEvent))).to.be.equal(false)
-		expect(testPageNavigationEvent:equalTo(PageNavigationEvent.new(testPage, RoactNavigation.Events.WillBlur))).to.be.equal(false)
+		local willFocus = PageNavigationEvent.new(testPage, willFocusEvent)
+		expect(testPageNavigationEvent:equalTo(willFocus)).to.be.equal(true)
+		local bogusWillFocus = PageNavigationEvent.new(testPage .. "bogus", willFocusEvent)
+		expect(testPageNavigationEvent:equalTo(bogusWillFocus)).to.be.equal(false)
+		local willBlur = PageNavigationEvent.new(testPage, RoactNavigation.Events.WillBlur)
+		expect(testPageNavigationEvent:equalTo(willBlur)).to.be.equal(false)
 	end)
 end
