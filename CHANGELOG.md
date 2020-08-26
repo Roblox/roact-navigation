@@ -5,10 +5,12 @@ ___
 
 Work in progress, to be added to next release notes.
 
+* Refactor TabRouter, SwitchRouter, StackRouter, createStackNavigator and createSwitchNagivator API. Previous API is deprecated but still supported. ([#27](https://github.com/Roblox/roact-navigation/pull/27))
+
 ___
 ### v0.2.8
 
-* Fixed bug with nested child transitions where trying to animate more than one screen at 
+* Fixed bug with nested child transitions where trying to animate more than one screen at
 a time could result in errors.
 * Fixed bug that caused scenes to be spuriously remounted in stack navigation under some
 circumstances.

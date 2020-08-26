@@ -1,3 +1,4 @@
+-- upstream https://github.com/react-navigation/react-navigation/blob/fcd7d83c4c33ad1fa508c8cfe687d2fa259bfc2c/packages/core/src/navigators/createSwitchNavigator.js
 local Cryo = require(script.Parent.Parent.Parent.Cryo)
 local createNavigator = require(script.Parent.createNavigator)
 local SwitchRouter = require(script.Parent.Parent.routers.SwitchRouter)
@@ -18,10 +19,14 @@ local SwitchView = require(script.Parent.Parent.views.SwitchView)
 			Set to BackBehavior.InitialRoute to allow a goBack() operation to return to the
 			initial route name. By default, the SwitchNavigator will not do anything on a back action.
 ]]
-return function(config)
-	local router = SwitchRouter(config)
-	return createNavigator(SwitchView, router, Cryo.Dictionary.join(config, {
-		routes = Cryo.None, -- navigator config doesn't need routes, remove from props
-	}))
-end
+return function(routeArray, switchConfig)
+	local router = SwitchRouter(routeArray, switchConfig)
 
+	if routeArray.routes then
+		switchConfig = Cryo.Dictionary.join(routeArray, {
+			routes = Cryo.None,
+		})
+	end
+
+	return createNavigator(SwitchView, router, switchConfig or {})
+end

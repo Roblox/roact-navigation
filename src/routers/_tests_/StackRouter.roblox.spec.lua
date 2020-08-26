@@ -3,8 +3,6 @@ return function()
 	local NavigationActions = require(script.Parent.Parent.Parent.NavigationActions)
 	local StackActions = require(script.Parent.Parent.Parent.StackActions)
 
-	-- local TableUtilities = require(script.Parent.Parent.Parent.utils.TableUtilities)
-
 	local function expectError(functor, msg)
 		local status, err = pcall(functor)
 
@@ -21,9 +19,9 @@ return function()
 	end)
 
 	it("should throw when passed a non-table", function()
-		expectError(function()
+		expect(function()
 			StackRouter(5)
-		end, "config must be a table")
+		end).to.throw("routeConfigs must be a table")
 	end)
 
 	it("should throw for invalid routes config", function()

@@ -19,9 +19,9 @@ return function()
 	end)
 
 	it("should throw when passed a non-table", function()
-		expectError(function()
+		expect(function()
 			SwitchRouter(5)
-		end, "config must be a table")
+		end).to.throw("routeConfigs must be a table")
 	end)
 
 	it("should throw for invalid routes config", function()

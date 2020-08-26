@@ -1,7 +1,6 @@
 -- upstream https://github.com/react-navigation/react-navigation/blob/fcd7d83c4c33ad1fa508c8cfe687d2fa259bfc2c/packages/core/src/routers/__tests__/SwitchRouter.test.js
 
 return function()
-
 	local Root = script.Parent.Parent.Parent
 	local Packages = Root.Parent
 	local Roact = require(Packages.Roact)
@@ -57,7 +56,7 @@ return function()
 	end
 
 	describe("SwitchRouter", function()
-		itSKIP("resets the route when unfocusing a tab by default", function()
+		it("resets the route when unfocusing a tab by default", function()
 			local helper = getRouterTestHelper(getExampleRouter())
 			local navigateTo = helper.navigateTo
 			local getState = helper.getState
@@ -71,7 +70,7 @@ return function()
 			expect(#getState().routes[1].routes).to.equal(1)
 		end)
 
-		itSKIP("does not reset the route on unfocus if resetOnBlur is false", function()
+		it("does not reset the route on unfocus if resetOnBlur is false", function()
 			local helper = getRouterTestHelper(getExampleRouter({resetOnBlur = false}))
 			local navigateTo = helper.navigateTo
 			local getState = helper.getState
@@ -353,7 +352,7 @@ return function()
 			expect(getSubState(2).routeName).to.equal("B1")
 		end)
 
-		itSKIP("handles nested actions", function()
+		it("handles nested actions", function()
 			local helper = getRouterTestHelper(getExampleRouter())
 			local navigateTo = helper.navigateTo
 			local getSubState = helper.getSubState
@@ -368,17 +367,13 @@ return function()
 			expect(getSubState(2).routeName).to.equal("B2")
 		end)
 
-		itSKIP("handles nested actions and params simultaneously", function()
+		it("handles nested actions and params simultaneously", function()
 			local helper = getRouterTestHelper(getExampleRouter())
 			local navigateTo = helper.navigateTo
 			local getSubState = helper.getSubState
 
-			local params1 = {
-				foo = "bar",
-			}
-			local params2 = {
-				bar = "baz",
-			}
+			local params1 = { foo = "bar" }
+			local params2 = { bar = "baz" }
 
 			navigateTo("B", {
 				params = params1,
@@ -394,8 +389,7 @@ return function()
 			expectDeepEqual(getSubState(2).params, params2)
 		end)
 
-		-- deviation: SwitchRouter API not compatible
-		itSKIP("order of handling navigate action is correct for nested switchrouters", function()
+		it("order of handling navigate action is correct for nested switchrouters", function()
 			-- router = switch({ Nested: switch({ Foo, Bar }), Other: switch({ Foo }), Bar })
 			-- if we are focused on Other and navigate to Bar, what should happen?
 
@@ -444,9 +438,8 @@ return function()
 			expect(getSubState(2).routeName).to.equal("Bar")
 		end)
 
-		-- deviation: SwitchRouter API not compatible
 		-- https://github.com/react-navigation/react-navigation.github.io/issues/117#issuecomment-385597628
-		itSKIP("order of handling navigate action is correct for nested stackrouters", function()
+		it("order of handling navigate action is correct for nested stackrouters", function()
 			local function Screen()
 				return Roact.createElement("Frame")
 			end
@@ -484,7 +477,7 @@ return function()
 			expect(getSubState(1).routeName).to.equal("Home")
 		end)
 
-		itSKIP("does not error for a nested navigate action in an uninitialized history router", function()
+		it("does not error for a nested navigate action in an uninitialized history router", function()
 			local helper = getRouterTestHelper(getExampleRouter({
 				backBehavior = "history",
 			}), {skipInitializeState = true})
@@ -492,13 +485,10 @@ return function()
 			local getSubState = helper.getSubState
 
 			navigateTo("B", {
-				action = NavigationActions.navigate({
-					routeName = "B2",
-				}),
+				action = NavigationActions.navigate({ routeName = "B2" }),
 			})
 			expect(getSubState(1).routeName).to.equal("B")
 			expect(getSubState(2).routeName).to.equal("B2")
 		end)
 	end)
-
 end

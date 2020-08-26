@@ -4,7 +4,9 @@ local BackBehavior = require(script.Parent.Parent.BackBehavior)
 local getScreenForRouteName = require(script.Parent.getScreenForRouteName)
 local createConfigGetter = require(script.Parent.createConfigGetter)
 local validateRouteConfigMap = require(script.Parent.validateRouteConfigMap)
+local validateRouteConfigArray = require(script.Parent.validateRouteConfigArray)
 local validate = require(script.Parent.Parent.utils.validate)
+local showDeprecatedRouterMessage = require(script.Parent.showDeprecatedRouterMessage)
 
 local defaultActionCreators = function() return {} end
 
@@ -45,23 +47,49 @@ local function getParamsForRoute(routeConfigs, routeName, initialParams)
 	end
 end
 
+local function mapToRouteName(element)
+	local routeName = next(element)
+	return routeName
+end
 
-return function(config)
-	validate(type(config) == "table", "config must be a table")
+local function foldToRoutes(routes, element)
+	local routeName, value = next(element)
+	routes[routeName] = value
+	return routes
+end
 
-	local routeConfigs = validateRouteConfigMap(config.routes)
+return function(routeArray, config)
+	validate(type(routeArray) == "table", "routeConfigs must be a table")
+	if config == nil and routeArray.routes ~= nil then
+		showDeprecatedRouterMessage("SwitchRouter")
+		validate(type(routeArray) == "table", "config must be a table")
+		validate(routeArray.initialRouteName, "initialRouteName must be provided")
+
+		config = Cryo.Dictionary.join(routeArray, { routes = Cryo.None })
+
+		local order = routeArray.order or Cryo.Dictionary.keys(routeArray.routes)
+		routeArray = Cryo.List.map(order, function(routeName)
+			return { [routeName] = routeArray.routes[routeName] }
+		end)
+	end
+
+	validateRouteConfigArray(routeArray)
+	config = config or {}
+	local routeConfigs = validateRouteConfigMap(
+		Cryo.List.foldLeft(routeArray, foldToRoutes, {})
+	)
 
 	-- Order is how we map the active index into the list of possible routes.
 	-- Lua does not guarantee any sense of order of table keys in dictionaries, so
-	-- we have to require the initialRouteName parameter instead defaulting to the
-	-- first route in the map.
-	local order = config.order or Cryo.Dictionary.keys(routeConfigs)
+	-- we have to deviate from react-navigation SwitchRouter API. Instead of using a
+	-- map for the routeConfigs, we wrap each key-value pair into its own table so that
+	-- routeConfigs becomes an array (i.e. { { Foo = Screen }, { Bar = Screen } }).
+	local order = config.order or Cryo.List.map(routeArray, mapToRouteName)
 
 	local getCustomActionCreators = config.getCustomActionCreators or defaultActionCreators
 	local initialRouteParams = config.initialRouteParams or {}
 
-	local initialRouteName = validate(config.initialRouteName,
-		"initialRouteName must be provided")
+	local initialRouteName = config.initialRouteName or order[1]
 
 	local backBehavior = config.backBehavior or BackBehavior.None
 	local backShouldNavigateToInitialRoute = backBehavior == BackBehavior.InitialRoute

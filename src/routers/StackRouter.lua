@@ -5,10 +5,12 @@ local KeyGenerator = require(script.Parent.Parent.utils.KeyGenerator)
 local StateUtils = require(script.Parent.Parent.StateUtils)
 local getScreenForRouteName = require(script.Parent.getScreenForRouteName)
 local createConfigGetter = require(script.Parent.createConfigGetter)
+local validateRouteConfigArray = require(script.Parent.validateRouteConfigArray)
 local validateRouteConfigMap = require(script.Parent.validateRouteConfigMap)
 local validate = require(script.Parent.Parent.utils.validate)
 local NavigationSymbol = require(script.Parent.Parent.NavigationSymbol)
 local NoneSymbol = require(script.Parent.Parent.NoneSymbol)
+local showDeprecatedRouterMessage = require(script.Parent.showDeprecatedRouterMessage)
 
 local STACK_ROUTER_ROOT_KEY = "StackRouterRoot"
 local CHILD_IS_SCREEN = NavigationSymbol("CHILD_IS_SCREEN")
@@ -24,11 +26,39 @@ local function isResetToRootStack(action)
 	return action.type == StackActions.Reset and action.key == NoneSymbol
 end
 
-return function(config)
-	validate(type(config) == "table", "config must be a table")
+local function mapToRouteName(element)
+	local routeName = next(element)
+	return routeName
+end
 
-	local routeConfigs = validateRouteConfigMap(config.routes)
-	local routeNames = Cryo.Dictionary.keys(routeConfigs)
+local function foldToRoutes(routes, element, index)
+	local routeName, value = next(element)
+	routes[routeName] = value
+	return routes
+end
+
+return function(routeArray, config)
+	validate(type(routeArray) == "table", "routeConfigs must be a table")
+	if config == nil and routeArray.routes ~= nil then
+		showDeprecatedRouterMessage("StackRouter")
+		validate(type(routeArray) == "table", "config must be a table")
+		validate(routeArray.initialRouteName, "initialRouteName must be provided")
+
+		config = Cryo.Dictionary.join(routeArray, { routes = Cryo.None })
+
+		local order = routeArray.order or Cryo.Dictionary.keys(routeArray.routes)
+		routeArray = Cryo.List.map(order, function(routeName)
+			return { [routeName] = routeArray.routes[routeName] }
+		end)
+	end
+
+	validateRouteConfigArray(routeArray)
+	config = config or {}
+	local routeConfigs = validateRouteConfigMap(
+		Cryo.List.foldLeft(routeArray, foldToRoutes, {})
+	)
+
+	local routeNames = config.order or Cryo.List.map(routeArray, mapToRouteName)
 
 	-- find child child routers
 	local childRouters = {}
@@ -47,7 +77,7 @@ return function(config)
 	local getCustomActionCreators = config.getCustomActionCreators or defaultActionCreators
 
 	local initialRouteParams = config.initialRouteParams or {}
-	local initialRouteName = validate(config.initialRouteName, "initialRouteName must be provided")
+	local initialRouteName = config.initialRouteName or routeNames[1]
 
 	local initialRouteIndex = Cryo.List.find(routeNames, initialRouteName)
 
