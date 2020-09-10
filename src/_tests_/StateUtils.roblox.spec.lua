@@ -283,19 +283,6 @@ return function()
 			expect(newState).to.equal(initialState)
 		end)
 
-		it("should return empty state if popping one route", function()
-			local initialState = {
-				index = 1,
-				routes = {
-					{ routeName = "route", key = "route-1", },
-				},
-			}
-
-			local newState = StateUtils.pop(initialState)
-			expect(newState.index).to.equal(0)
-			expect(#newState.routes).to.equal(0)
-		end)
-
 		it("should remove top route if popping with more than one route", function()
 			local initialState = {
 				index = 2,

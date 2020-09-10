@@ -92,7 +92,7 @@ function StateUtils.push(state, route)
 	assert(type(route) == "table", "route must be a table")
 
 	assert(StateUtils.indexOf(state, route.key) == nil,
-		string.format("route with key '%s' already exists", route.key))
+		("should not push route with duplicated key %s"):format(route.key))
 
 	local routes = Cryo.List.join(state.routes, { route })
 	return Cryo.Dictionary.join(state, {
@@ -106,8 +106,8 @@ end
 function StateUtils.pop(state)
 	assert(type(state) == "table", "state must be a table")
 
-	if #state.routes == 0 then
-		-- NOTE: Popping empty state is a no-op
+	if state.index <= 1 then
+		-- [Note]: Over-popping does not throw error. Instead, it will be no-op.
 		return state
 	end
 
@@ -127,8 +127,7 @@ function StateUtils.jumpToIndex(state, index)
 		return state
 	end
 
-	assert(state.routes[index] ~= nil,
-		string.format("cannot jump to out-of-range index '%d'", index))
+	assert(state.routes[index] ~= nil, ("invalid index %d to jump to"):format(index))
 
 	return Cryo.Dictionary.join(state, {
 		index = index,
@@ -250,8 +249,7 @@ function StateUtils.reset(state, routes, index)
 		end
 	end
 
-	assert(routes[nextIndex] ~= nil,
-		string.format("cannot reset index '%d' that does not exist", nextIndex))
+	assert(routes[nextIndex] ~= nil, ("invalid index %d to reset"):format(nextIndex))
 
 	return Cryo.Dictionary.join(state, {
 		index = nextIndex,
