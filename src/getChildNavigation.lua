@@ -1,3 +1,5 @@
+-- upstream https://github.com/react-navigation/react-navigation/blob/72e8160537954af40f1b070aa91ef45fc02bba69/packages/core/src/getChildNavigation.js
+
 local Cryo = require(script.Parent.Parent.Cryo)
 local getChildEventSubscriber = require(script.Parent.getChildEventSubscriber)
 local getChildRouter = require(script.Parent.routers.getChildRouter)
@@ -7,24 +9,26 @@ local getChildrenNavigationCache = require(script.Parent.getChildrenNavigationCa
 local function createParamGetter(route)
 	return function(paramName, defaultValue)
 		local params = route.params
-		return params and params[paramName] or defaultValue
+
+		if params and params[paramName] ~= nil then
+			return params[paramName]
+		else
+			return defaultValue
+		end
 	end
 end
 
 local function getChildNavigation(navigation, childKey, getCurrentParentNavigation)
 	local children = getChildrenNavigationCache(navigation)
 
-	local childRoute = nil
-	for _, route in ipairs(navigation.state.routes) do
-		if route.key == childKey then
-			childRoute = route
-			break
-		end
-	end
+	local childRouteIndex = Cryo.List.findWhere(navigation.state.routes, function(route)
+		return route.key == childKey
+	end)
 
-	if not childRoute then
+	if not childRouteIndex then
 		return nil
 	end
+	local childRoute = navigation.state.routes[childRouteIndex]
 
 	local requestedChild = children[childKey]
 
@@ -50,17 +54,26 @@ local function getChildNavigation(navigation, childKey, getCurrentParentNavigati
 		navigation.actions or {},
 		navigation.router.getActionCreators(childRoute, navigation.state.key) or {},
 		childRouterActionCreators or {},
-		getNavigationActionCreators(childRoute) or {})
+		getNavigationActionCreators(childRoute) or {}
+	)
 
 	local actionHelpers = {}
-	for key, creator in pairs(actionCreators) do
-		actionHelpers[key] = function(...)
-			local action = creator(...)
+	for actionName, actionCreator in pairs(actionCreators) do
+		actionHelpers[actionName] = function(...)
+			local action = actionCreator(...)
 			return navigation.dispatch(action)
 		end
 	end
 
-	if requestedChild then
+	local isFirstRouteInParent = true;
+
+	local parentNavigation = getCurrentParentNavigation();
+
+	if parentNavigation then
+		isFirstRouteInParent = Cryo.List.find(parentNavigation.state.routes, childRoute) == 1;
+	end
+
+	if requestedChild and requestedChild.isFirstRouteInParent() == isFirstRouteInParent then
 		-- Update cache value for requestedChild because child's state has changed
 		children[childKey] = Cryo.Dictionary.join(requestedChild, actionHelpers, {
 			state = childRoute,
@@ -91,19 +104,26 @@ local function getChildNavigation(navigation, childKey, getCurrentParentNavigati
 					return false
 				end
 
-				local state = currentNavigation.state
-				local routes = state.routes
-				local index = state.index
-
 				if not currentNavigation.isFocused() then
 					return false
 				end
 
-				-- If we're transitioning to this state then we are NOT focused until the transition is over.
-				return (routes[index].key == childKey and state.isTransitioning ~= true) or false
+				local state = currentNavigation.state
+				local routes = state.routes
+				local index = state.index
+
+				if routes[index].key == childKey then
+					return true
+				end
+
+				return false
+			end,
+			isFirstRouteInParent = function()
+				return isFirstRouteInParent
 			end,
 			dispatch = navigation.dispatch,
 			getScreenProps = navigation.getScreenProps,
+			-- deviation: `dangerouslyGetParent` function removed (deprecated in future)
 			addListener = childSubscriber.addListener,
 			emit = childSubscriber.emit,
 		})

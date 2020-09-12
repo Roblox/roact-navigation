@@ -53,11 +53,14 @@ return function()
 				getComponentForRouteName = function(routeName)
 					return function() end
 				end,
-				getActionCreators = function() end
-			}
+				getActionCreators = function() end,
+			},
 		}
 
 		local oldStateA = {
+			isFirstRouteInParent = function()
+				return true
+			end,
 			state  = {
 				routes = {
 					{ key = "a", routeName = "a" },
@@ -68,7 +71,7 @@ return function()
 		}
 
 		testNavigation._childrenNavigation = {
-			a = oldStateA
+			a = oldStateA,
 		}
 
 		local childNav = getChildNavigation(testNavigation, "a", function()

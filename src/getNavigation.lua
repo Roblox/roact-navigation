@@ -1,3 +1,5 @@
+-- upstream https://github.com/react-navigation/react-navigation/blob/72e8160537954af40f1b070aa91ef45fc02bba69/packages/core/src/getNavigation.js
+
 local Cryo = require(script.Parent.Parent.Cryo)
 local NavigationEvents = require(script.Parent.NavigationEvents)
 local getNavigationActionCreators = require(script.Parent.routers.getNavigationActionCreators)
@@ -13,6 +15,10 @@ return function(router, state, dispatch, actionSubscribers, getScreenProps, getC
 		state = state,
 		dispatch = dispatch,
 		getScreenProps = getScreenProps,
+		-- deviation: `dangerouslyGetParent` function removed (deprecated in future)
+		isFirstRouteInParent = function()
+			return true
+		end,
 		_childrenNavigation = getChildrenNavigationCache(getCurrentNavigation()),
 	}
 
@@ -21,10 +27,11 @@ return function(router, state, dispatch, actionSubscribers, getScreenProps, getC
 	end
 
 	function navigation.isFocused(childKey)
-		local routes = getCurrentNavigation().state.routes
-		local index = getCurrentNavigation().state.index
+		local currentState = getCurrentNavigation().state
+		local routes = currentState.routes
+		local index = currentState.index
 
-		return not childKey or routes[index].key == childKey
+		return childKey == nil or routes[index].key == childKey
 	end
 
 	function navigation.addListener(event, handler)
