@@ -9,7 +9,6 @@ return function()
 	local StackRouter = require(script.Parent.Parent.StackRouter)
 	local TabRouter = require(script.Parent.Parent.TabRouter)
 	local SwitchRouter = require(script.Parent.Parent.SwitchRouter)
-	local StackActions = require(Root.StackActions)
 	local NavigationActions = require(Root.NavigationActions)
 	local KeyGenerator = require(Root.utils.KeyGenerator)
 	local expectDeepEqual = require(Root.utils.expectDeepEqual)
@@ -124,8 +123,7 @@ return function()
 				expect(state0.routes[state0.index].params.foo).to.equal(42)
 			end)
 
-			-- deviation: wrong key for first route
-			itSKIP("merges existing params when set params on existing state", function()
+			it("merges existing params when set params on existing state", function()
 				local function Screen()
 					return Roact.createElement("Frame")
 				end
@@ -150,8 +148,7 @@ return function()
 				expectDeepEqual(newState.routes[newState.index].params, { a = 1, b = 2 })
 			end)
 
-			-- deviation: params `b` not merged for StackRouter
-			itSKIP("merges params when setting params during init", function()
+			it("merges params when setting params during init", function()
 				local function Screen()
 					return Roact.createElement("Frame")
 				end
@@ -487,7 +484,8 @@ return function()
 
 		local stateAfterCompleteTransition = TestRouter.getStateForAction(
 			{
-				type = StackActions.CompleteTransition,
+				-- deviation: `StackActions.CompleteTransition` is in NavigationActions
+				type = NavigationActions.CompleteTransition,
 				preserveFocus = true,
 				key = state2.routes[1].key,
 			},

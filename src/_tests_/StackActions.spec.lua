@@ -1,6 +1,12 @@
 return function()
 	local StackActions = require(script.Parent.Parent.StackActions)
 
+	it("throws when indexing an unknown field", function()
+		expect(function()
+			return StackActions.foo
+		end).to.throw("\"foo\" is not a valid member of StackActions")
+	end)
+
 	describe("StackActions token tests", function()
 		it("should return same object for each token for multiple calls", function()
 			expect(StackActions.Pop).to.equal(StackActions.Pop)

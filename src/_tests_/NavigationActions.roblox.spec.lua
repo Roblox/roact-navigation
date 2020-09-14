@@ -1,6 +1,12 @@
 return function()
 	local NavigationActions = require(script.Parent.Parent.NavigationActions)
 
+	it("throws when indexing an unknown field", function()
+		expect(function()
+			return NavigationActions.foo
+		end).to.throw("\"foo\" is not a valid member of NavigationActions")
+	end)
+
 	describe("NavigationActions token tests", function()
 		it("should return same object for each token for multiple calls", function()
 			expect(NavigationActions.Back).to.equal(NavigationActions.Back)

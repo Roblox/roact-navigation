@@ -570,19 +570,15 @@ return function()
 
 			expect(#poppedState2.routes).to.equal(2)
 			expect(poppedState2.index).to.equal(2)
-			-- deviation: `isTransitioning` prop does not match
-			-- expect(poppedState2.isTransitioning).to.equal(false)
+			expect(poppedState2.isTransitioning).to.equal(false)
 
-			-- luacheck: ignore
 			local poppedState3 = TestRouter.getStateForAction(
 				StackActions.pop({ n = 5 }),
 				state
 			)
-			-- deviation: pop action does not pop the correct amount of routes
-			-- expect(#poppedState3.routes).to.equal(1)
-			-- expect(poppedState3.index).to.equal(1)
-			-- expect(poppedState3.isTransitioning).to.equal(true)
-
+			expect(#poppedState3.routes).to.equal(1)
+			expect(poppedState3.index).to.equal(1)
+			expect(poppedState3.isTransitioning).to.equal(true)
 			local poppedState4 = TestRouter.getStateForAction(
 				StackActions.pop({ key = "C", prune = false, immediate = true }),
 				state
@@ -590,14 +586,12 @@ return function()
 
 			expect(#poppedState4.routes).to.equal(3)
 			expect(poppedState4.index).to.equal(3)
-			-- deviation: pop does not remove the correct routes and `isTransitioning`
-			-- prop does not match
-			-- expect(poppedState4.isTransitioning).to.equal(false)
-			-- expectDeepEqual(poppedState4.routes, {
-			-- 	{ key = "A", routeName = "foo" },
-			-- 	{ key = "B", routeName = "bar", params = { bazId = "321" } },
-			-- 	{ key = "D", routeName = "bar" },
-			-- })
+			expect(poppedState4.isTransitioning).to.equal(false)
+			expectDeepEqual(poppedState4.routes, {
+				{ key = "A", routeName = "foo" },
+				{ key = "B", routeName = "bar", params = { bazId = "321" } },
+				{ key = "D", routeName = "bar" },
+			})
 
 			local poppedState5 = TestRouter.getStateForAction(StackActions.pop({
 				n = 2,
@@ -607,13 +601,11 @@ return function()
 
 			expect(#poppedState5.routes).to.equal(2)
 			expect(poppedState5.index).to.equal(2)
-			-- deviation: pop does not remove the correct routes and `isTransitioning`
-			-- prop does not match
-			-- expect(poppedState5.isTransitioning).to.equal(true)
-			-- expectDeepEqual(poppedState5.routes, {
-			-- 	{ key = "A", routeName = "foo" },
-			-- 	{ key = "D", routeName = "bar" },
-			-- })
+			expect(poppedState5.isTransitioning).to.equal(true)
+			expectDeepEqual(poppedState5.routes, {
+				{ key = "A", routeName = "foo" },
+				{ key = "D", routeName = "bar" },
+			})
 		end)
 
 		it("popToTop works as expected", function()
@@ -647,8 +639,7 @@ return function()
 
 			expect(#poppedImmediatelyState.routes).to.equal(1)
 			expect(poppedImmediatelyState.index).to.equal(1)
-			-- deviation: `isTransitioning` is true instead of false
-			-- expect(poppedImmediatelyState.isTransitioning).to.equal(false)
+			expect(poppedImmediatelyState.isTransitioning).to.equal(false)
 		end)
 
 		it("Navigate does not push duplicate routeName", function()
@@ -710,8 +701,7 @@ return function()
 			expect(fooState.routes[1].routeName).to.equal("foo")
 		end)
 
-		-- deviation: after navigating to duplicate route name, state is nil
-		itSKIP("Navigate pushes duplicate routeName if unique key is provided", function()
+		it("Navigate pushes duplicate routeName if unique key is provided", function()
 			local TestRouter = StackRouter({
 				{ foo = { screen = function() return Roact.createElement("Frame") end } },
 				{ bar = { screen = function() return Roact.createElement("Frame") end } },
@@ -933,22 +923,20 @@ return function()
 				NavigationActions.navigate({ routeName = "bar", key = "b`" }),
 				pushedState
 			)
-			-- luacheck: ignore
 			local pushedThriceState = TestRouter.getStateForAction(
 				NavigationActions.navigate({ routeName = "foo", key = "c`" }),
 				pushedTwiceState
 			)
 
-			-- deviation: `pushedThriceState` is nil`
-			-- expect(#pushedThriceState.routes).to.equal(4)`
+			expect(#pushedThriceState.routes).to.equal(4)
 
-			-- local navigatedBackToFirstRouteState = TestRouter.getStateForAction(NavigationActions.navigate({
-			-- 	routeName = "foo",
-			-- 	key = pushedThriceState.routes[1].key,
-			-- }), pushedThriceState)
+			local navigatedBackToFirstRouteState = TestRouter.getStateForAction(NavigationActions.navigate({
+				routeName = "foo",
+				key = pushedThriceState.routes[1].key,
+			}), pushedThriceState)
 
-			-- expect(navigatedBackToFirstRouteState.index).to.equal(1)
-			-- expect(#navigatedBackToFirstRouteState.routes).to.equal(1)
+			expect(navigatedBackToFirstRouteState.index).to.equal(1)
+			expect(#navigatedBackToFirstRouteState.routes).to.equal(1)
 		end)
 
 		it("Handle basic stack logic for plain components", function()
@@ -1000,8 +988,7 @@ return function()
 			})
 		end)
 
-		-- deviation: getStateForAction returns nil if navigating from no state
-		itSKIP("Replace action works", function()
+		it("Replace action works", function()
 			local TestRouter = StackRouter({
 				{ foo = { screen = function() return Roact.createElement("Frame") end } },
 				{ bar = { screen = function() return Roact.createElement("Frame") end } },
@@ -1184,8 +1171,7 @@ return function()
 			expect(outputState.isTransitioning).to.equal(true)
 		end)
 
-		-- deviation: expected testState.index to be 3 but got 2
-		itSKIP("Back action parent is prioritized over inactive child routers", function()
+		it("Back action parent is prioritized over inactive child routers", function()
 			local Bar = Roact.Component:extend("Bar")
 			function Bar:render()
 				return Roact.createElement("Frame")
@@ -1203,7 +1189,7 @@ return function()
 			})
 			local state = {
 				key = "top",
-				index = 3,
+				index = 4,
 				routes = {
 					{ routeName = "foo", key = "f" },
 					{
@@ -1393,8 +1379,7 @@ return function()
 			})
 		end)
 
-		-- deviation: params get map directly into the state (instead of inside of params prop)
-		itSKIP("Initial route params appear in nav state", function()
+		it("Initial route params appear in nav state", function()
 			local function FooScreen()
 				return Roact.createElement("Frame")
 			end
@@ -1420,8 +1405,7 @@ return function()
 			})
 		end)
 
-		-- deviation: params get map directly into the state (instead of inside of params prop)
-		itSKIP("params in route config are merged with initialRouteParams", function()
+		it("params in route config are merged with initialRouteParams", function()
 			local function FooScreen()
 				return Roact.createElement("Frame")
 			end
@@ -1662,12 +1646,10 @@ return function()
 
 			expect(state2 and state2.index).to.equal(1)
 			expect(state2 and state2.routes[1].routeName).to.equal("Foo")
-			-- deviation: state2.routes[1].routes[1].routeName is equal to "Foo"
-			-- expect(state2 and state2.routes[1].routes[1].routeName).to.equal("baz")
+			expect(state2 and state2.routes[1].routes[1].routeName).to.equal("baz")
 		end)
 
-		-- deviation: state4.routes[1].routeName is equal to Foo
-		itSKIP("Handles the reset action with a key", function()
+		it("Handles the reset action with a key", function()
 			local ChildRouter = StackRouter({
 				{ baz = { screen = function() return Roact.createElement("Frame") end } },
 			})
@@ -1734,21 +1716,23 @@ return function()
 
 			local router = StackRouter({
 				{ Foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ Bar = {screen = ChildNavigator} },
+				{ Bar = { screen = ChildNavigator } },
 			})
 			local state = router.getStateForAction({ type = NavigationActions.Init })
-			local state2 = router.getStateForAction({
-				type = NavigationActions.Navigate,
-				immediate = true,
-				routeName = "Bar",
-				params = { foo = "42" },
-			}, state)
+			local state2 = router.getStateForAction(
+				{
+					type = NavigationActions.Navigate,
+					immediate = true,
+					routeName = "Bar",
+					params = { foo = "42" },
+				},
+				state
+			)
 
 			expectDeepEqual(state2 and state2.routes[2].params, { foo = "42" })
 			expect(state2 and state2.routes[2].routes[1]).to.be.ok()
 			expect(state2.routes[2].routes[1].routeName).to.equal("Baz")
-			-- deviation: state2.routes[2].routes[1].params is nil
-			-- expectDeepEqual(state2.routes[2].routes[1].params, { foo = "42" })
+			expectDeepEqual(state2.routes[2].routes[1].params, { foo = "42" })
 		end)
 
 		it("Navigate action to previous nested StackRouter causes isTransitioning start", function()
@@ -1782,8 +1766,7 @@ return function()
 			expect(state2.isTransitioning).to.equal(true)
 		end)
 
-		-- deviation: state.routes[1].routes[1].params is nil
-		itSKIP("Handles the navigate action with params and nested StackRouter as a first action", function()
+		it("Handles the navigate action with params and nested StackRouter as a first action", function()
 			local state = TestStackRouter.getStateForAction({
 				type = NavigationActions.Navigate,
 				routeName = "main",
@@ -1925,15 +1908,15 @@ return function()
 			expect(not not key).to.equal(true)
 
 			local state3 = router.getStateForAction({
-				type = StackActions.CompleteTransition,
+				-- deviation: `StackActions.CompleteTransition` is in NavigationActions
+				type = NavigationActions.CompleteTransition,
 				toChildKey = state2.routes[1].routes[2].key,
 			}, state2)
 
 			expect(state3 and state3.index).to.equal(1)
 			expect(state3 and state3.isTransitioning).to.equal(false)
 			expect(state3 and state3.routes[1].index).to.equal(2)
-			-- deviation: isTransitioning should be false
-			-- expect(state3 and state3.routes[1].isTransitioning).to.equal(false)
+			expect(state3 and state3.routes[1].isTransitioning).to.equal(false)
 		end)
 
 		it("order of handling navigate action is correct for nested stackrouters", function()

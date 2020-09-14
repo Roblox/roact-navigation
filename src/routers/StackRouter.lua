@@ -9,10 +9,12 @@ local validateRouteConfigArray = require(script.Parent.validateRouteConfigArray)
 local validateRouteConfigMap = require(script.Parent.validateRouteConfigMap)
 local validate = require(script.Parent.Parent.utils.validate)
 local NavigationSymbol = require(script.Parent.Parent.NavigationSymbol)
-local NoneSymbol = require(script.Parent.Parent.NoneSymbol)
 local showDeprecatedRouterMessage = require(script.Parent.showDeprecatedRouterMessage)
 
 local STACK_ROUTER_ROOT_KEY = "StackRouterRoot"
+-- This symbol is used to differentiate if a router has a child router
+-- or if is a regular Roact component. React-navigation does it by using
+-- undefined vs. null (that's why we need)
 local CHILD_IS_SCREEN = NavigationSymbol("CHILD_IS_SCREEN")
 
 local defaultActionCreators = function() return {} end
@@ -23,7 +25,7 @@ local function behavesLikePushAction(action)
 end
 
 local function isResetToRootStack(action)
-	return action.type == StackActions.Reset and action.key == NoneSymbol
+	return action.type == StackActions.Reset and action.key == nil
 end
 
 local function mapToRouteName(element)
@@ -60,12 +62,17 @@ return function(routeArray, config)
 
 	local routeNames = config.order or Cryo.List.map(routeArray, mapToRouteName)
 
-	-- find child child routers
+	-- Loop through routes and find child routers
 	local childRouters = {}
 	for _, routeName in ipairs(routeNames) do
-		local screen = getScreenForRouteName(routeConfigs, routeName)
+		-- We're not using `getScreenForRouteName` here to preserve the lazy loading
+		-- behaviour of routes. This means that routes with child routers must be
+		-- defined using a component directly or with an object with a screen prop.
+		local routeConfig = routeConfigs[routeName]
+		local screen = (type(routeConfig) == "table" and routeConfig.screen)
+			and routeConfig.screen or routeConfig
 		if type(screen) == "table" and screen.router then
-			-- if it has a router then it's a navigator
+			-- If it has a router it's a navigator.
 			childRouters[routeName] = screen.router
 		else
 			-- TODO: This is a hack to make this code behave like React-Navigation's usage of
@@ -74,13 +81,14 @@ return function(routeArray, config)
 		end
 	end
 
+	local initialRouteParams = config.initialRouteParams
 	local getCustomActionCreators = config.getCustomActionCreators or defaultActionCreators
 
-	local initialRouteParams = config.initialRouteParams or {}
 	local initialRouteName = config.initialRouteName or routeNames[1]
 
-	local initialRouteIndex = Cryo.List.find(routeNames, initialRouteName)
+	local initialChildRouter = childRouters[initialRouteName]
 
+	local initialRouteIndex = Cryo.List.find(routeNames, initialRouteName)
 	-- dump an error if initialRouteName is not in routes.
 	if initialRouteIndex == nil then
 		local availableRouteStr = ""
@@ -91,30 +99,62 @@ return function(routeArray, config)
 		error(string.format("Invalid initialRouteName '%s'. Must be one of [%s]", initialRouteName, availableRouteStr), 2)
 	end
 
-	local initialChildRouter = childRouters[initialRouteName]
-
-	local function getInitialState()
+	local function getInitialState(action)
 		local route = {}
+		local childRouter = childRouters[action.routeName]
 
+		-- This is a push-like action, and childRouter will be a router or null
+		-- if we are responsible for this routeName
+		if behavesLikePushAction(action) and childRouter ~= nil then
+			local childState = {}
+
+			-- The router is 'CHILD_IS_SCREEN' for normal leaf routes
+			if childRouter ~= CHILD_IS_SCREEN then
+				local childAction = action.action
+					or NavigationActions.init({ params = action.params })
+				childState = childRouter.getStateForAction(childAction)
+			end
+
+			return {
+				key = STACK_ROUTER_ROOT_KEY,
+				isTransitioning = false,
+				index = 1,
+				routes = {
+					Cryo.Dictionary.join({ params = action.params }, childState, {
+						key = action.key or KeyGenerator.generateKey(),
+						routeName = action.routeName,
+					})
+				}
+			}
+		end
+
+		-- we need to check if initialChildRouter is not CHILD_IS_SCREEN because
+		-- of the divergence with react-navigation.
 		if initialChildRouter ~= nil and initialChildRouter ~= CHILD_IS_SCREEN then
-			route = initialChildRouter.getStateForAction(NavigationActions.init({
+			route = initialChildRouter.getStateForAction(NavigationActions.navigate({
+				routeName = initialRouteName,
 				params = initialRouteParams,
 			}))
 		end
 
 		local initialRouteConfig = routeConfigs[initialRouteName]
-		local initialRouteConfigParams = type(initialRouteConfig) == "table" and initialRouteConfig.params or {}
+		-- we need to check if the routeConfig is a table because functions can't be
+		-- indexed in Lua.
+		local initialRouteConfigParams = type(initialRouteConfig) == "table" and initialRouteConfig.params
 
-		local params = Cryo.Dictionary.join(
-			initialRouteConfigParams, -- params set in routes table!
-			route.params or {},
-			initialRouteParams or {} -- params provided at top level
-		)
+		local params = (initialRouteConfigParams or route.params or action.params or initialRouteParams)
+			and Cryo.Dictionary.join(
+				initialRouteConfigParams or {}, -- params set in routes table!
+				route.params or {},
+				action.params or {},
+				initialRouteParams or {} -- params provided at top level
+			)
 
 		local initialRouteKey = config.initialRouteKey
-		route = Cryo.Dictionary.join(route, params, {
+		route = Cryo.Dictionary.join(route, {
+			params = params,
 			routeName = initialRouteName,
-			key = initialRouteKey or KeyGenerator.generateKey()
+			key = action.key or initialRouteKey or KeyGenerator.generateKey()
 		})
 
 		return {
@@ -127,6 +167,8 @@ return function(routeArray, config)
 
 	local function getParamsForRouteAndAction(routeName, action)
 		local routeConfig = routeConfigs[routeName]
+		-- we need to check if the routeConfig is a table because functions can't be
+		-- indexed in Lua.
 		if type(routeConfig) == "table" and routeConfig.params then
 			return Cryo.Dictionary.join(routeConfig.params, action.params)
 		else
@@ -156,6 +198,8 @@ return function(routeArray, config)
 			"valid stack index.", state.index)
 
 		local childRouter = childRouters[routeName]
+		-- we need to check if initialChildRouter is not CHILD_IS_SCREEN because
+		-- of the divergence with react-navigation.
 		if childRouter ~= nil and childRouter ~= CHILD_IS_SCREEN then
 			return childRouters[routeName].getComponentForState(activeChildRoute)
 		end
@@ -224,11 +268,14 @@ return function(routeArray, config)
 
 	function StackRouter.getStateForAction(action, state)
 		-- Set up initial state if needed
-		state = state or getInitialState()
+		if not state then
+			return getInitialState(action)
+		end
 
 		local activeChildRoute = state.routes[state.index]
 
 		if not isResetToRootStack(action) and action.type ~= NavigationActions.Navigate then
+			-- Let the active child router handle the action
 			local activeChildRouter = childRouters[activeChildRoute.routeName]
 			if activeChildRouter ~= nil and activeChildRouter ~= CHILD_IS_SCREEN then
 				local route = activeChildRouter.getStateForAction(action, activeChildRoute)
@@ -237,12 +284,16 @@ return function(routeArray, config)
 						state,
 						activeChildRoute.key,
 						route,
-						action.type == NavigationActions.SetParams -- don't change index for setParam action
+						-- the following tells replaceAt to NOT change the index to this
+						-- route for the setParam action, because people don't expect
+						-- param-setting actions to switch the active route
+						action.type == NavigationActions.SetParams
 					)
 				end
 			end
 		elseif action.type == NavigationActions.Navigate then
-			-- Traverse routes from top of the stack to the bottom; active route has first opportunity
+			-- Traverse routes from the top of the stack to the bottom, so the
+			-- active route has the first opportunity, then the one before it, etc.
 			for i = #state.routes, 1, -1 do
 				local childRoute = state.routes[i]
 				local childRouter = childRouters[childRoute.routeName]
@@ -251,6 +302,8 @@ return function(routeArray, config)
 					childAction = action.action
 				end
 
+				-- we need to check if initialChildRouter is not CHILD_IS_SCREEN because
+				-- of the divergence with react-navigation.
 				if childRouter ~= nil and childRouter ~= CHILD_IS_SCREEN then
 					local nextRouteState = childRouter.getStateForAction(childAction, childRoute)
 					if nextRouteState == nil or nextRouteState ~= childRoute then
@@ -275,32 +328,35 @@ return function(routeArray, config)
 
 		-- Handle push and navigation actions. This must happen after focused child router
 		-- has had its chance to handle the action.
+		-- If a router equals `nil` it means that it is not a childRouter or a screen.
 		if behavesLikePushAction(action) and childRouters[action.routeName] ~= nil then
 			local childRouter = childRouters[action.routeName]
 			validate(action.type ~= StackActions.Push or action.key == nil,
 				"StackRouter does not support key on the push action")
 
-			-- Before pushing new route, try to find existing one in the stack.
-			local lastRouteIndex = nil
-			for idx, route in ipairs(state.routes) do
-				if (action.key and route.key == action.key) or (route.routeName == action.routeName) then
-					lastRouteIndex = idx
-					break
+			-- Before pushing a new route we first try to find one in the existing route stack
+			-- More information on this: https://github.com/react-navigation/rfcs/blob/master/text/0004-less-pushy-navigate.md
+			local findRoute = function(route)
+				return route.routeName == action.routeName
+			end
+			if action.key then
+				findRoute = function(route)
+					return route.key == action.key
 				end
 			end
+			local lastRouteIndex = Cryo.List.findWhere(state.routes, findRoute)
 
-			-- An instance of this route exists already and we're dealing with a Navigate action.
+			-- An instance of this route exists already and we're dealing with a navigate action.
 			if action.type ~= StackActions.Push and lastRouteIndex ~= nil then
-				-- If index or params have not changed, leave state alone
+				-- If index is unchanged and params are not being set, leave state identity intact
 				if state.index == lastRouteIndex and not action.params then
 					return nil
 				end
 
-				-- Remove unused routes at tail
-				local tailIndex = state.index == lastRouteIndex and lastRouteIndex or lastRouteIndex + 1
-				local routes = Cryo.List.removeRange(state.routes, tailIndex, #state.routes)
+				-- Remove the now unused routes at the tail of the routes array
+				local routes = Cryo.List.getRange(state.routes, 1, lastRouteIndex)
 
-				-- Apply params if provided
+				-- Apply params if provided, otherwise leave route identity intact
 				if action.params then
 					local route = state.routes[lastRouteIndex]
 					routes[lastRouteIndex] = Cryo.Dictionary.join(route, {
@@ -323,54 +379,57 @@ return function(routeArray, config)
 
 			local route
 			if childRouter ~= CHILD_IS_SCREEN then
-				-- Delegate to child router
+				-- Delegate to the child router with the given action, or init it
 				local childAction = action.action or NavigationActions.init({
 					params = getParamsForRouteAndAction(action.routeName, action)
 				})
 
 				route = Cryo.Dictionary.join({
-					-- TODO: Does it make sense to wipe out the params here, or to incorporate params at all?
+					-- does it make sense to wipe out the params here? or even to
+					-- add params at all? need more info about what this solves
 					params = getParamsForRouteAndAction(action.routeName, action),
 				}, childRouter.getStateForAction(childAction), {
 					routeName = action.routeName,
 					key = action.key or KeyGenerator.generateKey(),
 				})
 			else
-				-- Create new route from scratch
+				-- Create the route from scratch
 				route = {
 					params = getParamsForRouteAndAction(action.routeName, action),
 					routeName = action.routeName,
 					key = action.key or KeyGenerator.generateKey(),
 				}
-
 			end
 
 			return Cryo.Dictionary.join(StateUtils.push(state, route), {
 				isTransitioning = action.immediate ~= true,
 			})
 		elseif action.type == StackActions.Push and childRouters[action.routeName] == nil then
-			-- Return original state to bubble the action up
+			-- Return the state identity to bubble the action up
 			return state
 		end
 
-		-- Handle navigation to other child routers that are not pushed yet.
+		-- Handle navigation to other child routers that are not yet pushed
 		if behavesLikePushAction(action) then
 			local childRouterNames = Cryo.Dictionary.keys(childRouters)
 			for _, childRouterName in ipairs(childRouterNames) do
 				local childRouter = childRouters[childRouterName]
+
+				-- we need to check if initialChildRouter is not CHILD_IS_SCREEN because
+				-- of the divergence with react-navigation.
 				if childRouter ~= nil and childRouter ~= CHILD_IS_SCREEN then
-					-- Start with blank state for each child router
+					-- For each child router, start with a blank state
 					local initChildRoute = childRouter.getStateForAction(NavigationActions.init())
 
-					-- Check to see if it handles our action
+					-- Then check to see if the router handles our navigate action
 					local navigatedChildRoute = childRouter.getStateForAction(action, initChildRoute)
 
 					local routeToPush = nil
 					if navigatedChildRoute == nil then
-						-- Push initial route if the router returned nil when handling action
+						-- Push the route if the router has 'handled' the action and returned null
 						routeToPush = initChildRoute
 					elseif navigatedChildRoute ~= initChildRoute then
-						-- Push new route if state changed in response to this action
+						-- Push the route if the state has changed in response to this navigation
 						routeToPush = navigatedChildRoute
 					end
 
@@ -388,45 +447,46 @@ return function(routeArray, config)
 			end
 		end
 
-		-- Handle pop-to-top behavior. This must happen after children have had a chance to handle
-		-- the action, so that the inner stack always pops first.
+		-- Handle pop-to-top behavior. Make sure this happens after children have had a
+		-- chance to handle the action, so that the inner stack pops to top first.
 		if action.type == StackActions.PopToTop then
-			-- Refuse to handle pop to top if a key is given that does not correspond to this router
+			-- Refuse to handle pop to top if a key is given that does not correspond
+			-- to this router
 			if action.key and state.key ~= action.key then
 				return state
 			end
 
-			-- If we're already at the top then return current state to allow action to bubble up.
-			if state.index <= 1 then
-				return state
+			-- If we're already at the top, then we return the state with a new
+			-- identity so that the action is handled by this router.
+			if state.index > 1 then
+				return Cryo.Dictionary.join(state, {
+					isTransitioning = action.immediate ~= true,
+					index = 1,
+					routes = { state.routes[1] }
+				})
 			end
 
-			return Cryo.Dictionary.join(state, {
-				isTransitioning = action.immediate ~= true,
-				index = 1,
-				routes = { state.routes[1] }
-			})
+			return state
 		end
 
 		if action.type == StackActions.Replace then
-			local routeIndex = nil
+			local routeIndex = nil -- luacheck: ignore routeIndex
 
-			-- If there is no key, set index to last route in stack
-			if not action.key and #state.routes > 0 then
+			-- If the key param is undefined, set the index to the last route in the stack
+			if action.key == nil and #state.routes > 0 then
 				routeIndex = #state.routes
 			else
-				for idx, route in ipairs(state.routes) do
-					if route.key == action.key then
-						routeIndex = idx
-						break
-					end
-				end
+				routeIndex = Cryo.List.findWhere(state.routes, function(route)
+					return route.key == action.key
+				end)
 			end
 
 			if routeIndex then
 				local childRouter = childRouters[action.routeName]
 				local childState = {}
 
+				-- we need to check if initialChildRouter is not CHILD_IS_SCREEN because
+				-- of the divergence with react-navigation.
 				if childRouter ~= nil and childRouter ~= CHILD_IS_SCREEN then
 					local childAction = action.action or NavigationActions.init({
 						params = getParamsForRouteAndAction(action.routeName, action)
@@ -435,25 +495,26 @@ return function(routeArray, config)
 					childState = childRouter.getStateForAction(childAction)
 				end
 
-				-- shallow copy and update routes
-				local routes = Cryo.List.join(state.routes)
-				routes[routeIndex] = Cryo.Dictionary.join({
-					params = getParamsForRouteAndAction(action.routeName, action),
-				}, childState, {
-					routeName = action.routeName,
-					key = action.newKey or KeyGenerator.generateKey(),
-				})
+				local routes = Cryo.List.replaceIndex(
+					state.routes,
+					routeIndex,
+					Cryo.Dictionary.join({
+						params = getParamsForRouteAndAction(action.routeName, action),
+					}, childState, {
+						routeName = action.routeName,
+						key = action.newKey or KeyGenerator.generateKey(),
+					})
+				)
 
-				return Cryo.Dictionary.join(state, {
-					routes = routes,
-				})
+				return Cryo.Dictionary.join(state, { routes = routes })
 			end
 		end
 
 		if action.type == NavigationActions.CompleteTransition and
 			(action.key == nil or action.key == state.key) and
 			action.toChildKey == state.routes[state.index].key and
-			state.isTransitioning then
+			state.isTransitioning
+		then
 			return Cryo.Dictionary.join(state, {
 				isTransitioning = false,
 			})
@@ -461,24 +522,18 @@ return function(routeArray, config)
 
 		if action.type == NavigationActions.SetParams then
 			local key = action.key
+			local lastRouteIndex = Cryo.List.findWhere(state.routes, function(route)
+				return route.key == key
+			end)
 
-			local lastRouteIndex = nil
-			local lastRoute = nil
-			for idx, route in ipairs(state.routes) do
-				if route.key == key then
-					lastRouteIndex = idx
-					lastRoute = route
-					break
-				end
-			end
-
-			if lastRoute then
+			if lastRouteIndex then
+				local lastRoute = state.routes[lastRouteIndex]
 				local params = Cryo.Dictionary.join(lastRoute.params or {}, action.params or {})
-				-- shallow copy and update routes
-				local routes = Cryo.List.join(state.routes)
-				routes[lastRouteIndex] = Cryo.Dictionary.join(lastRoute, {
-					params = params,
-				})
+				local routes = Cryo.List.replaceIndex(
+					state.routes,
+					lastRouteIndex,
+					Cryo.Dictionary.join(lastRoute, { params = params })
+				)
 
 				return Cryo.Dictionary.join(state, {
 					routes = routes,
@@ -487,98 +542,124 @@ return function(routeArray, config)
 		end
 
 		if action.type == StackActions.Reset then
-			-- Only handle reset actions with matching key (or none)
+			-- Only handle reset actions that are unspecified or match this state key
 			if action.key ~= nil and action.key ~= state.key then
 				return state
 			end
 
-			local specifiedActions = action.actions or {}
-
-			local newRoutes = {}
-			for _, newStackAction in ipairs(specifiedActions) do
+			local newStackActions = action.actions or {}
+			local newRoutes = Cryo.List.map(newStackActions, function(newStackAction)
 				local router = childRouters[newStackAction.routeName]
 
 				local childState = {}
+				-- we need to check if initialChildRouter is not CHILD_IS_SCREEN because
+				-- of the divergence with react-navigation.
 				if router ~= nil and router ~= CHILD_IS_SCREEN then
 					local childAction = newStackAction.action or NavigationActions.init({
-						params = getParamsForRouteAndAction(newStackAction.routeName, newStackAction),
+						params = getParamsForRouteAndAction(
+							newStackAction.routeName,
+							newStackAction
+						),
 					})
 
 					childState = router.getStateForAction(childAction)
 				end
 
-				table.insert(newRoutes, Cryo.Dictionary.join({
+				return Cryo.Dictionary.join({
 					params = getParamsForRouteAndAction(newStackAction.routeName, newStackAction)
 				}, childState, {
 					routeName = newStackAction.routeName,
 					key = newStackAction.key or KeyGenerator.generateKey(),
-				}))
-			end
+				})
+			end)
 
 			return Cryo.Dictionary.join(state, {
 				routes = newRoutes,
-				index = action.index or #specifiedActions,
+				index = action.index,
 			})
 		end
 
-		if action.type == NavigationActions.Back or
-			action.type == StackActions.Pop then
+		if action.type == NavigationActions.Back or action.type == StackActions.Pop then
 			local key = action.key
 			local n = action.n
 			local immediate = action.immediate
+			local prune = action.prune
 
-			local backRouteIndex = state.index -- index to go back *FROM*
-			if action.type == StackActions.Pop and n ~= nil then
-				backRouteIndex = math.max(1, state.index - n + 1)
-			elseif key and key ~= NoneSymbol then
-				-- If key is specified and is not ours, we should NOT try to navigate back
-				-- because it might be intended for our parent! (So clear the backRouteIndex.)
-				backRouteIndex = 0
-				for idx, route in ipairs(state.routes) do
-					if route.key == key then
-						backRouteIndex = idx
-						break
+			if action.type == StackActions.Pop and prune == false and key then
+				local index = Cryo.List.findWhere(state.routes, function(route)
+					return route.key == key
+				end)
+
+				if index ~= nil then
+					local count = math.max(index - (n or 1), 1)
+					local routes = Cryo.List.join(
+						Cryo.List.getRange(state.routes, 1, count),
+						Cryo.List.getRange(state.routes, index + 1, math.huge)
+					)
+
+					if #routes > 0 then
+						return Cryo.Dictionary.join(state, {
+							routes = routes,
+							index = #routes,
+							isTransitioning = immediate ~= true,
+						})
 					end
 				end
-			end
+			else
+				local backRouteIndex = state.index
 
-			if backRouteIndex > 1 then
-				return Cryo.Dictionary.join(state, {
-					routes = Cryo.List.removeRange(state.routes, backRouteIndex, #state.routes),
-					index = backRouteIndex - 1,
-					isTransitioning = immediate ~= true,
-				})
+				if action.type == StackActions.Pop and n ~= nil then
+					-- determine the index to go back *from*. In this case, n=1 means to go
+					-- back from state.index, as if it were a normal "BACK" action
+					backRouteIndex = math.max(2, state.index - n + 1)
+				elseif key then
+					backRouteIndex = Cryo.List.findWhere(state.routes, function(route)
+						return route.key == key
+					end)
+				end
+
+				if backRouteIndex and backRouteIndex > 1 then
+					return Cryo.Dictionary.join(state, {
+						routes = Cryo.List.getRange(state.routes, 1, backRouteIndex - 1),
+						index = backRouteIndex - 1,
+						isTransitioning = immediate ~= true,
+					})
+				end
 			end
 		end
 
-		-- At this point, we've handled the behavior of the active route and any
-		-- stack actions. Now we allow non-active child routers to try to process the action,
-		-- and switch to them if they can handle it.
+		-- By this point in the router's state handling logic, we have handled the behavior
+		-- of the active route, and handled any stack actions. If we haven't returned by
+		-- now, we should allow non-active child routers to handle this action, and switch
+		-- to that index if the child state (route) does change..
+
 		local keyIndex = action.key and StateUtils.indexOf(state, action.key) or nil
 
-		-- Traverse from top of stack to bottom.
+		-- Traverse routes from the top of the stack to the bottom, so the
+		-- active route has the first opportunity, then the one before it, etc.
 		for i = #state.routes, 1, -1 do
 			local childRoute = state.routes[i]
-			-- Skip over the active route since we already let it try.
-			-- Also, skip calling getStateForAction on other child routers
-			-- if the provided key is in the route's state
+			-- skip over the active child because we let it attempt to handle the action
+			-- earlier.
+			-- If a key is provided and in routes state then let's use that
+			-- knowledge to skip extra getStateForAction calls on other child
+			-- routers
 			if (childRoute.key ~= activeChildRoute.key) and
-				(not keyIndex or childRoute.key == action.key) then
+				(keyIndex == 1 or childRoute.key == action.key)
+			then
 				local childRouter = childRouters[childRoute.routeName]
 				if childRouter ~= nil and childRouter ~= CHILD_IS_SCREEN then
 					local route = childRouter.getStateForAction(action, childRoute)
-					if not route then
-						return state
-					end
 
-					if route ~= childRoute then
+					if route == nil then
+						return state
+					elseif route ~= childRoute then
 						return StateUtils.replaceAt(
 							state,
 							childRoute.key,
 							route,
-							-- don't change index for these action types
-							action.type == NavigationActions.SetParams or
-							action.type == NavigationActions.CompleteTransition
+							-- People don't expect these actions to switch the active route
+							action.preserveFocus
 						)
 					end
 				end

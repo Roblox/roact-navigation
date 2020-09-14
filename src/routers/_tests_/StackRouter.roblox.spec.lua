@@ -1,7 +1,8 @@
 return function()
+	local Root = script.Parent.Parent.Parent
 	local StackRouter = require(script.Parent.Parent.StackRouter)
-	local NavigationActions = require(script.Parent.Parent.Parent.NavigationActions)
-	local StackActions = require(script.Parent.Parent.Parent.StackActions)
+	local NavigationActions = require(Root.NavigationActions)
+	local StackActions = require(Root.StackActions)
 
 	local function expectError(functor, msg)
 		local status, err = pcall(functor)
@@ -484,32 +485,6 @@ return function()
 			local activeState = state.routes[state.index]
 			expect(activeState.routeName).to.equal("Foo") -- parent's tracking uses parent's route name
 			expect(activeState.routes[activeState.index].routeName).to.equal("Bar")
-		end)
-
-		it("should let active child handle non-init action first", function()
-			local childRouter = StackRouter({
-				routes = {
-					Bar = { screen = function() end },
-					City = { screen = function() end },
-				},
-				initialRouteName = "Bar",
-			})
-
-			local router = StackRouter({
-				routes = {
-					Foo = {
-						render = function() end,
-						router = childRouter,
-					},
-				},
-				initialRouteName = "Foo",
-			})
-
-			local state = router.getStateForAction(NavigationActions.navigate({ routeName = "City" }))
-
-			expect(state.routes[1].routes[2].routeName).to.equal("City")
-			expect(state.index).to.equal(1)
-			expect(state.routes[1].index).to.equal(2)
 		end)
 
 		it("should make historical inactive child router active if it handles action", function()
@@ -1131,27 +1106,6 @@ return function()
 			expect(newState.routes[newState.index].params.a).to.equal(1)
 		end)
 
-		it("should set params on route for setParams action with empty params", function()
-			local router = StackRouter({
-				routes = {
-					Foo = {
-						screen = function() end,
-						params = { a = 1 },
-					},
-					Bar = { render = function() end },
-				},
-				initialRouteName = "Foo",
-				initialRouteKey = "FooKey",
-			})
-
-			local newState = router.getStateForAction(NavigationActions.setParams({
-				key = "FooKey",
-				params = {},
-			}))
-
-			expect(newState.routes[newState.index].params.a).to.equal(nil)
-		end)
-
 		it("should combine params from action and route config", function()
 			local router = StackRouter({
 				routes = {
@@ -1164,31 +1118,14 @@ return function()
 				initialRouteName = "Foo",
 			})
 
-			local newState = router.getStateForAction(NavigationActions.navigate({
-				routeName = "Bar",
-				params = { b = 2 },
-			}))
+			local state = router.getStateForAction(NavigationActions.init())
+			local newState = router.getStateForAction(
+				NavigationActions.navigate({ routeName = "Bar", params = { b = 2 } }),
+				state
+			)
 
 			expect(newState.routes[2].params.a).to.equal(1)
 			expect(newState.routes[2].params.b).to.equal(2)
-		end)
-
-		it("should init and then replace initial route if prior state is not provided", function()
-			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-					Bar = function() end,
-				},
-				initialRouteName = "Foo",
-			})
-
-			local newState = router.getStateForAction(StackActions.replace({
-				routeName = "Bar",
-			}))
-
-			expect(#newState.routes).to.equal(1)
-			expect(newState.index).to.equal(1)
-			expect(newState.routes[1].routeName).to.equal("Bar")
 		end)
 
 		it("should replace top route if no key is provided", function()
@@ -1268,19 +1205,14 @@ return function()
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
-						routeName = "Foo",
-						key = "Foo1",
-					},
-					[2] = {
-						routeName = "Foo",
-						key = "Foo2",
-					},
+					{ routeName = "Foo", key = "Foo1" },
+					{ routeName = "Foo", key = "Foo2" },
 				},
 				index = 2,
 			}
 
 			local resultState = router.getStateForAction(StackActions.reset({
+				index = 1,
 				actions = {
 					NavigationActions.navigate({ routeName = "Bar" })
 				}

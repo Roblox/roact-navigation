@@ -5,6 +5,7 @@ ___
 
 Work in progress, to be added to next release notes.
 
+* StackRouter behavior now matches React-Navigation's StackRouter. StackActions.reset now requires the `index` field ([#28](https://github.com/Roblox/roact-navigation/pull/28))
 * Refactor TabRouter, SwitchRouter, StackRouter, createStackNavigator and createSwitchNagivator API. Previous API is deprecated but still supported. ([#27](https://github.com/Roblox/roact-navigation/pull/27))
 
 ___

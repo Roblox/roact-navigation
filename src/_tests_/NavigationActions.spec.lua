@@ -57,8 +57,7 @@ return function()
 			)
 		end)
 
-		-- deviation: missing prop `preserveFocus`
-		itSKIP("exports setParams action and type", function()
+		it("exports setParams action and type", function()
 			expectDeepEqual(
 				NavigationActions.setParams({
 					key = "test",

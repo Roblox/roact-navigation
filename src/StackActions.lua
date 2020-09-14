@@ -1,3 +1,7 @@
+-- upstream https://github.com/react-navigation/react-navigation/blob/62da341b672a83786b9c3a80c8a38f929964d7cc/packages/core/src/routers/StackActions.js
+
+local Packages = script.Parent.Parent
+local Cryo = require(Packages.Cryo)
 local NavigationSymbol = require(script.Parent.NavigationSymbol)
 
 local POP_TOKEN = NavigationSymbol("POP")
@@ -20,61 +24,43 @@ local StackActions = {
 	Replace = REPLACE_TOKEN,
 }
 
-StackActions.__index = StackActions
+-- deviation: we using this metatable to error when StackActions is indexed
+-- with an unexpected key.
+setmetatable(StackActions, {
+	__index = function(self, key)
+		error(("%q is not a valid member of StackActions"):format(tostring(key)), 2)
+	end,
+})
 
 -- Pop the top-most item off the route stack, if any.
 function StackActions.pop(payload)
-	local data = payload or {}
-	return {
-		type = POP_TOKEN,
-		n = data.n,
-	}
+	return Cryo.Dictionary.join({ type = POP_TOKEN }, payload or {})
 end
 
 -- Pop all the items except the last one off the route stack.
 function StackActions.popToTop(payload)
-	local data = payload or {}
-	return {
-		type = POP_TO_TOP_TOKEN,
-		key = data.key,
-	}
+	return Cryo.Dictionary.join({ type = POP_TO_TOP_TOKEN }, payload or {})
 end
 
 -- Push a new item onto the route stack.
 function StackActions.push(payload)
-	local data = payload or {}
-	return {
-		type = PUSH_TOKEN,
-		routeName = data.routeName,
-		params = data.params,
-		action = data.action,
-	}
+	return Cryo.Dictionary.join({ type = PUSH_TOKEN }, payload or {})
 end
 
 -- Reset the route stack and replace it with a new stack,
 -- specified by a list of actions to be applied.
 function StackActions.reset(payload)
-	local data = payload or {}
-	return {
-		type = RESET_TOKEN,
-		index = data.index,
-		actions = data.actions,
-		key = data.key,
-	}
+	return Cryo.Dictionary.join({ type = RESET_TOKEN }, payload or {})
 end
 
 -- Replace the route for the given key with a new route.
 function StackActions.replace(payload)
-	local data = payload or {}
-	return {
-		type = REPLACE_TOKEN,
-		key = data.key,
-		newKey = data.newKey,
-		routeName = data.routeName,
-		params = data.params,
-		action = data.action,
-		immediate = data.immediate,
-	}
+	return Cryo.Dictionary.join(
+		{ type = REPLACE_TOKEN, preserveFocus = true },
+		payload or {}
+	)
 end
+
+-- deviation: `StackActions.CompleteTransition` is moved in NavigationActions
 
 return StackActions
