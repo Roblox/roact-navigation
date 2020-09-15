@@ -38,7 +38,6 @@ return {
 
 	-- Additional Types
 	StackPresentationStyle = require(script.views.StackView.StackPresentationStyle),
-	None = require(script.NoneSymbol),
 
 	-- Screen Views
 	SceneView = require(script.views.SceneView),

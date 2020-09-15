@@ -2,7 +2,6 @@ return function()
 	local RoactNavigation = require(script.Parent.Parent)
 	local Roact = require(script.Parent.Parent.Parent.Roact)
 	local StackPresentationStyle = require(script.Parent.Parent.views.StackView.StackPresentationStyle)
-	local NoneSymbol = require(script.Parent.Parent.NoneSymbol)
 
 	it("should load", function()
 		require(script.Parent.Parent)
@@ -97,10 +96,6 @@ return function()
 
 	it("should return StackPresentationStyle", function()
 		expect(RoactNavigation.StackPresentationStyle).to.equal(StackPresentationStyle)
-	end)
-
-	it("should return NoneSymbol", function()
-		expect(RoactNavigation.None).to.equal(NoneSymbol)
 	end)
 
 	it("should return a valid component for SceneView", function()
