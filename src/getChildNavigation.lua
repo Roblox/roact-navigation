@@ -2,7 +2,7 @@
 
 local Cryo = require(script.Parent.Parent.Cryo)
 local getChildEventSubscriber = require(script.Parent.getChildEventSubscriber)
-local getChildRouter = require(script.Parent.routers.getChildRouter)
+local getChildRouter = require(script.Parent.getChildRouter)
 local getNavigationActionCreators = require(script.Parent.routers.getNavigationActionCreators)
 local getChildrenNavigationCache = require(script.Parent.getChildrenNavigationCache)
 
