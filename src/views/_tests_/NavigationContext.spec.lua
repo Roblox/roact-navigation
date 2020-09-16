@@ -1,15 +1,15 @@
 return function()
 	local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
-	local AppNavigationContext = require(script.Parent.Parent.AppNavigationContext)
+	local NavigationContext = require(script.Parent.Parent.NavigationContext)
 
 	it("should propagate navigation prop from provider to consumer", function()
 		local testNavigationContextProp = {}
 		local testComponentNavContext = nil
 
-		local provider = Roact.createElement(AppNavigationContext.Provider, {
+		local provider = Roact.createElement(NavigationContext.Provider, {
 			navigation = testNavigationContextProp
 		}, {
-			Child = Roact.createElement(AppNavigationContext.Consumer, {
+			Child = Roact.createElement(NavigationContext.Consumer, {
 				render = function(navigation)
 					testComponentNavContext = navigation
 				end
@@ -25,10 +25,10 @@ return function()
 		local testCustomNavigationProp = {}
 		local testComponentNavContext = nil
 
-		local provider = Roact.createElement(AppNavigationContext.Provider, {
+		local provider = Roact.createElement(NavigationContext.Provider, {
 			navigation = {}
 		}, {
-			Child = Roact.createElement(AppNavigationContext.Consumer, {
+			Child = Roact.createElement(NavigationContext.Consumer, {
 				navigation = testCustomNavigationProp,
 				render = function(navigation)
 					testComponentNavContext = navigation
@@ -50,9 +50,9 @@ return function()
 			passedNavigationProp = self.props.navigation
 		end
 
-		local WrappedComponent = AppNavigationContext.connect(TestComponent)
+		local WrappedComponent = NavigationContext.connect(TestComponent)
 
-		local element = Roact.createElement(AppNavigationContext.Provider, {
+		local element = Roact.createElement(NavigationContext.Provider, {
 			navigation = testNavigationContextProp
 		}, {
 			Child = Roact.createElement(WrappedComponent)
@@ -73,9 +73,9 @@ return function()
 			passedNavigationProp = self.props.navigation
 		end
 
-		local WrappedComponent = AppNavigationContext.connect(TestComponent)
+		local WrappedComponent = NavigationContext.connect(TestComponent)
 
-		local element = Roact.createElement(AppNavigationContext.Provider, {
+		local element = Roact.createElement(NavigationContext.Provider, {
 			navigation = {}
 		}, {
 			Child = Roact.createElement(WrappedComponent, {

@@ -24,7 +24,7 @@
 ]]
 local Roact = require(script.Parent.Parent.Parent.Roact)
 local NavigationEvents = require(script.Parent.Parent.NavigationEvents)
-local AppNavigationContext = require(script.Parent.AppNavigationContext)
+local NavigationContext = require(script.Parent.NavigationContext)
 local validate = require(script.Parent.Parent.utils.validate)
 
 
@@ -78,7 +78,7 @@ function NavigationFocusComponent:render()
 	return render(navigation, isFocused)
 end
 
-NavigationFocusComponent = AppNavigationContext.connect(NavigationFocusComponent)
+NavigationFocusComponent = NavigationContext.connect(NavigationFocusComponent)
 
 return function(renderProp)
 	validate(renderProp ~= nil, "withNavigationFocus must be passed a render prop")

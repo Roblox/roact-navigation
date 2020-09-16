@@ -1,5 +1,5 @@
 local Roact = require(script.Parent.Parent.Parent.Roact)
-local AppNavigationContext = require(script.Parent.AppNavigationContext)
+local NavigationContext = require(script.Parent.NavigationContext)
 local NavigationEvents = require(script.Parent.Parent.NavigationEvents)
 local validate = require(script.Parent.Parent.utils.validate)
 
@@ -88,4 +88,4 @@ function NavigationEventsAdapter:render()
 	return Roact.createElement("Folder", nil, self.props[Roact.Children])
 end
 
-return AppNavigationContext.connect(NavigationEventsAdapter)
+return NavigationContext.connect(NavigationEventsAdapter)

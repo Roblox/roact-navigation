@@ -1,6 +1,6 @@
 return function()
 	local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
-	local AppNavigationContext = require(script.Parent.Parent.AppNavigationContext)
+	local NavigationContext = require(script.Parent.Parent.NavigationContext)
 	local NavigationEvents = require(script.Parent.Parent.Parent.NavigationEvents)
 	local withNavigationFocus = require(script.Parent.Parent.withNavigationFocus)
 
@@ -25,7 +25,7 @@ return function()
 			end
 		}
 
-		local rootElement = Roact.createElement(AppNavigationContext.Provider, {
+		local rootElement = Roact.createElement(NavigationContext.Provider, {
 			navigation = navigationProp,
 		}, {
 			child = Roact.createElement(component)
@@ -59,7 +59,7 @@ return function()
 			end
 		}
 
-		local rootElement = Roact.createElement(AppNavigationContext.Provider, {
+		local rootElement = Roact.createElement(NavigationContext.Provider, {
 			navigation = navigationProp,
 		}, {
 			child = Roact.createElement(component)
@@ -96,7 +96,7 @@ return function()
 			end
 		}
 
-		local rootElement = Roact.createElement(AppNavigationContext.Provider, {
+		local rootElement = Roact.createElement(NavigationContext.Provider, {
 			navigation = navigationProp,
 		}, {
 			child = Roact.createElement(component)

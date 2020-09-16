@@ -2,7 +2,7 @@ local Roact = require(script.Parent.Parent.Roact)
 local Cryo = require(script.Parent.Parent.Cryo)
 local NavigationActions = require(script.Parent.NavigationActions)
 local NavigationEvents = require(script.Parent.NavigationEvents)
-local AppNavigationContext = require(script.Parent.views.AppNavigationContext)
+local NavigationContext = require(script.Parent.views.NavigationContext)
 local getNavigation = require(script.Parent.getNavigation)
 local validate = require(script.Parent.utils.validate)
 
@@ -138,7 +138,7 @@ return function(AppComponent)
 
 		validate(navigation ~= nil, "failed to get navigation")
 
-		return Roact.createElement(AppNavigationContext.Provider, {
+		return Roact.createElement(NavigationContext.Provider, {
 			navigation = navigation,
 		}, {
 			-- Provide navigation prop for top-level component so it doesn't have to connect.

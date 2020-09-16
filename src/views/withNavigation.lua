@@ -1,5 +1,6 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local AppNavigationContext = require(script.Parent.AppNavigationContext)
+local Packages = script.Parent.Parent.Parent
+local Roact = require(Packages.Roact)
+local NavigationContext = require(script.Parent.NavigationContext)
 local validate = require(script.Parent.Parent.utils.validate)
 
 --[[
@@ -18,7 +19,7 @@ local validate = require(script.Parent.Parent.utils.validate)
 ]]
 return function(renderProp)
 	validate(renderProp ~= nil, "withNavigation must be passed a render prop")
-	return Roact.createElement(AppNavigationContext.Consumer, {
+	return Roact.createElement(NavigationContext.Consumer, {
 		render = renderProp
 	})
 end

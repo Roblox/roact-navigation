@@ -1,7 +1,7 @@
 return function()
 	local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
 	local withNavigation = require(script.Parent.Parent.withNavigation)
-	local AppNavigationContext = require(script.Parent.Parent.AppNavigationContext)
+	local NavigationContext = require(script.Parent.Parent.NavigationContext)
 
 	it("should throw if no renderProp is provided", function()
 		local status, err = pcall(function()
@@ -16,7 +16,7 @@ return function()
 		local testNavigation = {}
 		local extractedNavigation = nil
 
-		local rootElement = Roact.createElement(AppNavigationContext.Provider, {
+		local rootElement = Roact.createElement(NavigationContext.Provider, {
 			navigation = testNavigation,
 		}, {
 			Child = Roact.createElement(function()
@@ -43,7 +43,7 @@ return function()
 			end)
 		end
 
-		local rootElement = Roact.createElement(AppNavigationContext.Provider, {
+		local rootElement = Roact.createElement(NavigationContext.Provider, {
 			navigation = testNavigation,
 		}, {
 			Child = Roact.createElement(Comp)
@@ -51,7 +51,7 @@ return function()
 
 		local rootInstance = Roact.mount(rootElement)
 
-		local rootElement2 = Roact.createElement(AppNavigationContext.Provider, {
+		local rootElement2 = Roact.createElement(NavigationContext.Provider, {
 			navigation = testNavigation2,
 		}, {
 			Child = Roact.createElement(Comp)

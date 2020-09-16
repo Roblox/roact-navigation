@@ -3,16 +3,18 @@
 -- Variable name: RoactNavigation
 -- Repo name: roact-navigation
 
+local NavigationContext = require(script.views.NavigationContext)
+
 return {
 	-- Navigation container construction
 	createAppContainer = require(script.createAppContainer),
 	getNavigation = require(script.getNavigation),
 
 	-- Context Access
-	Context = require(script.views.AppNavigationContext),
-	Provider = require(script.views.AppNavigationContext).Provider,
-	Consumer = require(script.views.AppNavigationContext).Consumer,
-	connect = require(script.views.AppNavigationContext).connect,
+	Context = NavigationContext,
+	Provider = NavigationContext.Provider,
+	Consumer = NavigationContext.Consumer,
+	connect = NavigationContext.connect,
 
 	withNavigation = require(script.views.withNavigation),
 	withNavigationFocus = require(script.views.withNavigationFocus),
