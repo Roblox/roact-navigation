@@ -1,3 +1,5 @@
+-- upstream https://github.com/react-navigation/react-navigation/blob/62da341b672a83786b9c3a80c8a38f929964d7cc/packages/core/src/views/withNavigation.js
+
 return function(navigation)
 	if not navigation then
 		return {}
