@@ -20,7 +20,7 @@ return function()
 			end,
 			addListener = function()
 				return {
-					disconnect = function() end
+					remove = function() end
 				}
 			end
 		}
@@ -54,7 +54,7 @@ return function()
 			end,
 			addListener = function()
 				return {
-					disconnect = function() end
+					remove = function() end
 				}
 			end
 		}
@@ -89,7 +89,7 @@ return function()
 			addListener = function(event, listener)
 				testListeners[event] = listener
 				return {
-					disconnect = function()
+					remove = function()
 						testListeners[event] = nil
 					end
 				}

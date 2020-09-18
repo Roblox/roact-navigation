@@ -5,6 +5,7 @@ ___
 
 Work in progress, to be added to next release notes.
 
+* Rename event subscriber `disconnect` method to `remove` to match react-navigation ([#37](https://github.com/Roblox/roact-navigation/pull/37))
 * Remove unused RoactNavigation.None ([#32](https://github.com/Roblox/roact-navigation/pull/32))
 * StackRouter behavior now matches React-Navigation's StackRouter. StackActions.reset now requires the `index` field ([#28](https://github.com/Roblox/roact-navigation/pull/28))
 * Refactor TabRouter, SwitchRouter, StackRouter, createStackNavigator and createSwitchNagivator API. Previous API is deprecated but still supported. ([#27](https://github.com/Roblox/roact-navigation/pull/27))

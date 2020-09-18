@@ -18,7 +18,7 @@ return function()
 		function mockNavContext.addListener(symbol, callback)
 			mockNavContext.subscribedHandlers[symbol] = callback
 			return {
-				disconnect = function()
+				remove = function()
 					mockNavContext.subscribedHandlers[symbol] = nil
 				end
 			}

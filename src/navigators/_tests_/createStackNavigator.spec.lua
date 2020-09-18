@@ -29,7 +29,7 @@ return function()
 
 		function testNavigation.addListener(symbol, callback)
 			return {
-				disconnect = function() end
+				remove = function() end
 			}
 		end
 

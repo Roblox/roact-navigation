@@ -100,7 +100,7 @@ return function()
 			},
 			addListener = function()
 				return {
-					disconnect = function() end
+					remove = function() end
 				}
 			end,
 			isFocused = function()

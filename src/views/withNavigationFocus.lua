@@ -60,12 +60,12 @@ end
 
 function NavigationFocusComponent:willUnmount()
 	if self._didFocusListener then
-		self._didFocusListener:disconnect()
+		self._didFocusListener.remove()
 		self._didFocusListener = nil
 	end
 
 	if self._willBlurListener then
-		self._willBlurListener:disconnect()
+		self._willBlurListener.remove()
 		self._willBlurListener = nil
 	end
 end

@@ -45,7 +45,7 @@ return function(addListener, key, initialState)
 
 		for _, subs in pairs(upstreamSubscribers) do
 			if subs then
-				subs.disconnect()
+				subs.remove()
 			end
 		end
 	end
@@ -129,7 +129,7 @@ return function(addListener, key, initialState)
 				"eventHandler for '%s' must be a function", tostring(eventType))
 			table.insert(subscribers, eventHandler)
 			return {
-				disconnect = function()
+				remove = function()
 					for idx, subs in ipairs(subscribers) do
 						if subs == eventHandler then
 							table.remove(subscribers, idx)

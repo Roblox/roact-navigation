@@ -10,7 +10,7 @@ return function()
 			testUpstreamListenerMap[eventType] = callback
 
 			return {
-				disconnect = function()
+				remove = function()
 					testUpstreamListenerMap[eventType] = nil
 				end
 			}
@@ -66,10 +66,16 @@ return function()
 			end).to.throw()
 		end)
 
-		it("should allow disconnect of listener", function()
+		it("should remove the listener", function()
 			local childSubscriber = getChildEventSubscriber(dummyAddListener, SIMPLE_TEST_KEY)
-			local connection = childSubscriber.addListener(NavigationEvents.Refocus, function() end)
-			connection.disconnect()
+			local eventHappened = false
+			local connection = childSubscriber.addListener(NavigationEvents.Refocus, function()
+				eventHappened = true
+			end)
+			connection.remove()
+
+			childSubscriber.emit(NavigationEvents.Refocus)
+			expect(eventHappened).to.equal(false)
 		end)
 	end)
 
@@ -143,7 +149,7 @@ return function()
 				testUpstreamListenerMap[eventType] = true
 
 				return {
-					disconnect = function() end
+					remove = function() end
 				}
 			end
 
@@ -163,7 +169,7 @@ return function()
 				testUpstreamListenerMap[eventType] = callback
 
 				return {
-					disconnect = function()
+					remove = function()
 						testUpstreamListenerMap[eventType] = false
 					end
 				}
@@ -195,7 +201,7 @@ return function()
 				testUpstreamListenerMap[eventType] = callback
 
 				return {
-					disconnect = function()
+					remove = function()
 						testUpstreamListenerMap[eventType] = false
 					end
 				}

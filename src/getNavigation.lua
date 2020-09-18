@@ -36,11 +36,11 @@ return function(router, state, dispatch, actionSubscribers, getScreenProps, getC
 
 	function navigation.addListener(event, handler)
 		if event ~= NavigationEvents.Action then
-			return { disconnect = function() end }
+			return { remove = function() end }
 		else
 			actionSubscribers[handler] = true
 			return {
-				disconnect = function()
+				remove = function()
 					actionSubscribers[handler] = nil
 				end
 			}

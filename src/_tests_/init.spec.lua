@@ -87,7 +87,7 @@ return function()
 		local instance = Roact.mount(Roact.createElement(RoactNavigation.EventsAdapter, {
 			navigation = {
 				addListener = function()
-					return { disconnect = function() end }
+					return { remove = function() end }
 				end
 			}
 		}))

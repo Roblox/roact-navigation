@@ -62,7 +62,7 @@ function NavigationEventsAdapter:_disconnectAll()
 	for _, symbol in pairs(NavigationEvents) do
 		local sub = self.subscriptions[symbol]
 		if sub then
-			sub.disconnect()
+			sub.remove()
 			self.subscriptions[symbol] = nil
 		end
 	end
