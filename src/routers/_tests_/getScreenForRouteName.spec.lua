@@ -2,19 +2,13 @@ return function()
 	local getScreenForRouteName = require(script.Parent.Parent.getScreenForRouteName)
 
 	it("should throw for invalid arg types", function()
-		local status, err = pcall(function()
+		expect(function()
 			getScreenForRouteName("", "myRoute")
-		end)
+		end).to.throw("routeConfigs must be a table")
 
-		expect(status).to.equal(false)
-		expect(string.find(err, "routeConfigs must be a table")).to.never.equal(nil)
-
-		status, err = pcall(function()
+		expect(function()
 			getScreenForRouteName({}, 5)
-		end)
-
-		expect(status).to.equal(false)
-		expect(string.find(err, "routeName must be a string")).to.never.equal(nil)
+		end).to.throw("routeName must be a string")
 	end)
 
 	it("should throw if requested route is not present within table", function()
@@ -61,30 +55,26 @@ return function()
 	end)
 
 	it("should throw if getScreen does not return a valid Roact element", function()
-		local status, err = pcall(function()
+		local errorExpected = "The getScreen defined for route 'myRoute' didn't return a valid " ..
+			"screen or navigator.\n\n"
+
+		expect(function()
 			getScreenForRouteName({
 				myRoute = {
 					getScreen = function() return nil end
 				}
 			}, "myRoute")
-		end)
-
-		expect(status).to.equal(false)
-		expect(string.find(err, "The getScreen function defined for route 'myRoute'" ..
-			" did not return a valid screen or navigator")).to.never.equal(nil)
+		end).to.throw(errorExpected)
 	end)
 
 	it("should throw if screen is not a valid Roact element", function()
-		local status, err = pcall(function()
+		expect(function()
 			getScreenForRouteName({
 				myRoute = {
 					screen = 5,
 				}
 			}, "myRoute")
-		end)
-
-		expect(status).to.equal(false)
-		expect(string.find(err, "screen param for key 'myRoute' must be a valid Roact component.")).to.never.equal(nil)
+		end).to.throw("screen for key 'myRoute' must be a valid Roact component.")
 	end)
 end
 
