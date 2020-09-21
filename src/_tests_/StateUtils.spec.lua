@@ -60,7 +60,9 @@ return function()
 				expect(StateUtils.indexOf(state, "b")).to.equal(2)
 			end)
 
-			-- WILLFIX(deviation)
+			-- deviation(will not fix): it is preferable to return `nil` as it's
+			-- more common so there is less chance to surprise the consumer of
+			-- that function
 			itSKIP("returns -1 when getting an unknown route index", function()
 				local state = {
 					index = 1,
@@ -249,20 +251,19 @@ return function()
 				)
 			end)
 
-			-- deviation: error message does not match
-			itSKIP("throws if jumps to invalid key", function()
+			it("throws if jumps to invalid key", function()
 				local state = {
 					index = 1,
 					routes = {
 						{ key = "a", routeName = routeName },
 						{ key = "b", routeName = routeName },
 					},
-				  isTransitioning = false,
+					isTransitioning = false,
 				}
 
 				expect(function()
 					StateUtils.jumpTo(state, "c")
-				end).to.throw("invalid index -1 to jump to")
+				end).to.throw("attempt to jump to unknown key \"c\"")
 			end)
 		end)
 
@@ -437,8 +438,7 @@ return function()
 				)
 			end)
 
-			-- WILLFIX(deviation)
-			itSKIP("throws when attempting to set empty state", function()
+			it("throws when attempting to set empty state", function()
 				local state = {
 					index = 1,
 					routes = {
