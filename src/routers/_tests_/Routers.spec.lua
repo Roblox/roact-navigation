@@ -112,8 +112,7 @@ return function()
 				local initState = router.getStateForAction(NavigationActions.init())
 				local initRoute = initState.routes[initState.index]
 
-				-- deviation: params is an empty table for SwitchRouter and TabRouter
-				-- expect(initRoute.params).to.equal(nil)
+				expect(initRoute.params).to.equal(nil)
 
 				local state0 = router.getStateForAction(
 					NavigationActions.setParams({ params = {foo = 42}, key = initRoute.key }),

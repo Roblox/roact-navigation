@@ -1,7 +1,8 @@
 return function()
+	local Root = script.Parent.Parent.Parent
 	local SwitchRouter = require(script.Parent.Parent.SwitchRouter)
-	local NavigationActions = require(script.Parent.Parent.Parent.NavigationActions)
-	local BackBehavior = require(script.Parent.Parent.Parent.BackBehavior)
+	local NavigationActions = require(Root.NavigationActions)
+	local BackBehavior = require(Root.BackBehavior)
 
 	local function expectError(functor, msg)
 		local status, err = pcall(functor)
@@ -39,7 +40,7 @@ return function()
 	end)
 
 	it("should throw if initialRouteName is not found in routes table", function()
-		expectError(function()
+		expect(function()
 			SwitchRouter({
 				routes = {
 					Foo = function() end,
@@ -47,7 +48,7 @@ return function()
 				},
 				initialRouteName = "MyRoute",
 			})
-		end, "Invalid initialRouteName 'MyRoute'. Must be one of %[Bar,Foo,%]")
+		end).to.throw("Invalid initialRouteName 'MyRoute'. Should be one of \"Bar\", \"Foo\"")
 	end)
 
 	it("should expose childRouters as a member", function()
@@ -219,7 +220,7 @@ return function()
 					index = 2,
 				})
 			end, "There is no route defined for index '2'. " ..
-			"Make sure that you passed in a navigation state with a " ..
+			"Check that you passed in a navigation state with a " ..
 			"valid tab/screen index.")
 
 		end)
@@ -289,7 +290,6 @@ return function()
 			local state = router.getStateForAction(NavigationActions.init(), nil)
 			expect(#state.routes).to.equal(2)
 			expect(state.routes[state.index].routeName).to.equal("Foo")
-			expect(state.isTransitioning).to.equal(false)
 		end)
 
 		it("should adjust initial state index to match initialRouteName's index", function()
@@ -497,7 +497,6 @@ return function()
 			}))
 
 			expect(newState.routes[newState.index].routeName).to.equal("Foo")
-			expect(newState.isTransitioning).to.equal(false)
 		end)
 
 		it("should reset state for deactivated route by default", function()
@@ -519,7 +518,7 @@ return function()
 			}
 
 			local state = router.getStateForAction(NavigationActions.navigate({ routeName = "Bar" }), initialState)
-			expect(state.routes[1].params.a).to.equal(nil) -- should be empty
+			expect(state.routes[1].params).to.equal(nil) -- should be empty
 		end)
 
 		it("should not reset state for deactivated route if resetOnBlur is false", function()

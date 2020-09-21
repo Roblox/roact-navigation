@@ -20,8 +20,7 @@ return function()
 	local INIT_ACTION = { type = NavigationActions.Init }
 
 	describe("TabRouter", function()
-		-- deviation: extra empty params field and `isTransitioning = false`
-		itSKIP("Handles basic tab logic", function()
+		it("Handles basic tab logic", function()
 			local function ScreenA()
 				return Roact.createElement("Frame")
 			end
@@ -69,8 +68,7 @@ return function()
 			expect(state3).to.equal(nil)
 		end)
 
-		-- deviation: extra empty params field and `isTransitioning = false`
-		itSKIP("Handles getScreen", function()
+		it("Handles getScreen", function()
 			local function ScreenA()
 				return Roact.createElement("Frame")
 			end
@@ -118,8 +116,7 @@ return function()
 			expect(state3).to.equal(nil)
 		end)
 
-		-- deviation: extra empty params field and `isTransitioning = false`
-		itSKIP("Can set the initial tab", function()
+		it("Can set the initial tab", function()
 			local router = TabRouter({
 				{ Foo = BareLeafRouteConfig },
 				{ Bar = BareLeafRouteConfig },
@@ -137,8 +134,7 @@ return function()
 			})
 		end)
 
-		-- deviation: extra empty params field and `isTransitioning = false`
-		itSKIP("Can set the initial params", function()
+		it("Can set the initial params", function()
 			local router = TabRouter({
 				{ Foo = BareLeafRouteConfig },
 				{ Bar = BareLeafRouteConfig },
@@ -311,8 +307,7 @@ return function()
 			})
 		end)
 
-		-- deviation: extra empty params field and `isTransitioning = false`
-		itSKIP("Handles passing params to nested tabs", function()
+		it("Handles passing params to nested tabs", function()
 			local ChildTabNavigator = Roact.Component:extend("ChildTabNavigator")
 
 			function ChildTabNavigator:render()
@@ -326,7 +321,7 @@ return function()
 
 			local router = TabRouter({
 				{ Foo = BareLeafRouteConfig },
-				{ Baz = { screen = ChildTabNavigator} },
+				{ Baz = { screen = ChildTabNavigator } },
 			})
 			local navAction = {
 				type = NavigationActions.Navigate,
@@ -344,7 +339,7 @@ return function()
 						routeName = "Baz",
 						routes = {
 							{ key = "Boo", routeName = "Boo" },
-							{ key = "Bar", routeName = "Bar"  },
+							{ key = "Bar", routeName = "Bar" },
 						},
 					},
 				},
@@ -365,14 +360,13 @@ return function()
 				key = "Baz",
 				routeName = "Baz",
 				routes = {
-					{ key = "Boo", routeName = "Boo", params = {} },
-					{ key = "Bar", routeName = "Bar", params = {} },
+					{ key = "Boo", routeName = "Boo" },
+					{ key = "Bar", routeName = "Bar" },
 				},
 			})
 		end)
 
-		-- deviation: extra empty params field and `isTransitioning = false`
-		itSKIP("Handles initial deep linking into nested tabs", function()
+		it("Handles initial deep linking into nested tabs", function()
 			local ChildTabNavigator = Roact.Component:extend("ChildTabNavigator")
 
 			function ChildTabNavigator:render()
@@ -439,8 +433,7 @@ return function()
 			expect(state3).to.equal(nil)
 		end)
 
-		-- deviation: extra empty params field and `isTransitioning = false`
-		itSKIP("Handles linking across of deeply nested tabs", function()
+		it("Handles linking across of deeply nested tabs", function()
 			local ChildNavigator0 = Roact.Component:extend("ChildNavigator0")
 			function ChildNavigator0:render()
 				return Roact.createElement("Frame")
@@ -712,8 +705,7 @@ return function()
 			expect(path).to.equal("f/Baz")
 		end)
 
-		-- deviation: extra empty params field and `isTransitioning = false`
-		itSKIP("Can navigate to other tab (no router) with params", function()
+		it("Can navigate to other tab (no router) with params", function()
 			local function ScreenA()
 				return Roact.createElement("Frame")
 			end
@@ -732,7 +724,6 @@ return function()
 					{ key = "a", routeName = "a" },
 					{ key = "b", routeName = "b" },
 				},
-				isTransitioning = false,
 			})
 
 			local params = { key = "value" }

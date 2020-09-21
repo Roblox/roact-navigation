@@ -18,4 +18,12 @@ local BackBehavior = {
 	History = HISTORY_TOKEN,
 }
 
+-- we are using this metatable to error when BackBehavior is indexed
+-- with an unexpected key.
+setmetatable(BackBehavior, {
+	__index = function(self, key)
+		error(("%q is not a valid member of BackBehavior"):format(tostring(key)), 2)
+	end,
+})
+
 return BackBehavior

@@ -74,6 +74,10 @@ return function()
 		expect(type(RoactNavigation.StackActions)).to.equal("table")
 	end)
 
+	it("should return a table for SwitchActions", function()
+		expect(type(RoactNavigation.SwitchActions)).to.equal("table")
+	end)
+
 	it("should return a table for BackBehavior", function()
 		expect(type(RoactNavigation.BackBehavior)).to.equal("table")
 	end)

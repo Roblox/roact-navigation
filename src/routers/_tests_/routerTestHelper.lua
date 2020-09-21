@@ -4,6 +4,7 @@ local Root = script.Parent.Parent.Parent
 local Packages = Root.Parent
 local Cryo = require(Packages.Cryo)
 local StackActions = require(Root.StackActions)
+local SwitchActions = require(Root.routers.SwitchActions)
 local NavigationActions = require(Root.NavigationActions)
 
 local defaultOptions = { skipInitializeState = false }
@@ -41,12 +42,11 @@ local function getRouterTestHelper(router, options)
 		}, otherActionAttributes))
 	end
 
-	-- deviation: SwitchActions API does not exist, reverted to NavigationActions
 	local function jumpTo(routeName, otherActionAttributes)
 		otherActionAttributes = otherActionAttributes or {}
 
 		return applyAction(Cryo.Dictionary.join({
-			type = NavigationActions.JumpTo, -- SwitchActions.JUMP_TO
+			type = SwitchActions.JumpTo,
 			routeName = routeName,
 		}, otherActionAttributes))
 	end

@@ -32,6 +32,7 @@ return {
 	-- Navigation Actions
 	Actions = require(script.NavigationActions),
 	StackActions = require(script.StackActions),
+	SwitchActions = require(script.routers.SwitchActions),
 	BackBehavior = require(script.BackBehavior),
 
 	-- Navigation Events

@@ -1,50 +1,21 @@
-local Cryo = require(script.Parent.Parent.Parent.Cryo)
-local NavigationActions = require(script.Parent.Parent.NavigationActions)
-local BackBehavior = require(script.Parent.Parent.BackBehavior)
+-- upstream https://github.com/react-navigation/react-navigation/blob/62da341b672a83786b9c3a80c8a38f929964d7cc/packages/core/src/routers/SwitchRouter.js
+local Root = script.Parent.Parent
+local Packages = Root.Parent
+
+local Cryo = require(Packages.Cryo)
+local NavigationActions = require(Root.NavigationActions)
+local BackBehavior = require(Root.BackBehavior)
 local getScreenForRouteName = require(script.Parent.getScreenForRouteName)
 local createConfigGetter = require(script.Parent.createConfigGetter)
 local validateRouteConfigMap = require(script.Parent.validateRouteConfigMap)
 local validateRouteConfigArray = require(script.Parent.validateRouteConfigArray)
-local validate = require(script.Parent.Parent.utils.validate)
+local validate = require(Root.utils.validate)
+local StackActions = require(Root.StackActions)
+local SwitchActions = require(script.Parent.SwitchActions)
 local showDeprecatedRouterMessage = require(script.Parent.showDeprecatedRouterMessage)
 
-local defaultActionCreators = function() return {} end
-
--- Until Cryo has a List function to do this, provide shallow copy+replace index
-local function immutableReplaceListIndex(list, index, value)
-	local result = {}
-	for i, ival in ipairs(list) do
-		result[i] = ival
-	end
-
-	result[index] = value
-	return result
-end
-
-local function childrenUpdateWithoutSwitchingIndex(actionType)
-	return actionType == NavigationActions.SetParams or
-		actionType == NavigationActions.CompleteTransition
-end
-
-local function collectChildRouters(routeConfigs)
-	local childRouters = {}
-	for routeName, _ in pairs(routeConfigs) do
-		local screen = getScreenForRouteName(routeConfigs, routeName)
-		if type(screen) == "table" and screen.router then
-			childRouters[routeName] = screen.router
-		end
-	end
-
-	return childRouters
-end
-
-local function getParamsForRoute(routeConfigs, routeName, initialParams)
-	local routeConfig = routeConfigs[routeName]
-	if type(routeConfig) == "table" and routeConfig.params then
-		return Cryo.Dictionary.join(routeConfig.params, initialParams)
-	else
-		return initialParams
-	end
+local function defaultActionCreators()
+	return {}
 end
 
 local function mapToRouteName(element)
@@ -59,6 +30,7 @@ local function foldToRoutes(routes, element)
 end
 
 return function(routeArray, config)
+	-- deviation: we still need to support the previous route API
 	validate(type(routeArray) == "table", "routeConfigs must be a table")
 	if config == nil and routeArray.routes ~= nil then
 		showDeprecatedRouterMessage("SwitchRouter")
@@ -87,36 +59,55 @@ return function(routeArray, config)
 	local order = config.order or Cryo.List.map(routeArray, mapToRouteName)
 
 	local getCustomActionCreators = config.getCustomActionCreators or defaultActionCreators
-	local initialRouteParams = config.initialRouteParams or {}
 
+	local initialRouteParams = config.initialRouteParams
 	local initialRouteName = config.initialRouteName or order[1]
-
 	local backBehavior = config.backBehavior or BackBehavior.None
-	local backShouldNavigateToInitialRoute = backBehavior == BackBehavior.InitialRoute
 
 	local resetOnBlur = true
-	if type(config.resetOnBlur) == "boolean" then
+	if config.resetOnBlur ~= nil then
 		resetOnBlur = config.resetOnBlur
 	end
 
 	local initialRouteIndex = Cryo.List.find(order, initialRouteName)
 	if initialRouteIndex == nil then
-		local availableRouteStr = ""
-		for _, name in ipairs(order) do
-			availableRouteStr = availableRouteStr .. name .. ","
-		end
+		local availableRouteNames = table.concat(
+			Cryo.List.map(order, function(routeName)
+				return ('"%s"'):format(routeName)
+			end),
+			", "
+		)
 
-		error(string.format("Invalid initialRouteName '%s'. Must be one of [%s]", initialRouteName, availableRouteStr), 2)
+		error(("Invalid initialRouteName '%s'. Should be one of %s"):format(
+			initialRouteName,
+			availableRouteNames
+		), 2)
 	end
 
-	local childRouters = collectChildRouters(routeConfigs)
+	local childRouters = {}
+	for _, routeName in ipairs(order) do
+		childRouters[routeName] = false
+		local screen = getScreenForRouteName(routeConfigs, routeName)
+		if type(screen) == "table" and screen.router then
+			childRouters[routeName] = screen.router
+		end
+	end
+
+	local function getParamsForRoute(routeName, params)
+		local routeConfig = routeConfigs[routeName]
+		if type(routeConfig) == "table" and routeConfig.params then
+			return Cryo.Dictionary.join(routeConfig.params, params or {})
+		else
+			return params
+		end
+	end
 
 	local function resetChildRoute(routeName)
-		-- TODO: Do we want to merge initialRouteParams on TOP of route-specific params?
-		-- There is a comment in RoactNavigation that this is incorrect behavior, but they
-		-- do it to be consistent with their StackRouter. Do we even need this feature?
-		local initialParams = routeName == initialRouteName and initialRouteParams or {}
-		local params = getParamsForRoute(routeConfigs, routeName, initialParams)
+		local initialParams = routeName == initialRouteName and initialRouteParams or nil
+		-- note(brentvatne): merging initialRouteParams *on top* of default params
+		-- on the route seems incorrect but it's consistent with existing behavior
+		-- in stackrouter
+		local params = getParamsForRoute(routeName, initialParams)
 		local childRouter = childRouters[routeName]
 		if childRouter then
 			local childAction = NavigationActions.init()
@@ -125,51 +116,78 @@ return function(routeArray, config)
 				routeName = routeName,
 				params = params,
 			})
-		else
-			return {
-				key = routeName,
-				routeName = routeName,
-				params = params,
-			}
 		end
+
+		return {
+			key = routeName,
+			routeName = routeName,
+			params = params,
+		}
 	end
 
-	local function getNextState(prevState, possibleNextState)
-		if not prevState then
-			return possibleNextState
-		end
+	local function getNextState(action, prevState, possibleNextState)
+		local nextState = possibleNextState
 
-		if prevState.index ~= possibleNextState.index and resetOnBlur then
+		if prevState and possibleNextState and
+			prevState.index ~= possibleNextState.index and
+			resetOnBlur
+		then
 			local prevRouteName = prevState.routes[prevState.index].routeName
-			local nextRoutes = immutableReplaceListIndex(
-				possibleNextState.routes,
-				prevState.index,
-				resetChildRoute(prevRouteName))
-
-			return Cryo.Dictionary.join(possibleNextState, {
-				routes = nextRoutes,
-			})
-		else
-			return possibleNextState
+			local nextRoutes = Cryo.List.join(possibleNextState.routes)
+			nextRoutes[prevState.index] = resetChildRoute(prevRouteName)
+			nextState = Cryo.Dictionary.join(
+				possibleNextState,
+				{ routes = nextRoutes }
+			)
 		end
+
+		if backBehavior ~= BackBehavior.History or
+			(prevState and nextState and nextState.index == prevState.index )
+		then
+			return nextState
+		end
+
+		local nextRouteKeyHistory = prevState and prevState.routeKeyHistory or {}
+
+		if action.type == NavigationActions.Navigate then
+			local keyToAdd = nextState.routes[nextState.index].key
+			nextRouteKeyHistory = Cryo.List.filter(nextRouteKeyHistory, function(k)
+				return k ~= keyToAdd
+			end)
+			table.insert(nextRouteKeyHistory, keyToAdd)
+
+		elseif action.type == NavigationActions.Back then
+			nextRouteKeyHistory = Cryo.List.removeIndex(nextRouteKeyHistory, #nextRouteKeyHistory)
+		end
+
+		return Cryo.Dictionary.join(
+			nextState,
+			{ routeKeyHistory = nextRouteKeyHistory }
+		)
 	end
 
 	local function getInitialState()
-		return {
-			routes = Cryo.List.map(order, resetChildRoute),
+		local routes = Cryo.List.map(order, resetChildRoute)
+		local initialState = {
+			routes = routes,
 			index = initialRouteIndex,
-			isTransitioning = false,
 		}
+
+		if backBehavior == BackBehavior.History then
+			local initialKey = routes[initialRouteIndex].key
+			initialState.routeKeyHistory = { initialKey }
+		end
+
+		return initialState
 	end
 
 	local SwitchRouter = {
 		childRouters = childRouters,
+		getActionCreators = function(route, stateKey)
+			return getCustomActionCreators(route, stateKey)
+		end,
 		getScreenOptions = createConfigGetter(routeConfigs, config.defaultNavigationOptions)
 	}
-
-	function SwitchRouter.getActionCreators(route, stateKey)
-		return getCustomActionCreators(route, stateKey)
-	end
 
 	function SwitchRouter.getStateForAction(action, inputState)
 		local prevState = inputState and Cryo.Dictionary.join(inputState) or nil
@@ -184,49 +202,106 @@ return function(routeArray, config)
 				state.routes = Cryo.List.map(state.routes, function(route)
 					local initialParams = route.routeName == initialRouteName and initialRouteParams or {}
 					return Cryo.Dictionary.join(route, {
-						params = Cryo.Dictionary.join(route.params, params, initialParams)
+						params = Cryo.Dictionary.join(route.params or {}, params, initialParams)
 					})
 				end)
 			end
 		end
 
-		-- Let the active child try to handle the action first.
-		local activeChildLastState = state.routes[state.index]
-		local activeChildRouter = childRouters[order[state.index]]
-		if activeChildRouter then
-			local activeChildState = activeChildRouter.getStateForAction(action, activeChildLastState)
-			if not activeChildState and inputState then
-				-- Child ran into error with known inputState. Propagate to caller.
-				return nil
+		if action.type == SwitchActions.JumpTo and
+			(action.key == nil or action.key == state.key)
+		then
+			local params = action.params
+			local index = Cryo.List.findWhere(state.routes, function(route)
+				return route.routeName == action.routeName
+			end)
+
+			if index == nil then
+				error(
+					("There is no route named '%s' in the navigator with the key '%s'.\n"):format(
+						action.routeName,
+						action.key
+					) ..
+					"Must be one of: " .. table.concat(
+						Cryo.List.map(state.routes, function(route)
+							return route.routeName
+						end),
+						","
+					)
+				)
 			end
 
+			local routes = state.routes
+			if params then
+				return state.routes.map(function(route, i)
+					if i == index then
+						return Cryo.Dictionary.join(route, {
+							params = Cryo.Dictionary.join(route.params, params),
+						})
+					end
+
+					return route
+				end)
+			end
+
+			return getNextState(action, prevState, Cryo.Dictionary.join(state, {
+				routes = routes,
+				index = index,
+			}))
+		end
+
+		-- Let the current child handle it
+		local activeChildLastState = state.routes[state.index]
+		local activeChildRouter = childRouters[order[state.index]]
+
+		if activeChildRouter then
+			local activeChildState = activeChildRouter.getStateForAction(
+				action,
+				activeChildLastState
+			)
+			if not activeChildState and inputState then
+				return nil
+			end
 			if activeChildState and activeChildState ~= activeChildLastState then
-				local routes = immutableReplaceListIndex(state.routes, state.index, activeChildState)
-				return getNextState(prevState, Cryo.Dictionary.join(state, {
-					routes = routes
-				}))
+				local routes = Cryo.List.join(state.routes)
+				routes[state.index] = activeChildState
+				return getNextState(action, prevState, Cryo.Dictionary.join(
+					state,
+					{ routes = routes }
+				))
 			end
 		end
 
-		-- Child did not handle it, so try to process the action ourselves.
-		local isBackEligible = not action.key or action.key == activeChildLastState.key
+		-- Handle tab changing. Do this after letting the current tab try to
+		-- handle the action, to allow inner children to change first
+		local isBackEligible = action.key == nil or action.key == activeChildLastState.key
+
 		if action.type == NavigationActions.Back then
-			if isBackEligible and backShouldNavigateToInitialRoute then
+			if isBackEligible and backBehavior == BackBehavior.InitialRoute then
 				activeChildIndex = initialRouteIndex
-			else
-				return state
+			elseif isBackEligible and backBehavior == BackBehavior.Order then
+				activeChildIndex = math.max(1, activeChildIndex - 1)
+			-- The history contains current route, so we can only go back
+			-- if there is more than one item in the history
+			elseif isBackEligible and
+				backBehavior == BackBehavior.History and
+				#state.routeKeyHistory > 1
+			then
+				local routeKey = state.routeKeyHistory[#state.routeKeyHistory - 1]
+				activeChildIndex = Cryo.List.find(order, routeKey)
 			end
 		end
 
 		local didNavigate = false
+
 		if action.type == NavigationActions.Navigate then
-			for index, childId in ipairs(order) do
+			didNavigate = nil ~= Cryo.List.findWhere(order, function(childId, i)
 				if childId == action.routeName then
-					activeChildIndex = index
-					didNavigate = true
-					break
+					activeChildIndex = i
+					return true
 				end
-			end
+				return false
+			end)
 
 			if didNavigate then
 				local childState = state.routes[activeChildIndex]
@@ -234,7 +309,10 @@ return function(routeArray, config)
 				local newChildState = childState
 
 				if action.action and childRouter then
-					local childStateUpdate = childRouter.getStateForAction(action.action, childState)
+					local childStateUpdate = childRouter.getStateForAction(
+						action.action,
+						childState
+					)
 					if childStateUpdate then
 						newChildState = childStateUpdate
 					end
@@ -242,19 +320,26 @@ return function(routeArray, config)
 
 				if action.params then
 					newChildState = Cryo.Dictionary.join(newChildState, {
-						params = Cryo.Dictionary.join(newChildState.params or {}, action.params)
+						params = Cryo.Dictionary.join(
+							newChildState.params or {},
+							action.params
+						),
 					})
 				end
 
 				if newChildState ~= childState then
-					local routes = immutableReplaceListIndex(state.routes, activeChildIndex, newChildState)
+					local routes = Cryo.List.join(state.routes)
+					routes[activeChildIndex] = newChildState
 					local nextState = Cryo.Dictionary.join(state, {
 						routes = routes,
 						index = activeChildIndex,
 					})
+					return getNextState(action, prevState, nextState)
 
-					return getNextState(prevState, nextState)
-				elseif newChildState == childState and state.index == activeChildIndex and prevState then
+				elseif newChildState == childState and
+					state.index == activeChildIndex and
+					prevState
+				then
 					return nil
 				end
 			end
@@ -262,43 +347,56 @@ return function(routeArray, config)
 
 		if action.type == NavigationActions.SetParams then
 			local key = action.key
-			local lastIndex, lastRoute
-			for index, route in ipairs(state.routes) do
-				if route.key == key then
-					lastIndex = index
-					lastRoute = route
-					break
-				end
-			end
+			local lastRouteIndex = Cryo.List.findWhere(state.routes, function(route)
+				return route.key == key
+			end)
 
-			if lastRoute then
+			if lastRouteIndex ~= nil then
+				local lastRoute = state.routes[lastRouteIndex]
 				local params = Cryo.Dictionary.join(lastRoute.params or {}, action.params)
-				local mergedRoute = Cryo.Dictionary.join(lastRoute, {
-					params = params
-				})
+				local routes = Cryo.List.join(state.routes)
 
-				local routes = immutableReplaceListIndex(state.routes, lastIndex, mergedRoute)
-				return getNextState(prevState, Cryo.Dictionary.join(state, {
-					routes = routes
-				}))
+				routes[lastRouteIndex] = Cryo.Dictionary.join(
+					lastRoute,
+					{ params = params }
+				)
+
+				return getNextState(action, prevState, Cryo.Dictionary.join(
+					state,
+					{ routes = routes })
+				)
 			end
 		end
 
 		if activeChildIndex ~= state.index then
-			return getNextState(prevState, Cryo.Dictionary.join(state, { index = activeChildIndex }))
+			return getNextState(action, prevState, Cryo.Dictionary.join(
+				state,
+				{ index = activeChildIndex })
+			)
 		elseif didNavigate and not inputState then
 			return state
 		elseif didNavigate then
-			return Cryo.Dictionary.join(state)
+			return Cryo.List.join(state)
 		end
 
-		-- Let other children handle it and switch to first child that returns a new state
-		local index = state.index
-		local routes = state.routes
 
-		for i, childId in ipairs(order) do
-			if i ~= index then
+		local isActionBackOrPop = action.type == NavigationActions.Back or
+			action.type == StackActions.Pop or action.type == StackActions.PopToTop
+		local sendActionToInactiveChildren = not isActionBackOrPop or
+			(action.type == NavigationActions.Back and action.key ~= nil)
+
+		-- Let other children handle it and switch to the first child that returns a new state
+		-- Do not do this for StackActions.Pop or NavigationActions.Back actions without a key:
+		-- it would be unintuitive for these actions to switch to another tab just because that tab had a Stack that could accept a back action
+		if sendActionToInactiveChildren then
+			local index = state.index
+			local routes = state.routes
+			Cryo.List.findWhere(order, function(childId, i)
 				local childRouter = childRouters[childId]
+				if i == index then
+					return false
+				end
+
 				local childState = routes[i]
 				if childRouter then
 					childState = childRouter.getStateForAction(action, childState)
@@ -306,28 +404,31 @@ return function(routeArray, config)
 
 				if not childState then
 					index = i
-					break
+					return true
 				end
 
 				if childState ~= routes[i] then
-					routes = immutableReplaceListIndex(routes, i, childState)
+					routes = Cryo.List.join(routes)
+					routes[i] = childState
 					index = i
-					break
+					return true
 				end
+
+				return false
+			end)
+
+			-- Nested routers can be updated after switching children with actions such as SetParams
+			-- and CompleteTransition.
+			if action.preserveFocus then
+				index = state.index
 			end
-		end
 
-		-- Nested routers can be updated after switching children with actions such as SetParams
-		-- and CompleteTransition
-		if childrenUpdateWithoutSwitchingIndex(action.type) then
-			index = state.index
-		end
-
-		if index ~= state.index or routes ~= state.routes then
-			return getNextState(prevState, Cryo.Dictionary.join(state, {
-				index = index,
-				routes = routes,
-			}))
+			if index ~= state.index or routes ~= state.routes then
+				return getNextState(action, prevState, Cryo.Dictionary.join(state, {
+					index = index,
+					routes = routes,
+				}))
+			end
 		end
 
 		return state
@@ -337,15 +438,16 @@ return function(routeArray, config)
 		local activeRoute = state.routes[state.index] or {}
 		local routeName = activeRoute.routeName
 		validate(routeName, "There is no route defined for index '%d'. " ..
-			"Make sure that you passed in a navigation state with a " ..
+			"Check that you passed in a navigation state with a " ..
 			"valid tab/screen index.", state.index)
 
 		local childRouter = childRouters[routeName]
+
 		if childRouter then
 			return childRouter.getComponentForState(state.routes[state.index])
-		else
-			return getScreenForRouteName(routeConfigs, routeName)
 		end
+
+		return getScreenForRouteName(routeConfigs, routeName)
 	end
 
 	function SwitchRouter.getComponentForRouteName(routeName)

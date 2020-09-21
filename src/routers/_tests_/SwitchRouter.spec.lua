@@ -8,6 +8,7 @@ return function()
 	local StackRouter = require(script.Parent.Parent.StackRouter)
 	local SwitchRouter = require(script.Parent.Parent.SwitchRouter)
 	local NavigationActions = require(Root.NavigationActions)
+	local BackBehavior = require(Root.BackBehavior)
 	local expectDeepEqual = require(Root.utils.expectDeepEqual)
 	local getRouterTestHelper = require(script.Parent.routerTestHelper)
 
@@ -83,8 +84,7 @@ return function()
 			expect(#getState().routes[1].routes).to.equal(2)
 		end)
 
-		-- deviation: getState().index expected 2 got 1
-		itSKIP("ignores back by default", function()
+		it("ignores back by default", function()
 			local helper = getRouterTestHelper(getExampleRouter())
 			local jumpTo = helper.jumpTo
 			local back = helper.back
@@ -97,10 +97,9 @@ return function()
 			expect(getState().index).to.equal(2)
 		end)
 
-		-- deviation: getState().index expected 3 got 2
-		itSKIP("handles initialRoute backBehavior", function()
+		it("handles initialRoute backBehavior", function()
 			local helper = getRouterTestHelper(getExampleRouter({
-				backBehavior = "initialRoute",
+				backBehavior = BackBehavior.InitialRoute,
 				initialRouteName = "B",
 			}))
 			local jumpTo = helper.jumpTo
@@ -123,10 +122,9 @@ return function()
 			expect(getState().index).to.equal(2)
 		end)
 
-		-- deviation: getState().index expected 2 got 3
-		itSKIP("handles order backBehavior", function()
+		it("handles order backBehavior", function()
 			local helper = getRouterTestHelper(getExampleRouter({
-				backBehavior = "order",
+				backBehavior = BackBehavior.Order,
 			}))
 			local navigateTo = helper.navigateTo
 			local back = helper.back
@@ -147,73 +145,48 @@ return function()
 			expect(getState().index).to.equal(1)
 		end)
 
-		-- deviation: getState().routeKeyHistory expected array got nil
-		itSKIP("handles history backBehavior", function()
+		it("handles history backBehavior", function()
 			local helper = getRouterTestHelper(getExampleRouter({
-				backBehavior = "history",
+				backBehavior = BackBehavior.History,
 			}))
 			local navigateTo = helper.navigateTo
 			local back = helper.back
 			local getState = helper.getState
 
-			expectDeepEqual(getState().routeKeyHistory, {
-				"A",
-			})
+			expectDeepEqual(getState().routeKeyHistory, {"A"})
 
 			navigateTo("B")
 			expect(getState().index).to.equal(2)
-			expectDeepEqual(getState().routeKeyHistory, {
-				"A",
-				"B",
-			})
+			expectDeepEqual(getState().routeKeyHistory, {"A", "B"})
 
 			navigateTo("A")
 			expect(getState().index).to.equal(1)
-			expectDeepEqual(getState().routeKeyHistory, {
-				"B",
-				"A",
-			})
+			expectDeepEqual(getState().routeKeyHistory, {"B", "A"})
 
 			navigateTo("C")
 			expect(getState().index).to.equal(3)
-			expectDeepEqual(getState().routeKeyHistory, {
-				"B",
-				"A",
-				"C",
-			})
+			expectDeepEqual(getState().routeKeyHistory, {"B", "A", "C"})
 
 			navigateTo("A")
 			expect(getState().index).to.equal(1)
-			expectDeepEqual(getState().routeKeyHistory, {
-				"B",
-				"C",
-				"A",
-			})
+			expectDeepEqual(getState().routeKeyHistory, {"B", "C", "A"})
 
 			back()
 			expect(getState().index).to.equal(3)
-			expectDeepEqual(getState().routeKeyHistory, {
-				"B",
-				"C",
-			})
+			expectDeepEqual(getState().routeKeyHistory, {"B", "C"})
 
 			back()
 			expect(getState().index).to.equal(2)
-			expectDeepEqual(getState().routeKeyHistory, {
-				"B",
-			})
+			expectDeepEqual(getState().routeKeyHistory, {"B"})
 
 			back()
 			expect(getState().index).to.equal(2)
-			expectDeepEqual(getState().routeKeyHistory, {
-				"B",
-			})
+			expectDeepEqual(getState().routeKeyHistory, {"B"})
 		end)
 
-		-- deviation: getState().routeKeyHistory expected array got nil
-		itSKIP("handles history backBehavior without popping routeKeyHistory when child handles action", function()
+		it("handles history backBehavior without popping routeKeyHistory when child handles action", function()
 			local helper = getRouterTestHelper(getExampleRouter({
-				backBehavior = "history",
+				backBehavior = BackBehavior.History,
 			}))
 			local navigateTo = helper.navigateTo
 			local back = helper.back
@@ -249,8 +222,7 @@ return function()
 			expect(getSubState(2).routeName).to.equal("B1")
 		end)
 
-		-- deviation: back() errors with non-string key, react ignores non-string key
-		itSKIP("handles back and does not apply back action to inactive child", function()
+		it("handles back and does not apply back action to inactive child", function()
 			local helper = getRouterTestHelper(getExampleRouter({
 				backBehavior = "initialRoute",
 				resetOnBlur = false, -- Don't erase the state of substack B when we switch back to A
@@ -270,12 +242,11 @@ return function()
 			expect(getSubState(1).routeName).to.equal("A")
 
 			-- The back action should not switch to B. It should stay on A
-			back({key = nil})
+			back(nil)
 			expect(getSubState(1).routeName).to.equal("A")
 		end)
 
-		-- deviation: getSubState(1).routeName expected A, got B instead
-		itSKIP("handles pop and does not apply pop action to inactive child", function()
+		it("handles pop and does not apply pop action to inactive child", function()
 			local helper = getRouterTestHelper(getExampleRouter({
 				backBehavior = "initialRoute",
 				resetOnBlur = false, -- Don't erase the state of substack B when we switch back to A
@@ -299,8 +270,7 @@ return function()
 			expect(getSubState(1).routeName).to.equal("A")
 		end)
 
-		-- deviation: getSubState(1).routeName expected A, got B instead
-		itSKIP("handles popToTop and does not apply popToTop action to inactive child", function()
+		it("handles popToTop and does not apply popToTop action to inactive child", function()
 			local helper = getRouterTestHelper(getExampleRouter({
 				backBehavior = "initialRoute",
 				resetOnBlur = false, -- Don't erase the state of substack B when we switch back to A
@@ -324,8 +294,7 @@ return function()
 			expect(getSubState(1).routeName).to.equal("A")
 		end)
 
-		-- deviation: getSubState(1).routeName expected B, got A instead
-		itSKIP("handles back and does switch to inactive child with matching key", function()
+		it("handles back and does switch to inactive child with matching key", function()
 			local helper = getRouterTestHelper(getExampleRouter({
 				backBehavior = "initialRoute",
 				resetOnBlur = false, -- Don't erase the state of substack B when we switch back to A
