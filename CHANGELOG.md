@@ -5,6 +5,12 @@ ___
 
 Work in progress, to be added to next release notes.
 
+___
+### v0.3.0
+
+This version has started to align with React Navigation a lot more. A part of React navigation test suite has been ported and multiple files have been refactored to align with their corresponding JavaScript version.
+
+* Align SwitchRouter with React navigation ([#33](https://github.com/Roblox/roact-navigation/pull/33))
 * Rename event subscriber `disconnect` method to `remove` to match react-navigation ([#37](https://github.com/Roblox/roact-navigation/pull/37))
 * Remove unused RoactNavigation.None ([#32](https://github.com/Roblox/roact-navigation/pull/32))
 * StackRouter behavior now matches React-Navigation's StackRouter. StackActions.reset now requires the `index` field ([#28](https://github.com/Roblox/roact-navigation/pull/28))
