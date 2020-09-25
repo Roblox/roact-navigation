@@ -17,7 +17,7 @@ return function()
 		local extractedNavigation = nil
 
 		local rootElement = Roact.createElement(NavigationContext.Provider, {
-			navigation = testNavigation,
+			value = testNavigation,
 		}, {
 			Child = Roact.createElement(function()
 				return withNavigation(function(nav)
@@ -44,7 +44,7 @@ return function()
 		end
 
 		local rootElement = Roact.createElement(NavigationContext.Provider, {
-			navigation = testNavigation,
+			value = testNavigation,
 		}, {
 			Child = Roact.createElement(Comp)
 		})
@@ -52,7 +52,7 @@ return function()
 		local rootInstance = Roact.mount(rootElement)
 
 		local rootElement2 = Roact.createElement(NavigationContext.Provider, {
-			navigation = testNavigation2,
+			value = testNavigation2,
 		}, {
 			Child = Roact.createElement(Comp)
 		})

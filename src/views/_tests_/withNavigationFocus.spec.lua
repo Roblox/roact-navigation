@@ -26,7 +26,7 @@ return function()
 		}
 
 		local rootElement = Roact.createElement(NavigationContext.Provider, {
-			navigation = navigationProp,
+			value = navigationProp,
 		}, {
 			child = Roact.createElement(component)
 		})
@@ -60,7 +60,7 @@ return function()
 		}
 
 		local rootElement = Roact.createElement(NavigationContext.Provider, {
-			navigation = navigationProp,
+			value = navigationProp,
 		}, {
 			child = Roact.createElement(component)
 		})
@@ -97,7 +97,7 @@ return function()
 		}
 
 		local rootElement = Roact.createElement(NavigationContext.Provider, {
-			navigation = navigationProp,
+			value = navigationProp,
 		}, {
 			child = Roact.createElement(component)
 		})

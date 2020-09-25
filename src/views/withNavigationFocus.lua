@@ -27,7 +27,6 @@ local NavigationEvents = require(script.Parent.Parent.NavigationEvents)
 local NavigationContext = require(script.Parent.NavigationContext)
 local validate = require(script.Parent.Parent.utils.validate)
 
-
 local NavigationFocusComponent = Roact.Component:extend("NavigationFocusComponent")
 
 function NavigationFocusComponent:init()
@@ -78,12 +77,15 @@ function NavigationFocusComponent:render()
 	return render(navigation, isFocused)
 end
 
-NavigationFocusComponent = NavigationContext.connect(NavigationFocusComponent)
-
 return function(renderProp)
 	validate(renderProp ~= nil, "withNavigationFocus must be passed a render prop")
 
-	return Roact.createElement(NavigationFocusComponent, {
-		render = renderProp
+	return Roact.createElement(NavigationContext.Consumer, {
+		render = function(navigation)
+			return Roact.createElement(NavigationFocusComponent, {
+				navigation = navigation,
+				render = renderProp,
+			})
+		end
 	})
 end

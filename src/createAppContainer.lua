@@ -139,7 +139,7 @@ return function(AppComponent)
 		validate(navigation ~= nil, "failed to get navigation")
 
 		return Roact.createElement(NavigationContext.Provider, {
-			navigation = navigation,
+			value = navigation,
 		}, {
 			-- Provide navigation prop for top-level component so it doesn't have to connect.
 			AppComponent = Roact.createElement(AppComponent, Cryo.Dictionary.join(self.props, {

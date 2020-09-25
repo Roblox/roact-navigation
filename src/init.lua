@@ -14,7 +14,6 @@ return {
 	Context = NavigationContext,
 	Provider = NavigationContext.Provider,
 	Consumer = NavigationContext.Consumer,
-	connect = NavigationContext.connect,
 
 	withNavigation = require(script.views.withNavigation),
 	withNavigationFocus = require(script.views.withNavigationFocus),

@@ -5,6 +5,8 @@ ___
 
 Work in progress, to be added to next release notes.
 
+* Remove `RoactNavigation.connect`. The context provider now receives its value through the `value` prop (instead of `navigation`) ([#43](https://github.com/Roblox/roact-navigation/pull/43#pullrequestreview-496663105))
+
 ___
 ### v0.3.0
 

@@ -11,7 +11,7 @@ function SceneView:render()
 	local navigation = self.props.navigation
 
 	return Roact.createElement(NavigationContext.Provider, {
-		navigation = navigation,
+		value = navigation,
 	}, {
 		Scene = Roact.createElement(component, {
 			screenProps = screenProps,

@@ -1,7 +1,10 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
+local root = script.Parent.Parent
+local Packages = root.Parent
+local Roact = require(Packages.Roact)
+local Cryo = require(Packages.Cryo)
 local NavigationContext = require(script.Parent.NavigationContext)
-local NavigationEvents = require(script.Parent.Parent.NavigationEvents)
-local validate = require(script.Parent.Parent.utils.validate)
+local NavigationEvents = require(root.NavigationEvents)
+local validate = require(root.utils.validate)
 
 --[[
 	NavigationEventsAdapter providers a wrapper component that allows you to subscribe
@@ -88,4 +91,12 @@ function NavigationEventsAdapter:render()
 	return Roact.createElement("Folder", nil, self.props[Roact.Children])
 end
 
-return NavigationContext.connect(NavigationEventsAdapter)
+return function(props)
+	return Roact.createElement(NavigationContext.Consumer, {
+		render = function(navigation)
+			return Roact.createElement(NavigationEventsAdapter, Cryo.Dictionary.join({
+				navigation = navigation,
+			}, props))
+		end
+	})
+end
