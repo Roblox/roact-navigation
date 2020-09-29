@@ -1,3 +1,4 @@
+-- upstream https://github.com/react-navigation/react-navigation/blob/20e2625f351f90fadadbf98890270e43e744225b/packages/core/src/views/withNavigationFocus.js
 --[[
 	withNavigationFocus() is a convenience function that extends withNavigation(),
 	allowing your render function (and therefor your subgraph) to access the
@@ -7,8 +8,8 @@
 	function MyButtonComponent:render()
 		return withNavigationFocus(function(navigation, focused)
 			return Roact.createElement("TextButton", {
-				Enabled = focused,
-				[Roact.Event.Activated] = function()
+				Visible = focused,
+				[Roact.Event.Activated] = focused and function()
 					navigation.navigate("DetailPage")
 				end,
 			})
@@ -22,70 +23,61 @@
 	Note that if you ONLY need the 'navigation' context object, it is recommended
 	that you use withNavigation() for performance reasons.
 ]]
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local NavigationEvents = require(script.Parent.Parent.NavigationEvents)
-local NavigationContext = require(script.Parent.NavigationContext)
-local validate = require(script.Parent.Parent.utils.validate)
+local root = script.Parent.Parent
+local Packages = root.Parent
+local Roact = require(Packages.Roact)
+local Cryo = require(Packages.Cryo)
+local NavigationEvents = require(root.NavigationEvents)
+local withNavigation = require(script.Parent.withNavigation)
 
-local NavigationFocusComponent = Roact.Component:extend("NavigationFocusComponent")
-
-function NavigationFocusComponent:init()
-	local navigation = self.props.navigation
-	self.state = {
-		isFocused = navigation and navigation.isFocused() or false
-	}
+local function isComponent(component)
+	local valueType = typeof(component)
+	return valueType == "function" or valueType == "table"
 end
 
-function NavigationFocusComponent:didMount()
-	local navigation = self.props.navigation
-	validate(navigation ~= nil,
-		"withNavigationFocus can only be used within the view hierarchy of a navigator. " ..
-		"The wrapped component cannot access 'navigation' from props or context.")
+return function(component)
+	assert(
+		isComponent(component),
+		"withNavigationFocus must be called with a Roact component (stateful or functional)"
+	)
+	local NavigationFocusComponent = Roact.Component:extend("NavigationFocusComponent")
 
-	self._didFocusListener = navigation.addListener(NavigationEvents.DidFocus, function()
-		-- no spawn because we expect this to be called directly from safe paths
-		self:setState({
-			isFocused = true,
-		})
-	end)
-
-	self._willBlurListener = navigation.addListener(NavigationEvents.WillBlur, function()
-		-- no spawn because we expect this to be called directly from safe paths
-		self:setState({
-			isFocused = false,
-		})
-	end)
-end
-
-function NavigationFocusComponent:willUnmount()
-	if self._didFocusListener then
-		self._didFocusListener.remove()
-		self._didFocusListener = nil
+	function NavigationFocusComponent:init()
+		self.state = {
+			isFocused = self.props.navigation.isFocused(),
+		}
 	end
 
-	if self._willBlurListener then
-		self._willBlurListener.remove()
-		self._willBlurListener = nil
+	function NavigationFocusComponent:didMount()
+		local navigation = self.props.navigation
+
+		self.subscriptions = {
+			navigation.addListener(NavigationEvents.WillFocus, function()
+				-- no spawn because we expect this to be called directly from safe paths
+				self:setState({
+					isFocused = true,
+				})
+			end),
+			navigation.addListener(NavigationEvents.WillBlur, function()
+				-- no spawn because we expect this to be called directly from safe paths
+				self:setState({
+					isFocused = false,
+				})
+			end),
+		}
 	end
-end
 
-function NavigationFocusComponent:render()
-	local isFocused = self.state.isFocused
-	local navigation = self.props.navigation
-	local render = self.props.render
-
-	return render(navigation, isFocused)
-end
-
-return function(renderProp)
-	validate(renderProp ~= nil, "withNavigationFocus must be passed a render prop")
-
-	return Roact.createElement(NavigationContext.Consumer, {
-		render = function(navigation)
-			return Roact.createElement(NavigationFocusComponent, {
-				navigation = navigation,
-				render = renderProp,
-			})
+	function NavigationFocusComponent:willUnmount()
+		for _, subscription in ipairs(self.subscriptions) do
+			subscription.remove()
 		end
-	})
+	end
+
+	function NavigationFocusComponent:render()
+		return Roact.createElement(component, Cryo.Dictionary.join(self.props, {
+			isFocused = self.state.isFocused,
+		}))
+	end
+
+	return withNavigation(NavigationFocusComponent, { forwardRef = false })
 end

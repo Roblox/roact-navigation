@@ -5,7 +5,8 @@ ___
 
 Work in progress, to be added to next release notes.
 
-* Remove `RoactNavigation.connect`. The context provider now receives its value through the `value` prop (instead of `navigation`) ([#43](https://github.com/Roblox/roact-navigation/pull/43#pullrequestreview-496663105))
+* Align `withNavigation` and `withNavigationFocus` with React Navigation. Now, those function are higher-order components (HOC). See React Navigation [documentation](https://reactnavigation.org/docs/4.x/with-navigation/) for a concrete example. ([#44](https://github.com/Roblox/roact-navigation/pull/44))
+* Remove `RoactNavigation.connect`. The context provider now receives its value through the `value` prop (instead of `navigation`) ([#43](https://github.com/Roblox/roact-navigation/pull/43))
 
 ___
 ### v0.3.0

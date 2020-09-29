@@ -67,41 +67,6 @@ In **React** Navigation, when you need to specify the back behavior property (fo
 
 Since this function is not part of React Navigation 5, we prefer to remove it now make our future migration to version 5 easier. If you think you have a use case where `dangerouslyGetParent` appears to be a necessity, open an issue and we can engineer a solution for you.
 
-## [`withNavigation`](https://reactnavigation.org/docs/4.x/with-navigation) and [`withNavigationFocus`](https://reactnavigation.org/docs/4.x/with-navigation-focus) [will align]
-
-Both of these functions work differently than React Navigation. In [React Navigation](https://reactnavigation.org/docs/4.x/with-navigation/), they are higher order components that passes the `navigation` prop to the given component. Currently, our version is a thin wrapper over the navigation context render prop. Here's a summary of the API differences:
-
-| version | input | output |
-| -- | -- | -- |
-| Roact | a function that will be called with the `navigation` prop | a Roact element |
-| React | a component (stateful or functional) | a new component |
-
-### Code example
-In concrete, you would use the current Roact Navigation `withNavigation` or `withNavigationFocus` like this:
-```lua
-local function Foo(props)
-	return withNavigation(function(navigation)
-		return Roact.createElement(...)
-	end)
-end
-
-return Foo
-```
-
-In a future release, we want to align with React Navigation, so the previous example would become:
-
-```lua
-local function Foo(props)
-	local navigation = props.navigation
-
-	return Roact.createElement(...)
-end
-
-return withNavigation(Foo)
-```
-
-This functionality already exist in Roact Navigation under another name: `RoactNavigation.connect`. With that being said, you should favor using `RoactNavigation.connect` as it will be easier to migrate later.
-
 ## `EventsAdapter` ([`NavigationEvents`](https://reactnavigation.org/docs/4.x/navigation-events) in React Navigation) [will align]
 
 Currently, our version of this component has a different name and works like this:
@@ -126,7 +91,7 @@ Roact.createElement(RoactNavigation.NavigationEvents, {
 })
 ```
 
-## Events and [`addListenter`](https://reactnavigation.org/docs/4.x/navigation-prop#addlistener---subscribe-to-updates-to-navigation-lifecycle)
+## Events and [`addListener`](https://reactnavigation.org/docs/4.x/navigation-prop#addlistener---subscribe-to-updates-to-navigation-lifecycle)
 
 Instead of using strings for each event, Roact Navigation uses an enum (RoactNavigation.Events), so each React Navigation event maps to an entry of the enum:
 

@@ -1,18 +1,20 @@
 return function()
-	local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
+	local root = script.Parent.Parent.Parent
+	local Packages = root.Parent
+	local Roact = require(Packages.Roact)
 	local NavigationContext = require(script.Parent.Parent.NavigationContext)
-	local NavigationEvents = require(script.Parent.Parent.Parent.NavigationEvents)
+	local NavigationEvents = require(root.NavigationEvents)
 	local withNavigationFocus = require(script.Parent.Parent.withNavigationFocus)
 
 	it("should pass focused=true when initially focused", function()
-		local testNavigation, testFocused
-		local component = function()
-			return withNavigationFocus(function(navigation, focused)
-				testNavigation = navigation
-				testFocused = focused
-				return nil
-			end)
+		local testFocused = nil
+
+		local function Foo(props)
+			testFocused = props.isFocused
+			return nil
 		end
+
+		local FooWithNavigationFocus = withNavigationFocus(Foo)
 
 		local navigationProp = {
 			isFocused = function()
@@ -28,25 +30,24 @@ return function()
 		local rootElement = Roact.createElement(NavigationContext.Provider, {
 			value = navigationProp,
 		}, {
-			child = Roact.createElement(component)
+			child = Roact.createElement(FooWithNavigationFocus),
 		})
 
-		local instance = Roact.mount(rootElement)
-		expect(testNavigation).to.equal(navigationProp)
+		local tree = Roact.mount(rootElement)
 		expect(testFocused).to.equal(true)
 
-		Roact.unmount(instance)
+		Roact.unmount(tree)
 	end)
 
 	it("should pass focused=false when initially unfocused", function()
-		local testNavigation, testFocused
-		local component = function()
-			return withNavigationFocus(function(navigation, focused)
-				testNavigation = navigation
-				testFocused = focused
-				return nil
-			end)
+		local testFocused = nil
+
+		local function Foo(props)
+			testFocused = props.isFocused
+			return nil
 		end
+
+		local FooWithNavigationFocus = withNavigationFocus(Foo)
 
 		local navigationProp = {
 			isFocused = function()
@@ -62,25 +63,25 @@ return function()
 		local rootElement = Roact.createElement(NavigationContext.Provider, {
 			value = navigationProp,
 		}, {
-			child = Roact.createElement(component)
+			child = Roact.createElement(FooWithNavigationFocus)
 		})
 
-		local instance = Roact.mount(rootElement)
-		expect(testNavigation).to.equal(navigationProp)
+		local tree = Roact.mount(rootElement)
 		expect(testFocused).to.equal(false)
 
-		Roact.unmount(instance)
+		Roact.unmount(tree)
 	end)
 
 	it("should re-render and set focused status for events", function()
 		local testListeners = {}
 		local testFocused = false
-		local component = function()
-			return withNavigationFocus(function(navigation, focused)
-				testFocused = focused
-				return nil
-			end)
+
+		local function Foo(props)
+			testFocused = props.isFocused
+			return Roact.createElement("TextButton")
 		end
+
+		local FooWithNavigationFocus = withNavigationFocus(Foo)
 
 		local navigationProp = {
 			isFocused = function()
@@ -99,49 +100,44 @@ return function()
 		local rootElement = Roact.createElement(NavigationContext.Provider, {
 			value = navigationProp,
 		}, {
-			child = Roact.createElement(component)
+			child = Roact.createElement(FooWithNavigationFocus),
 		})
 
-		local instance = Roact.mount(rootElement)
+		local tree = Roact.mount(rootElement)
 		expect(testFocused).to.equal(false)
-		expect(type(testListeners[NavigationEvents.DidFocus])).to.equal("function")
-		expect(type(testListeners[NavigationEvents.WillBlur])).to.equal("function")
+		expect(testListeners[NavigationEvents.WillFocus]).to.be.a("function")
+		expect(testListeners[NavigationEvents.WillBlur]).to.be.a("function")
 
-		testListeners[NavigationEvents.DidFocus]()
+		testListeners[NavigationEvents.WillFocus]()
 		expect(testFocused).to.equal(true)
 
 		testListeners[NavigationEvents.WillBlur]()
 		expect(testFocused).to.equal(false)
 
-		Roact.unmount(instance)
-		expect(testListeners[NavigationEvents.DidFocus]).to.equal(nil)
+		Roact.unmount(tree)
+		expect(testListeners[NavigationEvents.WillFocus]).to.equal(nil)
 		expect(testListeners[NavigationEvents.WillBlur]).to.equal(nil)
 	end)
 
-	it("should throw when renderProp is not provided", function()
-		local success, err = pcall(function()
+	it("throws if component is not provided", function()
+		expect(function()
 			withNavigationFocus(nil)
-		end)
-
-		expect(success).to.equal(false)
-		expect(string.find(err,
-			"withNavigationFocus must be passed a render prop")).to.never.equal(nil)
+		end).to.throw("withNavigationFocus must be called with a Roact component (stateful or functional)")
 	end)
 
 	it("should throw when used outside of a navigation provider", function()
-		local component = function()
-			return withNavigationFocus(function(navigation, focused)
-
-			end)
+		local function Foo()
+			return nil
 		end
 
-		local element = Roact.createElement(component)
+		local FooWithNavigationFocus = withNavigationFocus(Foo)
 
-		local success, _ = pcall(function()
-			Roact.unmount(Roact.mount(element))
-		end)
+		local errorMessage = "withNavigation and withNavigationFocus can only " ..
+			"be used on a view hierarchy of a navigator. The wrapped component is " ..
+			"unable to get access to navigation from props or context"
 
-		expect(success).to.equal(false)
-		-- We do not test the message because NavigationConsumer gets in the way here.
+		expect(function()
+			Roact.mount(Roact.createElement(FooWithNavigationFocus))
+		end).to.throw(errorMessage)
 	end)
 end

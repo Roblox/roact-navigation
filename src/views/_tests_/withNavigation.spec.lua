@@ -3,31 +3,31 @@ return function()
 	local withNavigation = require(script.Parent.Parent.withNavigation)
 	local NavigationContext = require(script.Parent.Parent.NavigationContext)
 
-	it("should throw if no renderProp is provided", function()
-		local status, err = pcall(function()
+	it("throws if no component is provided", function()
+		expect(function()
 			withNavigation(nil)
-		end)
-
-		expect(status).to.equal(false)
-		expect(string.find(err, "withNavigation must be passed a render prop")).to.never.equal(nil)
+		end).to.throw("withNavigation must be called with a Roact component (stateful or functional)")
 	end)
 
 	it("should extract navigation object from provider and pass it through", function()
 		local testNavigation = {}
 		local extractedNavigation = nil
 
+		local function Foo(props)
+			extractedNavigation = props.navigation
+			return nil
+		end
+
+		local FooWithNavigation = withNavigation(Foo)
+
 		local rootElement = Roact.createElement(NavigationContext.Provider, {
 			value = testNavigation,
 		}, {
-			Child = Roact.createElement(function()
-				return withNavigation(function(nav)
-					extractedNavigation = nav
-				end)
-			end)
+			Child = Roact.createElement(FooWithNavigation)
 		})
 
-		local rootInstance = Roact.mount(rootElement)
-		Roact.unmount(rootInstance)
+		local tree = Roact.mount(rootElement)
+		Roact.unmount(tree)
 
 		expect(extractedNavigation).to.equal(testNavigation)
 	end)
@@ -37,30 +37,49 @@ return function()
 		local testNavigation2 = {}
 		local extractedNavigation = nil
 
-		local function Comp()
-			return withNavigation(function(nav)
-				extractedNavigation = nav
-			end)
+		local function Foo(props)
+			extractedNavigation = props.navigation
+			return nil
 		end
+
+		local FooWithNavigation = withNavigation(Foo)
 
 		local rootElement = Roact.createElement(NavigationContext.Provider, {
 			value = testNavigation,
 		}, {
-			Child = Roact.createElement(Comp)
+			Child = Roact.createElement(FooWithNavigation)
 		})
 
-		local rootInstance = Roact.mount(rootElement)
+		local tree = Roact.mount(rootElement)
 
 		local rootElement2 = Roact.createElement(NavigationContext.Provider, {
 			value = testNavigation2,
 		}, {
-			Child = Roact.createElement(Comp)
+			Child = Roact.createElement(FooWithNavigation)
 		})
 
-		Roact.update(rootInstance, rootElement2)
+		Roact.update(tree, rootElement2)
 
-		Roact.unmount(rootInstance)
+		Roact.unmount(tree)
 
 		expect(extractedNavigation).to.equal(testNavigation2)
+	end)
+
+	it("should throw when used outside of a navigation provider", function()
+		local function Foo(props)
+			return nil
+		end
+
+		local FooWithNavigation = withNavigation(Foo)
+
+		local element = Roact.createElement(FooWithNavigation)
+
+		local errorMessage = "withNavigation and withNavigationFocus can only " ..
+			"be used on a view hierarchy of a navigator. The wrapped component is " ..
+			"unable to get access to navigation from props or context"
+
+		expect(function()
+			Roact.mount(element)
+		end).to.throw(errorMessage)
 	end)
 end

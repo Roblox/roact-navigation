@@ -1,7 +1,6 @@
 return function()
 	local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
 	local SwitchView = require(script.Parent.Parent.SwitchView)
-	local withNavigation = require(script.Parent.Parent.withNavigation)
 
 	it("should mount and pass required props and context", function()
 		local testScreenProps = {}
@@ -16,16 +15,12 @@ return function()
 
 		local testComponentNavigationFromProp = nil
 		local testComponentScreenProps = nil
-		local testComponentNavigationFromContext = nil
 
 		local TestComponent = Roact.Component:extend("TestComponent")
 		function TestComponent:render()
 			testComponentNavigationFromProp = self.props.navigation
 			testComponentScreenProps = self.props.screenProps
-
-			return withNavigation(function(navigation)
-				testComponentNavigationFromContext = navigation
-			end)
+			return nil
 		end
 
 		local testDescriptors = {
@@ -48,7 +43,6 @@ return function()
 
 		expect(testComponentNavigationFromProp).to.equal(testNavigation)
 		expect(testComponentScreenProps).to.equal(testScreenProps)
-		expect(testComponentNavigationFromContext).to.equal(testNavigation)
 	end)
 
 	it("should unmount inactive pages when keepVisitedScreensMounted is false", function()
