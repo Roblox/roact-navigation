@@ -10,6 +10,7 @@ return function()
 	local TabRouter = require(script.Parent.Parent.TabRouter)
 	local SwitchRouter = require(script.Parent.Parent.SwitchRouter)
 	local NavigationActions = require(Root.NavigationActions)
+	local StackActions = require(Root.routers.StackActions)
 	local KeyGenerator = require(Root.utils.KeyGenerator)
 	local expectDeepEqual = require(Root.utils.expectDeepEqual)
 
@@ -483,8 +484,7 @@ return function()
 
 		local stateAfterCompleteTransition = TestRouter.getStateForAction(
 			{
-				-- deviation: `StackActions.CompleteTransition` is in NavigationActions
-				type = NavigationActions.CompleteTransition,
+				type = StackActions.CompleteTransition,
 				preserveFocus = true,
 				key = state2.routes[1].key,
 			},

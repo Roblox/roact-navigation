@@ -10,7 +10,7 @@ local createConfigGetter = require(script.Parent.createConfigGetter)
 local validateRouteConfigMap = require(script.Parent.validateRouteConfigMap)
 local validateRouteConfigArray = require(script.Parent.validateRouteConfigArray)
 local validate = require(Root.utils.validate)
-local StackActions = require(Root.StackActions)
+local StackActions = require(Root.routers.StackActions)
 local SwitchActions = require(script.Parent.SwitchActions)
 local showDeprecatedRouterMessage = require(script.Parent.showDeprecatedRouterMessage)
 

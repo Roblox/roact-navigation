@@ -2,7 +2,7 @@ return function()
 	local Root = script.Parent.Parent.Parent
 	local StackRouter = require(script.Parent.Parent.StackRouter)
 	local NavigationActions = require(Root.NavigationActions)
-	local StackActions = require(Root.StackActions)
+	local StackActions = require(script.Parent.Parent.StackActions)
 
 	local function expectError(functor, msg)
 		local status, err = pcall(functor)
@@ -1303,7 +1303,7 @@ return function()
 			local transitioningState = router.getStateForAction(StackActions.push({ routeName = "Bar" }), initialState)
 			expect(transitioningState.isTransitioning).to.equal(true)
 
-			local completedState = router.getStateForAction(NavigationActions.completeTransition({
+			local completedState = router.getStateForAction(StackActions.completeTransition({
 				toChildKey = transitioningState.routes[2].key, -- Need actual key to identify target
 			}), transitioningState)
 
@@ -1348,13 +1348,13 @@ return function()
 			expect(transitioningState.routes[2].isTransitioning).to.equal(true)
 			expect(transitioningState.routes[2].routes[2].routeName).to.equal("BarB")
 
-			local childOnlyCompletedState = router.getStateForAction(NavigationActions.completeTransition({
+			local childOnlyCompletedState = router.getStateForAction(StackActions.completeTransition({
 				toChildKey = transitioningState.routes[2].routes[2].key,
 			}), transitioningState)
 			expect(childOnlyCompletedState.isTransitioning).to.equal(true) -- *** parent needs its own completeTransition call ***
 			expect(childOnlyCompletedState.routes[2].isTransitioning).to.equal(false)
 
-			local completedState = router.getStateForAction(NavigationActions.completeTransition({
+			local completedState = router.getStateForAction(StackActions.completeTransition({
 				toChildKey = transitioningState.routes[2].key,
 			}), childOnlyCompletedState)
 			expect(completedState.isTransitioning).to.equal(false)

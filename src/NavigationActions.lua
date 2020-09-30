@@ -1,14 +1,11 @@
 -- upstream https://github.com/react-navigation/react-navigation/blob/62da341b672a83786b9c3a80c8a38f929964d7cc/packages/core/src/NavigationActions.ts
 
-local Packages = script.Parent.Parent
-local Cryo = require(Packages.Cryo)
 local NavigationSymbol = require(script.Parent.NavigationSymbol)
 
 local BACK_TOKEN = NavigationSymbol("BACK")
 local INIT_TOKEN = NavigationSymbol("INIT")
 local NAVIGATE_TOKEN = NavigationSymbol("NAVIGATE")
 local SET_PARAMS_TOKEN = NavigationSymbol("SET_PARAMS")
-local COMPLETE_TRANSITION_TOKEN = NavigationSymbol("COMPLETE_TRANSITION")
 
 --[[
 	NavigationActions provides shared constants and methods to construct
@@ -19,7 +16,6 @@ local NavigationActions = {
 	Init = INIT_TOKEN,
 	Navigate = NAVIGATE_TOKEN,
 	SetParams = SET_PARAMS_TOKEN,
-	CompleteTransition = COMPLETE_TRANSITION_TOKEN,
 }
 
 -- deviation: we using this metatable to error when NavigationActions is indexed
@@ -70,17 +66,6 @@ function NavigationActions.setParams(payload)
 		key = data.key,
 		params = data.params,
 	}
-end
-
--- deviation: `StackActions.CompleteTransition` is moved in NavigationActions
--- For internal use. Triggers completion of a transition animation, if needed by the router.
--- This would be sent on e.g. didMount of the new page, so the router knows that the new screen
--- is ready to be displayed before it animates it in place.
-function NavigationActions.completeTransition(payload)
-	return Cryo.Dictionary.join(
-		{ type = COMPLETE_TRANSITION_TOKEN, preserveFocus = true },
-		payload or {}
-	)
 end
 
 return NavigationActions

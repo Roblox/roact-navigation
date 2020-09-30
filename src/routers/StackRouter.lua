@@ -1,14 +1,17 @@
-local Cryo = require(script.Parent.Parent.Parent.Cryo)
-local NavigationActions = require(script.Parent.Parent.NavigationActions)
-local StackActions = require(script.Parent.Parent.StackActions)
-local KeyGenerator = require(script.Parent.Parent.utils.KeyGenerator)
-local StateUtils = require(script.Parent.Parent.StateUtils)
+local root = script.Parent.Parent
+local Packages = root.Parent
+
+local Cryo = require(Packages.Cryo)
+local NavigationActions = require(root.NavigationActions)
+local StackActions = require(script.Parent.StackActions)
+local KeyGenerator = require(root.utils.KeyGenerator)
+local StateUtils = require(root.StateUtils)
 local getScreenForRouteName = require(script.Parent.getScreenForRouteName)
 local createConfigGetter = require(script.Parent.createConfigGetter)
 local validateRouteConfigArray = require(script.Parent.validateRouteConfigArray)
 local validateRouteConfigMap = require(script.Parent.validateRouteConfigMap)
-local validate = require(script.Parent.Parent.utils.validate)
-local NavigationSymbol = require(script.Parent.Parent.NavigationSymbol)
+local validate = require(root.utils.validate)
+local NavigationSymbol = require(root.NavigationSymbol)
 local showDeprecatedRouterMessage = require(script.Parent.showDeprecatedRouterMessage)
 
 local STACK_ROUTER_ROOT_KEY = "StackRouterRoot"
@@ -510,7 +513,7 @@ return function(routeArray, config)
 			end
 		end
 
-		if action.type == NavigationActions.CompleteTransition and
+		if action.type == StackActions.CompleteTransition and
 			(action.key == nil or action.key == state.key) and
 			action.toChildKey == state.routes[state.index].key and
 			state.isTransitioning

@@ -1,6 +1,8 @@
-local Cryo = require(script.Parent.Parent.Parent.Parent.Cryo)
-local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
-local NavigationActions = require(script.Parent.Parent.Parent.NavigationActions)
+local root = script.Parent.Parent.Parent
+local Packages = root.Parent
+local Cryo = require(Packages.Cryo)
+local Roact = require(Packages.Roact)
+local StackActions = require(root.routers.StackActions)
 local StackViewLayout = require(script.Parent.StackViewLayout)
 local Transitioner = require(script.Parent.Parent.Transitioner)
 local StackViewTransitionConfigs = require(script.Parent.StackViewTransitionConfigs)
@@ -57,7 +59,7 @@ end
 function StackView:didMount()
 	local navigation = self.props.navigation
 	if navigation.state.isTransitioning then
-		navigation.dispatch(NavigationActions.completeTransition({
+		navigation.dispatch(StackActions.completeTransition({
 			key = navigation.state.key,
 		}))
 	end
@@ -105,7 +107,7 @@ function StackView:_onTransitionEnd(transition, lastTransition)
 	local isCurrentKey = navigation.state.routes[navigation.state.index].key == transitionDestKey
 
 	if transition.navigation.state.isTransitioning and isCurrentKey then
-		navigation.dispatch(NavigationActions.completeTransition({
+		navigation.dispatch(StackActions.completeTransition({
 			key = navigation.state.key,
 			toChildKey = transitionDestKey,
 		}))

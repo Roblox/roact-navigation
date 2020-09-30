@@ -3,7 +3,7 @@
 local Root = script.Parent.Parent.Parent
 local Packages = Root.Parent
 local Cryo = require(Packages.Cryo)
-local StackActions = require(Root.StackActions)
+local StackActions = require(Root.routers.StackActions)
 local SwitchActions = require(Root.routers.SwitchActions)
 local NavigationActions = require(Root.NavigationActions)
 

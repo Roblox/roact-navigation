@@ -84,5 +84,16 @@ return function()
 			expect(replaceTable.action).to.equal("action")
 			expect(replaceTable.immediate).to.equal("immediate")
 		end)
+
+		it("should return a complete transition action with matching data for call to completeTransition()", function()
+			local completeTransitionTable = StackActions.completeTransition({
+				key = "key",
+				toChildKey = "toChildKey",
+			})
+
+			expect(completeTransitionTable.type).to.equal(StackActions.CompleteTransition)
+			expect(completeTransitionTable.key).to.equal("key")
+			expect(completeTransitionTable.toChildKey).to.equal("toChildKey")
+		end)
 	end)
 end

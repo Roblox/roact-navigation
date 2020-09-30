@@ -6,7 +6,7 @@ return function()
 	local Cryo = require(Packages.Cryo)
 	local Roact = require(Packages.Roact)
 	local StackRouter = require(script.Parent.Parent.StackRouter)
-	local StackActions = require(Root.StackActions)
+	local StackActions = require(Root.routers.StackActions)
 	local NavigationActions = require(Root.NavigationActions)
 	local KeyGenerator = require(Root.utils.KeyGenerator)
 	local expectDeepEqual = require(Root.utils.expectDeepEqual)
@@ -1101,8 +1101,7 @@ return function()
 			expect(state2 and state2.isTransitioning).to.equal(true)
 
 			local state3 = router.getStateForAction({
-				-- deviation: `StackActions.CompleteTransition` is in NavigationActions
-				type = NavigationActions.CompleteTransition,
+				type = StackActions.CompleteTransition,
 				toChildKey = state2.routes[2].key,
 			}, state2)
 
@@ -1128,8 +1127,7 @@ return function()
 				},
 			}
 			local outputState = router.getStateForAction({
-				-- deviation: `StackActions.CompleteTransition` is in NavigationActions
-				type = NavigationActions.CompleteTransition,
+				type = StackActions.CompleteTransition,
 				toChildKey = state.routes[state.index].key,
 				key = "not StackKey",
 			}, state)
@@ -1161,8 +1159,7 @@ return function()
 				},
 			}
 			local outputState = router.getStateForAction({
-				-- deviation: `StackActions.CompleteTransition` is in NavigationActions
-				type = NavigationActions.CompleteTransition,
+				type = StackActions.CompleteTransition,
 				-- for this action to toggle isTransitioning, toChildKey should be state.routes[state.index].key,
 				toChildKey = "incorrect",
 				key = "StackKey",
@@ -1908,8 +1905,7 @@ return function()
 			expect(not not key).to.equal(true)
 
 			local state3 = router.getStateForAction({
-				-- deviation: `StackActions.CompleteTransition` is in NavigationActions
-				type = NavigationActions.CompleteTransition,
+				type = StackActions.CompleteTransition,
 				toChildKey = state2.routes[1].routes[2].key,
 			}, state2)
 
