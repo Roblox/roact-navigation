@@ -54,6 +54,24 @@ createStackRouter({
 })
 ```
 
+## Actions
+
+The different actions under NavigationActions, StackActions and SwitchActions do not have the same casing as in React Navigation. However, the action creators match, simply just not the action types themselves. There is a good chance you won't need those, but here are the differences:
+
+| React Navigation | Roact Navigation |
+| -- | -- |
+| `NavigationActions.BACK` | `NavigationActions.Back` |
+| `NavigationActions.INIT` | `NavigationActions.Init` |
+| `NavigationActions.NAVIGATE` | `NavigationActions.Navigate` |
+| `NavigationActions.SET_PARAMS` | `NavigationActions.SetParams` |
+| `StackActions.POP` | `StackActions.Pop` |
+| `StackActions.POP_TO_TOP` | `StackActions.PopToTop` |
+| `StackActions.PUSH` | `StackActions.Push` |
+| `StackActions.RESET` | `StackActions.Reset` |
+| `StackActions.REPLACE` | `StackActions.Replace` |
+| `StackActions.COMPLETE_TRANSITION` | `StackActions.CompleteTransition` |
+| `SwitchActions.JUMP_TO` | `SwitchActions.JumpTo` |
+
 ## BackBehavior
 
 In **React** Navigation, when you need to specify the back behavior property (for a [SwitchNavigator](https://reactnavigation.org/docs/4.x/switch-navigator/#switchnavigatorconfig) for example), you use directly a string. In our version, you **can't use a string**, the different back behavior values are located under `RoactNavigation.BackBehavior`:
