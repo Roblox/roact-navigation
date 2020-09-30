@@ -9,6 +9,7 @@ return function()
 	local Roact = require(Packages.Roact)
 	local RoactNavigation = require(Packages.RoactNavigation)
 
+	local getUniqueName = require(script.Parent.Parent.getUniqueName)
 	local TrackNavigationEvents = require(Packages.RoactNavigation.utils.TrackNavigationEvents)
 	local PageNavigationEvent = require(Packages.RoactNavigation.utils.PageNavigationEvent)
 
@@ -22,18 +23,18 @@ return function()
 
 	local function createButtonPage(pageName, clickTargetPageName, trackNavigationEvents)
 		return function(props)
-			return trackNavigationEvents:createNavigationAdapter(pageName, {
-				Roact.createElement("TextButton", {
-					BackgroundColor3 = Color3.new(1, 1, 1),
-					Font = Enum.Font.Gotham,
-					Size = UDim2.new(1, 0, 1, 0),
-					Text = pageName,
-					TextColor3 = Color3.new(0, 0, 0),
-					TextSize = 18,
-					[Roact.Event.Activated] = function()
-						props.navigation.navigate(clickTargetPageName)
-					end,
-				})
+			return Roact.createElement("TextButton", {
+				BackgroundColor3 = Color3.new(1, 1, 1),
+				Font = Enum.Font.Gotham,
+				Size = UDim2.new(1, 0, 1, 0),
+				Text = pageName,
+				TextColor3 = Color3.new(0, 0, 0),
+				TextSize = 18,
+				[Roact.Event.Activated] = function()
+					props.navigation.navigate(clickTargetPageName)
+				end,
+			}, {
+				NavigationEvents = trackNavigationEvents:createNavigationAdapter(pageName)
 			})
 		end
 	end
@@ -80,18 +81,22 @@ return function()
 				))
 			})
 
-		local rootPath = XPath.new("game.CoreGui.RootContainer.AppComponent.TransitionerScenes")
-		local scene1Path = rootPath:cat(XPath.new("1.DynamicContent.*.Scene.1"))
-		local scene2Path = rootPath:cat(XPath.new("2.DynamicContent.*.Scene.1"))
+		local rootName = getUniqueName()
+		local rootPath = XPath.new("game.CoreGui"):cat(XPath.new(rootName))
+			:cat(XPath.new("AppComponent.TransitionerScenes"))
+		local scene1Path = rootPath:cat(XPath.new("1.DynamicContent.*.Scene"))
+		local scene2Path = rootPath:cat(XPath.new("2.DynamicContent.*.Scene"))
 
-		local rootInstance = Roact.mount(appContainer, CoreGui, "RootContainer")
+		local rootInstance = Roact.mount(appContainer, CoreGui, rootName)
 
 		-- wait for expected events to fire
 		trackNavigationEvents:waitForNumberEventsMaxWaitTime(2, 1)
-		expect(trackNavigationEvents:equalTo({
-			PageNavigationEvent.new(pageOneName, willFocusEvent),
-			PageNavigationEvent.new(pageOneName, didFocusEvent),
-		})).to.be.equal(true)
+		expect(function()
+			trackNavigationEvents:expect({
+				PageNavigationEvent.new(pageOneName, willFocusEvent),
+				PageNavigationEvent.new(pageOneName, didFocusEvent),
+			})
+		end).never.to.throw()
 		-- did events occur in the expected order
 		local button1Element = Element.new(scene1Path)
 		expect(button1Element:waitForRbxInstance(1)).to.be.ok()
@@ -113,18 +118,22 @@ return function()
 		-- willFocus/willBlur or didFocus/didBlur because of Lua table order semantics, but
 		-- the "did" events should always land after the "will" events are both done.
 		local willEvents = Cryo.List.removeRange(trackNavigationEvents:getNavigationEvents(), 3, 4)
-		willEvents = Cryo.List.sort(willEvents, function(a, b)
+		table.sort(willEvents, function(a, b)
 			return tostring(a.event) < tostring(b.event)
 		end)
-		expect(willEvents[1]:equalTo(PageNavigationEvent.new(pageOneName, willBlurEvent))).to.equal(true)
-		expect(willEvents[2]:equalTo(PageNavigationEvent.new(pageTwoName, willFocusEvent))).to.equal(true)
+		local firstWillEvent = PageNavigationEvent.new(pageOneName, willBlurEvent)
+		expect(willEvents[1]:equalTo(firstWillEvent)).to.equal(true)
+		local secondWillEvent = PageNavigationEvent.new(pageTwoName, willFocusEvent)
+		expect(willEvents[2]:equalTo(secondWillEvent)).to.equal(true)
 
 		local didEvents = Cryo.List.removeRange(trackNavigationEvents:getNavigationEvents(), 1, 2)
-		didEvents = Cryo.List.sort(didEvents, function(a, b)
+		table.sort(didEvents, function(a, b)
 			return tostring(a.event) < tostring(b.event)
 		end)
-		expect(didEvents[1]:equalTo(PageNavigationEvent.new(pageOneName, didBlurEvent))).to.equal(true)
-		expect(didEvents[2]:equalTo(PageNavigationEvent.new(pageTwoName, didFocusEvent))).to.equal(true)
+		local firstDidEvent = PageNavigationEvent.new(pageOneName, didBlurEvent)
+		expect(didEvents[1]:equalTo(firstDidEvent)).to.equal(true)
+		local secondDidEvent = PageNavigationEvent.new(pageTwoName, didFocusEvent)
+		expect(didEvents[2]:equalTo(secondDidEvent)).to.equal(true)
 
 		-- Wait for new page to mount
 		local scene2ButtonElement = Element.new(scene2Path)
@@ -156,15 +165,10 @@ return function()
 	end
 
 	for _, stackPresentationStyle in pairs(RoactNavigation.StackPresentationStyle) do
-		describe(string.format("Mode: %s - navigation events", tostring(stackPresentationStyle)),
-			function()
-				it("should appear in predetermined order",
-					function()
-						RhodiumTestNavigation(stackPresentationStyle)
-					end)
-			end
-		)
+		describe(("Mode: %s - navigation events"):format(tostring(stackPresentationStyle)), function()
+			it("should appear in predetermined order", function()
+				RhodiumTestNavigation(stackPresentationStyle)
+			end)
+		end)
 	end
-
 end
-

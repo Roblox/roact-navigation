@@ -81,13 +81,15 @@ return function()
 		expect(type(RoactNavigation.Events)).to.equal("table")
 	end)
 
-	it("should return a valid component for EventsAdapter", function()
-		local instance = Roact.mount(Roact.createElement(RoactNavigation.EventsAdapter, {
-			navigation = {
+	it("should return a valid component for NavigationEvents", function()
+		local instance = Roact.mount(Roact.createElement(RoactNavigation.Provider, {
+			value = {
 				addListener = function()
 					return { remove = function() end }
 				end
 			}
+		}, {
+			Events = Roact.createElement(RoactNavigation.NavigationEvents),
 		}))
 		Roact.unmount(instance)
 	end)

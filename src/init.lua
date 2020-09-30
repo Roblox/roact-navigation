@@ -35,8 +35,8 @@ return {
 	BackBehavior = require(script.BackBehavior),
 
 	-- Navigation Events
-	Events = require(script.NavigationEvents),
-	EventsAdapter = require(script.views.NavigationEventsAdapter),
+	Events = require(script.Events),
+	NavigationEvents = require(script.views.NavigationEvents),
 
 	-- Additional Types
 	StackPresentationStyle = require(script.views.StackView.StackPresentationStyle),

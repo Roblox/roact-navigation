@@ -1,5 +1,5 @@
 return function()
-	local NavigationEvents = require(script.Parent.Parent.NavigationEvents)
+	local Events = require(script.Parent.Parent.Events)
 	local getNavigation = require(script.Parent.Parent.getNavigation)
 
 	local function makeTestBundle(testState)
@@ -79,7 +79,7 @@ return function()
 			local bundle = makeTestBundle()
 
 			local testHandler = function() end
-			bundle.navigation.addListener(NavigationEvents.WillFocus, testHandler)
+			bundle.navigation.addListener(Events.WillFocus, testHandler)
 			expect(bundle.testActionSubscribers[testHandler]).to.equal(nil)
 		end)
 
@@ -87,7 +87,7 @@ return function()
 			local bundle = makeTestBundle()
 
 			local testHandler = function() end
-			bundle.navigation.addListener(NavigationEvents.Action, testHandler)
+			bundle.navigation.addListener(Events.Action, testHandler)
 			expect(bundle.testActionSubscribers[testHandler]).to.equal(true)
 		end)
 	end)

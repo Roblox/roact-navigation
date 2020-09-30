@@ -1,5 +1,5 @@
 local Cryo = require(script.Parent.Parent.Cryo)
-local NavigationEvents = require(script.Parent.NavigationEvents)
+local Events = require(script.Parent.Events)
 local createSubscriberEventsStateTable = require(script.Parent.utils.createSubscriberEventsStateTable)
 local validate = require(script.Parent.utils.validate)
 
@@ -18,12 +18,12 @@ return function(addListener, key, initialState)
 	local upstreamSubscribers = {}
 
 	local subscriberMap = {
-		[NavigationEvents.Action] = {},
-		[NavigationEvents.WillFocus] = {},
-		[NavigationEvents.DidFocus] = {},
-		[NavigationEvents.WillBlur] = {},
-		[NavigationEvents.DidBlur] = {},
-		[NavigationEvents.Refocus] = {},
+		[Events.Action] = {},
+		[Events.WillFocus] = {},
+		[Events.DidFocus] = {},
+		[Events.WillBlur] = {},
+		[Events.DidBlur] = {},
+		[Events.Refocus] = {},
 	}
 
 	local function emit(subscriberType, payload)
@@ -60,8 +60,8 @@ return function(addListener, key, initialState)
 		upstreamSubscribers[eventType] = addListener(eventType, function(payload)
 			-- Refocus events don't use a specialized child payload or T/A event key marks. Propagate immediately.
 			-- We also allow arbitrary payloads with Refocus so we do not want to try to parse the table.
-			if eventType == NavigationEvents.Refocus then
-				eventStateTable:handleEvent(tostring(NavigationEvents.Refocus), payload)
+			if eventType == Events.Refocus then
+				eventStateTable:handleEvent(tostring(Events.Refocus), payload)
 				return
 			end
 
@@ -140,8 +140,8 @@ return function(addListener, key, initialState)
 			}
 		end,
 		emit = function(eventType, payload)
-			validate(eventType == NavigationEvents.Refocus,
-				"navigation.emit only supports NavigationEvents.Refocus currently.")
+			validate(eventType == Events.Refocus,
+				"navigation.emit only supports Events.Refocus currently.")
 			validate(payload == nil or type(payload) == "table",
 				"navigation.emit payloads must be a table or nil")
 			emit(eventType, payload)

@@ -1,7 +1,7 @@
 local Roact = require(script.Parent.Parent.Roact)
 local Cryo = require(script.Parent.Parent.Cryo)
 local NavigationActions = require(script.Parent.NavigationActions)
-local NavigationEvents = require(script.Parent.NavigationEvents)
+local Events = require(script.Parent.Events)
 local NavigationContext = require(script.Parent.views.NavigationContext)
 local getNavigation = require(script.Parent.getNavigation)
 local validate = require(script.Parent.utils.validate)
@@ -168,7 +168,7 @@ return function(AppComponent)
 			-- _actionEventSubscribers is a table(handler, true), e.g. a Set container
 			for subscriber in pairs(self._actionEventSubscribers) do
 				subscriber({
-					type = NavigationEvents.Action,
+					type = Events.Action,
 					action = action,
 					state = self.state.nav,
 					-- there is no lastState for initial mounting
@@ -255,7 +255,7 @@ return function(AppComponent)
 			-- _actionEventSubscribers is a table(handler, true), e.g. a Set container
 			for subscriber in pairs(self._actionEventSubscribers) do
 				subscriber({
-					type = NavigationEvents.Action,
+					type = Events.Action,
 					action = action,
 					state = navState,
 					lastState = lastNavState,

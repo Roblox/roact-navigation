@@ -27,7 +27,7 @@ local root = script.Parent.Parent
 local Packages = root.Parent
 local Roact = require(Packages.Roact)
 local Cryo = require(Packages.Cryo)
-local NavigationEvents = require(root.NavigationEvents)
+local Events = require(root.Events)
 local withNavigation = require(script.Parent.withNavigation)
 
 local function isComponent(component)
@@ -52,13 +52,13 @@ return function(component)
 		local navigation = self.props.navigation
 
 		self.subscriptions = {
-			navigation.addListener(NavigationEvents.WillFocus, function()
+			navigation.addListener(Events.WillFocus, function()
 				-- no spawn because we expect this to be called directly from safe paths
 				self:setState({
 					isFocused = true,
 				})
 			end),
-			navigation.addListener(NavigationEvents.WillBlur, function()
+			navigation.addListener(Events.WillBlur, function()
 				-- no spawn because we expect this to be called directly from safe paths
 				self:setState({
 					isFocused = false,

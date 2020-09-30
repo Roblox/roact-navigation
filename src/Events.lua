@@ -8,7 +8,7 @@ local ACTION_TOKEN = NavigationSymbol("ACTION")
 local REFOCUS_TOKEN = NavigationSymbol("REFOCUS")
 
 --[[
-	NavigationEvents provides shared constants that are used to register
+	Events provides shared constants that are used to register
 	listeners for different RoactNavigation UI state changes.
 ]]
 return {

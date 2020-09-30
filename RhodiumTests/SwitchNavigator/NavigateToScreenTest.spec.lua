@@ -8,6 +8,8 @@ return function()
 	local Roact = require(Packages.Roact)
 	local RoactNavigation = require(Packages.RoactNavigation)
 
+	local getUniqueName = require(script.Parent.Parent.getUniqueName)
+
 	local function createButtonPage(pageName, clickTargetPageName)
 		return function(props)
 			return Roact.createElement("TextButton", {
@@ -40,9 +42,12 @@ return function()
 				))
 			})
 
-			local rootInstance = Roact.mount(appContainer, CoreGui, "RootContainer")
+			local rootName = getUniqueName()
+			local rootInstance = Roact.mount(appContainer, CoreGui, rootName)
 
-			local buttonPath = XPath.new("game.CoreGui.RootContainer.AppComponent.card_PageOne.Scene")
+			local appPath = XPath.new("game.CoreGui"):cat(XPath.new(rootName))
+				:cat(XPath.new("AppComponent"))
+			local buttonPath = appPath:cat(XPath.new("card_PageOne.Scene"))
 			local buttonElement = Element.new(buttonPath)
 
 			expect(buttonElement:waitForRbxInstance(1)).to.be.ok()
@@ -51,7 +56,7 @@ return function()
 			buttonElement:click()
 			wait()
 
-			local button2Path = XPath.new("game.CoreGui.RootContainer.AppComponent.card_PageTwo.Scene")
+			local button2Path = appPath:cat(XPath.new("card_PageTwo.Scene"))
 			local newButtonElement = Element.new(button2Path)
 			expect(newButtonElement:waitForRbxInstance(1)).to.be.ok()
 			expect(newButtonElement:getText()).to.equal("PageTwo")

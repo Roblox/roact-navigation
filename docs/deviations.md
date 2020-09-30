@@ -67,30 +67,6 @@ In **React** Navigation, when you need to specify the back behavior property (fo
 
 Since this function is not part of React Navigation 5, we prefer to remove it now make our future migration to version 5 easier. If you think you have a use case where `dangerouslyGetParent` appears to be a necessity, open an issue and we can engineer a solution for you.
 
-## `EventsAdapter` ([`NavigationEvents`](https://reactnavigation.org/docs/4.x/navigation-events) in React Navigation) [will align]
-
-Currently, our version of this component has a different name and works like this:
-
-```lua
-Roact.createElement(RoactNavigation.EventsAdapter, {
-	[RoactNavigation.Events.DidFocus] = <callback>,
-	[RoactNavigation.Events.WillFocus] = <callback>,
-	[RoactNavigation.Events.DidBlur] = <callback>,
-	[RoactNavigation.Events.WillBlur] = <callback>,
-})
-```
-
-In a future release, we want to align with React Navigation, which means the component will be renamed and the props too. The previous example would become:
-
-```lua
-Roact.createElement(RoactNavigation.NavigationEvents, {
-	onDidFocus = <callback>,
-	onWillFocus = <callback>,
-	onDidBlur = <callback>,
-	onWillBlur = <callback>,
-})
-```
-
 ## Events and [`addListener`](https://reactnavigation.org/docs/4.x/navigation-prop#addlistener---subscribe-to-updates-to-navigation-lifecycle)
 
 Instead of using strings for each event, Roact Navigation uses an enum (RoactNavigation.Events), so each React Navigation event maps to an entry of the enum:

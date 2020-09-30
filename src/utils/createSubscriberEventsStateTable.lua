@@ -1,5 +1,5 @@
 local StateTable = require(script.Parent.Parent.Parent.StateTable)
-local Events = require(script.Parent.Parent.NavigationEvents)
+local Events = require(script.Parent.Parent.Events)
 local validate = require(script.Parent.validate)
 
 local WILL_FOCUS_KEY = tostring(Events.WillFocus)
@@ -25,12 +25,12 @@ local REFOCUS_KEY = tostring(Events.Refocus)
 		Disconnected			- Screen is no longer part of the hierarchy and will not propagate events to user.
 
 	Accepted Event Types (always sent using Normal Events Pattern):
-		NavigationEvents.WillFocus
-		NavigationEvents.DidFocus
-		NavigationEvents.WillBlur
-		NavigationEvents.DidBlur
-		NavigationEvents.Action
-		NavigationEvents.Refocus	- Note that Refocus events do NOT support the pattern. Send them without adornment!
+		Events.WillFocus
+		Events.DidFocus
+		Events.WillBlur
+		Events.DidBlur
+		Events.Action
+		Events.Refocus	- Note that Refocus events do NOT support the pattern. Send them without adornment!
 
 	Normal Events Pattern:
 		[<Event> .. "A"]		- Received event while screen is active child and not currently transitioning.

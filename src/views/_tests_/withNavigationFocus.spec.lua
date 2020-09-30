@@ -3,7 +3,7 @@ return function()
 	local Packages = root.Parent
 	local Roact = require(Packages.Roact)
 	local NavigationContext = require(script.Parent.Parent.NavigationContext)
-	local NavigationEvents = require(root.NavigationEvents)
+	local Events = require(root.Events)
 	local withNavigationFocus = require(script.Parent.Parent.withNavigationFocus)
 
 	it("should pass focused=true when initially focused", function()
@@ -105,18 +105,18 @@ return function()
 
 		local tree = Roact.mount(rootElement)
 		expect(testFocused).to.equal(false)
-		expect(testListeners[NavigationEvents.WillFocus]).to.be.a("function")
-		expect(testListeners[NavigationEvents.WillBlur]).to.be.a("function")
+		expect(type(testListeners[Events.WillFocus])).to.equal("function")
+		expect(type(testListeners[Events.WillBlur])).to.equal("function")
 
-		testListeners[NavigationEvents.WillFocus]()
+		testListeners[Events.WillFocus]()
 		expect(testFocused).to.equal(true)
 
-		testListeners[NavigationEvents.WillBlur]()
+		testListeners[Events.WillBlur]()
 		expect(testFocused).to.equal(false)
 
 		Roact.unmount(tree)
-		expect(testListeners[NavigationEvents.WillFocus]).to.equal(nil)
-		expect(testListeners[NavigationEvents.WillBlur]).to.equal(nil)
+		expect(testListeners[Events.WillFocus]).to.equal(nil)
+		expect(testListeners[Events.WillBlur]).to.equal(nil)
 	end)
 
 	it("throws if component is not provided", function()

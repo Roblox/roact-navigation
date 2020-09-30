@@ -8,6 +8,8 @@ return function()
 	local Roact = require(Packages.Roact)
 	local RoactNavigation = require(Packages.RoactNavigation)
 
+	local getUniqueName = require(script.Parent.Parent.getUniqueName)
+
 	local function createButtonPage(pageName, clickTargetPageName)
 		return function(props)
 			return Roact.createElement("TextButton", {
@@ -38,11 +40,13 @@ return function()
 				))
 			})
 
-			local rootPath = XPath.new("game.CoreGui.RootContainer.AppComponent.TransitionerScenes")
+			local rootName = getUniqueName()
+			local rootPath = XPath.new("game.CoreGui"):cat(XPath.new(rootName))
+				:cat(XPath.new("AppComponent.TransitionerScenes"))
 			local scene1Path = rootPath:cat(XPath.new("1.DynamicContent.*.Scene"))
 			local scene2Path = rootPath:cat(XPath.new("2.DynamicContent.*.Scene"))
 
-			local rootInstance = Roact.mount(appContainer, CoreGui, "RootContainer")
+			local rootInstance = Roact.mount(appContainer, CoreGui, rootName)
 
 			local button1Element = Element.new(scene1Path)
 			expect(button1Element:waitForRbxInstance(1)).to.be.ok()

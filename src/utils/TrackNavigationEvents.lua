@@ -1,6 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent)
-local NavigationEventsAdapter = require(script.Parent.Parent.views.NavigationEventsAdapter)
+local root = script.Parent.Parent
+local Packages = root.Parent
+local Cryo = require(Packages.Cryo)
+local Roact = require(Packages.Roact)
+local NavigationEvents = require(root.views.NavigationEvents)
+local Events = require(root.Events)
 local validate = require(script.Parent.validate)
 local PageNavigationEvent = require(script.Parent.PageNavigationEvent)
 
@@ -44,29 +47,72 @@ function TrackNavigationEvents:resetNavigationEvents()
 	self.navigationEvents = {}
 end
 
-function TrackNavigationEvents:createNavigationAdapter(pageName, components)
-	local events = {}
-	for _, event in pairs(RoactNavigation.Events) do
-		events[event] = function()
+local propNameToEvent = {
+	onWillFocus = Events.WillFocus,
+	onDidFocus = Events.DidFocus,
+	onWillBlur = Events.WillBlur,
+	onDidBlur = Events.DidBlur,
+}
+
+function TrackNavigationEvents:createNavigationAdapter(pageName)
+	local props = {}
+	for propName, event in pairs(propNameToEvent) do
+		props[propName] = function()
 			PageNavigationEvent.new(pageName, event)
 			table.insert(self.navigationEvents, PageNavigationEvent.new(pageName, event))
 		end
 	end
 
-	return Roact.createElement(NavigationEventsAdapter, events, components)
+	return Roact.createElement(NavigationEvents, props)
 end
 
 function TrackNavigationEvents:equalTo(pageNavigationEventList)
 	validate(typeof(pageNavigationEventList) == "table", "should be a list")
 	local numberOfEvents = #self.navigationEvents
-	local equal =  numberOfEvents == #pageNavigationEventList
-	local eventIndex = 1
-	while eventIndex <= numberOfEvents and equal do
-		equal = self.navigationEvents[eventIndex]:equalTo(pageNavigationEventList[eventIndex])
-		eventIndex = eventIndex + 1
+
+	if numberOfEvents ~= #pageNavigationEventList then
+		return false, "different amount of events"
 	end
 
-	return equal
+	for i=1, numberOfEvents do
+		if not self.navigationEvents[i]:equalTo(pageNavigationEventList[i]) then
+			return false, ("events at position %d do not match"):format(i)
+		end
+	end
+
+	return true
+end
+
+function TrackNavigationEvents:expect(pageNavigationEventList)
+	local result, message = self:equalTo(pageNavigationEventList)
+
+	if not result then
+		local selfEvents = "{}"
+		local expectedEvents = "{}"
+
+		if #self.navigationEvents > 0 then
+			selfEvents = ("{\n  %s,\n}"):format(
+				table.concat(
+					Cryo.List.map(self.navigationEvents, tostring),
+					',\n  '
+				)
+			)
+		end
+		if #pageNavigationEventList > 0 then
+			expectedEvents = ("{\n  %s,\n}"):format(
+				table.concat(
+					Cryo.List.map(pageNavigationEventList, tostring),
+					',\n  '
+				)
+			)
+		end
+
+		error(("%s\nGot events: %s\n\nExpected events: %s"):format(
+			message,
+			selfEvents,
+			expectedEvents
+		))
+	end
 end
 
 return TrackNavigationEvents

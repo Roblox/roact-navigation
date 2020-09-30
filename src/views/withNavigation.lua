@@ -39,13 +39,15 @@ return function(component, config)
 	end
 
 	return function(props)
+		local navigationProp = props.navigation
 		return Roact.createElement(NavigationContext.Consumer, {
 			render = function(navigationContext)
-				validate(navigationContext, "withNavigation and withNavigationFocus can only " ..
+				local navigation = navigationProp or navigationContext
+				validate(navigation, "withNavigation and withNavigationFocus can only " ..
 					"be used on a view hierarchy of a navigator. The wrapped component is " ..
 					"unable to get access to navigation from props or context.")
 				return Roact.createElement(component, Cryo.Dictionary.join(props, {
-					navigation = navigationContext,
+					navigation = navigation,
 					[Roact.Ref] = config.forwardRef and props[Roact.Ref] or nil,
 				}))
 			end,

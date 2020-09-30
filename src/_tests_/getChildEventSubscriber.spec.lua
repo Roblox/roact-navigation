@@ -1,5 +1,5 @@
 return function()
-	local NavigationEvents = require(script.Parent.Parent.NavigationEvents)
+	local Events = require(script.Parent.Parent.Events)
 	local getChildEventSubscriber = require(script.Parent.Parent.getChildEventSubscriber)
 
 	local function dummyAddListener() end
@@ -62,19 +62,19 @@ return function()
 			local childSubscriber = getChildEventSubscriber(dummyAddListener, SIMPLE_TEST_KEY)
 
 			expect(function()
-				childSubscriber.addListener(NavigationEvents.Action, 5)
+				childSubscriber.addListener(Events.Action, 5)
 			end).to.throw()
 		end)
 
 		it("should remove the listener", function()
 			local childSubscriber = getChildEventSubscriber(dummyAddListener, SIMPLE_TEST_KEY)
 			local eventHappened = false
-			local connection = childSubscriber.addListener(NavigationEvents.Refocus, function()
+			local connection = childSubscriber.addListener(Events.Refocus, function()
 				eventHappened = true
 			end)
 			connection.remove()
 
-			childSubscriber.emit(NavigationEvents.Refocus)
+			childSubscriber.emit(Events.Refocus)
 			expect(eventHappened).to.equal(false)
 		end)
 	end)
@@ -84,23 +84,23 @@ return function()
 			local childSubscriber = getChildEventSubscriber(dummyAddListener, SIMPLE_TEST_KEY)
 
 			expect(function()
-				childSubscriber.emit(NavigationEvents.WillFocus)
+				childSubscriber.emit(Events.WillFocus)
 			end).to.throw()
 
 			expect(function()
-				childSubscriber.emit(NavigationEvents.DidFocus)
+				childSubscriber.emit(Events.DidFocus)
 			end).to.throw()
 
 			expect(function()
-				childSubscriber.emit(NavigationEvents.WillBlur)
+				childSubscriber.emit(Events.WillBlur)
 			end).to.throw()
 
 			expect(function()
-				childSubscriber.emit(NavigationEvents.DidBlur)
+				childSubscriber.emit(Events.DidBlur)
 			end).to.throw()
 
 			expect(function()
-				childSubscriber.emit(NavigationEvents.Action)
+				childSubscriber.emit(Events.Action)
 			end).to.throw()
 		end)
 
@@ -108,7 +108,7 @@ return function()
 			local childSubscriber = getChildEventSubscriber(dummyAddListener, SIMPLE_TEST_KEY)
 
 			expect(function()
-				childSubscriber.emit(NavigationEvents.Refocus, 5)
+				childSubscriber.emit(Events.Refocus, 5)
 			end).to.throw()
 		end)
 
@@ -118,13 +118,13 @@ return function()
 			local testPayload = { a = 1 }
 			local outputPayload = nil
 
-			childSubscriber.addListener(NavigationEvents.Refocus, function(payload)
+			childSubscriber.addListener(Events.Refocus, function(payload)
 				outputPayload = payload
 			end)
 
-			childSubscriber.emit(NavigationEvents.Refocus, testPayload)
+			childSubscriber.emit(Events.Refocus, testPayload)
 			expect(outputPayload.a).to.equal(1)
-			expect(outputPayload.type).to.equal(NavigationEvents.Refocus)
+			expect(outputPayload.type).to.equal(Events.Refocus)
 		end)
 
 		it("should allow external caller to emit a refocus event with nil payload", function()
@@ -132,12 +132,12 @@ return function()
 
 			local outputPayload = nil
 
-			childSubscriber.addListener(NavigationEvents.Refocus, function(payload)
+			childSubscriber.addListener(Events.Refocus, function(payload)
 				outputPayload = payload
 			end)
 
-			childSubscriber.emit(NavigationEvents.Refocus)
-			expect(outputPayload.type).to.equal(NavigationEvents.Refocus)
+			childSubscriber.emit(Events.Refocus)
+			expect(outputPayload.type).to.equal(Events.Refocus)
 		end)
 	end)
 
@@ -155,12 +155,12 @@ return function()
 
 			getChildEventSubscriber(testAddUpstreamListener, SIMPLE_TEST_KEY)
 
-			expect(testUpstreamListenerMap[NavigationEvents.Action]).to.equal(true)
-			expect(testUpstreamListenerMap[NavigationEvents.WillFocus]).to.equal(true)
-			expect(testUpstreamListenerMap[NavigationEvents.DidFocus]).to.equal(true)
-			expect(testUpstreamListenerMap[NavigationEvents.WillBlur]).to.equal(true)
-			expect(testUpstreamListenerMap[NavigationEvents.DidBlur]).to.equal(true)
-			expect(testUpstreamListenerMap[NavigationEvents.Refocus]).to.equal(true)
+			expect(testUpstreamListenerMap[Events.Action]).to.equal(true)
+			expect(testUpstreamListenerMap[Events.WillFocus]).to.equal(true)
+			expect(testUpstreamListenerMap[Events.DidFocus]).to.equal(true)
+			expect(testUpstreamListenerMap[Events.WillBlur]).to.equal(true)
+			expect(testUpstreamListenerMap[Events.DidBlur]).to.equal(true)
+			expect(testUpstreamListenerMap[Events.Refocus]).to.equal(true)
 		end)
 
 		it("should disconnect subscriptions on DidBlur when there is no new route", function()
@@ -178,21 +178,21 @@ return function()
 			local childSubscriber = getChildEventSubscriber(
 				testAddUpstreamListener, SIMPLE_TEST_KEY, "Blurred")
 
-			childSubscriber.addListener(NavigationEvents.Action, function() end)
+			childSubscriber.addListener(Events.Action, function() end)
 
-			testUpstreamListenerMap[NavigationEvents.DidBlur]({
+			testUpstreamListenerMap[Events.DidBlur]({
 				state = {},
 				action = {
 					type = "SomeAction"
 				}
 			})
 
-			expect(testUpstreamListenerMap[NavigationEvents.Action]).to.equal(false)
-			expect(testUpstreamListenerMap[NavigationEvents.WillFocus]).to.equal(false)
-			expect(testUpstreamListenerMap[NavigationEvents.DidFocus]).to.equal(false)
-			expect(testUpstreamListenerMap[NavigationEvents.WillBlur]).to.equal(false)
-			expect(testUpstreamListenerMap[NavigationEvents.DidBlur]).to.equal(false)
-			expect(testUpstreamListenerMap[NavigationEvents.Refocus]).to.equal(false)
+			expect(testUpstreamListenerMap[Events.Action]).to.equal(false)
+			expect(testUpstreamListenerMap[Events.WillFocus]).to.equal(false)
+			expect(testUpstreamListenerMap[Events.DidFocus]).to.equal(false)
+			expect(testUpstreamListenerMap[Events.WillBlur]).to.equal(false)
+			expect(testUpstreamListenerMap[Events.DidBlur]).to.equal(false)
+			expect(testUpstreamListenerMap[Events.Refocus]).to.equal(false)
 		end)
 
 		it("should NOT disconnect subscriptions on DidBlur when there is a new route", function()
@@ -209,16 +209,16 @@ return function()
 
 			local childSubscriber = getChildEventSubscriber(testAddUpstreamListener, SIMPLE_TEST_KEY, "Blurred")
 
-			childSubscriber.addListener(NavigationEvents.Action, function() end)
+			childSubscriber.addListener(Events.Action, function() end)
 
-			testUpstreamListenerMap[NavigationEvents.DidBlur](SIMPLE_TEST_STATE)
+			testUpstreamListenerMap[Events.DidBlur](SIMPLE_TEST_STATE)
 
-			expect(testUpstreamListenerMap[NavigationEvents.Action]).to.never.equal(false)
-			expect(testUpstreamListenerMap[NavigationEvents.WillFocus]).to.never.equal(false)
-			expect(testUpstreamListenerMap[NavigationEvents.DidFocus]).to.never.equal(false)
-			expect(testUpstreamListenerMap[NavigationEvents.WillBlur]).to.never.equal(false)
-			expect(testUpstreamListenerMap[NavigationEvents.DidBlur]).to.never.equal(false)
-			expect(testUpstreamListenerMap[NavigationEvents.Refocus]).to.never.equal(false)
+			expect(testUpstreamListenerMap[Events.Action]).to.never.equal(false)
+			expect(testUpstreamListenerMap[Events.WillFocus]).to.never.equal(false)
+			expect(testUpstreamListenerMap[Events.DidFocus]).to.never.equal(false)
+			expect(testUpstreamListenerMap[Events.WillBlur]).to.never.equal(false)
+			expect(testUpstreamListenerMap[Events.DidBlur]).to.never.equal(false)
+			expect(testUpstreamListenerMap[Events.Refocus]).to.never.equal(false)
 		end)
 
 		it("should propagate refocus event from upstream", function()
@@ -226,14 +226,14 @@ return function()
 
 			local outputPayload = nil
 			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY)
-			childSubscriber.addListener(NavigationEvents.Refocus, function(payload)
+			childSubscriber.addListener(Events.Refocus, function(payload)
 				outputPayload = payload
 			end)
 
-			bundle.listenerMap[NavigationEvents.Refocus]({ a = 1 })
+			bundle.listenerMap[Events.Refocus]({ a = 1 })
 
 			expect(outputPayload.a).to.equal(1)
-			expect(outputPayload.type).to.equal(NavigationEvents.Refocus)
+			expect(outputPayload.type).to.equal(Events.Refocus)
 		end)
 
 		it("should emit WillFocus on WillFocus event when previously blurred and child is current index", function()
@@ -241,18 +241,18 @@ return function()
 			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY)
 
 			local willFocusPayload = nil
-			childSubscriber.addListener(NavigationEvents.WillFocus, function(payload)
+			childSubscriber.addListener(Events.WillFocus, function(payload)
 				willFocusPayload = payload
 			end)
 
-			bundle.listenerMap[NavigationEvents.WillFocus](SIMPLE_TEST_STATE)
+			bundle.listenerMap[Events.WillFocus](SIMPLE_TEST_STATE)
 
 			-- Detailed analysis of generated payload. Further tests will just check that functor was called.
 			expect(willFocusPayload).to.never.equal(nil)
 			expect(willFocusPayload.state).to.never.equal(nil)
 			expect(willFocusPayload.lastState).to.never.equal(nil)
 			expect(willFocusPayload.action.type).to.equal("SomeAction")
-			expect(willFocusPayload.type).to.equal(NavigationEvents.WillFocus)
+			expect(willFocusPayload.type).to.equal(Events.WillFocus)
 		end)
 
 		it("should emit WillFocus AND DidFocus on Action event when previously blurred and child is current index", function()
@@ -260,16 +260,16 @@ return function()
 			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY)
 
 			local willFocusCalled = false
-			childSubscriber.addListener(NavigationEvents.WillFocus, function()
+			childSubscriber.addListener(Events.WillFocus, function()
 				willFocusCalled = true
 			end)
 
 			local didFocusCalled = false
-			childSubscriber.addListener(NavigationEvents.DidFocus, function()
+			childSubscriber.addListener(Events.DidFocus, function()
 				didFocusCalled = true
 			end)
 
-			bundle.listenerMap[NavigationEvents.Action](SIMPLE_TEST_STATE)
+			bundle.listenerMap[Events.Action](SIMPLE_TEST_STATE)
 			expect(willFocusCalled).to.equal(true)
 			expect(didFocusCalled).to.equal(true)
 		end)
@@ -280,16 +280,16 @@ return function()
 			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY)
 
 			local willFocusCalled = false
-			childSubscriber.addListener(NavigationEvents.WillFocus, function()
+			childSubscriber.addListener(Events.WillFocus, function()
 				willFocusCalled = true
 			end)
 
 			local didFocusCalled = false
-			childSubscriber.addListener(NavigationEvents.DidFocus, function()
+			childSubscriber.addListener(Events.DidFocus, function()
 				didFocusCalled = true
 			end)
 
-			bundle.listenerMap[NavigationEvents.Action]({
+			bundle.listenerMap[Events.Action]({
 				state = {
 					routes = {
 						{ key = SIMPLE_TEST_KEY },
@@ -311,11 +311,11 @@ return function()
 			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, "Focusing")
 
 			local didFocusCalled = false
-			childSubscriber.addListener(NavigationEvents.DidFocus, function()
+			childSubscriber.addListener(Events.DidFocus, function()
 				didFocusCalled = true
 			end)
 
-			bundle.listenerMap[NavigationEvents.DidFocus](SIMPLE_TEST_STATE)
+			bundle.listenerMap[Events.DidFocus](SIMPLE_TEST_STATE)
 
 			expect(didFocusCalled).to.equal(true)
 		end)
@@ -325,11 +325,11 @@ return function()
 			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, "Focusing")
 
 			local didFocusCalled = false
-			childSubscriber.addListener(NavigationEvents.DidFocus, function()
+			childSubscriber.addListener(Events.DidFocus, function()
 				didFocusCalled = true
 			end)
 
-			bundle.listenerMap[NavigationEvents.Action](SIMPLE_TEST_STATE)
+			bundle.listenerMap[Events.Action](SIMPLE_TEST_STATE)
 
 			expect(didFocusCalled).to.equal(true)
 		end)
@@ -339,11 +339,11 @@ return function()
 			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, "Focusing")
 
 			local didFocusCalled = false
-			childSubscriber.addListener(NavigationEvents.DidFocus, function()
+			childSubscriber.addListener(Events.DidFocus, function()
 				didFocusCalled = true
 			end)
 
-			bundle.listenerMap[NavigationEvents.DidFocus]({
+			bundle.listenerMap[Events.DidFocus]({
 				state = {
 					routes = {
 						{ key = SIMPLE_TEST_KEY }
@@ -364,11 +364,11 @@ return function()
 			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, "Focused")
 
 			local willBlurCalled = false
-			childSubscriber.addListener(NavigationEvents.WillBlur, function()
+			childSubscriber.addListener(Events.WillBlur, function()
 				willBlurCalled = true
 			end)
 
-			bundle.listenerMap[NavigationEvents.WillBlur](SIMPLE_TEST_STATE)
+			bundle.listenerMap[Events.WillBlur](SIMPLE_TEST_STATE)
 
 			expect(willBlurCalled).to.equal(true)
 		end)
@@ -378,11 +378,11 @@ return function()
 			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, "Focused")
 
 			local actionCalled = false
-			childSubscriber.addListener(NavigationEvents.Action, function()
+			childSubscriber.addListener(Events.Action, function()
 				actionCalled = true
 			end)
 
-			bundle.listenerMap[NavigationEvents.Action](SIMPLE_TEST_STATE)
+			bundle.listenerMap[Events.Action](SIMPLE_TEST_STATE)
 
 			expect(actionCalled).to.equal(true)
 		end)
@@ -392,11 +392,11 @@ return function()
 			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY, "Blurring")
 
 			local didBlurCalled = false
-			childSubscriber.addListener(NavigationEvents.DidBlur, function()
+			childSubscriber.addListener(Events.DidBlur, function()
 				didBlurCalled = true
 			end)
 
-			bundle.listenerMap[NavigationEvents.DidBlur](SIMPLE_TEST_STATE)
+			bundle.listenerMap[Events.DidBlur](SIMPLE_TEST_STATE)
 
 			expect(didBlurCalled).to.equal(true)
 		end)
@@ -406,11 +406,11 @@ return function()
 			local childSubscriber = getChildEventSubscriber(bundle.addListener, "Foo", "Blurring")
 
 			local didBlurCalled = false
-			childSubscriber.addListener(NavigationEvents.DidBlur, function()
+			childSubscriber.addListener(Events.DidBlur, function()
 				didBlurCalled = true
 			end)
 
-			bundle.listenerMap[NavigationEvents.Action]({
+			bundle.listenerMap[Events.Action]({
 				state = {
 					routes = {
 						{ key = "Foo" }, -- Transitioned away from this route!
@@ -438,11 +438,11 @@ return function()
 			local childSubscriber = getChildEventSubscriber(bundle.addListener, "Bar", "Blurring")
 
 			local willFocusCalled = false
-			childSubscriber.addListener(NavigationEvents.WillFocus, function()
+			childSubscriber.addListener(Events.WillFocus, function()
 				willFocusCalled = true
 			end)
 
-			bundle.listenerMap[NavigationEvents.Action]({
+			bundle.listenerMap[Events.Action]({
 				state = {
 					routes = {
 						{ key = "Foo" }, -- Transitioned away from this route!
@@ -471,11 +471,11 @@ return function()
 			local childSubscriber = getChildEventSubscriber(bundle.addListener, "Bar", "Blurring")
 
 			local didBlurCalled = false
-			childSubscriber.addListener(NavigationEvents.DidBlur, function()
+			childSubscriber.addListener(Events.DidBlur, function()
 				didBlurCalled = true
 			end)
 
-			bundle.listenerMap[NavigationEvents.Action]({
+			bundle.listenerMap[Events.Action]({
 				state = {
 					routes = {
 						{ key = "Foo" },
@@ -496,8 +496,8 @@ return function()
 				},
 			})
 
-			expect(bundle.listenerMap[NavigationEvents.Action]).to.equal(nil)
-			expect(bundle.listenerMap[NavigationEvents.Refocus]).to.equal(nil)
+			expect(bundle.listenerMap[Events.Action]).to.equal(nil)
+			expect(bundle.listenerMap[Events.Refocus]).to.equal(nil)
 			expect(didBlurCalled).to.equal(true) -- Event should still be propagated!
 		end)
 	end)

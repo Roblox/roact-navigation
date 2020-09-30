@@ -1,7 +1,7 @@
 -- upstream https://github.com/react-navigation/react-navigation/blob/72e8160537954af40f1b070aa91ef45fc02bba69/packages/core/src/getNavigation.js
 
 local Cryo = require(script.Parent.Parent.Cryo)
-local NavigationEvents = require(script.Parent.NavigationEvents)
+local Events = require(script.Parent.Events)
 local getNavigationActionCreators = require(script.Parent.routers.getNavigationActionCreators)
 local getChildNavigation = require(script.Parent.getChildNavigation)
 local getChildrenNavigationCache = require(script.Parent.getChildrenNavigationCache)
@@ -35,7 +35,7 @@ return function(router, state, dispatch, actionSubscribers, getScreenProps, getC
 	end
 
 	function navigation.addListener(event, handler)
-		if event ~= NavigationEvents.Action then
+		if event ~= Events.Action then
 			return { remove = function() end }
 		else
 			actionSubscribers[handler] = true
