@@ -1,4 +1,4 @@
--- upstream https://github.com/react-navigation/react-navigation/blob/f1a06e2f9283d36e81a4e0a5c1b219aab8cbc71d/packages/core/src/views/NavigationEvents.js
+-- upstream https://github.com/react-navigation/react-navigation/blob/6390aacd07fd647d925dfec842a766c8aad5272f/packages/core/src/views/NavigationEvents.js
 local root = script.Parent.Parent
 local Packages = root.Parent
 local Roact = require(Packages.Roact)
@@ -48,7 +48,30 @@ local EventNameToPropName = {
 
 local NavigationEvents = Roact.Component:extend("NavigationEvents")
 
-function NavigationEvents:_subscribeAll()
+function NavigationEvents:didMount()
+	-- We register all navigation listeners on mount to ensure listener stability across re-render
+    -- A former implementation was replacing (removing/adding) listeners on all update (if prop provided)
+    -- but there were issues (see https://github.com/react-navigation/react-navigation/issues/5058)
+	self:subscribeAll()
+end
+
+function NavigationEvents:didUpdate(prevProps)
+	if self.props.navigation ~= prevProps.navigation then
+		-- This component might get reused for different state, so we need to hook back up to events
+		self:removeAll()
+		self:subscribeAll()
+	end
+end
+
+function NavigationEvents:willUnmount()
+	self:removeAll()
+end
+
+function NavigationEvents:getPropListener(eventName)
+	return self.props[EventNameToPropName[eventName]]
+end
+
+function NavigationEvents:subscribeAll()
 	local navigation = self.props.navigation
 
 	self.subscriptions = {}
@@ -64,7 +87,7 @@ function NavigationEvents:_subscribeAll()
 	end
 end
 
-function NavigationEvents:_disconnectAll()
+function NavigationEvents:removeAll()
 	for symbol in pairs(EventNameToPropName) do
 		local sub = self.subscriptions[symbol]
 		if sub then
@@ -72,29 +95,6 @@ function NavigationEvents:_disconnectAll()
 			self.subscriptions[symbol] = nil
 		end
 	end
-end
-
-function NavigationEvents:didMount()
-	self:_subscribeAll()
-end
-
-function NavigationEvents:willUnmount()
-	self:_disconnectAll()
-end
-
--- deviation: react-navigation does not this life cycle method implemented,
--- but a pull request is submitted to add the functionality:
--- https://github.com/react-navigation/react-navigation/pull/8920
-function NavigationEvents:didUpdate(prevProps)
-	if self.props.navigation ~= prevProps.navigation then
-		-- This component might get reused for different state, so we need to hook back up to events
-		self:_disconnectAll()
-		self:_subscribeAll()
-	end
-end
-
-function NavigationEvents:getPropListener(eventName)
-	return self.props[EventNameToPropName[eventName]]
 end
 
 function NavigationEvents:render()

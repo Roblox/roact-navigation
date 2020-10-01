@@ -14,6 +14,13 @@ return function()
 		return createSpy()
 	end
 
+	local EVENT_TO_PROP_NAME = {
+		[Events.WillFocus] = "onWillFocus",
+		[Events.DidFocus] = "onDidFocus",
+		[Events.WillBlur] = "onWillBlur",
+		[Events.DidBlur] = "onDidBlur",
+	};
+
 	local function createEventListenersProp()
 		return {
 			onWillFocus = createPropListener(),
@@ -142,6 +149,44 @@ return function()
 			checkPropListenerIsCalled(Events.DidFocus, "onDidFocus")
 			checkPropListenerIsCalled(Events.WillBlur, "onWillBlur")
 			checkPropListenerIsCalled(Events.DidBlur, "onDidBlur")
+		end)
+
+		it("wires props listeners to latest navigation updates", function()
+			local helper = createTestNavigationAndHelpers()
+			local navigation = helper.navigation
+			local NavigationListenersAPI = helper.NavigationListenersAPI
+			local nextHelper = createTestNavigationAndHelpers()
+			local nextNavigation = nextHelper.navigation
+			local nextNavigationListenersAPI = nextHelper.NavigationListenersAPI
+
+			local eventListenerProps = createEventListenersProp()
+			local tree = Roact.mount(
+				Roact.createElement(NavigationEvents, Cryo.Dictionary.join(
+					{navigation = navigation},
+					eventListenerProps
+				))
+			)
+
+			for eventName, propName in pairs(EVENT_TO_PROP_NAME) do
+				expect(eventListenerProps[propName].callCount).to.equal(0)
+				NavigationListenersAPI.call(eventName)
+				expect(eventListenerProps[propName].callCount).to.equal(1)
+			end
+
+			Roact.update(
+				tree,
+				Roact.createElement(NavigationEvents, Cryo.Dictionary.join(
+					{navigation = nextNavigation},
+					eventListenerProps
+				))
+			)
+
+			for eventName, propName in pairs(EVENT_TO_PROP_NAME) do
+				NavigationListenersAPI.call(eventName)
+				expect(eventListenerProps[propName].callCount).to.equal(1)
+				nextNavigationListenersAPI.call(eventName)
+				expect(eventListenerProps[propName].callCount).to.equal(2)
+			end
 		end)
 
 		it(
