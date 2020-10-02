@@ -33,11 +33,8 @@ return function()
 			local appContainer = Roact.createElement("ScreenGui", nil, {
 				AppContainer = Roact.createElement(RoactNavigation.createAppContainer(
 					RoactNavigation.createSwitchNavigator({
-						routes = {
-							PageOne = createButtonPage("PageOne", "PageTwo"),
-							PageTwo = createButtonPage("PageTwo", "PageOne"),
-						},
-						initialRouteName = "PageOne",
+						{ PageOne = createButtonPage("PageOne", "PageTwo") },
+						{ PageTwo = createButtonPage("PageTwo", "PageOne") },
 					})
 				))
 			})

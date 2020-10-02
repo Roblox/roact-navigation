@@ -49,11 +49,9 @@ return function()
 		local appContainer = Roact.createElement("ScreenGui", nil, {
 				AppContainer = Roact.createElement(RoactNavigation.createAppContainer(
 					RoactNavigation.createStackNavigator({
-						routes = {
-							[pageOneName] = createButtonPage(pageOneName, pageTwoName, trackNavigationEvents),
-							[pageTwoName] = createButtonPage(pageTwoName, pageOneName, trackNavigationEvents),
-						},
-						initialRouteName = pageOneName,
+						{ [pageOneName] = createButtonPage(pageOneName, pageTwoName, trackNavigationEvents) },
+						{ [pageTwoName] = createButtonPage(pageTwoName, pageOneName, trackNavigationEvents) },
+					}, {
 						mode = stackPresentationStyle,
 						onTransitionStart = function(nextNavigation, prevNavigation)
 							table.insert(transitionCallbackList, {

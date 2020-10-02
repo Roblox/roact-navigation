@@ -9,10 +9,7 @@ return function()
 	it("should return a component that matches the given route name", function()
 		local testComponent = function() end
 		local router = TabRouter({
-			routes = {
-				Foo = { screen = testComponent },
-			},
-			initialRouteName = "Foo",
+			{ Foo = { screen = testComponent } },
 		})
 
 		local component = router.getComponentForRouteName("Foo")
@@ -21,12 +18,8 @@ return function()
 
 	it("should not reset state for deactivated route", function()
 		local router = TabRouter({
-			routes = {
-				Foo = { render = function() end },
-				Bar = { render = function() end },
-			},
-			order = { "Foo", "Bar" },
-			initialRouteName = "Foo",
+			{ Foo = { render = function() end } },
+			{ Bar = { render = function() end } },
 		})
 
 		local testParams = { a = 1 }
@@ -45,12 +38,8 @@ return function()
 
 	it("should go back to initial route index", function()
 		local router = TabRouter({
-			routes = {
-				Foo = { render = function() end },
-				Bar = { render = function() end },
-			},
-			order = { "Foo", "Bar" },
-			initialRouteName = "Foo",
+			{ Foo = { render = function() end } },
+			{ Bar = { render = function() end } },
 		})
 
 		local prevState = {

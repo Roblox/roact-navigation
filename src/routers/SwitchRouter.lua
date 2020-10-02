@@ -12,7 +12,6 @@ local validateRouteConfigArray = require(script.Parent.validateRouteConfigArray)
 local validate = require(Root.utils.validate)
 local StackActions = require(Root.routers.StackActions)
 local SwitchActions = require(script.Parent.SwitchActions)
-local showDeprecatedRouterMessage = require(script.Parent.showDeprecatedRouterMessage)
 
 local function defaultActionCreators()
 	return {}
@@ -30,21 +29,6 @@ local function foldToRoutes(routes, element)
 end
 
 return function(routeArray, config)
-	-- deviation: we still need to support the previous route API
-	validate(type(routeArray) == "table", "routeConfigs must be a table")
-	if config == nil and routeArray.routes ~= nil then
-		showDeprecatedRouterMessage("SwitchRouter")
-		validate(type(routeArray) == "table", "config must be a table")
-		validate(routeArray.initialRouteName, "initialRouteName must be provided")
-
-		config = Cryo.Dictionary.join(routeArray, { routes = Cryo.None })
-
-		local order = routeArray.order or Cryo.Dictionary.keys(routeArray.routes)
-		routeArray = Cryo.List.map(order, function(routeName)
-			return { [routeName] = routeArray.routes[routeName] }
-		end)
-	end
-
 	validateRouteConfigArray(routeArray)
 	config = config or {}
 	local routeConfigs = validateRouteConfigMap(

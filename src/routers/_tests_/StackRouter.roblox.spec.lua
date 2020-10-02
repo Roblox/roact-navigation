@@ -22,44 +22,31 @@ return function()
 	it("should throw when passed a non-table", function()
 		expect(function()
 			StackRouter(5)
-		end).to.throw("routeConfigs must be a table")
-	end)
-
-	it("should throw for invalid routes config", function()
-		expect(function()
-			StackRouter({ routes = 5 })
-		end).to.throw()
-	end)
-
-	it("should throw if initialRouteName is not provided", function()
-		expectError(function()
-			StackRouter({ routes = {
-				Foo = function() end,
-			}})
-		end, "initialRouteName must be provided")
+		end).to.throw("routeConfigs must be an array table")
 	end)
 
 	it("should throw if initialRouteName is not found in routes table", function()
 		expectError(function()
 			StackRouter({
-				routes = {
-					Foo = function() end,
-					Bar = function() end,
-				},
+				{ Foo = function() end },
+				{ Bar = function() end },
+			}, {
 				initialRouteName = "MyRoute",
 			})
-		end, "Invalid initialRouteName 'MyRoute'. Must be one of %[Bar,Foo,%]")
+		end, "Invalid initialRouteName 'MyRoute'. Must be one of %[Foo,Bar,%]")
 	end)
 
 	it("should expose childRouters as a member", function()
 		local router = StackRouter({
-			routes = {
+			{
 				Foo = {
 					screen = {
 						render = function() end,
 						router = "A",
 					},
 				},
+			},
+			{
 				Bar = {
 					screen = {
 						render = function() end,
@@ -67,7 +54,6 @@ return function()
 					},
 				},
 			},
-			initialRouteName = "Foo",
 		})
 
 		expect(router.childRouters.Foo).to.equal("A")
@@ -76,20 +62,21 @@ return function()
 
 	it("should not expose childRouters list members if they are CHILD_IS_SCREEN", function()
 		local router = StackRouter({
-			routes = {
+			{
 				Foo = {
 					screen = {
 						render = function() end,
 						router = "A",
 					},
 				},
+			},
+			{
 				Bar = {
 					screen = {
 						render = function() end,
 					},
 				},
 			},
-			initialRouteName = "Foo",
 		})
 
 		expect(router.childRouters.Foo).to.equal("A")
@@ -103,14 +90,14 @@ return function()
 	describe("getScreenOptions tests", function()
 		it("should correctly configure default screen options", function()
 			local router = StackRouter({
-				routes = {
+				{
 					Foo = {
 						screen = {
 							render = function() end,
 						}
 					}
 				},
-				initialRouteName = "Foo",
+			}, {
 				defaultNavigationOptions = {
 					title = "FooTitle",
 				}
@@ -127,7 +114,7 @@ return function()
 
 		it("should correctly configure route-specified screen options", function()
 			local router = StackRouter({
-				routes = {
+				{
 					Foo = {
 						screen = {
 							render = function() end,
@@ -135,7 +122,7 @@ return function()
 						navigationOptions = { title = "RouteFooTitle" },
 					}
 				},
-				initialRouteName = "Foo",
+			}, {
 				defaultNavigationOptions = {
 					title = "FooTitle",
 				},
@@ -152,7 +139,7 @@ return function()
 
 		it("should correctly configure component-specified screen options", function()
 			local router = StackRouter({
-				routes = {
+				{
 					Foo = {
 						screen = {
 							render = function() end,
@@ -160,7 +147,7 @@ return function()
 						},
 					}
 				},
-				initialRouteName = "Foo",
+			}, {
 				defaultNavigationOptions = {
 					title = "FooTitle",
 				},
@@ -179,10 +166,9 @@ return function()
 	describe("getActionCreators tests", function()
 		it("should return basic action creators table if none are provided", function()
 			local router = StackRouter({
-				routes = {
+				{
 					Foo = { render = function() end },
 				},
-				initialRouteName = "Foo",
 			})
 
 			local actionCreators = router.getActionCreators({ routeName = "Foo" }, "key")
@@ -203,10 +189,10 @@ return function()
 
 		it("should call custom action creators function if provided", function()
 			local router = StackRouter({
-				routes = {
+				{
 					Foo = { render = function() end },
 				},
-				initialRouteName = "Foo",
+			}, {
 				getCustomActionCreators = function()
 					return { a = 1, popToTop = 2 }
 				end,
@@ -222,10 +208,7 @@ return function()
 
 		it("should build a pop action", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
 			})
 
 			local actionCreators = router.getActionCreators({ routeName = "Foo" }, "key")
@@ -234,10 +217,7 @@ return function()
 
 		it("should build a pop to top action", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
 			})
 
 			local actionCreators = router.getActionCreators({ routeName = "Foo" }, "key")
@@ -246,10 +226,7 @@ return function()
 
 		it("should build a push action", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
 			})
 
 			local actionCreators = router.getActionCreators({ routeName = "Foo" }, "key")
@@ -258,10 +235,7 @@ return function()
 
 		it("should build a replace action with a string replaceWith arg", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
 			})
 
 			local actionCreators = router.getActionCreators({ routeName = "Foo", key = "Foo" }, "key")
@@ -270,10 +244,7 @@ return function()
 
 		it("should build a replace action with a table replaceWith arg", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
 			})
 
 			local actionCreators = router.getActionCreators({ routeName = "Foo" }, "key")
@@ -282,10 +253,7 @@ return function()
 
 		it("should build a reset action", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
 			})
 
 			local actionCreators = router.getActionCreators({ routeName = "Foo" }, "key")
@@ -296,10 +264,7 @@ return function()
 
 		it("should build a dismiss action", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
 			})
 
 			local actionCreators = router.getActionCreators({ routeName = "Foo" }, "key")
@@ -308,30 +273,9 @@ return function()
 	end)
 
 	describe("getComponentForState tests", function()
-		it("should return component matching requested state", function()
-			local testComponent = function() end
-			local router = StackRouter({
-				routes = {
-					Foo = { screen = testComponent },
-				},
-				initialRouteName = "Foo",
-			})
-
-			local component = router.getComponentForState({
-				routes = {
-					{ routeName = "Foo" },
-				},
-				index = 1,
-			})
-			expect(component).to.equal(testComponent)
-		end)
-
 		it("should throw if there is no route matching active index", function()
 			local router = StackRouter({
-				routes = {
-					Foo = { screen = function() end },
-				},
-				initialRouteName = "Foo",
+				{ Foo = { screen = function() end } },
 			})
 
 			expectError(function()
@@ -350,14 +294,11 @@ return function()
 		it("should descend child router for requested route", function()
 			local testComponent = function() end
 			local childRouter = StackRouter({
-				routes = {
-					Bar = { screen = testComponent }
-				},
-				initialRouteName = "Bar",
+				{ Bar = { screen = testComponent } },
 			})
 
 			local router = StackRouter({
-				routes = {
+				{
 					Foo = {
 						screen = {
 							render = function() end,
@@ -365,7 +306,6 @@ return function()
 						}
 					},
 				},
-				initialRouteName = "Foo",
 			})
 
 			local component = router.getComponentForState({
@@ -385,36 +325,19 @@ return function()
 	end)
 
 	describe("getComponentForRouteName tests", function()
-		it("should return a component that matches the given route name", function()
-			local testComponent = function() end
-			local router = StackRouter({
-				routes = {
-					Foo = testComponent,
-				},
-				initialRouteName = "Foo",
-			})
-
-			local component = router.getComponentForRouteName("Foo")
-			expect(component).to.equal(testComponent)
-		end)
-
 		it("should return a component that matches the given route name from accessed childRouter", function()
 			local testComponent = function() end
 			local childRouter = StackRouter({
-				routes = {
-					Bar = testComponent,
-				},
-				initialRouteName = "Bar",
+				{ Bar = testComponent },
 			})
 
 			local router = StackRouter({
-				routes = {
+				{
 					Foo = {
 						render = function() end,
 						router = childRouter,
 					},
 				},
-				initialRouteName = "Foo",
 			})
 
 			local component = router.childRouters.Foo.getComponentForRouteName("Bar")
@@ -425,11 +348,8 @@ return function()
 	describe("getStateForAction tests", function()
 		it("should return initial state for init action", function()
 			local router =  StackRouter({
-				routes = {
-					Foo = { screen = function() end },
-					Bar = { screen = function() end },
-				},
-				initialRouteName = "Foo",
+				{ Foo = { screen = function() end } },
+				{ Bar = { screen = function() end } },
 			})
 
 			local state = router.getStateForAction(NavigationActions.init(), nil)
@@ -440,21 +360,17 @@ return function()
 
 		it("should adjust initial state index to match initialRouteName's index", function()
 			local router =  StackRouter({
-				routes = {
-					Foo = { screen = function() end },
-					Bar = { screen = function() end },
-				},
-				initialRouteName = "Foo",
+				{ Foo = { screen = function() end } },
+				{ Bar = { screen = function() end } },
 			})
 
 			local state = router.getStateForAction(NavigationActions.init(), nil)
 			expect(state.routes[state.index].routeName).to.equal("Foo")
 
 			local router2 =  StackRouter({
-				routes = {
-					Foo = { screen = function() end },
-					Bar = { screen = function() end },
-				},
+				{ Foo = { screen = function() end } },
+				{ Bar = { screen = function() end } },
+			}, {
 				initialRouteName = "Bar",
 			})
 
@@ -464,21 +380,17 @@ return function()
 
 		it("should incorporate child router state", function()
 			local childRouter = StackRouter({
-				routes = {
-					Bar = { screen = function() end },
-				},
-				initialRouteName = "Bar",
+				{ Bar = { screen = function() end } },
 			})
 
 			local router = StackRouter({
-				routes = {
+				{
 					Foo = {
 						render = function() end,
 						router = childRouter,
 					},
-					City = { screen = function() end },
 				},
-				initialRouteName = "Foo",
+				{ City = { screen = function() end } },
 			})
 
 			local state = router.getStateForAction(NavigationActions.init(), nil)
@@ -489,36 +401,32 @@ return function()
 
 		it("should make historical inactive child router active if it handles action", function()
 			local childRouter = StackRouter({
-				routes = {
-					City = function() end,
-					State = function() end,
-				},
-				initialRouteName = "City",
+				{ City = function() end },
+				{ State = function() end },
 			})
 
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
+				{ Foo = function() end },
+				{
 					Bar = {
 						render = function() end,
 						router = childRouter,
 					}
 				},
-				initialRouteName = "Foo",
 			})
 
 			local initialState = {
 				routes = {
-					[1] = { routeName = "Foo", key = "Foo1" },
-					[2] = {
+					{ routeName = "Foo", key = "Foo1" },
+					{
 						routeName = "Bar",
 						key = "Bar",
 						routes = {
-							[1] = { routeName = "City", key = "City", },
+							{ routeName = "City", key = "City", },
 						},
 						index = 1
 					},
-					[3] = { routeName = "Foo", key = "Foo2" },
+					{ routeName = "Foo", key = "Foo2" },
 				},
 				index = 3,
 			}
@@ -532,21 +440,18 @@ return function()
 
 		it("should go back to previous stack entry on back action", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-					Bar = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
+				{ Bar = function() end },
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 					},
-					[2] = {
+					{
 						routeName = "Bar",
 						key = "Bar",
 					}
@@ -562,17 +467,14 @@ return function()
 
 		it("should not go back if at root of stack", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-					Bar = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
+				{ Bar = function() end },
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 					},
@@ -586,36 +488,34 @@ return function()
 
 		it("should go back out of child stack if on root of child", function()
 			local childRouter = StackRouter({
-				routes = {
-					Bar = { screen = function() end },
-					City = { screen = function() end },
-				},
-				initialRouteName = "Bar",
+				{ Bar = { screen = function() end } },
+				{ City = { screen = function() end } },
 			})
 
 			local router = StackRouter({
-				routes = {
+				{
 					Foo = {
 						render = function() end,
 						router = childRouter,
 					},
-					Cat = function() end,
 				},
+				{ Cat = function() end },
+			}, {
 				initialRouteName = "Cat",
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Cat",
 						key = "Cat",
 					},
-					[2] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 						routes = {
-							[1] = {
+							{
 								routeName = "Bar",
 								key = "Bar",
 							}
@@ -634,40 +534,38 @@ return function()
 
 		it("should go back within active child if not on root of child", function()
 			local childRouter = StackRouter({
-				routes = {
-					Bar = { screen = function() end },
-					City = { screen = function() end },
-				},
-				initialRouteName = "Bar",
+				{ Bar = { screen = function() end } },
+				{ City = { screen = function() end } },
 			})
 
 			local router = StackRouter({
-				routes = {
+				{
 					Foo = {
 						render = function() end,
 						router = childRouter,
 					},
-					Cat = function() end,
 				},
+				{ Cat = function() end },
+			}, {
 				initialRouteName = "Cat",
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Cat",
 						key = "Cat",
 					},
-					[2] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 						routes = {
-							[1] = {
+							{
 								routeName = "Bar",
 								key = "Bar",
 							},
-							[2] = {
+							{
 								routeName = "City",
 								key = "City",
 							},
@@ -691,25 +589,22 @@ return function()
 
 		it("should pop to top", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-					Bar = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
+				{ Bar = function() end },
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 					},
-					[2] = {
+					{
 						routeName = "Bar",
 						key = "Bar1",
 					},
-					[3] = {
+					{
 						routeName = "Bar",
 						key = "Bar2",
 					},
@@ -725,40 +620,38 @@ return function()
 
 		it("should pop to top through child router", function()
 			local childRouter = StackRouter({
-				routes = {
-					Bar = function() end,
-					City = function() end,
-				},
-				initialRouteName = "Bar",
+				{ Bar = function() end },
+				{ City = function() end },
 			})
 
 			local router = StackRouter({
-				routes = {
+				{
 					Foo = {
 						screen = function() end,
 						router = childRouter,
 					},
-					Crazy = function() end,
 				},
+				{ Crazy = function() end },
+			}, {
 				initialRouteName = "Crazy",
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Crazy",
 						key = "Crazy",
 					},
-					[2] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 						routes = {
-							[1] = {
+							{
 								routeName = "Bar",
 								key = "Bar",
 							},
-							[2] = {
+							{
 								routeName = "City",
 								key = "City",
 							},
@@ -777,17 +670,14 @@ return function()
 
 		it("should push a new entry on navigate without instance of that screen", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-					Bar = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
+				{ Bar = function() end },
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 					}
@@ -803,26 +693,23 @@ return function()
 
 		it("should jump to existing entry in stack if one exists already, on navigate", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-					Bar = function() end,
-					City = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
+				{ Bar = function() end },
+				{ City = function() end },
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 					},
-					[2] = {
+					{
 						routeName = "Bar",
 						key = "Bar",
 					},
-					[3] = {
+					{
 						routeName = "City",
 						key = "City",
 					},
@@ -842,26 +729,23 @@ return function()
 
 		it("should jump to existing entry in stack if one exists already, on navigate, with empty params", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-					Bar = function() end,
-					City = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
+				{ Bar = function() end },
+				{ City = function() end },
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 					},
-					[2] = {
+					{
 						routeName = "Bar",
 						key = "Bar",
 					},
-					[3] = {
+					{
 						routeName = "City",
 						key = "City",
 					},
@@ -878,27 +762,24 @@ return function()
 
 		it("should jump to existing entry in stack with existing params if params is not provided, on navigate", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-					Bar = function() end,
-					City = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
+				{ Bar = function() end },
+				{ City = function() end },
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 					},
-					[2] = {
+					{
 						routeName = "Bar",
 						key = "Bar",
 						params = { a = 1 },
 					},
-					[3] = {
+					{
 						routeName = "City",
 						key = "City",
 					},
@@ -915,27 +796,24 @@ return function()
 
 		it("should jump to existing entry in stack with updated params if params is provided, on navigate", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-					Bar = function() end,
-					City = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
+				{ Bar = function() end },
+				{ City = function() end },
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 					},
-					[2] = {
+					{
 						routeName = "Bar",
 						key = "Bar",
 						params = { a = 1 },
 					},
-					[3] = {
+					{
 						routeName = "City",
 						key = "City",
 					},
@@ -955,16 +833,13 @@ return function()
 
 		it("should stay at current route in stack if navigate with different params", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 					},
@@ -984,16 +859,13 @@ return function()
 
 		it("should stay at current route with existing params if navigate with empty params", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 						params = { a = 1 },
@@ -1014,26 +886,23 @@ return function()
 
 		it("should always push new entry on push action even with pre-existing instance of that screen", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-					Bar = function() end,
-					City = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
+				{ Bar = function() end },
+				{ City = function() end },
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 					},
-					[2] = {
+					{
 						routeName = "Bar",
 						key = "Bar",
 					},
-					[3] = {
+					{
 						routeName = "City",
 						key = "City",
 					},
@@ -1049,28 +918,26 @@ return function()
 
 		it("should navigate to inactive child if route not present elsewhere", function()
 			local childRouter = StackRouter({
-				routes = {
-					Bar = { screen = function() end },
-					City = { screen = function() end },
-				},
-				initialRouteName = "Bar",
+				{ Bar = { screen = function() end } },
+				{ City = { screen = function() end } },
 			})
 
 			local router = StackRouter({
-				routes = {
+				{
 					Foo = {
 						render = function() end,
 						router = childRouter,
 					},
-					Cat = function() end,
 				},
+				{ Cat = function() end },
+			}, {
 				initialRouteName = "Cat",
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Cat",
 						key = "Cat",
 					},
@@ -1090,11 +957,9 @@ return function()
 
 		it("should set params on route for setParams action", function()
 			local router = StackRouter({
-				routes = {
-					Foo = { render = function() end },
-					Bar = { render = function() end },
-				},
-				initialRouteName = "Foo",
+				{ Foo = { render = function() end } },
+				{ Bar = { render = function() end } },
+			}, {
 				initialRouteKey = "FooKey",
 			})
 
@@ -1108,14 +973,13 @@ return function()
 
 		it("should combine params from action and route config", function()
 			local router = StackRouter({
-				routes = {
-					Foo = { render = function() end },
+				{ Foo = { render = function() end } },
+				{
 					Bar = {
 						screen = function() end,
 						params = { a = 1 },
 					},
 				},
-				initialRouteName = "Foo",
 			})
 
 			local state = router.getStateForAction(NavigationActions.init())
@@ -1130,17 +994,14 @@ return function()
 
 		it("should replace top route if no key is provided", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-					Bar = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
+				{ Bar = function() end },
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 					}
@@ -1159,21 +1020,18 @@ return function()
 
 		it("should replace keyed route if provided", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-					Bar = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
+				{ Bar = function() end },
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 					},
-					[2] = {
+					{
 						routeName = "Bar",
 						key = "Bar",
 					}
@@ -1195,11 +1053,8 @@ return function()
 
 		it("should reset top-level routes if not given a key", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-					Bar = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
+				{ Bar = function() end },
 			})
 
 			local initialState = {
@@ -1226,36 +1081,34 @@ return function()
 
 		it("should reset keyed route if provided", function()
 			local childRouter = StackRouter({
-				routes = {
-					City = function() end,
-					State = function() end,
-				},
-				initialRouteName = "City",
+				{ City = function() end },
+				{ State = function() end },
 			})
 
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
+				{ Foo = function() end },
+				{
 					Bar = {
 						screen = function() end,
 						router = childRouter,
 					},
 				},
+			}, {
 				initialRouteName = "Bar",
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Foo",
 						key = "Foo1",
 					},
-					[2] = {
+					{
 						routeName = "Bar",
 						key = "Bar",
 						routes = {
-							[1] = {
+							{
 								routeName = "City",
 								key = "City",
 							}
@@ -1282,17 +1135,14 @@ return function()
 
 		it("should mark state as transitioning, then clear it on CompleteTransition action", function()
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
-					Bar = function() end,
-				},
-				initialRouteName = "Foo",
+				{ Foo = function() end },
+				{ Bar = function() end },
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 					}
@@ -1312,15 +1162,12 @@ return function()
 
 		it("should mark root and child states as transitioning, then separately clear them on CompleteTransition", function()
 			local childRouter = StackRouter({
-				routes = {
-					BarA = function() end,
-					BarB = function() end,
-				},
-				initialRouteName = "BarA",
+				{ BarA = function() end },
+				{ BarB = function() end },
 			})
 			local router = StackRouter({
-				routes = {
-					Foo = function() end,
+				{ Foo = function() end },
+				{
 					Bar = {
 						screen = {
 							render = function() end,
@@ -1328,13 +1175,12 @@ return function()
 						},
 					},
 				},
-				initialRouteName = "Foo",
 			})
 
 			local initialState = {
 				key = "root",
 				routes = {
-					[1] = {
+					{
 						routeName = "Foo",
 						key = "Foo",
 					},

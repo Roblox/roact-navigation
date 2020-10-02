@@ -22,44 +22,31 @@ return function()
 	it("should throw when passed a non-table", function()
 		expect(function()
 			SwitchRouter(5)
-		end).to.throw("routeConfigs must be a table")
-	end)
-
-	it("should throw for invalid routes config", function()
-		expect(function()
-			SwitchRouter({ routes = 5 })
-		end).to.throw() -- throw is from validateRouteConfigs, so do not depend on message
-	end)
-
-	it("should throw if initialRouteName is not provided", function()
-		expectError(function()
-			SwitchRouter({ routes = {
-				Foo = function() end,
-			} })
-		end, "initialRouteName must be provided")
+		end).to.throw("routeConfigs must be an array table")
 	end)
 
 	it("should throw if initialRouteName is not found in routes table", function()
 		expect(function()
 			SwitchRouter({
-				routes = {
-					Foo = function() end,
-					Bar = function() end,
-				},
+				{ Foo = function() end },
+				{ Bar = function() end },
+			}, {
 				initialRouteName = "MyRoute",
 			})
-		end).to.throw("Invalid initialRouteName 'MyRoute'. Should be one of \"Bar\", \"Foo\"")
+		end).to.throw("Invalid initialRouteName 'MyRoute'. Should be one of \"Foo\", \"Bar\"")
 	end)
 
 	it("should expose childRouters as a member", function()
 		local router = SwitchRouter({
-			routes = {
+			{
 				Foo = {
 					screen = {
 						render = function() end,
 						router = "A",
 					},
 				},
+			},
+			{
 				Bar = {
 					screen = {
 						render = function() end,
@@ -67,7 +54,6 @@ return function()
 					},
 				},
 			},
-			initialRouteName = "Foo",
 		})
 
 		expect(router.childRouters.Foo).to.equal("A")
@@ -77,14 +63,14 @@ return function()
 	describe("getScreenOptions tests", function()
 		it("should correctly configure default screen options", function()
 			local router = SwitchRouter({
-				routes = {
+				{
 					Foo = {
 						screen = {
 							render = function() end,
 						}
 					}
 				},
-				initialRouteName = "Foo",
+			}, {
 				defaultNavigationOptions = {
 					title = "FooTitle",
 				},
@@ -101,7 +87,7 @@ return function()
 
 		it("should correctly configure route-specified screen options", function()
 			local router = SwitchRouter({
-				routes = {
+				{
 					Foo = {
 						screen = {
 							render = function() end,
@@ -109,7 +95,7 @@ return function()
 						navigationOptions = { title = "RouteFooTitle" },
 					}
 				},
-				initialRouteName = "Foo",
+			}, {
 				defaultNavigationOptions = {
 					title = "FooTitle",
 				},
@@ -126,7 +112,7 @@ return function()
 
 		it("should correctly configure component-specified screen options", function()
 			local router = SwitchRouter({
-				routes = {
+				{
 					Foo = {
 						screen = {
 							render = function() end,
@@ -134,7 +120,7 @@ return function()
 						},
 					}
 				},
-				initialRouteName = "Foo",
+			}, {
 				defaultNavigationOptions = {
 					title = "FooTitle",
 				},
@@ -153,10 +139,7 @@ return function()
 	describe("getActionCreators tests", function()
 		it("should return empty action creators table if none are provided", function()
 			local router = SwitchRouter({
-				routes = {
-					Foo = { render = function() end },
-				},
-				initialRouteName = "Foo",
+				{ Foo = { render = function() end } },
 			})
 
 			local actionCreators = router.getActionCreators({ routeName = "Foo" }, "key")
@@ -171,10 +154,8 @@ return function()
 
 		it("should call custom action creators function if provided", function()
 			local router = SwitchRouter({
-				routes = {
-					Foo = { render = function() end },
-				},
-				initialRouteName = "Foo",
+				{ Foo = { render = function() end } },
+			}, {
 				getCustomActionCreators = function()
 					return { a = 1 }
 				end,
@@ -189,10 +170,7 @@ return function()
 		it("should return component matching requested state", function()
 			local testComponent = function() end
 			local router = SwitchRouter({
-				routes = {
-					Foo = { screen = testComponent },
-				},
-				initialRouteName = "Foo",
+				{ Foo = { screen = testComponent } },
 			})
 
 			local component = router.getComponentForState({
@@ -206,10 +184,7 @@ return function()
 
 		it("should throw if there is no route matching active index", function()
 			local router = SwitchRouter({
-				routes = {
-					Foo = { screen = function() end },
-				},
-				initialRouteName = "Foo",
+				{ Foo = { screen = function() end } },
 			})
 
 			expectError(function()
@@ -228,14 +203,11 @@ return function()
 		it("should descend child router for requested route", function()
 			local testComponent = function() end
 			local childRouter = SwitchRouter({
-				routes = {
-					Bar = { screen = testComponent }
-				},
-				initialRouteName = "Bar",
+				{ Bar = { screen = testComponent } },
 			})
 
 			local router = SwitchRouter({
-				routes = {
+				{
 					Foo = {
 						screen = {
 							render = function() end,
@@ -243,7 +215,6 @@ return function()
 						}
 					},
 				},
-				initialRouteName = "Foo",
 			})
 
 			local component = router.getComponentForState({
@@ -266,10 +237,7 @@ return function()
 		it("should return a component that matches the given route name", function()
 			local testComponent = function() end
 			local router = SwitchRouter({
-				routes = {
-					Foo = { screen = testComponent },
-				},
-				initialRouteName = "Foo",
+				{ Foo = { screen = testComponent } },
 			})
 
 			local component = router.getComponentForRouteName("Foo")
@@ -280,11 +248,8 @@ return function()
 	describe("getStateForAction tests", function()
 		it("should return initial state for init action", function()
 			local router =  SwitchRouter({
-				routes = {
-					Foo = { screen = function() end },
-					Bar = { screen = function() end },
-				},
-				initialRouteName = "Foo",
+				{ Foo = { screen = function() end } },
+				{ Bar = { screen = function() end } },
 			})
 
 			local state = router.getStateForAction(NavigationActions.init(), nil)
@@ -294,21 +259,17 @@ return function()
 
 		it("should adjust initial state index to match initialRouteName's index", function()
 			local router =  SwitchRouter({
-				routes = {
-					Foo = { screen = function() end },
-					Bar = { screen = function() end },
-				},
-				initialRouteName = "Foo",
+				{ Foo = { screen = function() end } },
+				{ Bar = { screen = function() end } },
 			})
 
 			local state = router.getStateForAction(NavigationActions.init(), nil)
 			expect(state.routes[state.index].routeName).to.equal("Foo")
 
 			local router2 =  SwitchRouter({
-				routes = {
-					Foo = { screen = function() end },
-					Bar = { screen = function() end },
-				},
+				{ Foo = { screen = function() end } },
+				{ Bar = { screen = function() end } },
+			}, {
 				initialRouteName = "Bar",
 			})
 
@@ -318,12 +279,8 @@ return function()
 
 		it("should respect optional order property", function()
 			local router =  SwitchRouter({
-				routes = {
-					Foo = { screen = function() end },
-					Bar = { screen = function() end },
-				},
-				order = { "Foo", "Bar" },
-				initialRouteName = "Foo",
+				{ Foo = { screen = function() end } },
+				{ Bar = { screen = function() end } },
 			})
 
 			local state = router.getStateForAction(NavigationActions.init(), nil)
@@ -333,21 +290,17 @@ return function()
 
 		it("should incorporate child router state", function()
 			local childRouter = SwitchRouter({
-				routes = {
-					Bar = { screen = function() end },
-				},
-				initialRouteName = "Bar",
+				{ Bar = { screen = function() end } },
 			})
 
 			local router = SwitchRouter({
-				routes = {
+				{
 					Foo = {
 						render = function() end,
 						router = childRouter,
 					},
-					City = { screen = function() end },
 				},
-				initialRouteName = "Foo",
+				{ City = { screen = function() end } },
 			})
 
 			local state = router.getStateForAction(NavigationActions.init(), nil)
@@ -358,24 +311,18 @@ return function()
 
 		it("should let active child handle non-init action first", function()
 			local childRouter = SwitchRouter({
-				routes = {
-					Bar = { screen = function() end },
-					City = { screen = function() end },
-				},
-				order = { "Bar", "City" },
-				initialRouteName = "Bar",
+				{ Bar = { screen = function() end } },
+				{ City = { screen = function() end } },
 			})
 
 			local router = SwitchRouter({
-				routes = {
+				{
 					Foo = {
 						render = function() end,
 						router = childRouter,
 					},
-					State = { render = function() end },
 				},
-				order = { "Foo", "State" },
-				initialRouteName = "Foo",
+				{ State = { render = function() end } },
 			})
 
 			local state = router.getStateForAction(NavigationActions.navigate({ routeName = "City" }))
@@ -385,13 +332,10 @@ return function()
 
 		it("should go back to initial route index if BackBehavior.InitialRoute", function()
 			local router = SwitchRouter({
-				routes = {
-					Foo = { render = function() end },
-					Bar = { render = function() end },
-				},
-				order = { "Foo", "Bar" },
+				{ Foo = { render = function() end } },
+				{ Bar = { render = function() end } },
+			}, {
 				backBehavior = BackBehavior.InitialRoute,
-				initialRouteName = "Foo",
 			})
 
 			local prevState = {
@@ -408,12 +352,8 @@ return function()
 
 		it("should not change state on back action if BackBehavior.None", function()
 			local router = SwitchRouter({
-				routes = {
-					Foo = { render = function() end },
-					Bar = { render = function() end },
-				},
-				order = { "Foo", "Bar" },
-				initialRouteName = "Foo",
+				{ Foo = { render = function() end } },
+				{ Bar = { render = function() end } },
 			})
 
 			local prevState = {
@@ -430,12 +370,8 @@ return function()
 
 		it("should change active route on navigate", function()
 			local router = SwitchRouter({
-				routes = {
-					Foo = { render = function() end },
-					Bar = { render = function() end },
-				},
-				order = { "Foo", "Bar" },
-				initialRouteName = "Foo",
+				{ Foo = { render = function() end } },
+				{ Bar = { render = function() end } },
 			})
 
 			local newState = router.getStateForAction(NavigationActions.navigate({ routeName = "Bar" }))
@@ -445,22 +381,17 @@ return function()
 
 		it("should pass sub-action to child router on navigate", function()
 			local childRouter = SwitchRouter({
-				routes = {
-					City = { screen = function() end },
-					State = { screen = function() end },
-				},
-				initialRouteName = "City",
+				{ City = { screen = function() end } },
+				{ State = { screen = function() end } },
 			})
 
 			local router = SwitchRouter({
-				routes = {
-					Foo = { render = function() end },
-					Bar = {
+				{ Foo = { render = function() end } },
+				{ Bar = {
 						render = function() end,
 						router = childRouter,
 					},
 				},
-				initialRouteName = "Foo",
 			})
 
 			local newState = router.getStateForAction(NavigationActions.navigate({
@@ -475,21 +406,17 @@ return function()
 
 		it("should return initial state if navigating to active child without previous state", function()
 			local childRouter = SwitchRouter({
-				routes = {
-					Bar = { screen = function() end },
-				},
-				initialRouteName = "Bar",
+				{ Bar = { screen = function() end } },
 			})
 
 			local router = SwitchRouter({
-				routes = {
+				{
 					Foo = {
 						render = function() end,
 						router = childRouter,
 					},
-					City = { render = function() end },
 				},
-				initialRouteName = "Foo",
+				{ City = { render = function() end } },
 			})
 
 			local newState = router.getStateForAction(NavigationActions.navigate({
@@ -501,12 +428,8 @@ return function()
 
 		it("should reset state for deactivated route by default", function()
 			local router = SwitchRouter({
-				routes = {
-					Foo = { render = function() end },
-					Bar = { render = function() end },
-				},
-				order = { "Foo", "Bar" },
-				initialRouteName = "Foo",
+				{ Foo = { render = function() end } },
+				{ Bar = { render = function() end } },
 			})
 
 			local initialState = {
@@ -523,12 +446,9 @@ return function()
 
 		it("should not reset state for deactivated route if resetOnBlur is false", function()
 			local router = SwitchRouter({
-				routes = {
-					Foo = { render = function() end },
-					Bar = { render = function() end },
-				},
-				order = { "Foo", "Bar" },
-				initialRouteName = "Foo",
+				{ Foo = { render = function() end } },
+				{ Bar = { render = function() end } },
+			}, {
 				resetOnBlur = false,
 			})
 
@@ -548,11 +468,8 @@ return function()
 
 		it("should set params on route for setParams action", function()
 			local router = SwitchRouter({
-				routes = {
-					Foo = { render = function() end },
-					Bar = { render = function() end },
-				},
-				initialRouteName = "Foo",
+				{ Foo = { render = function() end } },
+				{ Bar = { render = function() end } },
 			})
 
 			local newState = router.getStateForAction(NavigationActions.setParams({
@@ -565,25 +482,23 @@ return function()
 
 		it("should preserve route configured params for child router", function()
 			local childRouter = SwitchRouter({
-				routes = {
+				{
 					Bar = {
 						screen = function() end,
 						params = { a = 2 },
 					},
 				},
-				initialRouteName = "Bar",
 			})
 
 			local router = SwitchRouter({
-				routes = {
+				{
 					Foo = {
 						render = function() end,
 						params = { a = 1 },
 						router = childRouter,
 					},
-					City = { render = function() end },
 				},
-				initialRouteName = "Foo",
+				{ City = { render = function() end } },
 			})
 
 			local state = router.getStateForAction(NavigationActions.init())
@@ -592,18 +507,19 @@ return function()
 
 		it("should merge initialRouteParams with initial route's own params", function()
 			local router = SwitchRouter({
-				routes = {
+				{
 					Foo = {
 						render = function() end,
 						params = { a = 1 },
 					},
+				},
+				{
 					Bar = {
 						render = function() end,
 						params = { a = 1 },
 					},
 				},
-				order = { "Foo", "Bar" },
-				initialRouteName = "Foo",
+			}, {
 				initialRouteParams = { a = 2, b = 3 },
 			})
 
@@ -616,10 +532,10 @@ return function()
 
 		it("should merge init action params with initial route's own params and initialRouteParams", function()
 			local router = SwitchRouter({
-				routes = {
+				{
 					Foo = { render = function() end, params = { a = 1 } }
 				},
-				initialRouteName = "Foo",
+			}, {
 				initialRouteParams = { c = 3 },
 			})
 
@@ -631,23 +547,21 @@ return function()
 
 		it("should merge navigate action params for child router", function()
 			local childRouter = SwitchRouter({
-				routes = {
+				{
 					Bar = {
 						screen = function() end,
 						params = { a = 2 },
 					},
 				},
-				initialRouteName = "Bar",
 			})
 
 			local router = SwitchRouter({
-				routes = {
+				{
 					Foo = {
 						render = function() end,
 						router = childRouter,
 					},
 				},
-				initialRouteName = "Foo",
 			})
 
 			local state = router.getStateForAction(NavigationActions.navigate({
@@ -661,20 +575,16 @@ return function()
 
 		it("should propagate a child router getStateForAction failure to caller", function()
 			local childRouter = SwitchRouter({
-				routes = {
-					Bar = { screen = function() end },
-				},
-				initialRouteName = "Bar",
+				{ Bar = { screen = function() end } },
 			})
 
 			local router = SwitchRouter({
-				routes = {
+				{
 					Foo = {
 						render = function() end,
 						router = childRouter,
 					},
 				},
-				initialRouteName = "Foo",
 			})
 
 			-- need to properly initialize state because we're being abusive of getStateForAction

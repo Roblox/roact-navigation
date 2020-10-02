@@ -5,6 +5,7 @@ ___
 
 Work in progress, to be added to next release notes.
 
+* Stop supporting the routers API from 0.2.x (with the single parameter with the `routes` field). ([#49](https://github.com/Roblox/roact-navigation/pull/49))
 * Move `Navigations.CompleteTransition` into `StackActions` to align with React Navigation. ([#45](https://github.com/Roblox/roact-navigation/pull/45))
 * Rename `RoactNavigation.EventsAdapter` to `RoactNavigation.NavigationEvents` to align with React Navigation. The props from that component have also been aligned with upstream. See React Navigation [documentation](https://reactnavigation.org/docs/4.x/navigation-events/) ([#40](https://github.com/Roblox/roact-navigation/pull/40))
 * Align `withNavigation` and `withNavigationFocus` with React Navigation. Now, those function are higher-order components (HOC). See React Navigation [documentation](https://reactnavigation.org/docs/4.x/with-navigation/) for a concrete example. ([#44](https://github.com/Roblox/roact-navigation/pull/44))

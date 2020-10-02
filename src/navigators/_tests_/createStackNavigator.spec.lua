@@ -5,10 +5,7 @@ return function()
 
 	it("should return a mountable Roact component", function()
 		local navigator = createStackNavigator({
-			routes = {
-				Foo = function() end
-			},
-			initialRouteName = "Foo",
+			{ Foo = function() end },
 		})
 
 		local testNavigation = {

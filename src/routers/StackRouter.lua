@@ -1,3 +1,5 @@
+-- upstream https://github.com/react-navigation/react-navigation/blob/6390aacd07fd647d925dfec842a766c8aad5272f/packages/core/src/routers/TabRouter.js
+
 local root = script.Parent.Parent
 local Packages = root.Parent
 
@@ -12,7 +14,6 @@ local validateRouteConfigArray = require(script.Parent.validateRouteConfigArray)
 local validateRouteConfigMap = require(script.Parent.validateRouteConfigMap)
 local validate = require(root.utils.validate)
 local NavigationSymbol = require(root.NavigationSymbol)
-local showDeprecatedRouterMessage = require(script.Parent.showDeprecatedRouterMessage)
 
 local STACK_ROUTER_ROOT_KEY = "StackRouterRoot"
 -- This symbol is used to differentiate if a router has a child router
@@ -43,20 +44,6 @@ local function foldToRoutes(routes, element, index)
 end
 
 return function(routeArray, config)
-	validate(type(routeArray) == "table", "routeConfigs must be a table")
-	if config == nil and routeArray.routes ~= nil then
-		showDeprecatedRouterMessage("StackRouter")
-		validate(type(routeArray) == "table", "config must be a table")
-		validate(routeArray.initialRouteName, "initialRouteName must be provided")
-
-		config = Cryo.Dictionary.join(routeArray, { routes = Cryo.None })
-
-		local order = routeArray.order or Cryo.Dictionary.keys(routeArray.routes)
-		routeArray = Cryo.List.map(order, function(routeName)
-			return { [routeName] = routeArray.routes[routeName] }
-		end)
-	end
-
 	validateRouteConfigArray(routeArray)
 	config = config or {}
 	local routeConfigs = validateRouteConfigMap(

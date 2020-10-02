@@ -10,10 +10,7 @@ return function()
 
 	it("should return a valid component when mounting a switch navigator", function()
 		local TestNavigator = createSwitchNavigator({
-			routes = {
-				Foo = function() end,
-			},
-			initialRouteName = "Foo",
+			{ Foo = function() end },
 		})
 
 		local TestApp = createAppContainer(TestNavigator)
@@ -67,10 +64,7 @@ return function()
 
 	it("should accept actions from externalDispatchConnector", function()
 		local TestNavigator = createSwitchNavigator({
-			routes = {
-				Foo = function() end,
-			},
-			initialRouteName = "Foo",
+			{ Foo = function() end },
 		})
 
 		local registeredCallback = nil
@@ -114,7 +108,7 @@ return function()
 		}
 
 		local TestNavigator = createSwitchNavigator({
-			routes = {
+			{
 				Foo = function(props)
 					-- doing this in render is an abuse, but it's just a test
 					passedScreenProps = props.navigation.getScreenProps()
@@ -123,7 +117,6 @@ return function()
 					extractedMissingValue2 = props.navigation.getScreenProps("MyMissingKey")
 				end,
 			},
-			initialRouteName = "Foo",
 		})
 
 		local TestApp = createAppContainer(TestNavigator)
