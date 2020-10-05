@@ -4,17 +4,6 @@ return function()
 	local NavigationActions = require(Root.NavigationActions)
 	local BackBehavior = require(Root.BackBehavior)
 
-	local function expectError(functor, msg)
-		local status, err = pcall(functor)
-
-		if status ~= false then
-			error("expectError: Test function should have thrown error, but it passed", 2)
-		end
-		if string.find(err, msg) == nil then
-			error(string.format("expectError: Expected error message '%s' not found in actual message: '%s'", msg, err), 2)
-		end
-	end
-
 	it("should be a function", function()
 		expect(type(SwitchRouter)).to.equal("function")
 	end)
@@ -187,17 +176,17 @@ return function()
 				{ Foo = { screen = function() end } },
 			})
 
-			expectError(function()
+			local message = "There is no route defined for index '2'. " ..
+				"Check that you passed in a navigation state with a " ..
+				"valid tab/screen index."
+			expect(function()
 				router.getComponentForState({
 					routes = {
 						Foo = { screen = function() end },
 					},
 					index = 2,
 				})
-			end, "There is no route defined for index '2'. " ..
-			"Check that you passed in a navigation state with a " ..
-			"valid tab/screen index.")
-
+			end).to.throw(message)
 		end)
 
 		it("should descend child router for requested route", function()

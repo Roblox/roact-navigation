@@ -274,37 +274,39 @@ return function()
 			expect(didFocusCalled).to.equal(true)
 		end)
 
-		it("should NOT emit WillFocus or DidFocus on Action event when previously blurred and child is NOT current index",
-		function()
-			local bundle = makeListenerBundle()
-			local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY)
+		it(
+			"should NOT emit WillFocus or DidFocus on Action event when previously blurred and child is NOT current index",
+			function()
+				local bundle = makeListenerBundle()
+				local childSubscriber = getChildEventSubscriber(bundle.addListener, SIMPLE_TEST_KEY)
 
-			local willFocusCalled = false
-			childSubscriber.addListener(Events.WillFocus, function()
-				willFocusCalled = true
-			end)
+				local willFocusCalled = false
+				childSubscriber.addListener(Events.WillFocus, function()
+					willFocusCalled = true
+				end)
 
-			local didFocusCalled = false
-			childSubscriber.addListener(Events.DidFocus, function()
-				didFocusCalled = true
-			end)
+				local didFocusCalled = false
+				childSubscriber.addListener(Events.DidFocus, function()
+					didFocusCalled = true
+				end)
 
-			bundle.listenerMap[Events.Action]({
-				state = {
-					routes = {
-						{ key = SIMPLE_TEST_KEY },
-						{ key = "NOT_SIMPLE_TEST_KEY" },
+				bundle.listenerMap[Events.Action]({
+					state = {
+						routes = {
+							{ key = SIMPLE_TEST_KEY },
+							{ key = "NOT_SIMPLE_TEST_KEY" },
+						},
+						index = 2,
 					},
-					index = 2,
-				},
-				action = {
-					"SomeAction"
-				},
-			})
+					action = {
+						"SomeAction"
+					},
+				})
 
-			expect(willFocusCalled).to.equal(false)
-			expect(didFocusCalled).to.equal(false)
-		end)
+				expect(willFocusCalled).to.equal(false)
+				expect(didFocusCalled).to.equal(false)
+			end
+		)
 
 		it("should emit DidFocus on DidFocus event when previous event was WillFocus and child is current index", function()
 			local bundle = makeListenerBundle()

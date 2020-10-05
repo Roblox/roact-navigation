@@ -278,17 +278,17 @@ return function()
 				{ Foo = { screen = function() end } },
 			})
 
-			expectError(function()
+			local message = "There is no route defined for index '2'. " ..
+				"Make sure that you passed in a navigation state with a " ..
+				"valid stack index."
+			expect(function()
 				router.getComponentForState({
 					routes = {
 						Foo = { screen = function() end },
 					},
 					index = 2,
 				})
-			end, "There is no route defined for index '2'. " ..
-			"Make sure that you passed in a navigation state with a " ..
-			"valid stack index.")
-
+			end).to.throw(message)
 		end)
 
 		it("should descend child router for requested route", function()
