@@ -1,10 +1,10 @@
 return function()
 	local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
-	local createRobloxSwitchNavigator = require(script.Parent.Parent.createRobloxSwitchNavigator)
+	local createSwitchNavigator = require(script.Parent.Parent.createSwitchNavigator)
 	local getChildNavigation = require(script.Parent.Parent.Parent.getChildNavigation)
 
 	it("should return a mountable Roact component", function()
-		local navigator = createRobloxSwitchNavigator({
+		local navigator = createSwitchNavigator({
 			{ Foo = function() end },
 		})
 
