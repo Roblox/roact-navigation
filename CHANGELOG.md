@@ -5,6 +5,7 @@ ___
 
 Work in progress, to be added to next release notes.
 
+* Rename `StackView` to `RobloxStackView` and `createStackNavigator` to `createRobloxStackView` to make the deviation from upstream clear. ([#60](https://github.com/Roblox/roact-navigation/pull/60))
 * Rename `SwitchView` to `RobloxSwitchView` and `createSwitchNavigator` to `createRobloxSwitchNavigator` to reflect the differences with React Navigation `SwitchView` and `RobloxSwitchView`. ([#54](https://github.com/Roblox/roact-navigation/pull/54))
 * Stop supporting the routers API from 0.2.x (with the single parameter with the `routes` field). ([#49](https://github.com/Roblox/roact-navigation/pull/49))
 * Move `Navigations.CompleteTransition` into `StackActions` to align with React Navigation. ([#45](https://github.com/Roblox/roact-navigation/pull/45))

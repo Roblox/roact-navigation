@@ -48,7 +48,7 @@ return function()
 
 		local appContainer = Roact.createElement("ScreenGui", nil, {
 				AppContainer = Roact.createElement(RoactNavigation.createAppContainer(
-					RoactNavigation.createStackNavigator({
+					RoactNavigation.createRobloxStackNavigator({
 						{ [pageOneName] = createButtonPage(pageOneName, pageTwoName, trackNavigationEvents) },
 						{ [pageTwoName] = createButtonPage(pageTwoName, pageOneName, trackNavigationEvents) },
 					}, {

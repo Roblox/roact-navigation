@@ -1,11 +1,9 @@
 return function()
-	local RoactNavigation = require(script.Parent.Parent)
-	local Roact = require(script.Parent.Parent.Parent.Roact)
-	local StackPresentationStyle = require(script.Parent.Parent.views.StackView.StackPresentationStyle)
-
-	it("should load", function()
-		require(script.Parent.Parent)
-	end)
+	local root = script.Parent.Parent
+	local Packages = root.Parent
+	local RoactNavigation = require(root)
+	local Roact = require(Packages.Roact)
+	local StackPresentationStyle = require(root.views.RobloxStackView.StackPresentationStyle)
 
 	it("should return a function for createAppContainer", function()
 		expect(type(RoactNavigation.createAppContainer)).to.equal("function")
@@ -41,8 +39,8 @@ return function()
 		expect(type(RoactNavigation.createRobloxSwitchNavigator)).to.equal("function")
 	end)
 
-	it("should return a function for createStackNavigator", function()
-		expect(type(RoactNavigation.createStackNavigator)).to.equal("function")
+	it("should return a function for createRobloxStackNavigator", function()
+		expect(type(RoactNavigation.createRobloxStackNavigator)).to.equal("function")
 	end)
 
 	it("should return a function for createNavigator", function()

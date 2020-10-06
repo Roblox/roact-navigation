@@ -19,7 +19,7 @@ return {
 	withNavigationFocus = require(script.views.withNavigationFocus),
 
 	-- Navigators
-	createStackNavigator = require(script.navigators.createStackNavigator),
+	createRobloxStackNavigator = require(script.navigators.createRobloxStackNavigator),
 	createRobloxSwitchNavigator = require(script.navigators.createRobloxSwitchNavigator),
 	createNavigator = require(script.navigators.createNavigator),
 
@@ -39,12 +39,12 @@ return {
 	NavigationEvents = require(script.views.NavigationEvents),
 
 	-- Additional Types
-	StackPresentationStyle = require(script.views.StackView.StackPresentationStyle),
+	StackPresentationStyle = require(script.views.RobloxStackView.StackPresentationStyle),
 
 	-- Screen Views
 	SceneView = require(script.views.SceneView),
 	RobloxSwitchView = require(script.views.RobloxSwitchView),
-	StackView = require(script.views.StackView.StackView),
+	RobloxStackView = require(script.views.RobloxStackView.StackView),
 
 	-- Utilities
 	createConfigGetter = require(script.routers.createConfigGetter),
