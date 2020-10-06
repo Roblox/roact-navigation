@@ -1,6 +1,8 @@
-local Cryo = require(script.Parent.Parent.Parent.Cryo)
-local TableUtilities = require(script.Parent.Parent.utils.TableUtilities)
-local validate = require(script.Parent.Parent.utils.validate)
+local root = script.Parent.Parent.Parent
+local Packages = root.Parent
+local Cryo = require(Packages.Cryo)
+local TableUtilities = require(root.utils.TableUtilities)
+local validate = require(root.utils.validate)
 
 local SCENE_KEY_PREFIX = "scene_"
 

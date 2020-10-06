@@ -4,7 +4,7 @@ local Cryo = require(Packages.Cryo)
 local Roact = require(Packages.Roact)
 local StackActions = require(root.routers.StackActions)
 local StackViewLayout = require(script.Parent.StackViewLayout)
-local Transitioner = require(script.Parent.Parent.Transitioner)
+local Transitioner = require(script.Parent.Transitioner)
 local StackViewTransitionConfigs = require(script.Parent.StackViewTransitionConfigs)
 local StackPresentationStyle = require(script.Parent.StackPresentationStyle)
 

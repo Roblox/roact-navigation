@@ -1,8 +1,10 @@
-local Cryo = require(script.Parent.Parent.Parent.Cryo)
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local Otter = require(script.Parent.Parent.Parent.Otter)
+local root = script.Parent.Parent.Parent
+local Packages = root.Parent
+local Cryo = require(Packages.Cryo)
+local Roact = require(Packages.Roact)
+local Otter = require(Packages.Otter)
 local ScenesReducer = require(script.Parent.ScenesReducer)
-local validate = require(script.Parent.Parent.utils.validate)
+local validate = require(root.utils.validate)
 
 local DEFAULT_TRANSITION_SPEC = {
 	frequency = 4 -- Hz
