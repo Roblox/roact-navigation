@@ -2,14 +2,14 @@ return function()
 	local Roact = require(script.Parent.Parent.Parent.Roact)
 	local NavigationActions = require(script.Parent.Parent.NavigationActions)
 	local createAppContainer = require(script.Parent.Parent.createAppContainer)
-	local createSwitchNavigator = require(script.Parent.Parent.navigators.createSwitchNavigator)
+	local createRobloxSwitchNavigator = require(script.Parent.Parent.navigators.createRobloxSwitchNavigator)
 
 	it("should be a function", function()
 		expect(type(createAppContainer)).to.equal("function")
 	end)
 
 	it("should return a valid component when mounting a switch navigator", function()
-		local TestNavigator = createSwitchNavigator({
+		local TestNavigator = createRobloxSwitchNavigator({
 			{ Foo = function() end },
 		})
 
@@ -63,7 +63,7 @@ return function()
 	end)
 
 	it("should accept actions from externalDispatchConnector", function()
-		local TestNavigator = createSwitchNavigator({
+		local TestNavigator = createRobloxSwitchNavigator({
 			{ Foo = function() end },
 		})
 
@@ -107,7 +107,7 @@ return function()
 			MyKey1 = "MyValue1",
 		}
 
-		local TestNavigator = createSwitchNavigator({
+		local TestNavigator = createRobloxSwitchNavigator({
 			{
 				Foo = function(props)
 					-- doing this in render is an abuse, but it's just a test

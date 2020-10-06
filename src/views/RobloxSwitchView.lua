@@ -6,9 +6,9 @@ local defaultNavigationConfig = {
 	keepVisitedScreensMounted = false,
 }
 
-local SwitchView = Roact.Component:extend("SwitchView")
+local RobloxSwitchView = Roact.Component:extend("RobloxSwitchView")
 
-function SwitchView.getDerivedStateFromProps(nextProps, prevState)
+function RobloxSwitchView.getDerivedStateFromProps(nextProps, prevState)
 	local navState = nextProps.navigation.state
 	local activeKey = navState.routes[navState.index].key
 	local descriptors = nextProps.descriptors
@@ -34,7 +34,7 @@ function SwitchView.getDerivedStateFromProps(nextProps, prevState)
 	}
 end
 
-function SwitchView:render()
+function RobloxSwitchView:render()
 	local navState = self.props.navigation.state
 	local screenProps = self.props.screenProps
 	local descriptors = self.props.descriptors
@@ -65,4 +65,4 @@ function SwitchView:render()
 	return Roact.createElement("Folder", nil, screenElements)
 end
 
-return SwitchView
+return RobloxSwitchView

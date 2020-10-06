@@ -61,7 +61,7 @@ return function(target)
 		print("Second page unmounted!")
 	end
 
-	local navigator = RoactNavigation.createSwitchNavigator({
+	local navigator = RoactNavigation.createRobloxSwitchNavigator({
 		routes = {
 			MyFirstPage = MyFirstPage,
 			MySecondPage = MySecondPage,

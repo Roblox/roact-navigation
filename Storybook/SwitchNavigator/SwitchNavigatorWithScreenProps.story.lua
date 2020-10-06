@@ -39,7 +39,7 @@ return function(target)
 		})
 	end
 
-	local navigator = RoactNavigation.createSwitchNavigator({
+	local navigator = RoactNavigation.createRobloxSwitchNavigator({
 		routes = {
 			MyPage = MyPage,
 		},

@@ -37,8 +37,8 @@ return function()
 		expect(type(RoactNavigation.withNavigationFocus)).to.equal("function")
 	end)
 
-	it("should return a function for createSwitchNavigator", function()
-		expect(type(RoactNavigation.createSwitchNavigator)).to.equal("function")
+	it("should return a function for createRobloxSwitchNavigator", function()
+		expect(type(RoactNavigation.createRobloxSwitchNavigator)).to.equal("function")
 	end)
 
 	it("should return a function for createStackNavigator", function()
@@ -107,9 +107,7 @@ return function()
 		Roact.unmount(instance)
 	end)
 
-	it("should return a valid component for SwitchView", function()
-		expect(RoactNavigation.SwitchView.render).never.to.equal(nil)
-
+	it("should return a valid component for RobloxSwitchView", function()
 		local testNavigation = {
 			state = {
 				routes = {
@@ -119,7 +117,7 @@ return function()
 			}
 		}
 
-		local instance = Roact.mount(Roact.createElement(RoactNavigation.SwitchView, {
+		local instance = Roact.mount(Roact.createElement(RoactNavigation.RobloxSwitchView, {
 			descriptors = {
 				Foo = {
 					getComponent = function()

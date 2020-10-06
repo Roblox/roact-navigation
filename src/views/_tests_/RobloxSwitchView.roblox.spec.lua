@@ -1,6 +1,6 @@
 return function()
 	local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
-	local SwitchView = require(script.Parent.Parent.SwitchView)
+	local RobloxSwitchView = require(script.Parent.Parent.RobloxSwitchView)
 
 	it("should mount and pass required props and context", function()
 		local testScreenProps = {}
@@ -32,7 +32,7 @@ return function()
 			}
 		}
 
-		local element = Roact.createElement(SwitchView, {
+		local element = Roact.createElement(RobloxSwitchView, {
 			screenProps = testScreenProps,
 			navigation = testNavigation,
 			descriptors = testDescriptors,
@@ -79,7 +79,7 @@ return function()
 			},
 		}
 
-		local element = Roact.createElement(SwitchView, {
+		local element = Roact.createElement(RobloxSwitchView, {
 			screenProps = {},
 			navigation = testNavigation1,
 			descriptors = makeDescriptors(testNavigation1),
@@ -101,7 +101,7 @@ return function()
 			},
 		}
 
-		instance = Roact.update(instance, Roact.createElement(SwitchView, {
+		instance = Roact.update(instance, Roact.createElement(RobloxSwitchView, {
 			screenProps = {},
 			navigation = testNavigation2,
 			descriptors = makeDescriptors(testNavigation2),
@@ -148,7 +148,7 @@ return function()
 			},
 		}
 
-		local element = Roact.createElement(SwitchView, {
+		local element = Roact.createElement(RobloxSwitchView, {
 			screenProps = {},
 			navigation = testNavigation1,
 			descriptors = makeDescriptors(testNavigation1),
@@ -170,7 +170,7 @@ return function()
 			},
 		}
 
-		instance = Roact.update(instance, Roact.createElement(SwitchView, {
+		instance = Roact.update(instance, Roact.createElement(RobloxSwitchView, {
 			screenProps = {},
 			navigation = testNavigation2,
 			descriptors = makeDescriptors(testNavigation2),
@@ -219,7 +219,7 @@ return function()
 			},
 		}
 
-		local element = Roact.createElement(SwitchView, {
+		local element = Roact.createElement(RobloxSwitchView, {
 			screenProps = {},
 			navigation = testNavigation1,
 			descriptors = makeDescriptors(testNavigation1),
@@ -241,7 +241,7 @@ return function()
 		}
 
 		-- We must update tree to make sure active screens list gets updated first!
-		instance = Roact.update(instance, Roact.createElement(SwitchView, {
+		instance = Roact.update(instance, Roact.createElement(RobloxSwitchView, {
 			screenProps = {},
 			navigation = testNavigation2,
 			descriptors = makeDescriptors(testNavigation2),
@@ -252,7 +252,7 @@ return function()
 
 		expect(fooUnmounted).to.equal(false)
 
-		instance = Roact.update(instance, Roact.createElement(SwitchView, {
+		instance = Roact.update(instance, Roact.createElement(RobloxSwitchView, {
 			screenProps = {},
 			navigation = testNavigation2,
 			descriptors = makeDescriptors(testNavigation2),

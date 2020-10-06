@@ -177,7 +177,7 @@ return function(target)
 		},
 	})
 
-	local detailSwitchNavigator = RoactNavigation.createSwitchNavigator({
+	local detailSwitchNavigator = RoactNavigation.createRobloxSwitchNavigator({
 		routes = {
 			One = PageOne,
 			Two = subDetailNavigator,

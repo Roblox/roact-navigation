@@ -1,8 +1,7 @@
--- upstream https://github.com/react-navigation/react-navigation/blob/fcd7d83c4c33ad1fa508c8cfe687d2fa259bfc2c/packages/core/src/navigators/createSwitchNavigator.js
-local Cryo = require(script.Parent.Parent.Parent.Cryo)
+local root = script.Parent.Parent
 local createNavigator = require(script.Parent.createNavigator)
-local SwitchRouter = require(script.Parent.Parent.routers.SwitchRouter)
-local SwitchView = require(script.Parent.Parent.views.SwitchView)
+local SwitchRouter = require(root.routers.SwitchRouter)
+local RobloxSwitchView = require(root.views.RobloxSwitchView)
 
 --[[
 	Creates a navigator component that provides simple screen "switcher" behavior.
@@ -22,11 +21,5 @@ local SwitchView = require(script.Parent.Parent.views.SwitchView)
 return function(routeArray, switchConfig)
 	local router = SwitchRouter(routeArray, switchConfig)
 
-	if routeArray.routes then
-		switchConfig = Cryo.Dictionary.join(routeArray, {
-			routes = Cryo.None,
-		})
-	end
-
-	return createNavigator(SwitchView, router, switchConfig or {})
+	return createNavigator(RobloxSwitchView, router, switchConfig or {})
 end

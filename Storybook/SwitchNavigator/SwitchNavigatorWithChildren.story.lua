@@ -111,7 +111,7 @@ return function(target)
 
 	-- This is the second-level navigator that holds Third+Fourth pages.
 	-- Note that each navigator has its own initialRouteName and initialRouteParams.
-	local ThirdPageNavigator = RoactNavigation.createSwitchNavigator({
+	local ThirdPageNavigator = RoactNavigation.createRobloxSwitchNavigator({
 		routes = {
 			Page3A = ThirdPage,
 			Page3B = FourthPage,
@@ -124,7 +124,7 @@ return function(target)
 
 	-- This is the top-level navigator. Note that child navigators are just Roact
 	-- Components attached like any other route.
-	local rootNavigator = RoactNavigation.createSwitchNavigator({
+	local rootNavigator = RoactNavigation.createRobloxSwitchNavigator({
 		routes = {
 			Page1 = FirstPage,
 			Page2 = SecondPage,

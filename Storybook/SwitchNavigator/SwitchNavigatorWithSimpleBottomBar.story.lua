@@ -40,7 +40,7 @@ return function(target)
 
 	local tabOrder = { "PageOne", "PageTwo", "PageThree" }
 
-	local InnerNavigator = RoactNavigation.createSwitchNavigator({
+	local InnerNavigator = RoactNavigation.createRobloxSwitchNavigator({
 		routes = {
 			PageOne = generatePageComponent("PageOne"),
 			PageTwo = generatePageComponent("PageTwo"),

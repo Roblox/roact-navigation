@@ -102,7 +102,7 @@ return function(target)
 		initialRouteName = "One",
 	})
 
-	local rootNavigator = RoactNavigation.createSwitchNavigator({
+	local rootNavigator = RoactNavigation.createRobloxSwitchNavigator({
 		routes = {
 			Login = LoginPage,
 			AppMain = AppMainStackNavigator,

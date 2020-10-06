@@ -20,7 +20,7 @@ return {
 
 	-- Navigators
 	createStackNavigator = require(script.navigators.createStackNavigator),
-	createSwitchNavigator = require(script.navigators.createSwitchNavigator),
+	createRobloxSwitchNavigator = require(script.navigators.createRobloxSwitchNavigator),
 	createNavigator = require(script.navigators.createNavigator),
 
 	-- Routers
@@ -43,7 +43,7 @@ return {
 
 	-- Screen Views
 	SceneView = require(script.views.SceneView),
-	SwitchView = require(script.views.SwitchView),
+	RobloxSwitchView = require(script.views.RobloxSwitchView),
 	StackView = require(script.views.StackView.StackView),
 
 	-- Utilities

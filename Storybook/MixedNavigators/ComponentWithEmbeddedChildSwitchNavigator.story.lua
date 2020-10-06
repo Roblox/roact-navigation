@@ -97,7 +97,7 @@ return function(target)
 	end
 
 
-	local InnerSwitchNavigator = RoactNavigation.createSwitchNavigator({
+	local InnerSwitchNavigator = RoactNavigation.createRobloxSwitchNavigator({
 		routes = {
 			SubDetailA = SubPageA,
 			SubDetailB = SubPageB,

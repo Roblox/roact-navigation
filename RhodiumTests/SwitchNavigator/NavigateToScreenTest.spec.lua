@@ -32,7 +32,7 @@ return function()
 		it("should change pages on navigate operation", function()
 			local appContainer = Roact.createElement("ScreenGui", nil, {
 				AppContainer = Roact.createElement(RoactNavigation.createAppContainer(
-					RoactNavigation.createSwitchNavigator({
+					RoactNavigation.createRobloxSwitchNavigator({
 						{ PageOne = createButtonPage("PageOne", "PageTwo") },
 						{ PageTwo = createButtonPage("PageTwo", "PageOne") },
 					})
