@@ -113,9 +113,9 @@ return function(target)
 	-- with mode=StackPresentationStyle.Overlay. Your main app content goes inside
 	-- a Page or navigator at this level. Note that to hide the automatic top bar
 	-- for the root stack navigator, you have to set headerMode=StackHeaderMode.None.
-	local rootNavigator = RoactNavigation.createStackNavigator({
-		routes = {
-			MainContent = MainContent,
+	local rootNavigator = RoactNavigation.createRobloxStackNavigator({
+		{ MainContent = MainContent },
+		{
 			OverlayDialog = {
 				screen = OverlayDialog,
 				navigationOptions = {
@@ -127,7 +127,7 @@ return function(target)
 				},
 			},
 		},
-		initialRouteName = "MainContent",
+	}, {
 		mode = RoactNavigation.StackPresentationStyle.Overlay, -- use Overlay mode instead of Modal!
 	})
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)

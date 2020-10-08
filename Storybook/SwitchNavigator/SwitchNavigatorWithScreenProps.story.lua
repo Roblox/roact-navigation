@@ -40,10 +40,8 @@ return function(target)
 	end
 
 	local navigator = RoactNavigation.createRobloxSwitchNavigator({
-		routes = {
-			MyPage = MyPage,
-		},
-		initialRouteName = "MyPage",
+		{ MyPage = MyPage },
+	}, {
 		initialRouteParams = {
 			extraTitle = "Tap to Update",
 		},

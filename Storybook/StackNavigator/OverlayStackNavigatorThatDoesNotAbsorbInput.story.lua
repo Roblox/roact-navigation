@@ -101,9 +101,9 @@ return function(target)
 		})
 	end
 
-	local rootNavigator = RoactNavigation.createStackNavigator({
-		routes = {
-			MainContent = MainContent,
+	local rootNavigator = RoactNavigation.createRobloxStackNavigator({
+		{ MainContent = MainContent },
+		{
 			OverlayDialog = {
 				screen = OverlayDialog,
 				navigationOptions = {
@@ -113,7 +113,7 @@ return function(target)
 				},
 			},
 		},
-		initialRouteName = "MainContent",
+	}, {
 		mode = RoactNavigation.StackPresentationStyle.Overlay, -- use Overlay mode instead of Modal!
 	})
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)

@@ -164,12 +164,10 @@ return function(target)
 		})
 	end
 
-	local subDetailNavigator = RoactNavigation.createStackNavigator({
-		routes = {
-			SubA = SubPageA,
-			SubB = SubPageB,
-		},
-		initialRouteName = "SubA",
+	local subDetailNavigator = RoactNavigation.createRobloxStackNavigator({
+		{ SubA = SubPageA },
+		{ SubB = SubPageB },
+	}, {
 		defaultNavigationOptions = {
 			headerStyle = {
 				BackgroundColor3 = Color3.new(100, 0, 0),
@@ -178,19 +176,13 @@ return function(target)
 	})
 
 	local detailSwitchNavigator = RoactNavigation.createRobloxSwitchNavigator({
-		routes = {
-			One = PageOne,
-			Two = subDetailNavigator,
-		},
-		initialRouteName = "One",
+		{ One = PageOne },
+		{ Two = subDetailNavigator },
 	})
 
-	local rootNavigator = RoactNavigation.createStackNavigator({
-		routes = {
-			Master = MasterPage,
-			Detail = detailSwitchNavigator,
-		},
-		initialRouteName = "Master",
+	local rootNavigator = RoactNavigation.createRobloxStackNavigator({
+		{ Master = MasterPage },
+		{ Detail = detailSwitchNavigator },
 	})
 
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)

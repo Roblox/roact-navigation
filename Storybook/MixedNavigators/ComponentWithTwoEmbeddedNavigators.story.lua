@@ -19,8 +19,8 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 ]]
 return function(target)
 	local function RootComponent(props)
-		local stackOneNavigator = RoactNavigation.createStackNavigator({
-			routes = {
+		local stackOneNavigator = RoactNavigation.createRobloxStackNavigator({
+			{
 				OneA = function(aProps)
 					return Roact.createElement("TextLabel", {
 						Size = UDim2.new(1, 0, 1, 0),
@@ -41,6 +41,8 @@ return function(target)
 						}),
 					})
 				end,
+			},
+			{
 				OneB = function(bProps)
 					return Roact.createElement("TextLabel", {
 						Size = UDim2.new(1, 0, 1, 0),
@@ -62,11 +64,10 @@ return function(target)
 					})
 				end,
 			},
-			initialRouteName = "OneA",
 		})
 
-		local stackTwoNavigator = RoactNavigation.createStackNavigator({
-			routes = {
+		local stackTwoNavigator = RoactNavigation.createRobloxStackNavigator({
+			{
 				TwoA = function(aProps)
 					return Roact.createElement("TextLabel", {
 						Size = UDim2.new(1, 0, 1, 0),
@@ -87,6 +88,8 @@ return function(target)
 						}),
 					})
 				end,
+			},
+			{
 				TwoB = function(bProps)
 					return Roact.createElement("TextLabel", {
 						Size = UDim2.new(1, 0, 1, 0),
@@ -108,7 +111,6 @@ return function(target)
 					})
 				end,
 			},
-			initialRouteName = "TwoA",
 		})
 
 		return Roact.createElement("Frame", {

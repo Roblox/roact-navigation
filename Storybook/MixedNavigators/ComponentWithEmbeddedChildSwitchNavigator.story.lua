@@ -98,11 +98,8 @@ return function(target)
 
 
 	local InnerSwitchNavigator = RoactNavigation.createRobloxSwitchNavigator({
-		routes = {
-			SubDetailA = SubPageA,
-			SubDetailB = SubPageB,
-		},
-		initialRouteName = "SubDetailA",
+		{ SubDetailA = SubPageA },
+		{ SubDetailB = SubPageB },
 	})
 
 	local DetailPage = Roact.Component:extend("DetailPage")
@@ -197,12 +194,9 @@ return function(target)
 		})
 	end
 
-	local rootNavigator = RoactNavigation.createStackNavigator({
-		routes = {
-			Master = MasterPage,
-			Detail = DetailPage,
-		},
-		initialRouteName = "Master",
+	local rootNavigator = RoactNavigation.createRobloxStackNavigator({
+		{ Master = MasterPage },
+		{ Detail = DetailPage },
 	})
 
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)

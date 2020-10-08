@@ -92,12 +92,10 @@ return function(target)
 
 	-- This is the top-level navigator. Note that child navigators are just Roact
 	-- Components attached like any other route.
-	local rootNavigator = RoactNavigation.createStackNavigator({
-		routes = {
-			Master = MasterPage,
-			Detail = DetailPage,
-		},
-		initialRouteName = "Master",
+	local rootNavigator = RoactNavigation.createRobloxStackNavigator({
+		{ Master = MasterPage },
+		{ Detail = DetailPage },
+	}, {
 		onTransitionStart = function(nextNavigation, prevNavigation)
 			-- Monitor start of transition animations
 			local nextRouteName = nextNavigation.state.routes[nextNavigation.state.index].routeName

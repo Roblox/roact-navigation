@@ -94,20 +94,14 @@ return function(target)
 		})
 	end
 
-	local AppMainStackNavigator = RoactNavigation.createStackNavigator({
-		routes = {
-			One = PageOne,
-			Two = PageTwo,
-		},
-		initialRouteName = "One",
+	local AppMainStackNavigator = RoactNavigation.createRobloxStackNavigator({
+		{ One = PageOne },
+		{ Two = PageTwo },
 	})
 
 	local rootNavigator = RoactNavigation.createRobloxSwitchNavigator({
-		routes = {
-			Login = LoginPage,
-			AppMain = AppMainStackNavigator,
-		},
-		initialRouteName = "Login",
+		{ Login = LoginPage },
+		{ AppMain = AppMainStackNavigator },
 	})
 
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)

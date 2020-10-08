@@ -3,7 +3,7 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 
 --[[
 	This story demonstrates how to build a screen component that listens
-	to navigation events using RoactNavigation.EventsAdapter. It makes a
+	to navigation events using RoactNavigation.NavigationEvents. It makes a
 	basic master-detail stack navigator to exercise the events.
 ]]
 return function(target)
@@ -64,11 +64,11 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			eventsAdapter = Roact.createElement(RoactNavigation.EventsAdapter, {
-				[RoactNavigation.Events.WillFocus] = self._onWillFocus,
-				[RoactNavigation.Events.DidFocus] = self._onDidFocus,
-				[RoactNavigation.Events.WillBlur] = self._onWillBlur,
-				[RoactNavigation.Events.DidBlur] = self._onDidBlur,
+			eventsAdapter = Roact.createElement(RoactNavigation.NavigationEvents, {
+				onWillFocus = self._onWillFocus,
+				onDidFocus = self._onDidFocus,
+				onWillBlur = self._onWillBlur,
+				onDidBlur = self._onDidBlur,
 			}),
 			detailButton = Roact.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
@@ -139,11 +139,11 @@ return function(target)
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = bgColor,
 		}, {
-			eventsAdapter = Roact.createElement(RoactNavigation.EventsAdapter, {
-				[RoactNavigation.Events.WillFocus] = self._onWillFocus,
-				[RoactNavigation.Events.DidFocus] = self._onDidFocus,
-				[RoactNavigation.Events.WillBlur] = self._onWillBlur,
-				[RoactNavigation.Events.DidBlur] = self._onDidBlur,
+			eventsAdapter = Roact.createElement(RoactNavigation.NavigationEvents, {
+				onWillFocus = self._onWillFocus,
+				onDidFocus = self._onDidFocus,
+				onWillBlur = self._onWillBlur,
+				onDidBlur = self._onDidBlur,
 			}),
 			backButton = Roact.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0.5),
@@ -162,12 +162,9 @@ return function(target)
 
 	-- This is the top-level navigator. Note that child navigators are just Roact
 	-- Components attached like any other route.
-	local rootNavigator = RoactNavigation.createStackNavigator({
-		routes = {
-			Master = MasterPage,
-			Detail = DetailPage,
-		},
-		initialRouteName = "Master",
+	local rootNavigator = RoactNavigation.createRobloxStackNavigator({
+		{ Master = MasterPage },
+		{ Detail = DetailPage },
 	})
 
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)

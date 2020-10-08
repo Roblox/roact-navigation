@@ -141,9 +141,9 @@ return function(target)
 		})
 	end
 
-	local rootNavigator = RoactNavigation.createStackNavigator({
-		routes = {
-			MainContent = MainContent,
+	local rootNavigator = RoactNavigation.createRobloxStackNavigator({
+		{ MainContent = MainContent },
+		{
 			OpaqueModalDialog = {
 				screen = ModalDialog,
 				navigationOptions = function(navProps)
@@ -153,6 +153,8 @@ return function(target)
 					}
 				end,
 			},
+		},
+		{
 			TransparentModalDialog = {
 				screen = ModalDialog,
 				navigationOptions = {
@@ -160,7 +162,7 @@ return function(target)
 				}
 			},
 		},
-		initialRouteName = "MainContent",
+	}, {
 		mode = RoactNavigation.StackPresentationStyle.Modal,
 	})
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)

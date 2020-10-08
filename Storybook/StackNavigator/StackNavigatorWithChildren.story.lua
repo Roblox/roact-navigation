@@ -97,20 +97,14 @@ return function(target)
 		})
 	end
 
-	local DetailPageNavigator = RoactNavigation.createStackNavigator({
-		routes = {
-			SubDetailA = SubDetailPageA,
-			SubDetailB = SubDetailPageB,
-		},
-		initialRouteName = "SubDetailA",
+	local DetailPageNavigator = RoactNavigation.createRobloxStackNavigator({
+		{ SubDetailA = SubDetailPageA },
+		{ SubDetailB = SubDetailPageB },
 	})
 
-	local rootNavigator = RoactNavigation.createStackNavigator({
-		routes = {
-			Master = MasterPage,
-			Detail = DetailPageNavigator,
-		},
-		initialRouteName = "Master",
+	local rootNavigator = RoactNavigation.createRobloxStackNavigator({
+		{ Master = MasterPage },
+		{ Detail = DetailPageNavigator },
 	})
 
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)

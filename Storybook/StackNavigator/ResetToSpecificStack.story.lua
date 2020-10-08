@@ -132,12 +132,9 @@ return function(target)
 		})
 	end
 
-	local rootNavigator = RoactNavigation.createStackNavigator({
-		routes = {
-			Master = MasterPage,
-			Detail = DetailPage,
-		},
-		initialRouteName = "Master",
+	local rootNavigator = RoactNavigation.createRobloxStackNavigator({
+		{ Master = MasterPage },
+		{ Detail = DetailPage },
 	})
 
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)

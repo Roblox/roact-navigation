@@ -88,12 +88,9 @@ return function(target)
 
 	-- This is the top-level navigator. Note that child navigators are just Roact
 	-- Components attached like any other route.
-	local rootNavigator = RoactNavigation.createStackNavigator({
-		routes = {
-			Master = MasterPage,
-			Detail = DetailPage,
-		},
-		initialRouteName = "Master",
+	local rootNavigator = RoactNavigation.createRobloxStackNavigator({
+		{ Master = MasterPage },
+		{ Detail = DetailPage },
 	})
 
 	-- Navigators must all live under a single top-level container. The container

@@ -62,11 +62,9 @@ return function(target)
 	end
 
 	local navigator = RoactNavigation.createRobloxSwitchNavigator({
-		routes = {
-			MyFirstPage = MyFirstPage,
-			MySecondPage = MySecondPage,
-		},
-		initialRouteName = "MyFirstPage",
+		{ MyFirstPage = MyFirstPage },
+		{ MySecondPage = MySecondPage },
+	}, {
 		keepVisitedScreensMounted = true, -- This is the important flag!
 	})
 

@@ -65,12 +65,14 @@ return function(target)
 		})
 	end
 
-	local InnerNavigator = RoactNavigation.createStackNavigator({
-		routes = {
+	local InnerNavigator = RoactNavigation.createRobloxStackNavigator({
+		{
 			Master = {
 				screen = MasterPage,
 				navigationOptions = { title = "Master" },
 			},
+		},
+		{
 			Detail = {
 				screen = DetailPage,
 				navigationOptions = function(navProps)
@@ -81,7 +83,6 @@ return function(target)
 				end,
 			},
 		},
-		initialRouteName = "Master",
 	})
 
 	local SimpleTopBarStackNavigator = Roact.Component:extend("SimpleTopBarStackNavigator")

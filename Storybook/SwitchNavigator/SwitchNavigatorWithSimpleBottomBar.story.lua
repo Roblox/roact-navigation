@@ -41,13 +41,11 @@ return function(target)
 	local tabOrder = { "PageOne", "PageTwo", "PageThree" }
 
 	local InnerNavigator = RoactNavigation.createRobloxSwitchNavigator({
-		routes = {
-			PageOne = generatePageComponent("PageOne"),
-			PageTwo = generatePageComponent("PageTwo"),
-			PageThree = generatePageComponent("PageThree"),
-		},
+		{ PageOne = generatePageComponent("PageOne") },
+		{ PageTwo = generatePageComponent("PageTwo") },
+		{ PageThree = generatePageComponent("PageThree") },
+	}, {
 		order = tabOrder,
-		initialRouteName = "PageOne",
 	})
 
 	local SimpleBottomBarSwitchNavigator = Roact.Component:extend("SimpleBottomBarSwitchNavigator")
