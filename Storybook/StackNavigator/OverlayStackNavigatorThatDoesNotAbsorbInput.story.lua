@@ -1,5 +1,7 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Packages = script.Parent.Parent.Parent
+local Roact = require(Packages.Roact)
+local RoactNavigation = require(Packages.RoactNavigation)
+local Cryo = require(Packages.Cryo)
 
 --[[
 	This story demonstrates how to control whether or not stack navigator screens
@@ -19,7 +21,9 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 			MainContent
 			OverlayDialog
 ]]
-return function(target)
+return function(target, navigatorOptions)
+	navigatorOptions = navigatorOptions or {}
+
 	local function MainContent(props)
 		local navigation = props.navigation
 
@@ -101,6 +105,9 @@ return function(target)
 		})
 	end
 
+	local config = Cryo.Dictionary.join({
+		mode = RoactNavigation.StackPresentationStyle.Overlay, -- use Overlay mode instead of Modal!
+	}, navigatorOptions)
 	local rootNavigator = RoactNavigation.createRobloxStackNavigator({
 		{ MainContent = MainContent },
 		{
@@ -113,9 +120,7 @@ return function(target)
 				},
 			},
 		},
-	}, {
-		mode = RoactNavigation.StackPresentationStyle.Overlay, -- use Overlay mode instead of Modal!
-	})
+	}, config)
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
 	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
 

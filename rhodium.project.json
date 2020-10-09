@@ -8,6 +8,10 @@
 
             "RoactNavigation": {
                 "$path": "src"
+            },
+
+            "RoactNavigationStorybook": {
+                "$path": "Storybook"
             }
         },
 
