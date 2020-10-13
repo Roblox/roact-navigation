@@ -5,6 +5,9 @@ ___
 
 Work in progress, to be added to next release notes.
 
+___
+### v0.4.0
+
 * Add `SwitchView` and `createSwitchNavigator` from React Navigation. ([#58](https://github.com/Roblox/roact-navigation/pull/58))
 * Rename `StackView` to `RobloxStackView` and `createStackNavigator` to `createRobloxStackView` to make the deviation from upstream clear. ([#60](https://github.com/Roblox/roact-navigation/pull/60))
 * Rename `SwitchView` to `RobloxSwitchView` and `createSwitchNavigator` to `createRobloxSwitchNavigator` to reflect the differences with React Navigation `SwitchView` and `RobloxSwitchView`. ([#54](https://github.com/Roblox/roact-navigation/pull/54))

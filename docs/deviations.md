@@ -8,7 +8,9 @@ This page will attempt to explain any known deviations between Roact Navigation 
 
 The alignment process has mainly focused on the navigators behavior. We have imported a good part of the React Navigation test suite into our version to drive our alignment, but because of deviations between the React ecosystem and the current Roact, aligning the view part is more challenging. That is why our version does not have as much navigator creators as in React Navigation  ([`createBottomTabNavigator`](https://reactnavigation.org/docs/4.x/bottom-tab-navigator) or [`createDrawerNavigator`](https://reactnavigation.org/docs/4.x/drawer-navigator) for example).
 
-Generally, you should expect deviations regarding anything visible to the eyes (topbars, animations). This document attempts to show deviations of the core mecanics of the library (when screens are focused or not, how to navigate to an other screen, etc).
+Generally, you should expect deviations regarding anything visible to the eyes (topbars, animations). To highlight this fact, the navigators and views have been prefixed with `Roblox`. For example, you'll find `createRobloxStackNavigator` or `createRobloxSwitchNavigator` which use `RobloxStackView` and `RobloxSwitchView` respectively.
+
+This document attempts to show deviations of the core mecanics of the library (when screens are focused or not, how to navigate to an other screen, etc).
 
 ## [Themes](https://reactnavigation.org/docs/4.x/themes)
 
@@ -33,7 +35,7 @@ createStackRouter({
 In **Roact** Navigation, we wrap each key-value pair in its own table, so the routeConfig is actually an array. That let Roact Navigation know the order of the routes and the initial route.
 
 ```lua
-createStackRouter({
+createRobloxStackRouter({
 	{ Profile = ProfileScreenComponent },
 	{ Games = GamesScreenComponent },
 })
@@ -42,7 +44,7 @@ createStackRouter({
 If a specific route does not map to a component, but rather a config table, the same rule applies!
 
 ```lua
-createStackRouter({
+createRobloxStackRouter({
 	{
 		Profile = {
 			getScreen = function()

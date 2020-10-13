@@ -77,7 +77,7 @@ https://confluence.rbx.com/display/MOBAPP/Roact+Navigation
 1. **git**
 	1. Update the CHANGELOG.md to list all the changes since the last tag
 	2. Update version number in rotriever.toml
-	3. Generate new tag in roact-navigationr repository (pick ONE):
+	3. Generate a new tag in roact-navigation repository (pick ONE):
 
 		- Run "rotrieve publish" to automatically generate the tag.
 
