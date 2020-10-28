@@ -43,7 +43,7 @@ return function()
 			local rootInstance = Roact.mount(appContainer, CoreGui, rootName)
 
 			local appPath = XPath.new("game.CoreGui"):cat(XPath.new(rootName))
-				:cat(XPath.new("AppComponent"))
+				:cat(XPath.new("View"))
 			local buttonPath = appPath:cat(XPath.new("card_PageOne.Scene"))
 			local buttonElement = Element.new(buttonPath)
 

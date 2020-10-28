@@ -5,6 +5,8 @@ ___
 
 Work in progress, to be added to next release notes.
 
+* Refactor navigation events handling to align with React Navigation. ([#65](https://github.com/Roblox/roact-navigation/pull/65))
+
 ___
 ### v0.4.0
 

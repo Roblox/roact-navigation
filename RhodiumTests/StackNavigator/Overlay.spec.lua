@@ -44,7 +44,7 @@ return function()
 			})
 
 			local rootPath = XPath.new("game.CoreGui"):cat(XPath.new(screen.Name))
-			local scenesPath = rootPath:cat(XPath.new("AppComponent.TransitionerScenes"))
+			local scenesPath = rootPath:cat(XPath.new("View.TransitionerScenes"))
 			local showOverlayButtonPath = XPath.new("1.DynamicContent.*.Scene.showOverlayButton")
 
 			local showOverlayButton = Element.new(scenesPath:cat(showOverlayButtonPath))
@@ -142,7 +142,7 @@ return function()
 			})
 
 			local rootPath = XPath.new("game.CoreGui"):cat(XPath.new(screen.Name))
-			local scenesPath = rootPath:cat(XPath.new("AppComponent.TransitionerScenes"))
+			local scenesPath = rootPath:cat(XPath.new("View.TransitionerScenes"))
 
 			local mainContent = scenesPath:cat(XPath.new("1.DynamicContent.*.Scene"))
 			local showOverlayButton = Element.new(mainContent:cat(XPath.new("showOverlayButton")))
@@ -168,7 +168,7 @@ return function()
 			})
 
 			local rootPath = XPath.new("game.CoreGui"):cat(XPath.new(screen.Name))
-			local scenesPath = rootPath:cat(XPath.new("AppComponent.TransitionerScenes"))
+			local scenesPath = rootPath:cat(XPath.new("View.TransitionerScenes"))
 
 			local mainContent = scenesPath:cat(XPath.new("1.DynamicContent.*.Scene"))
 			local showOverlayButton = Element.new(mainContent:cat(XPath.new("showOverlayButton")))

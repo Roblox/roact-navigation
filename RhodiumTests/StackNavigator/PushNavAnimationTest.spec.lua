@@ -39,7 +39,7 @@ return function()
 
 			local rootName = getUniqueName()
 			local rootPath = XPath.new("game.CoreGui"):cat(XPath.new(rootName))
-				:cat(XPath.new("AppComponent.TransitionerScenes"))
+				:cat(XPath.new("View.TransitionerScenes"))
 			local scene1Path = rootPath:cat(XPath.new("1.DynamicContent.*.Scene"))
 			local scene2Path = rootPath:cat(XPath.new("2.DynamicContent.*.Scene"))
 

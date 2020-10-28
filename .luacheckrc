@@ -18,6 +18,12 @@ stds.roblox = {
 		"CFrame",
 		"Enum",
 		"Instance",
+
+		table = {
+			fields = {
+				find = {},
+			},
+		},
 	}
 }
 
