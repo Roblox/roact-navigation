@@ -75,8 +75,12 @@ return function(target, navigatorOptions)
 					TextColor3 = Color3.new(0, 0, 0),
 					TextSize = 18,
 					[Roact.Event.Activated] = function()
-						navigation.push("OverlayDialog", {
-							dialogCount = dialogCount + 1,
+						navigation.navigate({
+							routeName = "OverlayDialog",
+							-- using a unique key will avoid pushing the same dialog
+							-- multiple times if we're clicking really fast
+							key = ("Dialog-%d"):format(dialogCount + 1),
+							params = { dialogCount = dialogCount + 1 },
 						})
 					end,
 				}),

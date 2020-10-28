@@ -53,7 +53,7 @@ return function(target)
 			Font = Enum.Font.Gotham,
 			Position = UDim2.new(0.5, 0, 0.5, 0),
 			Size = UDim2.new(0.5, 0, 0.5, 0),
-			Text = "Detail Page",
+			Text = "Detail Page #" .. pushCount,
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
@@ -67,7 +67,11 @@ return function(target)
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
-					navigation.push("Detail", { pushCount = pushCount + 1 })
+					navigation.navigate({
+						routeName = "Detail",
+						key = ("Detail-%d"):format(pushCount + 1),
+						params = { pushCount = pushCount + 1 },
+					})
 				end,
 			}),
 			goBackButton = Roact.createElement("TextButton", {

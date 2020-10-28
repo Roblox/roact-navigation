@@ -67,7 +67,7 @@ return function(target)
 			Font = Enum.Font.Gotham,
 			Position = UDim2.new(0.5, 0, 0.5, 0),
 			Size = UDim2.new(0.5, 0, 0.5, 0),
-			Text = "Detail Page",
+			Text = "Detail Page #" .. pushCount,
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {

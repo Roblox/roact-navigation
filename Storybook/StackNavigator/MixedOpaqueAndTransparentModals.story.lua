@@ -88,8 +88,13 @@ return function(target)
 					TextColor3 = Color3.new(0, 0, 0),
 					TextSize = 18,
 					[Roact.Event.Activated] = function()
-						navigation.push("OpaqueModalDialog", {
-							dialogCount = dialogCount + 1,
+						navigation.navigate({
+							routeName = "OpaqueModalDialog",
+							-- having the same key as the transparent dialog will
+							-- prevent pushing both of the dialogs if we click
+							-- really fast on both buttons
+							key = ("Dialog-%d"):format(dialogCount + 1),
+							params = { dialogCount = dialogCount + 1 },
 						})
 					end,
 				}),
@@ -103,8 +108,13 @@ return function(target)
 					TextColor3 = Color3.new(0, 0, 0),
 					TextSize = 18,
 					[Roact.Event.Activated] = function()
-						navigation.push("TransparentModalDialog", {
-							dialogCount = dialogCount + 1,
+						navigation.navigate({
+							routeName = "TransparentModalDialog",
+							-- having the same key as the opaque dialog will
+							-- prevent pushing both of the dialogs if we click
+							-- really fast on both buttons
+							key = ("Dialog-%d"):format(dialogCount + 1),
+							params = { dialogCount = dialogCount + 1 },
 						})
 					end,
 				}),

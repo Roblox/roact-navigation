@@ -70,8 +70,12 @@ return function(target)
 					TextColor3 = Color3.new(0, 0, 0),
 					TextSize = 18,
 					[Roact.Event.Activated] = function()
-						navigation.push("ModalDialog", {
-							dialogCount = dialogCount + 1,
+						navigation.navigate({
+							routeName = "ModalDialog",
+							-- using a unique key will avoid pushing the same dialog
+							-- multiple times if we're clicking really fast
+							key = ("ModalDialog-%d"):format(dialogCount + 1),
+							params = { dialogCount = dialogCount + 1 },
 						})
 					end,
 				}),
