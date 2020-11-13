@@ -1,6 +1,6 @@
 [package]
 name = "roblox/roact-navigation"
-version = "0.4.0"
+version = "0.4.1"
 author = "Roblox"
 content_root = "src"
 
@@ -10,5 +10,5 @@ Cryo = "github.com/roblox/cryo@1.0"
 Otter = "github.com/roblox/otter@0.1"
 
 [dev_dependencies]
-TestEZ = "github.com/roblox/testez@0.3.2"
+TestEZ = "github.com/roblox/testez@0.4.1"
 Rhodium = "github.com/roblox/rhodium@0.2.4"

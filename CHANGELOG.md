@@ -5,7 +5,10 @@ ___
 
 Work in progress, to be added to next release notes.
 
-* Refactor navigation events handling to align with React Navigation. ([#65](https://github.com/Roblox/roact-navigation/pull/65))
+___
+### v0.4.1
+
+* Refactor navigation events handling to align with React Navigation. ([#65](https://github.com/Roblox/roact-navigation/pull/65)). This should resolve issues with ordering and timing of blur and focus events.
 
 ___
 ### v0.4.0
