@@ -5,6 +5,8 @@ ___
 
 Work in progress, to be added to next release notes.
 
+* Prevent ref forwarding when the `withNavigation` config field `forwardRef` is false ([#73](https://github.com/Roblox/roact-navigation/pull/73))
+
 ___
 ### v0.4.1
 

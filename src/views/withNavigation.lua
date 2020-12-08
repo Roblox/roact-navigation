@@ -48,7 +48,7 @@ return function(component, config)
 					"unable to get access to navigation from props or context.")
 				return Roact.createElement(component, Cryo.Dictionary.join(props, {
 					navigation = navigation,
-					[Roact.Ref] = config.forwardRef and props[Roact.Ref] or nil,
+					[Roact.Ref] = config.forwardRef and props[Roact.Ref] or Cryo.None,
 				}))
 			end,
 		})
