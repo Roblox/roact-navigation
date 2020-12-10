@@ -78,21 +78,18 @@ https://confluence.rbx.com/display/MOBAPP/Roact+Navigation
 	1. Update the CHANGELOG.md to list all the changes since the last tag
 	2. Update version number in rotriever.toml
 	3. Generate a new tag in roact-navigation repository (pick ONE):
-
 		- Run "rotrieve publish" to automatically generate the tag.
+		- Note: if your origin remote is an ssh URL, rotrieve will fail. Use https checkouts for publishing.
 
-		- *(OR)* Manually create a new annotated tag:
-			1. `cd roact-navigation`
-			2. `git tag -a v0.x.y ` (Number should match rotriever.toml; use `git tag -l` to see all tags)
-			3. Copy-paste the changelog entry into the tag annotation.
-			4. `git push origin v0.x.y`
-
+	
 2. **Publish to Roblox internal artifact repository**
 	1. go to: https://teamcity.simulpong.com/buildConfiguration/LuaAppsAndTools_CacheRotrieverPackage
 	2. Click run.
 	3. Put in the RN repository, e.g. `GitHub.com/roblox/roact-navigation`
 	4. Put in your new version number, e.g. `0.2.7`. (It will prepend 'v' automatically for the tag.)
 	5. Click "Run Build".
+		- Note: you may get a failure if a dependency package (e.g. testez) hasn't had its latest version cached by TeamCity.
+		  `Could not resolve dependencies: No matching versions found for package github.com/roblox/testez@^0.4.1`
 
 ## Caveats/Concerns
 * Otter version [9ad129e](https://github.com/Roblox/otter/commit/9ad129e70e103d0de71232a0d0e7a1527da7a51a) or later is required to avoid the motor:start() timing bugs.
