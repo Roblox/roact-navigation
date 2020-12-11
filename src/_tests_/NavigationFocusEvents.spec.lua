@@ -1,6 +1,4 @@
 -- upstream https://github.com/react-navigation/react-navigation/blob/9b55493e7662f4d54c21f75e53eb3911675f61bc/packages/core/src/__tests__/NavigationFocusEvents.test.js
-local RunService = game:GetService("RunService")
-
 return function()
 	local root = script.Parent.Parent
 	local Packages = root.Parent
@@ -11,6 +9,7 @@ return function()
 	local Events = require(root.Events)
 	local NavigationActions = require(root.NavigationActions)
 	local createSpy = require(root.utils.createSpy)
+	local waitUntil = require(root.utils.waitUntil)
 
 	local Cryo = require(Packages.Cryo)
 	local Roact = require(Packages.Roact)
@@ -40,14 +39,6 @@ return function()
 			router,
 			config
 		)
-	end
-
-	local function waitUntil(predicate, timeout)
-		timeout = timeout or 1
-		local waitedTime = 0
-		while waitedTime < timeout and not predicate() do
-			waitedTime = waitedTime + RunService.Heartbeat:Wait()
-		end
 	end
 
 	-- deviation: utility function moved out of test scope because

@@ -59,7 +59,13 @@ return function(target)
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
-					navigation.push("Detail", { pushCount = pushCount + 1 })
+					navigation.navigate({
+						routeName = "Detail",
+						key = tostring(pushCount),
+						params = {
+							pushCount = pushCount + 1
+						},
+					})
 				end,
 			}),
 		})

@@ -5,7 +5,7 @@ return function()
 	local createRobloxSwitchNavigator = require(script.Parent.Parent.navigators.createRobloxSwitchNavigator)
 
 	it("should be a function", function()
-		expect(type(createAppContainer)).to.equal("function")
+		expect(createAppContainer).to.be.a("function")
 	end)
 
 	it("should return a valid component when mounting a switch navigator", function()
@@ -30,36 +30,28 @@ return function()
 			somePropThatShouldNotBeHere = true,
 		})
 
-		local status, err = pcall(function()
+		expect(function()
 			Roact.mount(element)
-		end)
-
-		expect(status).to.equal(false)
-		expect(string.find(err, "This navigator has both 'navigation' and container props.")).to.never.equal(nil)
+		end).to.throw("This navigator has both navigation and container props, " ..
+			"so it is unclear if it should own its own state")
 	end)
 
 	it("should throw when not passed a table for AppComponent", function()
 		local TestAppComponent = 5
 
-		local status, err = pcall(function()
+		expect(function()
 			createAppContainer(TestAppComponent)
-		end)
-
-		expect(status).to.equal(false)
-		expect(string.find(err, "AppComponent must be a navigator or a stateful Roact " ..
-			"component with a 'router' field")).to.never.equal(nil)
+		end).to.throw("AppComponent must be a navigator or a stateful Roact " ..
+			"component with a 'router' field")
 	end)
 
 	it("should throw when passed a stateful component without router field", function()
 		local TestAppComponent = Roact.Component:extend("TestAppComponent")
 
-		local status, err = pcall(function()
+		expect(function()
 			createAppContainer(TestAppComponent)
-		end)
-
-		expect(status).to.equal(false)
-		expect(string.find(err, "AppComponent must be a navigator or a stateful Roact " ..
-			"component with a 'router' field")).to.never.equal(nil)
+		end).to.throw("AppComponent must be a navigator or a stateful Roact " ..
+			"component with a 'router' field")
 	end)
 
 	it("should accept actions from externalDispatchConnector", function()

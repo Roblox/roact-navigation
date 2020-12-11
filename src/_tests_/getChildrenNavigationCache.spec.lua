@@ -7,7 +7,13 @@ return function()
 	end)
 
 	it("should populate navigation._childrenNavigation as a side-effect", function()
-		local navigation = { state = {} }
+		local navigation = {
+			state = {
+				routes = {
+					{ key = "one" },
+				}
+			},
+		}
 		local result = getChildrenNavigationCache(navigation)
 		expect(result).to.never.equal(nil)
 		expect(navigation._childrenNavigation).to.equal(result)

@@ -45,8 +45,8 @@ local function createSpy(inner)
 
 		if self.valuesLength ~= len then
 			error(("Expected %d arguments, but was called with %d arguments"):format(
-				self.valuesLength,
-				len
+				len,
+				self.valuesLength
 			), 2)
 		end
 
