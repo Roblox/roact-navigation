@@ -9,7 +9,7 @@ local getScreenForRouteName = require(script.Parent.getScreenForRouteName)
 local createConfigGetter = require(script.Parent.createConfigGetter)
 local validateRouteConfigMap = require(script.Parent.validateRouteConfigMap)
 local validateRouteConfigArray = require(script.Parent.validateRouteConfigArray)
-local validate = require(Root.utils.validate)
+local invariant = require(Root.utils.invariant)
 local StackActions = require(Root.routers.StackActions)
 local SwitchActions = require(script.Parent.SwitchActions)
 
@@ -421,7 +421,7 @@ return function(routeArray, config)
 	function SwitchRouter.getComponentForState(state)
 		local activeRoute = state.routes[state.index] or {}
 		local routeName = activeRoute.routeName
-		validate(routeName, "There is no route defined for index '%d'. " ..
+		invariant(routeName, "There is no route defined for index '%d'. " ..
 			"Check that you passed in a navigation state with a " ..
 			"valid tab/screen index.", state.index)
 

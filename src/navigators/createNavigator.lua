@@ -4,7 +4,7 @@ local root = script.Parent.Parent
 local Packages = root.Parent
 local Roact = require(Packages.Roact)
 local Cryo = require(Packages.Cryo)
-local validate = require(root.utils.validate)
+local invariant = require(root.utils.invariant)
 local NavigationFocusEvents = require(root.views.NavigationFocusEvents)
 
 return function(navigatorViewComponent, router, navigationConfig)
@@ -30,13 +30,13 @@ return function(navigatorViewComponent, router, navigationConfig)
 		local navigation = nextProps.navigation
 		local screenProps = nextProps.screenProps
 
-		validate(navigation ~= nil, "The navigation prop is missing for this navigator. " ..
+		invariant(navigation ~= nil, "The navigation prop is missing for this navigator. " ..
 			"In react-navigation v3 and v4 you must set up your app container directly. " ..
 			"More info: https://reactnavigation.org/docs/en/app-containers.html")
 
 		local routes = navigation.state.routes
 
-		validate(type(routes) == "table", 'No "routes" found in navigation state. ' ..
+		invariant(type(routes) == "table", 'No "routes" found in navigation state. ' ..
 			"Did you try to pass the navigation prop of a React component to a Navigator child? " ..
 			"See https://reactnavigation.org/docs/en/custom-navigators.html#navigator-navigation-prop")
 

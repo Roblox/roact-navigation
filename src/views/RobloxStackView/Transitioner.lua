@@ -4,7 +4,7 @@ local Cryo = require(Packages.Cryo)
 local Roact = require(Packages.Roact)
 local Otter = require(Packages.Otter)
 local ScenesReducer = require(script.Parent.ScenesReducer)
-local validate = require(root.utils.validate)
+local invariant = require(root.utils.invariant)
 
 local DEFAULT_TRANSITION_SPEC = {
 	frequency = 4 -- Hz
@@ -26,7 +26,7 @@ local function buildTransitionProps(props, state)
 		end
 	end
 
-	validate(activeScene, "Could not find active scene")
+	invariant(activeScene, "Could not find active scene")
 
 	return {
 		layout = layout,

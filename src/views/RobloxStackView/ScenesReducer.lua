@@ -2,7 +2,7 @@ local root = script.Parent.Parent.Parent
 local Packages = root.Parent
 local Cryo = require(Packages.Cryo)
 local TableUtilities = require(root.utils.TableUtilities)
-local validate = require(root.utils.validate)
+local invariant = require(root.utils.invariant)
 
 local SCENE_KEY_PREFIX = "scene_"
 
@@ -96,7 +96,7 @@ return function(scenes, nextState, prevState, descriptors)
 			descriptor = descriptor,
 		}
 
-		validate(not nextKeys[key], "navigation.state.routes[%d].key '%s' conflicts with another route!", index, key)
+		invariant(not nextKeys[key], "navigation.state.routes[%d].key '%s' conflicts with another route!", index, key)
 		nextKeys[key] = true
 
 		if staleScenes[key] then
@@ -185,7 +185,7 @@ return function(scenes, nextState, prevState, descriptors)
 		end
 	end
 
-	validate(activeScenesCount == 1, "There should only be one active scene, not %d", activeScenesCount)
+	invariant(activeScenesCount == 1, "There should only be one active scene, not %d", activeScenesCount)
 
 	-- Conditionally return nextScenes based upon shallow comparison, for performance
 	if #nextScenes ~= #scenes then

@@ -118,7 +118,7 @@ return function(target)
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Position = UDim2.new(0.5, 0, 0.5, 0),
 				Size = UDim2.new(0.75, 0, 0.75, 0),
-				BackgroundColor3 = Color3.new(100, 100, 100),
+				BackgroundColor3 = Color3.fromRGB(100, 100, 100),
 			}, {
 				innerNavigator = Roact.createElement(InnerSwitchNavigator, {
 					navigation = self.props.navigation,

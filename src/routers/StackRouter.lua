@@ -12,7 +12,7 @@ local getScreenForRouteName = require(script.Parent.getScreenForRouteName)
 local createConfigGetter = require(script.Parent.createConfigGetter)
 local validateRouteConfigArray = require(script.Parent.validateRouteConfigArray)
 local validateRouteConfigMap = require(script.Parent.validateRouteConfigMap)
-local validate = require(root.utils.validate)
+local invariant = require(root.utils.invariant)
 local NavigationSymbol = require(root.NavigationSymbol)
 
 local STACK_ROUTER_ROOT_KEY = "StackRouterRoot"
@@ -21,7 +21,9 @@ local STACK_ROUTER_ROOT_KEY = "StackRouterRoot"
 -- undefined vs. null (that's why we need)
 local CHILD_IS_SCREEN = NavigationSymbol("CHILD_IS_SCREEN")
 
-local defaultActionCreators = function() return {} end
+local defaultActionCreators = function()
+	return {}
+end
 
 local function behavesLikePushAction(action)
 	return action.type == NavigationActions.Navigate or
@@ -183,7 +185,7 @@ return function(routeArray, config)
 	function StackRouter.getComponentForState(state)
 		local activeChildRoute = state.routes[state.index] or {}
 		local routeName = activeChildRoute.routeName
-		validate(routeName, "There is no route defined for index '%d'. " ..
+		invariant(routeName, "There is no route defined for index '%d'. " ..
 			"Make sure that you passed in a navigation state with a " ..
 			"valid stack index.", state.index)
 
@@ -229,10 +231,10 @@ return function(routeArray, config)
 					})
 				end
 
-				validate(type(replaceWith) == "table", "replaceWith must be a table or string")
-				validate(params == nil, "params cannot be provided to .replace() when specifying a table")
-				validate(action == nil, "Child action cannot be provided to .replace() when specifying a table")
-				validate(newKey == nil, "newKey cannot be provided to .replace() when specifying a table")
+				invariant(type(replaceWith) == "table", "replaceWith must be a table or string")
+				invariant(params == nil, "params cannot be provided to .replace() when specifying a table")
+				invariant(action == nil, "Child action cannot be provided to .replace() when specifying a table")
+				invariant(newKey == nil, "newKey cannot be provided to .replace() when specifying a table")
 
 				return StackActions.replace(replaceWith)
 			end,
@@ -321,7 +323,7 @@ return function(routeArray, config)
 		-- If a router equals `nil` it means that it is not a childRouter or a screen.
 		if behavesLikePushAction(action) and childRouters[action.routeName] ~= nil then
 			local childRouter = childRouters[action.routeName]
-			validate(action.type ~= StackActions.Push or action.key == nil,
+			invariant(action.type ~= StackActions.Push or action.key == nil,
 				"StackRouter does not support key on the push action")
 
 			-- Before pushing a new route we first try to find one in the existing route stack

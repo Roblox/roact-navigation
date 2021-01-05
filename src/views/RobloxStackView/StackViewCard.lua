@@ -1,5 +1,5 @@
 local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
-local validate = require(script.Parent.Parent.Parent.utils.validate)
+local invariant = require(script.Parent.Parent.Parent.utils.invariant)
 
 --[[
 	Render a scene as a card for use in a StackView. This component is
@@ -47,7 +47,7 @@ function StackViewCard:render()
 	local renderScene = self.props.renderScene
 	local scene = self.props.scene
 
-	validate(type(renderScene) == "function", "renderScene must be a function")
+	invariant(type(renderScene) == "function", "renderScene must be a function")
 
 	return Roact.createElement("Frame", {
 		Position = initialPosition,

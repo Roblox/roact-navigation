@@ -2,14 +2,14 @@
 local root = script.Parent.Parent
 local Packages = root.Parent
 local Cryo = require(Packages.Cryo)
-local validate = require(root.utils.validate)
+local invariant = require(root.utils.invariant)
 local isValidScreenComponent = require(root.utils.isValidScreenComponent)
 
 -- Extract a single screen Roact component/navigator from
 -- a navigator's config.
 return function(routeConfigs, routeName)
-	validate(type(routeConfigs) == "table", "routeConfigs must be a table")
-	validate(type(routeName) == "string", "routeName must be a string")
+	invariant(type(routeConfigs) == "table", "routeConfigs must be a table")
+	invariant(type(routeName) == "string", "routeName must be a string")
 
 	local routeConfig = routeConfigs[routeName]
 
@@ -29,7 +29,7 @@ return function(routeConfigs, routeName)
 
 	if routeConfigType == "table" then
 		if routeConfig.screen ~= nil then
-			validate(
+			invariant(
 				isValidScreenComponent(routeConfig.screen),
 				"screen for key '%s' must be a valid Roact component.",
 				routeName
@@ -37,7 +37,7 @@ return function(routeConfigs, routeName)
 			return routeConfig.screen
 		elseif type(routeConfig.getScreen) == "function" then
 			local screen = routeConfig.getScreen()
-			validate(
+			invariant(
 				isValidScreenComponent(screen),
 				"The getScreen defined for route '%s' didn't return a valid " ..
 					"screen or navigator.\n\n" ..
@@ -50,7 +50,7 @@ return function(routeConfigs, routeName)
 		end
 	end
 
-	validate(
+	invariant(
 		isValidScreenComponent(routeConfig),
 		"Value for key '%s' must be a route config table or a valid Roact component.",
 		routeName

@@ -2,7 +2,7 @@
 local Cryo = require(script.Parent.Parent.Parent.Cryo)
 local getScreenForRouteName = require(script.Parent.getScreenForRouteName)
 local validateScreenOptions = require(script.Parent.validateScreenOptions)
-local validate = require(script.Parent.Parent.utils.validate)
+local invariant = require(script.Parent.Parent.utils.invariant)
 
 local function applyConfig(configurer, navigationOptions, configProps)
 	navigationOptions = navigationOptions or {}
@@ -27,8 +27,8 @@ return function(routeConfigs, navigatorScreenConfig)
 		screenProps = screenProps or {}
 		local route = navigation.state
 
-		validate(type(route) == "table", "navigation.state must be a table")
-		validate(
+		invariant(type(route) == "table", "navigation.state must be a table")
+		invariant(
 			type(route.routeName == "string"),
 			"Cannot get config because the route does not have a routeName."
 		)

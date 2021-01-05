@@ -23,7 +23,7 @@ local function getRouterTestHelper(router, options)
 	options = options or defaultOptions
 
 	local state = nil
-	if (not options.skipInitializeState) then
+	if not options.skipInitializeState then
 		state = router.getStateForAction({
 			type = NavigationActions.Init,
 		})

@@ -6,7 +6,7 @@ local NavigationActions = require(script.Parent.NavigationActions)
 local Events = require(script.Parent.Events)
 local NavigationContext = require(script.Parent.views.NavigationContext)
 local getNavigation = require(script.Parent.getNavigation)
-local validate = require(script.Parent.utils.validate)
+local invariant = require(script.Parent.utils.invariant)
 
 local function isStateful(props)
 	return not props.navigation
@@ -50,7 +50,7 @@ local function validateProps(props)
 
 	local persistNavigationState = props.persistNavigationState
 	local loadNavigationState = props.loadNavigationState
-	validate(
+	invariant(
 		(persistNavigationState == nil and loadNavigationState == nil)
 			or (typeof(persistNavigationState) == "function"
 					and typeof(loadNavigationState) == "function"),
@@ -88,7 +88,7 @@ end
 										})
 ]]
 return function(AppComponent)
-	validate(type(AppComponent) == "table" and AppComponent.router ~= nil,
+	invariant(type(AppComponent) == "table" and AppComponent.router ~= nil,
 		"AppComponent must be a navigator or a stateful Roact component with a 'router' field")
 
 	local containerName = string.format("NavigationContainer(%s)", tostring(AppComponent))
@@ -322,7 +322,7 @@ return function(AppComponent)
 		-- navState will have the most up-to-date value, because setState sometimes behaves asyncronously
 		self._navState = self._navState or self.state.nav
 		local lastNavState = self._navState
-		validate(lastNavState ~= nil, "should be set in constructor if stateful")
+		invariant(lastNavState ~= nil, "should be set in constructor if stateful")
 
 		local reducedState = AppComponent.router.getStateForAction(action, lastNavState)
 		local navState = reducedState
@@ -414,7 +414,7 @@ return function(AppComponent)
 			navigation = self._navigation
 		end
 
-		validate(navigation ~= nil, "failed to get navigation")
+		invariant(navigation ~= nil, "failed to get navigation")
 
 		return Roact.createElement(NavigationContext.Provider, {
 			value = navigation,

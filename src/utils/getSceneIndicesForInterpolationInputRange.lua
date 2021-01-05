@@ -1,6 +1,6 @@
 local Cryo = require(script.Parent.Parent.Parent.Cryo)
 
-return function(props)
+local function getSceneIndicesForInterpolationInputRange(props)
 	local scene = props.scene
 	local scenes = props.scenes
 
@@ -42,3 +42,5 @@ return function(props)
 		last = index + 1
 	}
 end
+
+return getSceneIndicesForInterpolationInputRange

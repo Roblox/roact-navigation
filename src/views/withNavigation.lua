@@ -3,7 +3,7 @@ local Packages = script.Parent.Parent.Parent
 local Cryo = require(Packages.Cryo)
 local Roact = require(Packages.Roact)
 local NavigationContext = require(script.Parent.NavigationContext)
-local validate = require(script.Parent.Parent.utils.validate)
+local invariant = require(script.Parent.Parent.utils.invariant)
 
 local function isComponent(component)
 	local valueType = typeof(component)
@@ -43,7 +43,7 @@ return function(component, config)
 		return Roact.createElement(NavigationContext.Consumer, {
 			render = function(navigationContext)
 				local navigation = navigationProp or navigationContext
-				validate(navigation, "withNavigation and withNavigationFocus can only " ..
+				invariant(navigation, "withNavigation and withNavigationFocus can only " ..
 					"be used on a view hierarchy of a navigator. The wrapped component is " ..
 					"unable to get access to navigation from props or context.")
 				return Roact.createElement(component, Cryo.Dictionary.join(props, {

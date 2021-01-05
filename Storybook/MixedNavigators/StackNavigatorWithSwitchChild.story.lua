@@ -170,7 +170,7 @@ return function(target)
 	}, {
 		defaultNavigationOptions = {
 			headerStyle = {
-				BackgroundColor3 = Color3.new(100, 0, 0),
+				BackgroundColor3 = Color3.fromRGB(100, 0, 0),
 			},
 		},
 	})

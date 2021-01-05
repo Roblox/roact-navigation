@@ -4,7 +4,7 @@ local Cryo = require(Packages.Cryo)
 local Roact = require(Packages.Roact)
 local NavigationEvents = require(root.views.NavigationEvents)
 local Events = require(root.Events)
-local validate = require(script.Parent.validate)
+local invariant = require(script.Parent.invariant)
 local PageNavigationEvent = require(script.Parent.PageNavigationEvent)
 
 local TrackNavigationEvents = {}
@@ -67,7 +67,7 @@ function TrackNavigationEvents:createNavigationAdapter(pageName)
 end
 
 function TrackNavigationEvents:equalTo(pageNavigationEventList)
-	validate(typeof(pageNavigationEventList) == "table", "should be a list")
+	invariant(typeof(pageNavigationEventList) == "table", "should be a list")
 	local numberOfEvents = #self.navigationEvents
 
 	if numberOfEvents ~= #pageNavigationEventList then
