@@ -1,5 +1,5 @@
 local Packages = script.Parent.Packages
-local TestEZ = require(Packages.Dev.TestEZ)
+local JestRoblox = require(Packages.Dev.JestRoblox)
 local Tests = script.Parent.Tests
 
 local dockWidgetInfo = DockWidgetPluginGuiInfo.new(
@@ -21,7 +21,7 @@ runButton.Parent = dockWidget
 local function runRhodiumTests()
 	local Rhodium = require(Packages.Dev.Rhodium)
 
-	TestEZ.TestBootstrap:run({Tests}, TestEZ.Reporters.TextReporter, {
+	JestRoblox.TestBootstrap:run({Tests}, JestRoblox.Reporters.TextReporter, {
 		noXpcallByDefault = true,
 		extraEnvironment = {
 			Rhodium = Rhodium,

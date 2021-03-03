@@ -1,82 +1,93 @@
 return function()
-	local root = script.Parent.Parent
-	local Packages = root.Parent
-	local RoactNavigation = require(root)
+	local RoactNavigationModule = script.Parent.Parent
+	local RoactNavigation = require(RoactNavigationModule)
+	local StackPresentationStyle = require(RoactNavigationModule.views.RobloxStackView.StackPresentationStyle)
+	local Packages = RoactNavigationModule.Parent
 	local Roact = require(Packages.Roact)
-	local StackPresentationStyle = require(root.views.RobloxStackView.StackPresentationStyle)
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
 
 	it("should return a function for createAppContainer", function()
-		expect(type(RoactNavigation.createAppContainer)).to.equal("function")
+		jestExpect(RoactNavigation.createAppContainer).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should return a function for getNavigation", function()
-		expect(type(RoactNavigation.getNavigation)).to.equal("function")
+		jestExpect(RoactNavigation.getNavigation).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should return an appropriate table for Context", function()
-		expect(type(RoactNavigation.Context)).to.equal("table")
-		expect(type(RoactNavigation.Context.Provider)).to.equal("table")
-		expect(type(RoactNavigation.Context.Consumer)).to.equal("table")
+		jestExpect(RoactNavigation.Context).toEqual(jestExpect.any("table"))
+		jestExpect(RoactNavigation.Context.Provider).toEqual(jestExpect.any("table"))
+		jestExpect(RoactNavigation.Context.Consumer).toEqual(jestExpect.any("table"))
 	end)
 
 	it("should return a Component for Provider", function()
-		expect(type(RoactNavigation.Provider)).to.equal("table")
+		jestExpect(RoactNavigation.Provider).toEqual(jestExpect.any("table"))
 	end)
 
 	it("should return a Component for Consumer", function()
-		expect(type(RoactNavigation.Consumer)).to.equal("table")
+		jestExpect(RoactNavigation.Consumer).toEqual(jestExpect.any("table"))
 	end)
 
 	it("should return a function for withNavigation", function()
-		expect(type(RoactNavigation.withNavigation)).to.equal("function")
+		jestExpect(RoactNavigation.withNavigation).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should return a function for withNavigationFocus", function()
-		expect(type(RoactNavigation.withNavigationFocus)).to.equal("function")
+		jestExpect(RoactNavigation.withNavigationFocus).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should return a function for createRobloxSwitchNavigator", function()
-		expect(type(RoactNavigation.createRobloxSwitchNavigator)).to.equal("function")
+		jestExpect(RoactNavigation.createRobloxSwitchNavigator).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should return a function for createRobloxStackNavigator", function()
-		expect(type(RoactNavigation.createRobloxStackNavigator)).to.equal("function")
+		jestExpect(RoactNavigation.createRobloxStackNavigator).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should return a function for createNavigator", function()
-		expect(type(RoactNavigation.createNavigator)).to.equal("function")
+		jestExpect(RoactNavigation.createNavigator).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should return a function for StackRouter", function()
-		expect(type(RoactNavigation.StackRouter)).to.equal("function")
+		jestExpect(RoactNavigation.StackRouter).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should return a function for SwitchRouter", function()
-		expect(type(RoactNavigation.SwitchRouter)).to.equal("function")
+		jestExpect(RoactNavigation.SwitchRouter).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should return a function for TabRouter", function()
-		expect(type(RoactNavigation.TabRouter)).to.equal("function")
+		jestExpect(RoactNavigation.TabRouter).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should return a table for Actions", function()
-		expect(type(RoactNavigation.Actions)).to.equal("table")
+		-- TODO: replace the expectation when jest supports `jestExpect.any("table")` (ADO-1373)
+		-- jestExpect(RoactNavigation.Actions).toEqual(jestExpect.any("table"))
+		expect(RoactNavigation.Actions).to.be.a("table")
 	end)
 
 	it("should return a table for StackActions", function()
-		expect(type(RoactNavigation.StackActions)).to.equal("table")
+		-- TODO: replace the expectation when jest supports `jestExpect.any("table")` (ADO-1373)
+		-- jestExpect(RoactNavigation.StackActions).toEqual(jestExpect.any("table"))
+		expect(RoactNavigation.StackActions).to.be.a("table")
 	end)
 
 	it("should return a table for SwitchActions", function()
-		expect(type(RoactNavigation.SwitchActions)).to.equal("table")
+		-- TODO: replace the expectation when jest supports `jestExpect.any("table")` (ADO-1373)
+		-- jestExpect(RoactNavigation.SwitchActions).toEqual(jestExpect.any("table"))
+		expect(RoactNavigation.SwitchActions).to.be.a("table")
 	end)
 
 	it("should return a table for BackBehavior", function()
-		expect(type(RoactNavigation.BackBehavior)).to.equal("table")
+		-- TODO: replace the expectation when jest supports `jestExpect.any("table")` (ADO-1373)
+		-- jestExpect(RoactNavigation.BackBehavior).toEqual(jestExpect.any("table"))
+		expect(RoactNavigation.BackBehavior).to.be.a("table")
 	end)
 
 	it("should return a table for Events", function()
-		expect(type(RoactNavigation.Events)).to.equal("table")
+		-- TODO: replace the expectation when jest supports `jestExpect.any("table")` (ADO-1373)
+		-- jestExpect(RoactNavigation.Events).toEqual(jestExpect.any("table"))
+		expect(RoactNavigation.Events).to.be.a("table")
 	end)
 
 	it("should return a valid component for NavigationEvents", function()
@@ -93,11 +104,11 @@ return function()
 	end)
 
 	it("should return StackPresentationStyle", function()
-		expect(RoactNavigation.StackPresentationStyle).to.equal(StackPresentationStyle)
+		jestExpect(RoactNavigation.StackPresentationStyle).toBe(StackPresentationStyle)
 	end)
 
 	it("should return a valid component for SceneView", function()
-		expect(RoactNavigation.SceneView.render).never.to.equal(nil)
+		jestExpect(RoactNavigation.SceneView.render).toBeDefined()
 		local instance = Roact.mount(Roact.createElement(RoactNavigation.SceneView, {
 			navigation = {},
 			component = function() end,
@@ -130,18 +141,18 @@ return function()
 	end)
 
 	it("should return a function for createConfigGetter", function()
-		expect(type(RoactNavigation.createConfigGetter)).to.equal("function")
+		jestExpect(RoactNavigation.createConfigGetter).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should return a function for getScreenForRouteName", function()
-		expect(type(RoactNavigation.getScreenForRouteName)).to.equal("function")
+		jestExpect(RoactNavigation.getScreenForRouteName).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should return a function for validateRouteConfigMap", function()
-		expect(type(RoactNavigation.validateRouteConfigMap)).to.equal("function")
+		jestExpect(RoactNavigation.validateRouteConfigMap).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should return a function for getActiveChildNavigationOptions", function()
-		expect(type(RoactNavigation.getActiveChildNavigationOptions)).to.equal("function")
+		jestExpect(RoactNavigation.getActiveChildNavigationOptions).toEqual(jestExpect.any("function"))
 	end)
 end

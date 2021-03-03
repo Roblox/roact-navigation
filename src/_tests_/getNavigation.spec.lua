@@ -1,11 +1,12 @@
 -- upstream https://github.com/react-navigation/react-navigation/blob/20e2625f351f90fadadbf98890270e43e744225b/packages/core/src/__tests__/getNavigation.test.js
 
 return function()
-	local root = script.Parent.Parent
-	local getNavigation = require(root.getNavigation)
-	local NavigationActions = require(root.NavigationActions)
-
-	local createSpy = require(root.utils.createSpy)
+	local RoactNavigationModule = script.Parent.Parent
+	local getNavigation = require(RoactNavigationModule.getNavigation)
+	local NavigationActions = require(RoactNavigationModule.NavigationActions)
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local createSpy = require(RoactNavigationModule.utils.createSpy)
 
 	it("getNavigation provides default action helpers", function()
 		local router = {
@@ -32,9 +33,9 @@ return function()
 
 		topNav.navigate("GreatRoute")
 
-		expect(dispatchSpy.callCount).to.equal(1)
-		expect(dispatchSpy.values[1].type).to.equal(NavigationActions.Navigate)
-		expect(dispatchSpy.values[1].routeName).to.equal("GreatRoute")
+		jestExpect(dispatchSpy.callCount).toBe(1)
+		jestExpect(dispatchSpy.values[1].type).toBe(NavigationActions.Navigate)
+		jestExpect(dispatchSpy.values[1].routeName).toBe("GreatRoute")
 	end)
 
 	it("getNavigation provides router action helpers", function()
@@ -69,9 +70,9 @@ return function()
 
 		topNav.foo("Great")
 
-		expect(dispatchSpy.callCount).to.equal(1)
-		expect(dispatchSpy.values[1].type).to.equal("FooBarAction")
-		expect(dispatchSpy.values[1].bar).to.equal("Great")
+		jestExpect(dispatchSpy.callCount).toBe(1)
+		jestExpect(dispatchSpy.values[1].type).toBe("FooBarAction")
+		jestExpect(dispatchSpy.values[1].bar).toBe("Great")
 	end)
 
 	it("getNavigation get child navigation with router", function()
@@ -126,6 +127,6 @@ return function()
 
 		local childNavA = topNav.getChildNavigation("a")
 
-		expect(childNavA.router).to.equal(routerA)
+		jestExpect(childNavA.router).toBe(routerA)
 	end)
 end

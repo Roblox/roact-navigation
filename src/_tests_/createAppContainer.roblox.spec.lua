@@ -1,11 +1,14 @@
 return function()
-	local Roact = require(script.Parent.Parent.Parent.Roact)
-	local NavigationActions = require(script.Parent.Parent.NavigationActions)
-	local createAppContainer = require(script.Parent.Parent.createAppContainer)
-	local createRobloxSwitchNavigator = require(script.Parent.Parent.navigators.createRobloxSwitchNavigator)
+	local RoactNavigationModule = script.Parent.Parent
+	local Packages = RoactNavigationModule.Parent
+	local Roact = require(Packages.Roact)
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local NavigationActions = require(RoactNavigationModule.NavigationActions)
+	local createAppContainer = require(RoactNavigationModule.createAppContainer)
+	local createRobloxSwitchNavigator = require(RoactNavigationModule.navigators.createRobloxSwitchNavigator)
 
 	it("should be a function", function()
-		expect(createAppContainer).to.be.a("function")
+		jestExpect(createAppContainer).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should return a valid component when mounting a switch navigator", function()
@@ -30,27 +33,27 @@ return function()
 			somePropThatShouldNotBeHere = true,
 		})
 
-		expect(function()
+		jestExpect(function()
 			Roact.mount(element)
-		end).to.throw("This navigator has both navigation and container props, " ..
+		end).toThrow("This navigator has both navigation and container props, " ..
 			"so it is unclear if it should own its own state")
 	end)
 
 	it("should throw when not passed a table for AppComponent", function()
 		local TestAppComponent = 5
 
-		expect(function()
+		jestExpect(function()
 			createAppContainer(TestAppComponent)
-		end).to.throw("AppComponent must be a navigator or a stateful Roact " ..
+		end).toThrow("AppComponent must be a navigator or a stateful Roact " ..
 			"component with a 'router' field")
 	end)
 
 	it("should throw when passed a stateful component without router field", function()
 		local TestAppComponent = Roact.Component:extend("TestAppComponent")
 
-		expect(function()
+		jestExpect(function()
 			createAppContainer(TestAppComponent)
-		end).to.throw("AppComponent must be a navigator or a stateful Roact " ..
+		end).toThrow("AppComponent must be a navigator or a stateful Roact " ..
 			"component with a 'router' field")
 	end)
 
@@ -72,21 +75,21 @@ return function()
 		})
 
 		local instance = Roact.mount(element)
-		expect(type(registeredCallback)).to.equal("function")
+		jestExpect(registeredCallback).toEqual(jestExpect.any("function"))
 
 		-- Make sure it processes action
 		local result = registeredCallback(NavigationActions.navigate({
 			routeName = "Foo",
 		}))
-		expect(result).to.equal(true)
+		jestExpect(result).toEqual(true)
 
 		local failResult = registeredCallback(NavigationActions.navigate({
 			routeName = "Bar", -- should fail because not a valid route
 		}))
-		expect(failResult).to.equal(false)
+		jestExpect(failResult).toEqual(false)
 
 		Roact.unmount(instance)
-		expect(registeredCallback).to.equal(nil)
+		jestExpect(registeredCallback).toEqual(nil)
 	end)
 
 	it("should correctly pass screenProps to pages", function()
@@ -117,10 +120,10 @@ return function()
 		})
 		local instance = Roact.mount(element)
 
-		expect(passedScreenProps).to.equal(testScreenProps)
-		expect(extractedValue1).to.equal("MyValue1")
-		expect(extractedMissingValue1).to.equal(5)
-		expect(extractedMissingValue2).to.equal(nil)
+		jestExpect(passedScreenProps).toEqual(testScreenProps)
+		jestExpect(extractedValue1).toEqual("MyValue1")
+		jestExpect(extractedMissingValue1).toEqual(5)
+		jestExpect(extractedMissingValue2).toEqual(nil)
 
 		Roact.unmount(instance)
 	end)

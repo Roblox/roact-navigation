@@ -1,6 +1,9 @@
 return function()
-	local Events = require(script.Parent.Parent.Events)
-	local getNavigation = require(script.Parent.Parent.getNavigation)
+	local RoactNavigationModule = script.Parent.Parent
+	local Events = require(RoactNavigationModule.Events)
+	local getNavigation = require(RoactNavigationModule.getNavigation)
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
 
 	local function makeTestBundle(testState)
 		testState = testState or {
@@ -43,18 +46,18 @@ return function()
 	it("should build out correct public props", function()
 		local bundle = makeTestBundle()
 
-		expect(bundle.navigation.actions).to.equal(bundle.testActions)
-		expect(bundle.navigation.router).to.equal(bundle.testRouter)
-		expect(bundle.navigation.state).to.equal(bundle.testState)
-		expect(bundle.navigation.dispatch).to.equal(bundle.testDispatch)
-		expect(bundle.navigation.getScreenProps).to.equal(bundle.testGetScreenProps)
-		expect(#bundle.navigation._childrenNavigation).to.equal(0)
+		jestExpect(bundle.navigation.actions).toBe(bundle.testActions)
+		jestExpect(bundle.navigation.router).toBe(bundle.testRouter)
+		jestExpect(bundle.navigation.state).toBe(bundle.testState)
+		jestExpect(bundle.navigation.dispatch).toBe(bundle.testDispatch)
+		jestExpect(bundle.navigation.getScreenProps).toBe(bundle.testGetScreenProps)
+		jestExpect(#bundle.navigation._childrenNavigation).toEqual(0)
 	end)
 
 	describe("isFocused tests", function()
 		it("should return focused=true for child key matching index", function()
 			local bundle = makeTestBundle()
-			expect(bundle.navigation.isFocused("a")).to.equal(true)
+			jestExpect(bundle.navigation.isFocused("a")).toEqual(true)
 		end)
 
 		it("should return focused=false for child key not matching index", function()
@@ -65,12 +68,12 @@ return function()
 				},
 				index = 2,
 			})
-			expect(bundle.navigation.isFocused("a")).to.equal(false)
+			jestExpect(bundle.navigation.isFocused("a")).toEqual(false)
 		end)
 
 		it("should return focused=true if no child key provided (parent always focused)", function()
 			local bundle = makeTestBundle()
-			expect(bundle.navigation.isFocused()).to.equal(true)
+			jestExpect(bundle.navigation.isFocused()).toEqual(true)
 		end)
 	end)
 
@@ -80,7 +83,7 @@ return function()
 
 			local testHandler = function() end
 			bundle.navigation.addListener(Events.WillFocus, testHandler)
-			expect(bundle.testActionSubscribers[testHandler]).to.equal(nil)
+			jestExpect(bundle.testActionSubscribers[testHandler]).toBeNil()
 		end)
 
 		it("should add Action event handlers to actionSubscribers set", function()
@@ -88,7 +91,7 @@ return function()
 
 			local testHandler = function() end
 			bundle.navigation.addListener(Events.Action, testHandler)
-			expect(bundle.testActionSubscribers[testHandler]).to.equal(true)
+			jestExpect(bundle.testActionSubscribers[testHandler]).toEqual(true)
 		end)
 	end)
 end

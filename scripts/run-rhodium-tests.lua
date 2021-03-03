@@ -4,10 +4,10 @@ local ProcessService = game:GetService("ProcessService")
 local Packages = ReplicatedStorage.Packages
 local Tests = ReplicatedStorage.Tests
 
-local TestEZ = require(Packages.Dev.TestEZ)
+local JestRoblox = require(Packages.Dev.JestRoblox)
 local Rhodium = require(Packages.Dev.Rhodium)
 
-local result = TestEZ.TestBootstrap:run({ Tests }, TestEZ.Reporters.TextReporterQuiet, {
+local result = JestRoblox.TestBootstrap:run({ Tests }, JestRoblox.Reporters.TextReporterQuiet, {
 	noXpcallByDefault = true,
 	extraEnvironment = {
 		Rhodium = Rhodium,

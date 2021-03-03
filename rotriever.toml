@@ -10,5 +10,5 @@ Cryo = "github.com/roblox/cryo@1.0"
 Otter = "github.com/roblox/otter@0.1"
 
 [dev_dependencies]
-TestEZ = "github.com/roblox/testez@0.4.1"
+JestRoblox = "github.com/roblox/jest-roblox@0.7.0"
 Rhodium = "github.com/roblox/rhodium@0.2.4"

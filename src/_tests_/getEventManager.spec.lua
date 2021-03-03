@@ -1,9 +1,11 @@
 -- upstream https://github.com/react-navigation/react-navigation/blob/f10543f9fcc0f347c9d23aeb57616fd0f21cd4e3/packages/core/src/__tests__/getEventManager.test.js
 return function()
-	local root = script.Parent.Parent
-	local getEventManager = require(root.getEventManager)
-	local Events = require(root.Events)
-	local createSpy = require(root.utils.createSpy)
+	local RoactNavigationModule = script.Parent.Parent
+	local getEventManager = require(RoactNavigationModule.getEventManager)
+	local Events = require(RoactNavigationModule.Events)
+	local createSpy = require(RoactNavigationModule.utils.createSpy)
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
 
 	local TARGET = "target"
 
@@ -14,7 +16,7 @@ return function()
 
 		eventManager.emit(Events.DidFocus)
 
-		expect(callback.callCount).to.equal(1)
+		jestExpect(callback.callCount).toEqual(1)
 	end)
 
 	it("does not call listeners connected to a different event", function()
@@ -24,7 +26,7 @@ return function()
 
 		eventManager.emit("didBlur")
 
-		expect(callback.callCount).to.equal(0)
+		jestExpect(callback.callCount).toEqual(0)
 	end)
 
 	it("does not call removed listeners", function()
@@ -33,12 +35,12 @@ return function()
 		local remove = eventManager.addListener(Events.DidFocus, callback.value).remove
 
 		eventManager.emit(Events.DidFocus)
-		expect(callback.callCount).to.equal(1)
+		jestExpect(callback.callCount).toEqual(1)
 
 		remove()
 
 		eventManager.emit(Events.DidFocus)
-		expect(callback.callCount).to.equal(1)
+		jestExpect(callback.callCount).toEqual(1)
 	end)
 
 	it("calls the listeners with the given payload", function()

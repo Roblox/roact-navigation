@@ -1,16 +1,17 @@
 local LogService = game:GetService("LogService")
 
 return function()
-	local root = script.Parent.Parent
-	local Packages = root.Parent
+	local RoactNavigationModule = script.Parent.Parent
+	local Packages = RoactNavigationModule.Parent
 	local Roact = require(Packages.Roact)
-	local NavigationActions = require(root.NavigationActions)
-	local createNavigator = require(root.navigators.createNavigator)
-	local createAppContainer = require(root.createAppContainer)
-	local StackRouter = require(root.routers.StackRouter)
-	local SwitchView = require(root.views.SwitchView.SwitchView)
-	local createSpy = require(root.utils.createSpy)
-	local waitUntil = require(root.utils.waitUntil)
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local NavigationActions = require(RoactNavigationModule.NavigationActions)
+	local createNavigator = require(RoactNavigationModule.navigators.createNavigator)
+	local createAppContainer = require(RoactNavigationModule.createAppContainer)
+	local StackRouter = require(RoactNavigationModule.routers.StackRouter)
+	local SwitchView = require(RoactNavigationModule.views.SwitchView.SwitchView)
+	local createSpy = require(RoactNavigationModule.utils.createSpy)
+	local waitUntil = require(RoactNavigationModule.utils.waitUntil)
 
 	local function createStackNavigator(routeConfigMap, stackConfig)
 		local router = StackRouter(routeConfigMap, stackConfig)
@@ -73,10 +74,12 @@ return function()
 
 				Roact.mount(Roact.createElement(NavigationContainer))
 
-				expect(navigationContainer.state.nav.index).to.equal(1)
-				expect(navigationContainer.state.nav.routes).to.be.a("table")
-				expect(#navigationContainer.state.nav.routes).to.equal(1)
-				expect(navigationContainer.state.nav.routes[1].routeName).to.equal("foo")
+				jestExpect(navigationContainer.state.nav).toMatchObject({ index = 1 })
+				jestExpect(navigationContainer.state.nav.routes).toEqual(jestExpect.any("table"))
+				jestExpect(#navigationContainer.state.nav.routes).toBe(1)
+				jestExpect(navigationContainer.state.nav.routes[1]).toMatchObject({
+					routeName = "foo",
+				})
 			end)
 		end)
 
@@ -91,11 +94,11 @@ return function()
 
 				-- jest.runOnlyPendingTimers()
 
-				expect(
+				jestExpect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "bar" })
 					)
-				).to.equal(true)
+				).toEqual(true)
 			end)
 
 			it("returns false when given an invalid action", function()
@@ -107,7 +110,7 @@ return function()
 				Roact.mount(Roact.createElement(NavigationContainer))
 
 				-- jest.runOnlyPendingTimers()
-				expect(navigationContainer:dispatch(NavigationActions.back())).to.equal(false)
+				jestExpect(navigationContainer:dispatch(NavigationActions.back())).toEqual(false)
 			end)
 
 			it("updates state.nav with an action by the next tick", function()
@@ -118,18 +121,19 @@ return function()
 
 				Roact.mount(Roact.createElement(NavigationContainer))
 
-				expect(
+				jestExpect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "bar" })
 					)
-				).to.equal(true)
+				).toEqual(true)
 
 				-- Fake the passing of a tick
 				-- jest.runOnlyPendingTimers()
 
-				expect(navigationContainer.state.nav.index).to.equal(2)
-				expect(navigationContainer.state.nav.routes[1].routeName).to.equal("foo")
-				expect(navigationContainer.state.nav.routes[2].routeName).to.equal("bar")
+				jestExpect(navigationContainer.state.nav).toMatchObject({
+					index = 2,
+					routes = {{ routeName = "foo" }, { routeName = "bar" }},
+				})
 			end)
 
 			it("does not discard actions when called twice in one tick", function()
@@ -140,29 +144,33 @@ return function()
 				Roact.mount(Roact.createElement(NavigationContainer))
 
 				-- First dispatch
-				expect(
+				jestExpect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "bar" })
 					)
-				).to.equal(true)
+				).toEqual(true)
 
 				-- Make sure that the test runner has NOT synchronously applied setState before the tick
-				-- expect(navigationContainer.state.nav).toMatchObject(initialState)
+				-- jestExpect(navigationContainer.state.nav).toMatchObject(initialState)
 
 				-- Second dispatch
-				expect(
+				jestExpect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "baz" })
 					)
-				).to.equal(true)
+				).toEqual(true)
 
 				-- Fake the passing of a tick
 				-- jest.runOnlyPendingTimers()
 
-				expect(navigationContainer.state.nav.index).to.equal(3)
-				expect(navigationContainer.state.nav.routes[1].routeName).to.equal("foo")
-				expect(navigationContainer.state.nav.routes[2].routeName).to.equal("bar")
-				expect(navigationContainer.state.nav.routes[3].routeName).to.equal("baz")
+				jestExpect(navigationContainer.state.nav).toMatchObject({
+					index = 3,
+					routes = {
+						{ routeName = "foo" },
+						{ routeName = "bar" },
+						{ routeName = "baz" },
+					},
+				})
 			end)
 
 			it("does not discard actions when called more than 2 times in one tick", function()
@@ -173,53 +181,57 @@ return function()
 				Roact.mount(Roact.createElement(NavigationContainer))
 
 				-- First dispatch
-				expect(
+				jestExpect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "bar" })
 					)
-				).to.equal(true)
+				).toEqual(true)
 
 				-- Make sure that the test runner has NOT synchronously applied setState before the tick
-				-- expect(navigationContainer.state.nav).toMatchObject(initialState);
+				-- jestExpect(navigationContainer.state.nav).toMatchObject(initialState);
 
 				-- Second dispatch
-				expect(
+				jestExpect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "baz" })
 					)
-				).to.equal(true)
+				).toEqual(true)
 
 				-- Third dispatch
-				expect(
+				jestExpect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "car" })
 					)
-				).to.equal(true)
+				).toEqual(true)
 
 				-- Fourth dispatch
-				expect(
+				jestExpect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "dog" })
 					)
-				).to.equal(true)
+				).toEqual(true)
 
 				-- Fifth dispatch
-				expect(
+				jestExpect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "elk" })
 					)
-				).to.equal(true)
+				).toEqual(true)
 
 				-- Fake the passing of a tick
 				-- jest.runOnlyPendingTimers()
 
-				expect(navigationContainer.state.nav.index).to.equal(6)
-				expect(navigationContainer.state.nav.routes[1].routeName).to.equal("foo")
-				expect(navigationContainer.state.nav.routes[2].routeName).to.equal("bar")
-				expect(navigationContainer.state.nav.routes[3].routeName).to.equal("baz")
-				expect(navigationContainer.state.nav.routes[4].routeName).to.equal("car")
-				expect(navigationContainer.state.nav.routes[5].routeName).to.equal("dog")
-				expect(navigationContainer.state.nav.routes[6].routeName).to.equal("elk")
+				jestExpect(navigationContainer.state.nav).toMatchObject({
+					index = 6,
+					routes = {
+						{ routeName = "foo" },
+						{ routeName = "bar" },
+						{ routeName = "baz" },
+						{ routeName = "car" },
+						{ routeName = "dog" },
+						{ routeName = "elk" },
+					},
+				})
 			end)
 		end)
 
@@ -282,7 +294,7 @@ return function()
 				end)
 				local navigationContainer = createPersistenceEnabledContainer(loadNavigationState, persistNavigationState)
 
-				expect(loadNavigationState.callCount).never.to.equal(0)
+				jestExpect(loadNavigationState.callCount).never.toEqual(0)
 				-- jest.runOnlyPendingTimers()
 				navigationContainer:dispatch(
 					NavigationActions.navigate({ routeName = "foo" })
@@ -331,7 +343,7 @@ return function()
 				end)
 				connection:Disconnect()
 
-				expect(warningFound).to.equal(true)
+				jestExpect(warningFound).toEqual(true)
 			end)
 
 			it("when loadNavigationState rejects, navigator ignores the rejection and starts from the initial state", function()
@@ -340,12 +352,14 @@ return function()
 				end)
 				local navigationContainer = createPersistenceEnabledContainer(loadNavigationState)
 
-				expect(loadNavigationState.callCount).never.to.equal(0)
+				jestExpect(loadNavigationState.callCount).never.toEqual(0)
 				-- jest.runOnlyPendingTimers()
-				expect(navigationContainer.state.nav.index).to.equal(1)
-				expect(navigationContainer.state.nav.isTransitioning).to.equal(false)
-				expect(navigationContainer.state.nav.key).to.equal("StackRouterRoot")
-				expect(navigationContainer.state.nav.routes[1].routeName).to.equal("foo")
+				jestExpect(navigationContainer.state.nav).toMatchObject({
+					index = 1,
+					isTransitioning = false,
+					key = "StackRouterRoot",
+					routes = {{ routeName = "foo" }}
+				})
 			end)
 
 			-- deviation: Roact does not have componendDidCatch which is used
@@ -364,23 +378,25 @@ return function()
 					end)
 					local navigationContainer = createPersistenceEnabledContainer(loadNavigationState)
 
-					expect(loadNavigationState.callCount).never.to.equal(0)
+					jestExpect(loadNavigationState.callCount).never.toEqual(0)
 					-- jest.runOnlyPendingTimers()
-					expect(navigationContainer.state.nav.index).to.equal(1)
-					expect(navigationContainer.state.nav.isTransitioning).to.equal(false)
-					expect(navigationContainer.state.nav.key).to.equal("StackRouterRoot")
-					expect(navigationContainer.state.nav.routes[1].routeName).to.equal("foo")
+					jestExpect(navigationContainer.state.nav).toMatchObject({
+						index = 1,
+						isTransitioning = false,
+						key = "StackRouterRoot",
+						routes = {{ routeName = "foo" }},
+					})
 				end
 			)
 
 			it("throws when persistNavigationState and loadNavigationState do not pass validation", function()
 				local NavigationContainer = createAppContainer(Stack)
 
-				expect(function()
+				jestExpect(function()
 					Roact.mount(Roact.createElement(NavigationContainer, {
 						persistNavigationState = function() end,
 					}))
-				end).to.throw("both persistNavigationState and loadNavigationState must either be undefined, or be functions")
+				end).toThrow("both persistNavigationState and loadNavigationState must either be undefined, or be functions")
 			end)
 		end)
 	end)

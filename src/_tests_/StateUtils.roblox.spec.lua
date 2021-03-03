@@ -1,17 +1,21 @@
 return function()
-	local StateUtils = require(script.Parent.Parent.StateUtils)
+	local RoactNavigationModule = script.Parent.Parent
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+
+	local StateUtils = require(RoactNavigationModule.StateUtils)
 
 	describe("StateUtils.get tests", function()
 		it("should assert if state is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.get(nil, "key")
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if key is not a string", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.get({}, 5)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should return nil if key is not found in routes", function()
@@ -25,7 +29,7 @@ return function()
 				},
 			}, "key")
 
-			expect(result).to.equal(nil)
+			jestExpect(result).toBeUndefined()
 		end)
 
 		it("should return route if key is found in routes", function()
@@ -39,22 +43,22 @@ return function()
 				},
 			}, "foo-1")
 
-			expect(result.routeName).to.equal("foo")
-			expect(result.key).to.equal("foo-1")
+			jestExpect(result.routeName).toEqual("foo")
+			jestExpect(result.key).toEqual("foo-1")
 		end)
 	end)
 
 	describe("StateUtils.indexOf tests", function()
 		it("should assert if state is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.indexOf(nil, "key")
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if key is not a string", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.indexOf({}, 5)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should return nil if key is not found in routes", function()
@@ -68,7 +72,7 @@ return function()
 				},
 			}, "key")
 
-			expect(result).to.equal(nil)
+			jestExpect(result).toBeUndefined()
 		end)
 
 		it("should return index if key is found in routes", function()
@@ -86,21 +90,21 @@ return function()
 				},
 			}, "foo-2")
 
-			expect(result).to.equal(2)
+			jestExpect(result).toEqual(2)
 		end)
 	end)
 
 	describe("StateUtils.has tests", function()
 		it("should assert if state is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.has(nil, "key")
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if key is not a string", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.has({}, 5)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should return false if key is not in routes", function()
@@ -114,7 +118,7 @@ return function()
 				}
 			}, "key")
 
-			expect(result).to.equal(false)
+			jestExpect(result).toEqual(false)
 		end)
 
 		it("should return true if key is found in routes", function()
@@ -128,25 +132,25 @@ return function()
 				}
 			}, "foo-1")
 
-			expect(result).to.equal(true)
+			jestExpect(result).toEqual(true)
 		end)
 	end)
 
 	describe("StateUtils.push tests", function()
 		it("should assert if state is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.push(nil, {})
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if route is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.push({}, 5)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if route.key is already present", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.push({
 					index = 1,
 					routes = {
@@ -159,7 +163,7 @@ return function()
 					routeName = "foo",
 					key = "foo-1",
 				})
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should insert new route if it doesn't exist", function()
@@ -176,18 +180,18 @@ return function()
 				key = "foo-2",
 			})
 
-			expect(newState.index).to.equal(2)
-			expect(#newState.routes).to.equal(2)
-			expect(newState.routes[newState.index].key).to.equal("foo-2")
-			expect(newState.routes[newState.index].routeName).to.equal("second")
+			jestExpect(newState.index).toEqual(2)
+			jestExpect(#newState.routes).toEqual(2)
+			jestExpect(newState.routes[newState.index].key).toEqual("foo-2")
+			jestExpect(newState.routes[newState.index].routeName).toEqual("second")
 		end)
 	end)
 
 	describe("StateUtils.pop tests", function()
 		it("should assert if state is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.pop(nil)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should return existing state if routes is empty", function()
@@ -197,7 +201,7 @@ return function()
 			}
 
 			local newState = StateUtils.pop(initialState)
-			expect(newState).to.equal(initialState)
+			jestExpect(newState).toEqual(initialState)
 		end)
 
 		it("should remove top route if popping with more than one route", function()
@@ -210,32 +214,32 @@ return function()
 			}
 
 			local newState = StateUtils.pop(initialState)
-			expect(newState.index).to.equal(1)
-			expect(#newState.routes).to.equal(1)
-			expect(newState.routes[1].key).to.equal("route-1")
+			jestExpect(newState.index).toEqual(1)
+			jestExpect(#newState.routes).toEqual(1)
+			jestExpect(newState.routes[1].key).toEqual("route-1")
 		end)
 	end)
 
 	describe("StateUtils.jumpToIndex tests", function()
 		it("should assert if state is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.jumpToIndex(nil, 0)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if index is not a number", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.jumpToIndex({}, "foo")
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if index does not match a route", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.jumpToIndex({
 					index = 1,
 					routes = { { routeName = "first", key = "first-1" } }
 				}, 5)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should return original state if index matches current", function()
@@ -245,7 +249,7 @@ return function()
 			}
 
 			local newState = StateUtils.jumpToIndex(initialState, 1)
-			expect(newState).to.equal(initialState)
+			jestExpect(newState).toEqual(initialState)
 		end)
 
 		it("should return updated state if index differs", function()
@@ -258,21 +262,21 @@ return function()
 			}
 
 			local newState = StateUtils.jumpToIndex(initialState, 2)
-			expect(newState.index).to.equal(2)
+			jestExpect(newState.index).toEqual(2)
 		end)
 	end)
 
 	describe("StateUtils.jumpTo tests", function()
 		it("should assert if state is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.jumpTo(nil, "key")
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if key is not a string", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.jumpTo({}, 0)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should return original state if key is already active route", function()
@@ -285,7 +289,7 @@ return function()
 			}
 
 			local newState = StateUtils.jumpTo(initialState, "key-1")
-			expect(newState).to.equal(initialState)
+			jestExpect(newState).toBe(initialState)
 		end)
 
 		it("should return state with new active route if key is not active", function()
@@ -298,15 +302,15 @@ return function()
 			}
 
 			local newState = StateUtils.jumpTo(initialState, "key-2")
-			expect(newState.index).to.equal(2)
+			jestExpect(newState.index).toEqual(2)
 		end)
 	end)
 
 	describe("StateUtils.back tests", function()
 		it("should assert if state is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.back(nil)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should return original state if route for new index does not exist", function()
@@ -318,7 +322,7 @@ return function()
 			}
 
 			local newState = StateUtils.back(initialState)
-			expect(newState).to.equal(initialState)
+			jestExpect(newState).toBe(initialState)
 		end)
 
 		it("should remove top state if there is somewhere to go", function()
@@ -331,15 +335,15 @@ return function()
 			}
 
 			local newState = StateUtils.back(initialState)
-			expect(newState.index).to.equal(1)
+			jestExpect(newState.index).toEqual(1)
 		end)
 	end)
 
 	describe("StateUtils.forward tests", function()
 		it("should assert if state is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.forward(nil)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should not walk off the end of the route list", function()
@@ -351,7 +355,7 @@ return function()
 			}
 
 			local newState = StateUtils.forward(initialState)
-			expect(newState).to.equal(initialState)
+			jestExpect(newState).toBe(initialState)
 		end)
 
 		it("should move to next route if available", function()
@@ -364,27 +368,27 @@ return function()
 			}
 
 			local newState = StateUtils.forward(initialState)
-			expect(newState.index).to.equal(2)
+			jestExpect(newState.index).toEqual(2)
 		end)
 	end)
 
 	describe("StateUtils.replaceAndPrune tests", function()
 		it("should assert if state is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.replaceAndPrune(nil, "key", {})
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if key is not a string", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.replaceAndPrune({}, 0, {})
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if route is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.replaceAndPrune({}, "key", 0)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should replace matching route and prune following routes", function()
@@ -400,36 +404,36 @@ return function()
 				routeName = "newRoute", key = "key-3"
 			})
 
-			expect(newState.index).to.equal(1)
-			expect(#newState.routes).to.equal(1)
-			expect(newState.routes[1].routeName).to.equal("newRoute")
-			expect(newState.routes[1].key).to.equal("key-3")
+			jestExpect(newState.index).toEqual(1)
+			jestExpect(#newState.routes).toEqual(1)
+			jestExpect(newState.routes[1].routeName).toEqual("newRoute")
+			jestExpect(newState.routes[1].key).toEqual("key-3")
 		end)
 	end)
 
 	describe("StateUtils.replaceAt tests", function()
 		it("should assert if state is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.replaceAt(nil, "key", {}, false)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if key is not a string", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.replaceAt({}, 0, {}, false)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if route is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.replaceAt({}, "key", 0, false)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if preserveIndex is not a boolean", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.replaceAt({}, "key", {}, 0)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should replace matching route, not prune, and update index", function()
@@ -445,10 +449,10 @@ return function()
 				routeName = "newRoute", key = "key-3"
 			}, false)
 
-			expect(newState.index).to.equal(1)
-			expect(#newState.routes).to.equal(2)
-			expect(newState.routes[1].routeName).to.equal("newRoute")
-			expect(newState.routes[1].key).to.equal("key-3")
+			jestExpect(newState.index).toEqual(1)
+			jestExpect(#newState.routes).toEqual(2)
+			jestExpect(newState.routes[1].routeName).toEqual("newRoute")
+			jestExpect(newState.routes[1].key).toEqual("key-3")
 		end)
 
 		it("should replace matching route, not prune, and preserve existing index", function()
@@ -464,39 +468,39 @@ return function()
 				routeName = "newRoute", key = "key-3"
 			}, true)
 
-			expect(newState.index).to.equal(2)
-			expect(#newState.routes).to.equal(2)
-			expect(newState.routes[1].routeName).to.equal("newRoute")
-			expect(newState.routes[1].key).to.equal("key-3")
+			jestExpect(newState.index).toEqual(2)
+			jestExpect(#newState.routes).toEqual(2)
+			jestExpect(newState.routes[1].routeName).toEqual("newRoute")
+			jestExpect(newState.routes[1].key).toEqual("key-3")
 		end)
 	end)
 
 	describe("StateUtils.replaceAtIndex tests", function()
 		it("should assert if state is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.replaceAtIndex(nil, 0, {})
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if index is not a number", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.replaceAtIndex({}, nil, {})
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if route is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.replaceAtIndex({}, 5, nil)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if index does not exist", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.replaceAtIndex({
 					index = 0,
 					routes = {}
 				}, 5, { routeName = "name", key = "key" })
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should return original state if inputs are same", function()
@@ -507,7 +511,7 @@ return function()
 			}
 
 			local newState = StateUtils.replaceAtIndex(initialState, 1, testRoute)
-			expect(newState).to.equal(initialState)
+			jestExpect(newState).toBe(initialState)
 		end)
 
 		it("should replace route at index if route is not equal", function()
@@ -523,10 +527,10 @@ return function()
 				key = "key",
 			})
 
-			expect(newState.index).to.equal(1)
-			expect(#newState.routes).to.equal(1)
-			expect(newState.routes[1].routeName).to.equal("newName")
-			expect(newState.routes[1].key).to.equal("key")
+			jestExpect(newState.index).toEqual(1)
+			jestExpect(#newState.routes).toEqual(1)
+			jestExpect(newState.routes[1].routeName).toEqual("newName")
+			jestExpect(newState.routes[1].key).toEqual("key")
 		end)
 
 		it("should update index, if new index differs but route does not", function()
@@ -540,35 +544,35 @@ return function()
 			}
 
 			local newState = StateUtils.replaceAtIndex(initialState, 2, testRoute)
-			expect(newState).never.to.equal(initialState)
-			expect(newState.index).to.equal(2)
+			jestExpect(newState).never.toBe(initialState)
+			jestExpect(newState.index).toEqual(2)
 		end)
 	end)
 
 	describe("StateUtils.reset tests", function()
 		it("should assert if state is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.reset(nil, {}, 0)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if routes is not a table", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.reset({}, nil, 0)
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should assert if index is not a number", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.reset({}, {}, "foo")
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		-- the test does not seem to match with the name
 		it("should NOT assert if index is nil", function()
-			expect(function()
+			jestExpect(function()
 				StateUtils.reset({}, {})
-			end).to.throw()
+			end).toThrow()
 		end)
 
 		it("should return original state if index matches and all routes are same objects", function()
@@ -585,7 +589,7 @@ return function()
 				route2,
 			}, 2)
 
-			expect(newState).to.equal(initialState)
+			jestExpect(newState).toBe(initialState)
 		end)
 
 		it("should update state if index is not specified and old index is not last route", function()
@@ -602,8 +606,8 @@ return function()
 				route2,
 			})
 
-			expect(newState).never.to.equal(initialState)
-			expect(newState.index).to.equal(2)
+			jestExpect(newState).never.toBe(initialState)
+			jestExpect(newState.index).toEqual(2)
 		end)
 
 		it("should update state if index matches but routes differ", function()
@@ -620,11 +624,11 @@ return function()
 				{ routeName = "route3", key = "route-3" },
 			}, 1)
 
-			expect(newState).never.to.equal(initialState)
-			expect(#newState.routes).to.equal(2)
-			expect(newState.index).to.equal(1)
-			expect(newState.routes[2].routeName).to.equal("route3")
-			expect(newState.routes[2].key).to.equal("route-3")
+			jestExpect(newState).never.toBe(initialState)
+			jestExpect(#newState.routes).toEqual(2)
+			jestExpect(newState.index).toEqual(1)
+			jestExpect(newState.routes[2].routeName).toEqual("route3")
+			jestExpect(newState.routes[2].key).toEqual("route-3")
 		end)
 	end)
 end

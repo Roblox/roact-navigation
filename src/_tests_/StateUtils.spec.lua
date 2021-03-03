@@ -1,10 +1,11 @@
 -- upstream https://github.com/react-navigation/react-navigation/blob/62da341b672a83786b9c3a80c8a38f929964d7cc/packages/core/src/__tests__/NavigationStateUtils.test.js
 
 return function()
-	local StateUtils = require(script.Parent.Parent.StateUtils)
+	local RoactNavigationModule = script.Parent.Parent
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
 
-	local utils = script.Parent.Parent.utils
-	local expectDeepEqual = require(utils.expectDeepEqual)
+	local StateUtils = require(RoactNavigationModule.StateUtils)
 
 	local routeName = "Anything"
 
@@ -21,9 +22,7 @@ return function()
 					},
 				}
 
-				expectDeepEqual(
-					StateUtils.get(state, "a"),
-					{
+				jestExpect(StateUtils.get(state, "a")).toEqual({
 						key = "a",
 						routeName = routeName,
 					}
@@ -41,7 +40,7 @@ return function()
 					},
 				}
 
-				expect(StateUtils.get(state, "b")).to.equal(nil)
+				jestExpect(StateUtils.get(state, "b")).toBe(nil)
 			end)
 		end)
 
@@ -56,8 +55,8 @@ return function()
 					isTransitioning = false,
 				}
 
-				expect(StateUtils.indexOf(state, "a")).to.equal(1)
-				expect(StateUtils.indexOf(state, "b")).to.equal(2)
+				jestExpect(StateUtils.indexOf(state, "a")).toBe(1)
+				jestExpect(StateUtils.indexOf(state, "b")).toBe(2)
 			end)
 
 			-- deviation(will not fix): it is preferable to return `nil` as it's
@@ -71,7 +70,7 @@ return function()
 					},
 					isTransitioning = false,
 				}
-				expect(StateUtils.indexOf(state, "b")).to.equal(-1)
+				jestExpect(StateUtils.indexOf(state, "b")).toBe(-1)
 			end)
 		end)
 
@@ -85,8 +84,8 @@ return function()
 				isTransitioning = false,
 			}
 
-			expect(StateUtils.has(state, "b")).to.equal(true)
-			expect(StateUtils.has(state, "c")).to.equal(false)
+			jestExpect(StateUtils.has(state, "b")).toBe(true)
+			jestExpect(StateUtils.has(state, "c")).toBe(false)
 		end)
 
 		describe("push", function()
@@ -105,10 +104,9 @@ return function()
 					},
 				}
 
-				expectDeepEqual(
-					StateUtils.push(state, { key = "b", routeName = routeName }),
-					newState
-				)
+				jestExpect(
+					StateUtils.push(state, { key = "b", routeName = routeName })
+				).toEqual(newState)
 			end)
 
 			it("does not push duplicated route", function()
@@ -118,9 +116,9 @@ return function()
 					isTransitioning = false,
 				}
 
-				expect(function()
+				jestExpect(function()
 					StateUtils.push(state, { key = "a", routeName = routeName })
-				end).to.throw("should not push route with duplicated key a")
+				end).toThrow("should not push route with duplicated key a")
 			end)
 		end)
 
@@ -140,7 +138,7 @@ return function()
 					isTransitioning = false,
 				}
 
-				expectDeepEqual(StateUtils.pop(state), newState)
+				jestExpect(StateUtils.pop(state)).toEqual(newState)
 			end)
 
 			it("does not pop route if not applicable with single route config", function()
@@ -149,11 +147,7 @@ return function()
 					routes = {{ key = "a", routeName = routeName }},
 					isTransitioning = false,
 				}
-
-				expectDeepEqual(
-					StateUtils.pop(state),
-					state
-				)
+				jestExpect(StateUtils.pop(state)).toBe(state)
 			end)
 
 			it("does not pop route if not applicable with multiple route config", function()
@@ -164,8 +158,8 @@ return function()
 						{ key = "b", routeName = routeName },
 					},
 					isTransitioning = false,
-				};
-				expectDeepEqual(StateUtils.pop(state), state)
+				}
+				jestExpect(StateUtils.pop(state)).toBe(state)
 			end)
 		end)
 
@@ -188,14 +182,8 @@ return function()
 					isTransitioning = false,
 				}
 
-				expectDeepEqual(
-					StateUtils.jumpToIndex(state, 1),
-					state
-				)
-				expectDeepEqual(
-					StateUtils.jumpToIndex(state, 2),
-					newState
-				)
+				jestExpect(StateUtils.jumpToIndex(state, 1)).toBe(state)
+				jestExpect(StateUtils.jumpToIndex(state, 2)).toEqual(newState)
 			end)
 
 			it("throws if jumps to invalid index", function()
@@ -208,9 +196,9 @@ return function()
 					isTransitioning = false,
 				}
 
-				expect(function()
+				jestExpect(function()
 					StateUtils.jumpToIndex(state, 3)
-				end).to.throw("invalid index 3 to jump to")
+				end).toThrow("invalid index 3 to jump to")
 			end)
 		end)
 
@@ -224,7 +212,7 @@ return function()
 					},
 					isTransitioning = false,
 				}
-				expectDeepEqual(StateUtils.jumpTo(state, "a"), state)
+				jestExpect(StateUtils.jumpTo(state, "a")).toBe(state)
 			end)
 
 			it("jumps to new key", function()
@@ -245,10 +233,7 @@ return function()
 					isTransitioning = false,
 				}
 
-				expectDeepEqual(
-					StateUtils.jumpTo(state, "b"),
-					newState
-				)
+				jestExpect(StateUtils.jumpTo(state, "b")).toEqual(newState)
 			end)
 
 			it("throws if jumps to invalid key", function()
@@ -261,9 +246,9 @@ return function()
 					isTransitioning = false,
 				}
 
-				expect(function()
+				jestExpect(function()
 					StateUtils.jumpTo(state, "c")
-				end).to.throw("attempt to jump to unknown key \"c\"")
+				end).toThrow("attempt to jump to unknown key \"c\"")
 			end)
 		end)
 
@@ -286,7 +271,7 @@ return function()
 					isTransitioning = false,
 				}
 
-				expectDeepEqual(StateUtils.back(state), newState)
+				jestExpect(StateUtils.back(state)).toEqual(newState)
 			end)
 
 			it("does not move backwards when the active route is the first", function()
@@ -298,7 +283,7 @@ return function()
 					},
 					isTransitioning = false,
 				}
-				expect(StateUtils.back(state)).to.equal(state)
+				jestExpect(StateUtils.back(state)).toBe(state)
 			end)
 		end)
 
@@ -320,7 +305,7 @@ return function()
 					},
 					isTransitioning = false,
 				}
-				expectDeepEqual(StateUtils.forward(state), newState)
+				jestExpect(StateUtils.forward(state)).toEqual(newState)
 			end)
 
 			it("does not move forward when active route is already the top-most", function()
@@ -332,8 +317,7 @@ return function()
 					},
 					isTransitioning = false,
 				}
-
-				expectDeepEqual(StateUtils.forward(state), state)
+				jestExpect(StateUtils.forward(state)).toEqual(state)
 			end)
 		end)
 
@@ -356,10 +340,9 @@ return function()
 					isTransitioning = false,
 				}
 
-				expectDeepEqual(
-					StateUtils.replaceAt(state, "b", { key = "c", routeName = routeName }),
-					newState
-				)
+				jestExpect(
+					StateUtils.replaceAt(state, "b", { key = "c", routeName = routeName })
+				).toEqual(newState)
 			end)
 
 			it("Replaces by index", function()
@@ -380,10 +363,9 @@ return function()
 					isTransitioning = false,
 				}
 
-				expectDeepEqual(
-					StateUtils.replaceAtIndex(state, 2, { key = "c", routeName = routeName }),
-					newState
-				)
+				jestExpect(
+					StateUtils.replaceAtIndex(state, 2, { key = "c", routeName = routeName })
+				).toEqual(newState)
 			end)
 
 			it("Returns the state with updated index if route is unchanged but index changes", function()
@@ -396,17 +378,16 @@ return function()
 					isTransitioning = false,
 				}
 
-				expectDeepEqual(
-					StateUtils.replaceAtIndex(state, 2, state.routes[2]),
-					{
-						index = 2,
-						routes = {
-							{ key = "a", routeName = routeName },
-							{ key = "b", routeName = routeName },
-						},
-						isTransitioning = false,
-					}
-				)
+				jestExpect(
+					StateUtils.replaceAtIndex(state, 2, state.routes[2])
+				).toEqual({
+					index = 2,
+					routes = {
+						{ key = "a", routeName = routeName },
+						{ key = "b", routeName = routeName },
+					},
+					isTransitioning = false,
+				})
 			end)
 		end)
 
@@ -429,13 +410,12 @@ return function()
 					isTransitioning = false,
 				}
 
-				expectDeepEqual(
+				jestExpect(
 					StateUtils.reset(state, {
 						{ key = "x", routeName = routeName },
 						{ key = "y", routeName = routeName },
-					}),
-					newState
-				)
+					})
+				).toEqual(newState)
 			end)
 
 			it("throws when attempting to set empty state", function()
@@ -447,9 +427,9 @@ return function()
 					},
 					isTransitioning = false,
 				}
-				expect(function()
+				jestExpect(function()
 					StateUtils.reset(state, {})
-				end).to.throw("invalid routes to replace")
+				end).toThrow("invalid routes to replace")
 			end)
 
 			it("Resets routes with index", function()
@@ -470,13 +450,12 @@ return function()
 					isTransitioning = false,
 				}
 
-				expectDeepEqual(
+				jestExpect(
 					StateUtils.reset(state, {
 						{ key = "x", routeName = routeName },
 						{ key = "y", routeName = routeName },
-					}, 1),
-					newState
-				)
+					}, 1)
+				).toEqual(newState)
 			end)
 
 			it("throws when attempting to set an out of range route index", function()
@@ -488,12 +467,12 @@ return function()
 					},
 					isTransitioning = false,
 				}
-				expect(function()
+				jestExpect(function()
 					StateUtils.reset(state, {
 						{ key = "x", routeName = routeName },
 						{ key = "y", routeName = routeName },
 					}, 100)
-				end).to.throw("invalid index 100 to reset")
+				end).toThrow("invalid index 100 to reset")
 			end)
 		end)
 	end)

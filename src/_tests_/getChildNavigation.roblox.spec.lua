@@ -1,5 +1,8 @@
 return function()
-	local getChildNavigation = require(script.Parent.Parent.getChildNavigation)
+	local RoactNavigationModule = script.Parent.Parent
+	local getChildNavigation = require(RoactNavigationModule.getChildNavigation)
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
 
 	it("should return nil if there is no route matching requested key", function()
 		local testNavigation = {
@@ -14,7 +17,7 @@ return function()
 			return testNavigation
 		end)
 
-		expect(childNav).to.equal(nil)
+		jestExpect(childNav).toEqual(nil)
 	end)
 
 	it("should return cached child if its state is a top-level route", function()
@@ -37,7 +40,7 @@ return function()
 			return testNavigation
 		end)
 
-		expect(childNav).to.equal(testNavigation._childrenNavigation.a)
+		jestExpect(childNav).toBe(testNavigation._childrenNavigation.a)
 	end)
 
 	it("should update cache and return new data when child's state has changed", function()
@@ -78,9 +81,9 @@ return function()
 			return testNavigation
 		end)
 
-		expect(childNav).to.equal(testNavigation._childrenNavigation["a"])
-		expect(childNav.state).to.equal(testNavigation.state.routes[1])
-		expect(type(childNav.getParam)).to.equal("function")
+		jestExpect(childNav).toBe(testNavigation._childrenNavigation["a"])
+		jestExpect(childNav.state).toBe(testNavigation.state.routes[1])
+		jestExpect(childNav.getParam).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should create a new entry if cached child does not exist yet", function()
@@ -112,11 +115,11 @@ return function()
 			return testNavigation
 		end)
 
-		expect(testNavigation._childrenNavigation["a"]).to.never.equal(nil)
-		expect(childNav).to.equal(testNavigation._childrenNavigation["a"])
-		expect(childNav.isFocused()).to.equal(true)
+		jestExpect(testNavigation._childrenNavigation["a"]).never.toEqual(nil)
+		jestExpect(childNav).toEqual(testNavigation._childrenNavigation["a"])
+		jestExpect(childNav.isFocused()).toEqual(true)
 
-		expect(childNav.getParam("a", 0)).to.equal(1)
-		expect(childNav.getParam("b", 0)).to.equal(0)
+		jestExpect(childNav.getParam("a", 0)).toEqual(1)
+		jestExpect(childNav.getParam("b", 0)).toEqual(0)
 	end)
 end

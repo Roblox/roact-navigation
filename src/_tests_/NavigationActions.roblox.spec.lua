@@ -1,25 +1,28 @@
 return function()
-	local NavigationActions = require(script.Parent.Parent.NavigationActions)
+	local RoactNavigationModule = script.Parent.Parent
+	local NavigationActions = require(RoactNavigationModule.NavigationActions)
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
 
 	it("throws when indexing an unknown field", function()
-		expect(function()
+		jestExpect(function()
 			return NavigationActions.foo
-		end).to.throw("\"foo\" is not a valid member of NavigationActions")
+		end).toThrow("\"foo\" is not a valid member of NavigationActions")
 	end)
 
 	describe("NavigationActions token tests", function()
 		it("should return same object for each token for multiple calls", function()
-			expect(NavigationActions.Back).to.equal(NavigationActions.Back)
-			expect(NavigationActions.Init).to.equal(NavigationActions.Init)
-			expect(NavigationActions.Navigate).to.equal(NavigationActions.Navigate)
-			expect(NavigationActions.SetParams).to.equal(NavigationActions.SetParams)
+			jestExpect(NavigationActions.Back).toEqual(NavigationActions.Back)
+			jestExpect(NavigationActions.Init).toEqual(NavigationActions.Init)
+			jestExpect(NavigationActions.Navigate).toEqual(NavigationActions.Navigate)
+			jestExpect(NavigationActions.SetParams).toEqual(NavigationActions.SetParams)
 		end)
 
 		it("should return matching string names for symbols", function()
-			expect(tostring(NavigationActions.Back)).to.equal("BACK")
-			expect(tostring(NavigationActions.Init)).to.equal("INIT")
-			expect(tostring(NavigationActions.Navigate)).to.equal("NAVIGATE")
-			expect(tostring(NavigationActions.SetParams)).to.equal("SET_PARAMS")
+			jestExpect(tostring(NavigationActions.Back)).toEqual("BACK")
+			jestExpect(tostring(NavigationActions.Init)).toEqual("INIT")
+			jestExpect(tostring(NavigationActions.Navigate)).toEqual("NAVIGATE")
+			jestExpect(tostring(NavigationActions.SetParams)).toEqual("SET_PARAMS")
 		end)
 	end)
 
@@ -30,9 +33,9 @@ return function()
 				immediate = true,
 			})
 
-			expect(backTable.type).to.equal(NavigationActions.Back)
-			expect(backTable.key).to.equal("the_key")
-			expect(backTable.immediate).to.equal(true)
+			jestExpect(backTable.type).toEqual(NavigationActions.Back)
+			jestExpect(backTable.key).toEqual("the_key")
+			jestExpect(backTable.immediate).toEqual(true)
 		end)
 
 		it("should return an init action with matching data for call to init()", function()
@@ -40,8 +43,8 @@ return function()
 				params = "foo",
 			})
 
-			expect(initTable.type).to.equal(NavigationActions.Init)
-			expect(initTable.params).to.equal("foo")
+			jestExpect(initTable.type).toEqual(NavigationActions.Init)
+			jestExpect(initTable.params).toEqual("foo")
 		end)
 
 		it("should return a navigate action with matching data for call to navigate()", function()
@@ -52,11 +55,11 @@ return function()
 				key = "key",
 			})
 
-			expect(navigateTable.type).to.equal(NavigationActions.Navigate)
-			expect(navigateTable.routeName).to.equal("routeName")
-			expect(navigateTable.params).to.equal("foo")
-			expect(navigateTable.action).to.equal("action")
-			expect(navigateTable.key).to.equal("key")
+			jestExpect(navigateTable.type).toEqual(NavigationActions.Navigate)
+			jestExpect(navigateTable.routeName).toEqual("routeName")
+			jestExpect(navigateTable.params).toEqual("foo")
+			jestExpect(navigateTable.action).toEqual("action")
+			jestExpect(navigateTable.key).toEqual("key")
 		end)
 
 		it("should return a set params action with matching data for call to setParams()", function()
@@ -65,9 +68,9 @@ return function()
 				params = "foo",
 			})
 
-			expect(setParamsTable.type).to.equal(NavigationActions.SetParams)
-			expect(setParamsTable.key).to.equal("key")
-			expect(setParamsTable.params).to.equal("foo")
+			jestExpect(setParamsTable.type).toEqual(NavigationActions.SetParams)
+			jestExpect(setParamsTable.key).toEqual("key")
+			jestExpect(setParamsTable.params).toEqual("foo")
 		end)
 	end)
 end
