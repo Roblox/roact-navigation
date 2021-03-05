@@ -1,8 +1,3 @@
--- Generator information:
--- Human name: Roact Navigation
--- Variable name: RoactNavigation
--- Repo name: roact-navigation
-
 local NavigationContext = require(script.views.NavigationContext)
 
 return {

@@ -5,6 +5,3 @@ return function (screenComponent)
 		(componentType == "table" and type(screenComponent.render) == "function") -- Stateful Component
 	return valid
 end
-
-
-
