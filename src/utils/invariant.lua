@@ -19,11 +19,19 @@ if _G.__DEV__ then
 	end
 end
 
-function invariant(condition: bool, format: string?, ...)
+local function invariant(condition: boolean, format: string?, ...)
 	validateFormat(format)
 
 	if not condition then
-		error(string.format(format, ...), 3)
+		if format == nil then
+			error(
+				"Minified exception occurred; use the non-minified dev environment " ..
+					"for the full error message and additional helpful warnings.",
+				2
+			)
+		else
+			error(string.format(format, ...), 2)
+		end
 	end
 end
 

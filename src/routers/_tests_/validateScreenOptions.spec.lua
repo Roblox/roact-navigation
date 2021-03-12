@@ -1,25 +1,29 @@
 return function()
-	local validateScreenOptions = require(script.Parent.Parent.validateScreenOptions)
+	local routersModule = script.Parent.Parent
+	local RoactNavigationModule = routersModule.Parent
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+
+	local validateScreenOptions = require(routersModule.validateScreenOptions)
 
 	it("should not throw when there are no problems", function()
-		validateScreenOptions({ title = "foo" }, { routeName = "foo" })
+		jestExpect(function()
+			validateScreenOptions({ title = "foo" }, { routeName = "foo" })
+		end).never.toThrow()
 	end)
 
 	it("should throw error if no routeName is provided", function()
-		local status, err = pcall(function()
+		jestExpect(function()
 			validateScreenOptions({ title = "bar" }, {})
-		end)
-
-		expect(status).to.equal(false)
-		expect(string.find(err, "route.routeName must be a string")).to.never.equal(nil)
+		end).toThrow("route.routeName must be a string")
 	end)
 
 	it("should throw error for options with function for title", function()
-		expect(function()
+		jestExpect(function()
 			validateScreenOptions({
 				title = function() end,
 			}, { routeName = "foo" })
-		end).to.throw()
+		end).toThrow()
 	end)
 end
 

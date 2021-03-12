@@ -27,9 +27,9 @@ return function(routeConfigs, navigatorScreenConfig)
 		screenProps = screenProps or {}
 		local route = navigation.state
 
-		invariant(type(route) == "table", "navigation.state must be a table")
+		invariant(typeof(route) == "table", "navigation.state must be a table")
 		invariant(
-			type(route.routeName == "string"),
+			typeof(route.routeName) == "string",
 			"Cannot get config because the route does not have a routeName."
 		)
 

@@ -288,7 +288,7 @@ return function()
 			state2
 		)
 
-		expect(state2, state3)
+		expectDeepEqual(state2, state3)
 	end)
 
 	it("Handles deep action", function()

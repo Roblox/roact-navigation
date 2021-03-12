@@ -7,8 +7,8 @@ local Cryo = require(Packages.Cryo)
 local function getEventManager(target)
 	local listeners = {}
 
-	local function removeListener(type, callback)
-		local callbacks = listeners[type] and listeners[type][target]
+	local function removeListener(type_, callback)
+		local callbacks = listeners[type_] and listeners[type_][target]
 
 		if not callbacks then
 			return
@@ -18,23 +18,23 @@ local function getEventManager(target)
 		table.remove(callbacks, index)
 	end
 
-	local function addListener(type, callback)
-		listeners[type] = listeners[type] or {}
-		listeners[type][target] = listeners[type][target] or {}
+	local function addListener(type_, callback)
+		listeners[type_] = listeners[type_] or {}
+		listeners[type_][target] = listeners[type_][target] or {}
 
-		table.insert(listeners[type][target], callback)
+		table.insert(listeners[type_][target], callback)
 
 		return {
 			remove = function()
-				removeListener(type, callback)
+				removeListener(type_, callback)
 			end,
 		}
 	end
 
 	return {
 		addListener = addListener,
-		emit = function(type, data)
-			local items = listeners[type] or {}
+		emit = function(type_, data)
+			local items = listeners[type_] or {}
 			local callbacks = items[target] and Cryo.List.join({}, items[target])
 
 			if callbacks then

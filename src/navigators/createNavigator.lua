@@ -86,9 +86,9 @@ return function(navigatorViewComponent, router, navigationConfig)
 		return Roact.createFragment({
 			Events = Roact.createElement(NavigationFocusEvents, {
 				navigation = navigation,
-				onEvent = function(target, type, data)
+				onEvent = function(target, type_, data)
 					if descriptors[target] then
-						descriptors[target].navigation.emit(type, data);
+						descriptors[target].navigation.emit(type_, data);
 					end
 				end,
 			}),

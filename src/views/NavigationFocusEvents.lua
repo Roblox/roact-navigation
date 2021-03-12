@@ -79,7 +79,7 @@ function NavigationEventManager:_handleAction(actionPayload)
 	local state = actionPayload.state
 	local lastState = actionPayload.lastState
 	local action = actionPayload.action
-	local type = actionPayload.type
+	local type_ = actionPayload.type
 	local context = actionPayload.context
 
 	local navigation = self.props.navigation
@@ -102,7 +102,7 @@ function NavigationEventManager:_handleAction(actionPayload)
 		state = current,
 		lastState = previous,
 		action = action,
-		type = type,
+		type = type_,
 	}
 
 	if (previous and previous.key) ~= current.key then
@@ -132,7 +132,7 @@ function NavigationEventManager:_handleWillFocus(args)
 	local lastState = args.lastState
 	local action = args.action
 	local context = args.context
-	local type = args.type
+	local type_ = args.type
 
 	local navigation = self.props.navigation
 	local route = navigation.state.routes[navigation.state.index]
@@ -152,7 +152,7 @@ function NavigationEventManager:_handleWillFocus(args)
 		state = route,
 		lastState = nextLastState,
 		action = action,
-		type = type,
+		type = type_,
 	})
 end
 
@@ -160,7 +160,7 @@ function NavigationEventManager:_handleWillBlur(args)
 	local lastState = args.lastState
 	local action = args.action
 	local context = args.context
-	local type = args.type
+	local type_ = args.type
 
 	local navigation = self.props.navigation
 	local route = navigation.state.routes[navigation.state.index]
@@ -180,7 +180,7 @@ function NavigationEventManager:_handleWillBlur(args)
 		state = route,
 		lastState = nextLastState,
 		action = action,
-		type = type,
+		type = type_,
 	});
 end
 
@@ -188,7 +188,7 @@ function NavigationEventManager:_handleDidFocus(args)
 	local lastState = args.lastState
 	local action = args.action
 	local context = args.context
-	local type = args.type
+	local type_ = args.type
 
 	local navigation = self.props.navigation
 
@@ -215,7 +215,7 @@ function NavigationEventManager:_handleDidFocus(args)
 				state = route,
 				lastState = nextLastState,
 				action = action,
-				type = type,
+				type = type_,
 			});
 		end
 	end
@@ -225,7 +225,7 @@ function NavigationEventManager:_handleDidBlur(args)
 	local lastState = args.lastState
 	local action = args.action
 	local context = args.context
-	local type = args.type
+	local type_ = args.type
 
 	local navigation = self.props.navigation
 
@@ -252,7 +252,7 @@ function NavigationEventManager:_handleDidBlur(args)
 				state = route,
 				lastState = nextLastState,
 				action = action,
-				type = type,
+				type = type_,
 			});
 		end
 	end
