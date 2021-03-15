@@ -1,15 +1,17 @@
 -- upstream https://github.com/react-navigation/react-navigation/blob/fcd7d83c4c33ad1fa508c8cfe687d2fa259bfc2c/packages/core/src/routers/__tests__/SwitchRouter.test.js
 
 return function()
-	local Root = script.Parent.Parent.Parent
-	local Packages = Root.Parent
+	local routersModule = script.Parent.Parent
+	local RoactNavigationModule = routersModule.Parent
+	local Packages = RoactNavigationModule.Parent
 	local Roact = require(Packages.Roact)
 	local Cryo = require(Packages.Cryo)
-	local StackRouter = require(script.Parent.Parent.StackRouter)
-	local SwitchRouter = require(script.Parent.Parent.SwitchRouter)
-	local NavigationActions = require(Root.NavigationActions)
-	local BackBehavior = require(Root.BackBehavior)
-	local expectDeepEqual = require(Root.utils.expectDeepEqual)
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+
+	local StackRouter = require(routersModule.StackRouter)
+	local SwitchRouter = require(routersModule.SwitchRouter)
+	local NavigationActions = require(RoactNavigationModule.NavigationActions)
+	local BackBehavior = require(RoactNavigationModule.BackBehavior)
 	local getRouterTestHelper = require(script.Parent.routerTestHelper)
 
 	local function getExampleRouter(config)
@@ -63,12 +65,12 @@ return function()
 			local getState = helper.getState
 
 			navigateTo("A2")
-			expect(getState().routes[1].index).to.equal(2)
-			expect(#getState().routes[1].routes).to.equal(2)
+			jestExpect(getState().routes[1].index).toEqual(2)
+			jestExpect(#getState().routes[1].routes).toEqual(2)
 
 			navigateTo("B")
-			expect(getState().routes[1].index).to.equal(1)
-			expect(#getState().routes[1].routes).to.equal(1)
+			jestExpect(getState().routes[1].index).toEqual(1)
+			jestExpect(#getState().routes[1].routes).toEqual(1)
 		end)
 
 		it("does not reset the route on unfocus if resetOnBlur is false", function()
@@ -77,11 +79,11 @@ return function()
 			local getState = helper.getState
 
 			navigateTo("A2")
-			expect(getState().routes[1].index).to.equal(2)
-			expect(#getState().routes[1].routes).to.equal(2)
+			jestExpect(getState().routes[1].index).toEqual(2)
+			jestExpect(#getState().routes[1].routes).toEqual(2)
 			navigateTo("B")
-			expect(getState().routes[1].index).to.equal(2)
-			expect(#getState().routes[1].routes).to.equal(2)
+			jestExpect(getState().routes[1].index).toEqual(2)
+			jestExpect(#getState().routes[1].routes).toEqual(2)
 		end)
 
 		it("ignores back by default", function()
@@ -91,10 +93,10 @@ return function()
 			local getState = helper.getState
 
 			jumpTo("B")
-			expect(getState().index).to.equal(2)
+			jestExpect(getState().index).toEqual(2)
 
 			back()
-			expect(getState().index).to.equal(2)
+			jestExpect(getState().index).toEqual(2)
 		end)
 
 		it("handles initialRoute backBehavior", function()
@@ -106,20 +108,20 @@ return function()
 			local back = helper.back
 			local getState = helper.getState
 
-			expect(getState().routeKeyHistory).to.equal(nil)
-			expect(getState().index).to.equal(2)
+			jestExpect(getState().routeKeyHistory).toEqual(nil)
+			jestExpect(getState().index).toEqual(2)
 
 			jumpTo("C")
-			expect(getState().index).to.equal(3)
+			jestExpect(getState().index).toEqual(3)
 
 			jumpTo("A")
-			expect(getState().index).to.equal(1)
+			jestExpect(getState().index).toEqual(1)
 
 			back()
-			expect(getState().index).to.equal(2)
+			jestExpect(getState().index).toEqual(2)
 
 			back()
-			expect(getState().index).to.equal(2)
+			jestExpect(getState().index).toEqual(2)
 		end)
 
 		it("handles order backBehavior", function()
@@ -130,19 +132,19 @@ return function()
 			local back = helper.back
 			local getState = helper.getState
 
-			expect(getState().routeKeyHistory).to.equal(nil)
+			jestExpect(getState().routeKeyHistory).toEqual(nil)
 
 			navigateTo("C")
-			expect(getState().index).to.equal(3)
+			jestExpect(getState().index).toEqual(3)
 
 			back()
-			expect(getState().index).to.equal(2)
+			jestExpect(getState().index).toEqual(2)
 
 			back()
-			expect(getState().index).to.equal(1)
+			jestExpect(getState().index).toEqual(1)
 
 			back()
-			expect(getState().index).to.equal(1)
+			jestExpect(getState().index).toEqual(1)
 		end)
 
 		it("handles history backBehavior", function()
@@ -153,35 +155,35 @@ return function()
 			local back = helper.back
 			local getState = helper.getState
 
-			expectDeepEqual(getState().routeKeyHistory, {"A"})
+			jestExpect(getState().routeKeyHistory).toEqual({"A"})
 
 			navigateTo("B")
-			expect(getState().index).to.equal(2)
-			expectDeepEqual(getState().routeKeyHistory, {"A", "B"})
+			jestExpect(getState().index).toEqual(2)
+			jestExpect(getState().routeKeyHistory).toEqual({"A", "B"})
 
 			navigateTo("A")
-			expect(getState().index).to.equal(1)
-			expectDeepEqual(getState().routeKeyHistory, {"B", "A"})
+			jestExpect(getState().index).toEqual(1)
+			jestExpect(getState().routeKeyHistory).toEqual({"B", "A"})
 
 			navigateTo("C")
-			expect(getState().index).to.equal(3)
-			expectDeepEqual(getState().routeKeyHistory, {"B", "A", "C"})
+			jestExpect(getState().index).toEqual(3)
+			jestExpect(getState().routeKeyHistory).toEqual({"B", "A", "C"})
 
 			navigateTo("A")
-			expect(getState().index).to.equal(1)
-			expectDeepEqual(getState().routeKeyHistory, {"B", "C", "A"})
+			jestExpect(getState().index).toEqual(1)
+			jestExpect(getState().routeKeyHistory).toEqual({"B", "C", "A"})
 
 			back()
-			expect(getState().index).to.equal(3)
-			expectDeepEqual(getState().routeKeyHistory, {"B", "C"})
+			jestExpect(getState().index).toEqual(3)
+			jestExpect(getState().routeKeyHistory).toEqual({"B", "C"})
 
 			back()
-			expect(getState().index).to.equal(2)
-			expectDeepEqual(getState().routeKeyHistory, {"B"})
+			jestExpect(getState().index).toEqual(2)
+			jestExpect(getState().routeKeyHistory).toEqual({"B"})
 
 			back()
-			expect(getState().index).to.equal(2)
-			expectDeepEqual(getState().routeKeyHistory, {"B"})
+			jestExpect(getState().index).toEqual(2)
+			jestExpect(getState().routeKeyHistory).toEqual({"B"})
 		end)
 
 		it("handles history backBehavior without popping routeKeyHistory when child handles action", function()
@@ -193,33 +195,25 @@ return function()
 			local getState = helper.getState
 			local getSubState = helper.getSubState
 
-			expectDeepEqual(getState().routeKeyHistory, {
-				"A",
-			})
+			jestExpect(getState().routeKeyHistory).toEqual({"A"})
 
 			navigateTo("B")
-			expect(getState().index).to.equal(2)
-			expectDeepEqual(getState().routeKeyHistory, {
+			jestExpect(getState().index).toEqual(2)
+			jestExpect(getState().routeKeyHistory).toEqual({
 				"A",
 				"B",
 			})
 
 			navigateTo("B2")
-			expect(getState().index).to.equal(2)
-			expectDeepEqual(getState().routeKeyHistory, {
-				"A",
-				"B",
-			})
-			expect(getSubState(2).routeName).to.equal("B2")
+			jestExpect(getState().index).toEqual(2)
+			jestExpect(getState().routeKeyHistory).toEqual({"A", "B"})
+			jestExpect(getSubState(2).routeName).toEqual("B2")
 
 			back()
-			expect(getState().index).to.equal(2)
+			jestExpect(getState().index).toEqual(2)
 			-- "B" should not be popped when the child handles the back action
-			expectDeepEqual(getState().routeKeyHistory, {
-				"A",
-				"B",
-			})
-			expect(getSubState(2).routeName).to.equal("B1")
+			jestExpect(getState().routeKeyHistory).toEqual({"A", "B"})
+			jestExpect(getSubState(2).routeName).toEqual("B1")
 		end)
 
 		it("handles back and does not apply back action to inactive child", function()
@@ -231,19 +225,19 @@ return function()
 			local back = helper.back
 			local getSubState = helper.getSubState
 
-			expect(getSubState(1).routeName).to.equal("A")
+			jestExpect(getSubState(1).routeName).toEqual("A")
 
 			navigateTo("B")
 			navigateTo("B2")
-			expect(getSubState(1).routeName).to.equal("B")
-			expect(getSubState(2).routeName).to.equal("B2")
+			jestExpect(getSubState(1).routeName).toEqual("B")
+			jestExpect(getSubState(2).routeName).toEqual("B2")
 
 			navigateTo("A")
-			expect(getSubState(1).routeName).to.equal("A")
+			jestExpect(getSubState(1).routeName).toEqual("A")
 
 			-- The back action should not switch to B. It should stay on A
 			back(nil)
-			expect(getSubState(1).routeName).to.equal("A")
+			jestExpect(getSubState(1).routeName).toEqual("A")
 		end)
 
 		it("handles pop and does not apply pop action to inactive child", function()
@@ -255,19 +249,19 @@ return function()
 			local pop = helper.pop
 			local getSubState = helper.getSubState
 
-			expect(getSubState(1).routeName).to.equal("A")
+			jestExpect(getSubState(1).routeName).toEqual("A")
 
 			navigateTo("B")
 			navigateTo("B2")
-			expect(getSubState(1).routeName).to.equal("B")
-			expect(getSubState(2).routeName).to.equal("B2")
+			jestExpect(getSubState(1).routeName).toEqual("B")
+			jestExpect(getSubState(2).routeName).toEqual("B2")
 
 			navigateTo("A")
-			expect(getSubState(1).routeName).to.equal("A")
+			jestExpect(getSubState(1).routeName).toEqual("A")
 
 			-- The pop action should not switch to B. It should stay on A
 			pop()
-			expect(getSubState(1).routeName).to.equal("A")
+			jestExpect(getSubState(1).routeName).toEqual("A")
 		end)
 
 		it("handles popToTop and does not apply popToTop action to inactive child", function()
@@ -279,19 +273,19 @@ return function()
 			local popToTop = helper.popToTop
 			local getSubState = helper.getSubState
 
-			expect(getSubState(1).routeName).to.equal("A")
+			jestExpect(getSubState(1).routeName).toEqual("A")
 
 			navigateTo("B")
 			navigateTo("B2")
-			expect(getSubState(1).routeName).to.equal("B")
-			expect(getSubState(2).routeName).to.equal("B2")
+			jestExpect(getSubState(1).routeName).toEqual("B")
+			jestExpect(getSubState(2).routeName).toEqual("B2")
 
 			navigateTo("A")
-			expect(getSubState(1).routeName).to.equal("A")
+			jestExpect(getSubState(1).routeName).toEqual("A")
 
 			-- The popToTop action should not switch to B. It should stay on A
 			popToTop()
-			expect(getSubState(1).routeName).to.equal("A")
+			jestExpect(getSubState(1).routeName).toEqual("A")
 		end)
 
 		it("handles back and does switch to inactive child with matching key", function()
@@ -303,22 +297,22 @@ return function()
 			local back = helper.back
 			local getSubState = helper.getSubState
 
-			expect(getSubState(1).routeName).to.equal("A")
+			jestExpect(getSubState(1).routeName).toEqual("A")
 
 			navigateTo("B")
 			navigateTo("B2")
-			expect(getSubState(1).routeName).to.equal("B")
-			expect(getSubState(2).routeName).to.equal("B2")
+			jestExpect(getSubState(1).routeName).toEqual("B")
+			jestExpect(getSubState(2).routeName).toEqual("B2")
 
 			local b2Key = getSubState(2).key
 
 			navigateTo("A")
-			expect(getSubState(1).routeName).to.equal("A")
+			jestExpect(getSubState(1).routeName).toEqual("A")
 
 			-- The back action should switch to B and go back from B2 to B1
 			back(b2Key)
-			expect(getSubState(1).routeName).to.equal("B")
-			expect(getSubState(2).routeName).to.equal("B1")
+			jestExpect(getSubState(1).routeName).toEqual("B")
+			jestExpect(getSubState(2).routeName).toEqual("B1")
 		end)
 
 		it("handles nested actions", function()
@@ -332,8 +326,8 @@ return function()
 					routeName = "B2",
 				},
 			})
-			expect(getSubState(1).routeName).to.equal("B")
-			expect(getSubState(2).routeName).to.equal("B2")
+			jestExpect(getSubState(1).routeName).toEqual("B")
+			jestExpect(getSubState(2).routeName).toEqual("B2")
 		end)
 
 		it("handles nested actions and params simultaneously", function()
@@ -352,10 +346,10 @@ return function()
 					params = params2,
 				},
 			})
-			expect(getSubState(1).routeName).to.equal("B")
-			expectDeepEqual(getSubState(1).params, params1)
-			expect(getSubState(2).routeName).to.equal("B2")
-			expectDeepEqual(getSubState(2).params, params2)
+			jestExpect(getSubState(1).routeName).toEqual("B")
+			jestExpect(getSubState(1).params).toEqual(params1)
+			jestExpect(getSubState(2).routeName).toEqual("B2")
+			jestExpect(getSubState(2).params).toEqual(params2)
 		end)
 
 		it("order of handling navigate action is correct for nested switchrouters", function()
@@ -395,16 +389,16 @@ return function()
 			local navigateTo = helper.navigateTo
 			local getSubState = helper.getSubState
 
-			expect(getSubState(1).routeName).to.equal("OtherNestedSwitch")
+			jestExpect(getSubState(1).routeName).toEqual("OtherNestedSwitch")
 
 			navigateTo("Bar")
-			expect(getSubState(1).routeName).to.equal("Bar")
+			jestExpect(getSubState(1).routeName).toEqual("Bar")
 
 			navigateTo("NestedSwitch")
 			navigateTo("Bar")
 
-			expect(getSubState(1).routeName).to.equal("NestedSwitch")
-			expect(getSubState(2).routeName).to.equal("Bar")
+			jestExpect(getSubState(1).routeName).toEqual("NestedSwitch")
+			jestExpect(getSubState(2).routeName).toEqual("Bar")
 		end)
 
 		-- https://github.com/react-navigation/react-navigation.github.io/issues/117#issuecomment-385597628
@@ -440,10 +434,10 @@ return function()
 			local navigateTo = helper.navigateTo
 			local getSubState = helper.getSubState
 
-			expect(getSubState(1).routeName).to.equal("Login")
+			jestExpect(getSubState(1).routeName).toEqual("Login")
 
 			navigateTo("Home")
-			expect(getSubState(1).routeName).to.equal("Home")
+			jestExpect(getSubState(1).routeName).toEqual("Home")
 		end)
 
 		it("does not error for a nested navigate action in an uninitialized history router", function()
@@ -456,8 +450,8 @@ return function()
 			navigateTo("B", {
 				action = NavigationActions.navigate({ routeName = "B2" }),
 			})
-			expect(getSubState(1).routeName).to.equal("B")
-			expect(getSubState(2).routeName).to.equal("B2")
+			jestExpect(getSubState(1).routeName).toEqual("B")
+			jestExpect(getSubState(2).routeName).toEqual("B2")
 		end)
 	end)
 end

@@ -1,8 +1,13 @@
 -- upstream https://github.com/react-navigation/react-navigation/blob/72e8160537954af40f1b070aa91ef45fc02bba69/packages/core/src/routers/__tests__/createConfigGetter.test.js
 
 return function()
-	local createConfigGetter = require(script.Parent.Parent.createConfigGetter)
-	local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
+	local routersModule = script.Parent.Parent
+	local RoactNavigationModule = routersModule.Parent
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local Roact = require(Packages.Roact)
+
+	local createConfigGetter = require(routersModule.createConfigGetter)
 
 	it("should get config for screen", function()
 		local HomeScreen = Roact.Component:extend("HomeScreen")
@@ -56,29 +61,29 @@ return function()
 			{ key = "E", routeName = "Notifications", params = { fullscreen = true } },
 		}
 
-		expect(getScreenOptions({ state = routes[1] }, {}).title)
-			.to.equal("Welcome anonymous")
+		jestExpect(getScreenOptions({ state = routes[1] }, {}).title)
+			.toEqual("Welcome anonymous")
 
-		expect(getScreenOptions({ state = routes[2] }, {}).title)
-			.to.equal("Welcome jane")
+		jestExpect(getScreenOptions({ state = routes[2] }, {}).title)
+			.toEqual("Welcome jane")
 
-		expect(getScreenOptions({ state = routes[1] }, {}).gesturesEnabled)
-			.to.equal(true)
+		jestExpect(getScreenOptions({ state = routes[1] }, {}).gesturesEnabled)
+			.toEqual(true)
 
-		expect(getScreenOptions({ state = routes[3] }, {}).title)
-			.to.equal("Settings!!!")
+		jestExpect(getScreenOptions({ state = routes[3] }, {}).title)
+			.toEqual("Settings!!!")
 
-		expect(getScreenOptions({ state = routes[3] }, {}).gesturesEnabled)
-			.to.equal(false)
+		jestExpect(getScreenOptions({ state = routes[3] }, {}).gesturesEnabled)
+			.toEqual(false)
 
-		expect(getScreenOptions({ state = routes[4] }, {}).title)
-			.to.equal("10 new notifications")
+		jestExpect(getScreenOptions({ state = routes[4] }, {}).title)
+			.toEqual("10 new notifications")
 
-		expect(getScreenOptions({ state = routes[4] }, {}).gesturesEnabled)
-			.to.equal(true)
+		jestExpect(getScreenOptions({ state = routes[4] }, {}).gesturesEnabled)
+			.toEqual(true)
 
-		expect(getScreenOptions({ state = routes[5] }, {}).gesturesEnabled)
-			.to.equal(false)
+		jestExpect(getScreenOptions({ state = routes[5] }, {}).gesturesEnabled)
+			.toEqual(false)
 	end)
 
 	it("should throw if the route does not exist", function()
@@ -95,8 +100,8 @@ return function()
 
 		local routes = {{ key = "B", routeName = "Settings" }}
 
-		expect(function()
+		jestExpect(function()
 			getScreenOptions({ state = routes[1] }, {})
-		end).to.throw("There is no route defined for key Settings.\nMust be one of: 'Home'")
+		end).toThrow("There is no route defined for key Settings.\nMust be one of: 'Home'")
 	end)
 end

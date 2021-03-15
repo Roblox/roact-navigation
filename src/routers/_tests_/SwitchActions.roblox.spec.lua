@@ -1,19 +1,24 @@
 return function()
-	local SwitchActions = require(script.Parent.Parent.SwitchActions)
+	local routersModule = script.Parent.Parent
+	local RoactNavigationModule = routersModule.Parent
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+
+	local SwitchActions = require(routersModule.SwitchActions)
 
 	it("throws when indexing an unknown field", function()
-		expect(function()
+		jestExpect(function()
 			return SwitchActions.foo
-		end).to.throw("\"foo\" is not a valid member of SwitchActions")
+		end).toThrow("\"foo\" is not a valid member of SwitchActions")
 	end)
 
 	describe("token tests", function()
 		it("returns same object for each token for multiple calls", function()
-			expect(SwitchActions.JumpTo).to.equal(SwitchActions.JumpTo)
+			jestExpect(SwitchActions.JumpTo).toBe(SwitchActions.JumpTo)
 		end)
 
 		it("should return matching string names for symbols", function()
-			expect(tostring(SwitchActions.JumpTo)).to.equal("JUMP_TO")
+			jestExpect(tostring(SwitchActions.JumpTo)).toEqual("JUMP_TO")
 		end)
 	end)
 
@@ -23,9 +28,9 @@ return function()
 				routeName = "foo",
 			})
 
-			expect(popTable.type).to.equal(SwitchActions.JumpTo)
-			expect(popTable.routeName).to.equal("foo")
-			expect(popTable.preserveFocus).to.equal(true)
+			jestExpect(popTable.type).toBe(SwitchActions.JumpTo)
+			jestExpect(popTable.routeName).toEqual("foo")
+			jestExpect(popTable.preserveFocus).toEqual(true)
 		end)
 	end)
 end

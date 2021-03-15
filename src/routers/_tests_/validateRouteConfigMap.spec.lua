@@ -1,6 +1,11 @@
 return function()
-	local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
-	local validateRouteConfigMap = require(script.Parent.Parent.validateRouteConfigMap)
+	local routersModule = script.Parent.Parent
+	local RoactNavigationModule = routersModule.Parent
+	local Packages = RoactNavigationModule.Parent
+	local Roact = require(Packages.Roact)
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+
+	local validateRouteConfigMap = require(routersModule.validateRouteConfigMap)
 
 	local TestComponent = Roact.Component:extend("TestComponent")
 	function TestComponent:render()
@@ -11,64 +16,64 @@ return function()
 		" component or table with 'getScreen'."
 
 	it("should throw if routeConfigs is not a table", function()
-		expect(function()
+		jestExpect(function()
 			validateRouteConfigMap(5)
-		end).to.throw("routeConfigs must be a table")
+		end).toThrow("routeConfigs must be a table")
 	end)
 
 	it("should throw if routeConfigs is empty", function()
-		expect(function()
+		jestExpect(function()
 			validateRouteConfigMap({})
-		end).to.throw("Please specify at least one route when configuring a navigator.")
+		end).toThrow("Please specify at least one route when configuring a navigator.")
 	end)
 
 	it("should throw if routeConfigs contains an invalid Roact element", function()
-		expect(function()
+		jestExpect(function()
 			validateRouteConfigMap({
 				myRoute = 5,
 			})
-		end).to.throw()
+		end).toThrow()
 	end)
 
 	it("should throw when both screen and getScreen are provided for same component", function()
-		expect(function()
+		jestExpect(function()
 			validateRouteConfigMap({
 				myRoute = {
 					screen = "TheScreen",
 					getScreen = function() return TestComponent end,
 				}
 			})
-		end).to.throw("Route 'myRoute' should declare a screen or a getScreen, not both.")
+		end).toThrow("Route 'myRoute' should declare a screen or a getScreen, not both.")
 	end)
 
 	it("should throw for a simple table where screen is not a Roact component", function()
-		expect(function()
+		jestExpect(function()
 			validateRouteConfigMap({
 				myRoute = {
 					screen = {},
 				}
 			})
-		end).to.throw(INVALID_COMPONENT_MESSAGE)
+		end).toThrow(INVALID_COMPONENT_MESSAGE)
 	end)
 
 	it("should throw for a non-function getScreen", function()
-		expect(function()
+		jestExpect(function()
 			validateRouteConfigMap({
 				myRoute = {
 					getScreen = 5
 				}
 			})
-		end).to.throw(INVALID_COMPONENT_MESSAGE)
+		end).toThrow(INVALID_COMPONENT_MESSAGE)
 	end)
 
 	it("should throw for a Host Component", function()
-		expect(function()
+		jestExpect(function()
 			validateRouteConfigMap({
 				myRoute = {
 					aFrame = "Frame"
 				}
 			})
-		end).to.throw(INVALID_COMPONENT_MESSAGE)
+		end).toThrow(INVALID_COMPONENT_MESSAGE)
 	end)
 
 	it("should pass for valid basic routeConfigs", function()

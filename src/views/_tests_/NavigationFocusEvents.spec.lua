@@ -1,17 +1,19 @@
 -- upstream https://github.com/react-navigation/react-navigation/blob/9b55493e7662f4d54c21f75e53eb3911675f61bc/packages/core/src/views/__tests__/NavigationFocusEvents.test.js
 
 return function()
-	local root = script.Parent.Parent.Parent
-	local Packages = root.Parent
+	local routersModule = script.Parent.Parent
+	local RoactNavigationModule = routersModule.Parent
+	local Packages = RoactNavigationModule.Parent
 	local Cryo = require(Packages.Cryo)
 	local Roact = require(Packages.Roact)
-	local NavigationFocusEvents = require(script.Parent.Parent.NavigationFocusEvents)
-	local getEventManager = require(root.getEventManager)
-	local NavigationActions = require(root.NavigationActions)
-	local StackActions = require(root.routers.StackActions)
-	local Events = require(root.Events)
-	local createSpy = require(root.utils.createSpy)
-	local expectDeepEqual = require(root.utils.expectDeepEqual)
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+
+	local NavigationFocusEvents = require(routersModule.NavigationFocusEvents)
+	local getEventManager = require(RoactNavigationModule.getEventManager)
+	local NavigationActions = require(RoactNavigationModule.NavigationActions)
+	local StackActions = require(RoactNavigationModule.routers.StackActions)
+	local Events = require(RoactNavigationModule.Events)
+	local createSpy = require(RoactNavigationModule.utils.createSpy)
 
 	local function getNavigationMock(mock)
 	  local eventManager = getEventManager("target")
@@ -52,7 +54,7 @@ return function()
 
 		navigation.emit(Events.Refocus)
 
-		expect(onEvent.callCount).to.equal(1)
+		jestExpect(onEvent.callCount).toEqual(1)
 		local key = navigation.state.routes[navigation.state.index].key
 		onEvent:assertCalledWith(key, Events.Refocus)
 	end)
@@ -77,7 +79,7 @@ return function()
 				type = Events.Action,
 			})
 
-			expect(onEvent.callCount).to.equal(0)
+			jestExpect(onEvent.callCount).toEqual(0)
 		end)
 
 		it("emits only willFocus and willBlur if state is transitioning", function()
@@ -125,7 +127,7 @@ return function()
 				type = Events.Action,
 			}
 
-			expectDeepEqual(onEvent.calls, {
+			jestExpect(onEvent.calls).toEqual({
 				{"Second", Events.WillFocus, expectedPayload},
 				{"First", Events.WillBlur, expectedPayload},
 				{"Second", Events.Action, expectedPayload},
@@ -174,7 +176,7 @@ return function()
 				type = Events.Action,
 			}
 
-			expectDeepEqual(onEvent.calls, {
+			jestExpect(onEvent.calls).toEqual({
 				{"Second", Events.WillFocus, expectedPayload},
 				{"Second", Events.DidFocus, expectedPayload},
 				{"First", Events.WillBlur, expectedPayload},
@@ -239,7 +241,7 @@ return function()
 				type = Events.Action,
 			}
 
-			expectDeepEqual(onEvent.calls, {
+			jestExpect(onEvent.calls).toEqual({
 				{"Second", Events.WillFocus, expectedPayloadNavigate},
 				{"First", Events.WillBlur, expectedPayloadNavigate},
 				{"Second", Events.Action, expectedPayloadNavigate},
@@ -261,7 +263,7 @@ return function()
 				type = Events.Action,
 			}
 
-			expectDeepEqual(onEvent.calls, {
+			jestExpect(onEvent.calls).toEqual({
 				{"First", Events.DidBlur, expectedPayloadEndTransition},
 				{"Second", Events.DidFocus, expectedPayloadEndTransition},
 				{"Second", Events.Action, expectedPayloadEndTransition},
@@ -307,7 +309,7 @@ return function()
 				type = Events.Action,
 			}
 
-			expectDeepEqual(onEvent.calls, {
+			jestExpect(onEvent.calls).toEqual({
 				{"FirstLanding", Events.WillFocus, expectedPayload},
 				{"FirstLanding", Events.DidFocus, expectedPayload},
 			})
@@ -322,7 +324,7 @@ return function()
 				type = Events.Action,
 			})
 
-			expect(onEvent.callCount).to.equal(0)
+			jestExpect(onEvent.callCount).toEqual(0)
 		end)
 	end)
 end

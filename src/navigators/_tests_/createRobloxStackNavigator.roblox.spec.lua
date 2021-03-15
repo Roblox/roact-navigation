@@ -1,7 +1,12 @@
 return function()
-	local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
-	local createRobloxStackNavigator = require(script.Parent.Parent.createRobloxStackNavigator)
-	local getChildNavigation = require(script.Parent.Parent.Parent.getChildNavigation)
+	local navigatorsModule = script.Parent.Parent
+	local RoactNavigationModule = navigatorsModule.Parent
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local Roact = require(Packages.Roact)
+
+	local createRobloxStackNavigator = require(navigatorsModule.createRobloxStackNavigator)
+	local getChildNavigation = require(RoactNavigationModule.getChildNavigation)
 
 	it("should return a mountable Roact component", function()
 		local navigator = createRobloxStackNavigator({
@@ -30,11 +35,13 @@ return function()
 			}
 		end
 
-		local instance = Roact.mount(Roact.createElement(navigator, {
-			navigation = testNavigation
-		}))
+		jestExpect(function()
+			local instance = Roact.mount(Roact.createElement(navigator, {
+				navigation = testNavigation
+			}))
 
-		Roact.unmount(instance)
+			Roact.unmount(instance)
+		end).never.toThrow()
 	end)
 end
 

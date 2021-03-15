@@ -1,6 +1,11 @@
 return function()
-	local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
-	local createNavigator = require(script.Parent.Parent.createNavigator)
+	local navigatorsModule = script.Parent.Parent
+	local RoactNavigationModule = navigatorsModule.Parent
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local Roact = require(Packages.Roact)
+
+	local createNavigator = require(navigatorsModule.createNavigator)
 
 	local testRouter = {
 		getScreenOptions = function() return nil end,
@@ -19,9 +24,9 @@ return function()
 			navigationOptions = testNavOptions,
 		})
 
-		expect(navigator.render).to.be.a("function")
-		expect(navigator.router).to.equal(testRouter)
-		expect(navigator.navigationOptions).to.equal(testNavOptions)
+		jestExpect(navigator.render).toEqual(jestExpect.any("function"))
+		jestExpect(navigator.router).toBe(testRouter)
+		jestExpect(navigator.navigationOptions).toBe(testNavOptions)
 
 		local testNavigation = {
 			state = {
@@ -39,9 +44,9 @@ return function()
 			navigation = testNavigation
 		}))
 
-		expect(testComponentMounted).to.equal(true)
+		jestExpect(testComponentMounted).toEqual(true)
 		Roact.unmount(instance)
-		expect(testComponentMounted).to.equal(false)
+		jestExpect(testComponentMounted).toEqual(false)
 	end)
 
 	it("should throw when trying to mount without navigation prop", function()
@@ -51,9 +56,9 @@ return function()
 			navigationOptions = {}
 		})
 
-		expect(function()
+		jestExpect(function()
 			Roact.mount(Roact.createElement(navigator))
-		end).to.throw()
+		end).toThrow()
 	end)
 
 	it("should throw when trying to mount without routes", function()
@@ -70,10 +75,10 @@ return function()
 			getChildNavigation = function() return nil end, -- stub
 		}
 
-		expect(function()
+		jestExpect(function()
 			Roact.mount(Roact.createElement(navigator, {
 				navigation = testNavigation
 			}))
-		end).to.throw()
+		end).toThrow()
 	end)
 end

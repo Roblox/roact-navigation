@@ -1,14 +1,19 @@
 return function()
-	local getScreenForRouteName = require(script.Parent.Parent.getScreenForRouteName)
+	local routersModule = script.Parent.Parent
+	local RoactNavigationModule = routersModule.Parent
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+
+	local getScreenForRouteName = require(routersModule.getScreenForRouteName)
 
 	it("should throw for invalid arg types", function()
-		expect(function()
+		jestExpect(function()
 			getScreenForRouteName("", "myRoute")
-		end).to.throw("routeConfigs must be a table")
+		end).toThrow("routeConfigs must be a table")
 
-		expect(function()
+		jestExpect(function()
 			getScreenForRouteName({}, 5)
-		end).to.throw("routeName must be a string")
+		end).toThrow("routeName must be a string")
 	end)
 
 	it("should throw if requested route is not present within table", function()
@@ -18,7 +23,7 @@ return function()
 			}, "myRoute")
 		end
 
-		expect(shouldThrow).to.throw(
+		jestExpect(shouldThrow).toThrow(
 			"There is no route defined for key myRoute.\nMust be one of: 'notMyRoute'"
 		)
 	end)
@@ -29,7 +34,7 @@ return function()
 			myRoute = screenComponent
 		}, "myRoute")
 
-		expect(result).to.equal(screenComponent)
+		jestExpect(result).toBe(screenComponent)
 	end)
 
 	it("should return screen prop if it is set in route data table", function()
@@ -40,7 +45,7 @@ return function()
 			}
 		}, "myRoute")
 
-		expect(result).to.equal(screenComponent)
+		jestExpect(result).toBe(screenComponent)
 	end)
 
 	it("should return object returned by getScreen function if object is valid Roact element", function()
@@ -51,30 +56,30 @@ return function()
 			}
 		}, "myRoute")
 
-		expect(result).to.equal(screenComponent)
+		jestExpect(result).toBe(screenComponent)
 	end)
 
 	it("should throw if getScreen does not return a valid Roact element", function()
 		local errorExpected = "The getScreen defined for route 'myRoute' didn't return a valid " ..
 			"screen or navigator.\n\n"
 
-		expect(function()
+		jestExpect(function()
 			getScreenForRouteName({
 				myRoute = {
 					getScreen = function() return nil end
 				}
 			}, "myRoute")
-		end).to.throw(errorExpected)
+		end).toThrow(errorExpected)
 	end)
 
 	it("should throw if screen is not a valid Roact element", function()
-		expect(function()
+		jestExpect(function()
 			getScreenForRouteName({
 				myRoute = {
 					screen = 5,
 				}
 			}, "myRoute")
-		end).to.throw("screen for key 'myRoute' must be a valid Roact component.")
+		end).toThrow("screen for key 'myRoute' must be a valid Roact component.")
 	end)
 end
 

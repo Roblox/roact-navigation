@@ -1,9 +1,14 @@
 return function()
-	local createConfigGetter = require(script.Parent.Parent.createConfigGetter)
+	local routersModule = script.Parent.Parent
+	local RoactNavigationModule = routersModule.Parent
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+
+	local createConfigGetter = require(routersModule.createConfigGetter)
 
 	it("should return a function", function()
 		local result = createConfigGetter({}, {})
-		expect(result).to.be.a("function")
+		jestExpect(result).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should override default config with component-specific config", function()
@@ -17,7 +22,7 @@ return function()
 			defaultNavigationOptions = { title = "DefaultTitle" },
 		})
 
-		expect(getScreenOptions({ state = { routeName = "Home" } }).title).to.equal("ComponentHome")
+		jestExpect(getScreenOptions({ state = { routeName = "Home" } }).title).toEqual("ComponentHome")
 	end)
 
 	it("should override component-specific config with route-specific config", function()
@@ -32,6 +37,6 @@ return function()
 			defaultNavigationOptions = { title = "DefaultTitle" },
 		})
 
-		expect(getScreenOptions({ state = { routeName = "Home" } }).title).to.equal("RouteHome")
+		jestExpect(getScreenOptions({ state = { routeName = "Home" } }).title).toEqual("RouteHome")
 	end)
 end

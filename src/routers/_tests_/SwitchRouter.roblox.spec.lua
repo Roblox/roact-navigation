@@ -1,28 +1,32 @@
 return function()
-	local Root = script.Parent.Parent.Parent
-	local SwitchRouter = require(script.Parent.Parent.SwitchRouter)
-	local NavigationActions = require(Root.NavigationActions)
-	local BackBehavior = require(Root.BackBehavior)
+	local routersModule = script.Parent.Parent
+	local RoactNavigationModule = routersModule.Parent
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+
+	local NavigationActions = require(RoactNavigationModule.NavigationActions)
+	local BackBehavior = require(RoactNavigationModule.BackBehavior)
+	local SwitchRouter = require(routersModule.SwitchRouter)
 
 	it("should be a function", function()
-		expect(type(SwitchRouter)).to.equal("function")
+		jestExpect(SwitchRouter).toEqual(jestExpect.any("function"))
 	end)
 
 	it("should throw when passed a non-table", function()
-		expect(function()
+		jestExpect(function()
 			SwitchRouter(5)
-		end).to.throw("routeConfigs must be an array table")
+		end).toThrow("routeConfigs must be an array table")
 	end)
 
 	it("should throw if initialRouteName is not found in routes table", function()
-		expect(function()
+		jestExpect(function()
 			SwitchRouter({
 				{ Foo = function() end },
 				{ Bar = function() end },
 			}, {
 				initialRouteName = "MyRoute",
 			})
-		end).to.throw("Invalid initialRouteName 'MyRoute'. Should be one of \"Foo\", \"Bar\"")
+		end).toThrow("Invalid initialRouteName 'MyRoute'. Should be one of \"Foo\", \"Bar\"")
 	end)
 
 	it("should expose childRouters as a member", function()
@@ -45,8 +49,8 @@ return function()
 			},
 		})
 
-		expect(router.childRouters.Foo).to.equal("A")
-		expect(router.childRouters.Bar).to.equal("B")
+		jestExpect(router.childRouters.Foo).toEqual("A")
+		jestExpect(router.childRouters.Bar).toEqual("B")
 	end)
 
 	describe("getScreenOptions tests", function()
@@ -71,7 +75,7 @@ return function()
 				}
 			})
 
-			expect(screenOptions.title).to.equal("FooTitle")
+			jestExpect(screenOptions.title).toEqual("FooTitle")
 		end)
 
 		it("should correctly configure route-specified screen options", function()
@@ -96,7 +100,7 @@ return function()
 				}
 			})
 
-			expect(screenOptions.title).to.equal("RouteFooTitle")
+			jestExpect(screenOptions.title).toEqual("RouteFooTitle")
 		end)
 
 		it("should correctly configure component-specified screen options", function()
@@ -121,7 +125,7 @@ return function()
 				}
 			})
 
-			expect(screenOptions.title).to.equal("ComponentFooTitle")
+			jestExpect(screenOptions.title).toEqual("ComponentFooTitle")
 		end)
 	end)
 
@@ -138,7 +142,7 @@ return function()
 				fieldCount = fieldCount + 1
 			end
 
-			expect(fieldCount).to.equal(0)
+			jestExpect(fieldCount).toEqual(0)
 		end)
 
 		it("should call custom action creators function if provided", function()
@@ -151,7 +155,7 @@ return function()
 			})
 
 			local actionCreators = router.getActionCreators({ routeName = "Foo" }, "key")
-			expect(actionCreators.a).to.equal(1)
+			jestExpect(actionCreators.a).toEqual(1)
 		end)
 	end)
 
@@ -168,7 +172,7 @@ return function()
 				},
 				index = 1,
 			})
-			expect(component).to.equal(testComponent)
+			jestExpect(component).toBe(testComponent)
 		end)
 
 		it("should throw if there is no route matching active index", function()
@@ -179,14 +183,14 @@ return function()
 			local message = "There is no route defined for index '2'. " ..
 				"Check that you passed in a navigation state with a " ..
 				"valid tab/screen index."
-			expect(function()
+			jestExpect(function()
 				router.getComponentForState({
 					routes = {
 						Foo = { screen = function() end },
 					},
 					index = 2,
 				})
-			end).to.throw(message)
+			end).toThrow(message)
 		end)
 
 		it("should descend child router for requested route", function()
@@ -218,7 +222,7 @@ return function()
 				},
 				index = 1,
 			})
-			expect(component).to.equal(testComponent)
+			jestExpect(component).toBe(testComponent)
 		end)
 	end)
 
@@ -230,7 +234,7 @@ return function()
 			})
 
 			local component = router.getComponentForRouteName("Foo")
-			expect(component).to.equal(testComponent)
+			jestExpect(component).toBe(testComponent)
 		end)
 	end)
 
@@ -242,8 +246,8 @@ return function()
 			})
 
 			local state = router.getStateForAction(NavigationActions.init(), nil)
-			expect(#state.routes).to.equal(2)
-			expect(state.routes[state.index].routeName).to.equal("Foo")
+			jestExpect(#state.routes).toEqual(2)
+			jestExpect(state.routes[state.index].routeName).toEqual("Foo")
 		end)
 
 		it("should adjust initial state index to match initialRouteName's index", function()
@@ -253,7 +257,7 @@ return function()
 			})
 
 			local state = router.getStateForAction(NavigationActions.init(), nil)
-			expect(state.routes[state.index].routeName).to.equal("Foo")
+			jestExpect(state.routes[state.index].routeName).toEqual("Foo")
 
 			local router2 =  SwitchRouter({
 				{ Foo = { screen = function() end } },
@@ -263,7 +267,7 @@ return function()
 			})
 
 			local state2 = router2.getStateForAction(NavigationActions.init(), nil)
-			expect(state2.routes[state2.index].routeName).to.equal("Bar")
+			jestExpect(state2.routes[state2.index].routeName).toEqual("Bar")
 		end)
 
 		it("should respect optional order property", function()
@@ -273,8 +277,8 @@ return function()
 			})
 
 			local state = router.getStateForAction(NavigationActions.init(), nil)
-			expect(state.routes[1].routeName).to.equal("Foo")
-			expect(state.routes[2].routeName).to.equal("Bar")
+			jestExpect(state.routes[1].routeName).toEqual("Foo")
+			jestExpect(state.routes[2].routeName).toEqual("Bar")
 		end)
 
 		it("should incorporate child router state", function()
@@ -294,8 +298,8 @@ return function()
 
 			local state = router.getStateForAction(NavigationActions.init(), nil)
 			local activeState = state.routes[state.index]
-			expect(activeState.routeName).to.equal("Foo") -- parent's tracking uses parent's route name
-			expect(activeState.routes[activeState.index].routeName).to.equal("Bar")
+			jestExpect(activeState.routeName).toEqual("Foo") -- parent's tracking uses parent's route name
+			jestExpect(activeState.routes[activeState.index].routeName).toEqual("Bar")
 		end)
 
 		it("should let active child handle non-init action first", function()
@@ -315,8 +319,8 @@ return function()
 			})
 
 			local state = router.getStateForAction(NavigationActions.navigate({ routeName = "City" }))
-			expect(state.routes[1].index).to.equal(2)
-			expect(state.index).to.equal(1)
+			jestExpect(state.routes[1].index).toEqual(2)
+			jestExpect(state.index).toEqual(1)
 		end)
 
 		it("should go back to initial route index if BackBehavior.InitialRoute", function()
@@ -336,7 +340,7 @@ return function()
 			}
 
 			local newState = router.getStateForAction(NavigationActions.back(), prevState)
-			expect(newState.index).to.equal(1)
+			jestExpect(newState.index).toEqual(1)
 		end)
 
 		it("should not change state on back action if BackBehavior.None", function()
@@ -354,7 +358,7 @@ return function()
 			}
 
 			local newState = router.getStateForAction(NavigationActions.back(), prevState)
-			expect(newState).to.equal(prevState)
+			jestExpect(newState).toBe(prevState)
 		end)
 
 		it("should change active route on navigate", function()
@@ -364,8 +368,8 @@ return function()
 			})
 
 			local newState = router.getStateForAction(NavigationActions.navigate({ routeName = "Bar" }))
-			expect(newState.index).to.equal(2)
-			expect(newState.routes[newState.index].routeName).to.equal("Bar")
+			jestExpect(newState.index).toEqual(2)
+			jestExpect(newState.routes[newState.index].routeName).toEqual("Bar")
 		end)
 
 		it("should pass sub-action to child router on navigate", function()
@@ -389,8 +393,8 @@ return function()
 			}))
 
 			local activeRoute = newState.routes[newState.index]
-			expect(activeRoute.routeName).to.equal("Bar")
-			expect(activeRoute.routes[activeRoute.index].routeName).to.equal("State")
+			jestExpect(activeRoute.routeName).toEqual("Bar")
+			jestExpect(activeRoute.routes[activeRoute.index].routeName).toEqual("State")
 		end)
 
 		it("should return initial state if navigating to active child without previous state", function()
@@ -412,7 +416,7 @@ return function()
 				routeName = "Foo",
 			}))
 
-			expect(newState.routes[newState.index].routeName).to.equal("Foo")
+			jestExpect(newState.routes[newState.index].routeName).toEqual("Foo")
 		end)
 
 		it("should reset state for deactivated route by default", function()
@@ -430,7 +434,7 @@ return function()
 			}
 
 			local state = router.getStateForAction(NavigationActions.navigate({ routeName = "Bar" }), initialState)
-			expect(state.routes[1].params).to.equal(nil) -- should be empty
+			jestExpect(state.routes[1].params).toEqual(nil) -- should be empty
 		end)
 
 		it("should not reset state for deactivated route if resetOnBlur is false", function()
@@ -452,7 +456,7 @@ return function()
 			}
 
 			local state = router.getStateForAction(NavigationActions.navigate({ routeName = "Bar" }), initialState)
-			expect(state.routes[1].params).to.equal(testParams)
+			jestExpect(state.routes[1].params).toEqual(testParams)
 		end)
 
 		it("should set params on route for setParams action", function()
@@ -466,7 +470,7 @@ return function()
 				params = { a = 1 },
 			}))
 
-			expect(newState.routes[newState.index].params.a).to.equal(1)
+			jestExpect(newState.routes[newState.index].params.a).toEqual(1)
 		end)
 
 		it("should preserve route configured params for child router", function()
@@ -491,7 +495,7 @@ return function()
 			})
 
 			local state = router.getStateForAction(NavigationActions.init())
-			expect(state.routes[state.index].params.a).to.equal(1)
+			jestExpect(state.routes[state.index].params.a).toEqual(1)
 		end)
 
 		it("should merge initialRouteParams with initial route's own params", function()
@@ -513,10 +517,10 @@ return function()
 			})
 
 			local state = router.getStateForAction(NavigationActions.init())
-			expect(state.routes[1].params.a).to.equal(2)
-			expect(state.routes[1].params.b).to.equal(3)
-			expect(state.routes[2].params.a).to.equal(1)
-			expect(state.routes[2].params.b).to.equal(nil)
+			jestExpect(state.routes[1].params.a).toEqual(2)
+			jestExpect(state.routes[1].params.b).toEqual(3)
+			jestExpect(state.routes[2].params.a).toEqual(1)
+			jestExpect(state.routes[2].params.b).toEqual(nil)
 		end)
 
 		it("should merge init action params with initial route's own params and initialRouteParams", function()
@@ -529,9 +533,9 @@ return function()
 			})
 
 			local state = router.getStateForAction(NavigationActions.init({ params = { b = 2 } }))
-			expect(state.routes[1].params.a).to.equal(1)
-			expect(state.routes[1].params.b).to.equal(2)
-			expect(state.routes[1].params.c).to.equal(3)
+			jestExpect(state.routes[1].params.a).toEqual(1)
+			jestExpect(state.routes[1].params.b).toEqual(2)
+			jestExpect(state.routes[1].params.c).toEqual(3)
 		end)
 
 		it("should merge navigate action params for child router", function()
@@ -558,8 +562,8 @@ return function()
 				params = { b = 3 },
 			}))
 
-			expect(state.routes[1].routes[1].params.a).to.equal(2)
-			expect(state.routes[1].routes[1].params.b).to.equal(3)
+			jestExpect(state.routes[1].routes[1].params.a).toEqual(2)
+			jestExpect(state.routes[1].routes[1].params.b).toEqual(3)
 		end)
 
 		it("should propagate a child router getStateForAction failure to caller", function()
@@ -582,7 +586,7 @@ return function()
 			childRouter.getStateForAction = function() return nil end
 
 			local state = router.getStateForAction(NavigationActions.navigate("Bar"), initialState)
-			expect(state).to.equal(nil)
+			jestExpect(state).toEqual(nil)
 		end)
 	end)
 end

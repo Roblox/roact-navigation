@@ -1,6 +1,11 @@
 return function()
-	local TabRouter = require(script.Parent.Parent.TabRouter)
-	local NavigationActions = require(script.Parent.Parent.Parent.NavigationActions)
+	local routersModule = script.Parent.Parent
+	local RoactNavigationModule = routersModule.Parent
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+
+	local TabRouter = require(routersModule.TabRouter)
+	local NavigationActions = require(RoactNavigationModule.NavigationActions)
 
 	-- NOTE: Most functional tests are covered by SwitchRouter.spec.lua
 	-- We just check that we can mount a basic case, and check that our custom
@@ -13,7 +18,7 @@ return function()
 		})
 
 		local component = router.getComponentForRouteName("Foo")
-		expect(component).to.equal(testComponent)
+		jestExpect(component).toEqual(testComponent)
 	end)
 
 	it("should not reset state for deactivated route", function()
@@ -33,7 +38,7 @@ return function()
 		}
 
 		local state = router.getStateForAction(NavigationActions.navigate({ routeName = "Bar" }), initialState)
-		expect(state.routes[1].params).to.equal(testParams)
+		jestExpect(state.routes[1].params).toBe(testParams)
 	end)
 
 	it("should go back to initial route index", function()
@@ -51,6 +56,6 @@ return function()
 		}
 
 		local newState = router.getStateForAction(NavigationActions.back(), prevState)
-		expect(newState.index).to.equal(1)
+		jestExpect(newState.index).toEqual(1)
 	end)
 end

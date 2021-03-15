@@ -1,27 +1,32 @@
 return function()
-	local StackActions = require(script.Parent.Parent.StackActions)
+	local routersModule = script.Parent.Parent
+	local RoactNavigationModule = routersModule.Parent
+	local Packages = RoactNavigationModule.Parent
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+
+	local StackActions = require(routersModule.StackActions)
 
 	it("throws when indexing an unknown field", function()
-		expect(function()
+		jestExpect(function()
 			return StackActions.foo
-		end).to.throw("\"foo\" is not a valid member of StackActions")
+		end).toThrow("\"foo\" is not a valid member of StackActions")
 	end)
 
 	describe("StackActions token tests", function()
 		it("should return same object for each token for multiple calls", function()
-			expect(StackActions.Pop).to.equal(StackActions.Pop)
-			expect(StackActions.PopToTop).to.equal(StackActions.PopToTop)
-			expect(StackActions.Push).to.equal(StackActions.Push)
-			expect(StackActions.Reset).to.equal(StackActions.Reset)
-			expect(StackActions.Replace).to.equal(StackActions.Replace)
+			jestExpect(StackActions.Pop).toBe(StackActions.Pop)
+			jestExpect(StackActions.PopToTop).toBe(StackActions.PopToTop)
+			jestExpect(StackActions.Push).toBe(StackActions.Push)
+			jestExpect(StackActions.Reset).toBe(StackActions.Reset)
+			jestExpect(StackActions.Replace).toBe(StackActions.Replace)
 		end)
 
 		it("should return matching string names for symbols", function()
-			expect(tostring(StackActions.Pop)).to.equal("POP")
-			expect(tostring(StackActions.PopToTop)).to.equal("POP_TO_TOP")
-			expect(tostring(StackActions.Push)).to.equal("PUSH")
-			expect(tostring(StackActions.Reset)).to.equal("RESET")
-			expect(tostring(StackActions.Replace)).to.equal("REPLACE")
+			jestExpect(tostring(StackActions.Pop)).toEqual("POP")
+			jestExpect(tostring(StackActions.PopToTop)).toEqual("POP_TO_TOP")
+			jestExpect(tostring(StackActions.Push)).toEqual("PUSH")
+			jestExpect(tostring(StackActions.Reset)).toEqual("RESET")
+			jestExpect(tostring(StackActions.Replace)).toEqual("REPLACE")
 		end)
 	end)
 
@@ -31,14 +36,14 @@ return function()
 				n = "n",
 			})
 
-			expect(popTable.type).to.equal(StackActions.Pop)
-			expect(popTable.n).to.equal("n")
+			jestExpect(popTable.type).toBe(StackActions.Pop)
+			jestExpect(popTable.n).toEqual("n")
 		end)
 
 		it("should return a pop to top action for popToTop()", function()
 			local popToTopTable = StackActions.popToTop()
 
-			expect(popToTopTable.type).to.equal(StackActions.PopToTop)
+			jestExpect(popToTopTable.type).toBe(StackActions.PopToTop)
 		end)
 
 		it("should return a push action for push()", function()
@@ -48,10 +53,10 @@ return function()
 				action = "action",
 			})
 
-			expect(pushTable.type).to.equal(StackActions.Push)
-			expect(pushTable.routeName).to.equal("routeName")
-			expect(pushTable.params).to.equal("params")
-			expect(pushTable.action).to.equal("action")
+			jestExpect(pushTable.type).toBe(StackActions.Push)
+			jestExpect(pushTable.routeName).toEqual("routeName")
+			jestExpect(pushTable.params).toEqual("params")
+			jestExpect(pushTable.action).toEqual("action")
 		end)
 
 		it("should return a reset action for reset()", function()
@@ -61,9 +66,9 @@ return function()
 				key = "key",
 			})
 
-			expect(resetTable.type).to.equal(StackActions.Reset)
-			expect(resetTable.index).to.equal("index")
-			expect(resetTable.key).to.equal("key")
+			jestExpect(resetTable.type).toBe(StackActions.Reset)
+			jestExpect(resetTable.index).toEqual("index")
+			jestExpect(resetTable.key).toEqual("key")
 		end)
 
 		it("should return a replace action for replace()", function()
@@ -76,13 +81,13 @@ return function()
 				immediate = "immediate",
 			})
 
-			expect(replaceTable.type).to.equal(StackActions.Replace)
-			expect(replaceTable.key).to.equal("key")
-			expect(replaceTable.newKey).to.equal("newKey")
-			expect(replaceTable.routeName).to.equal("routeName")
-			expect(replaceTable.params).to.equal("params")
-			expect(replaceTable.action).to.equal("action")
-			expect(replaceTable.immediate).to.equal("immediate")
+			jestExpect(replaceTable.type).toBe(StackActions.Replace)
+			jestExpect(replaceTable.key).toEqual("key")
+			jestExpect(replaceTable.newKey).toEqual("newKey")
+			jestExpect(replaceTable.routeName).toEqual("routeName")
+			jestExpect(replaceTable.params).toEqual("params")
+			jestExpect(replaceTable.action).toEqual("action")
+			jestExpect(replaceTable.immediate).toEqual("immediate")
 		end)
 
 		it("should return a complete transition action with matching data for call to completeTransition()", function()
@@ -91,9 +96,9 @@ return function()
 				toChildKey = "toChildKey",
 			})
 
-			expect(completeTransitionTable.type).to.equal(StackActions.CompleteTransition)
-			expect(completeTransitionTable.key).to.equal("key")
-			expect(completeTransitionTable.toChildKey).to.equal("toChildKey")
+			jestExpect(completeTransitionTable.type).toBe(StackActions.CompleteTransition)
+			jestExpect(completeTransitionTable.key).toEqual("key")
+			jestExpect(completeTransitionTable.toChildKey).toEqual("toChildKey")
 		end)
 	end)
 end

@@ -1,18 +1,19 @@
 -- upstream: https://github.com/react-navigation/react-navigation/blob/a57e47786c5654a3803582b2c4953547164f26a0/packages/core/src/routers/__tests__/Routers.test.js
 
 return function()
-	local Root = script.Parent.Parent.Parent
-	local Packages = Root.Parent
-
+	local routersModule = script.Parent.Parent
+	local RoactNavigationModule = routersModule.Parent
+	local Packages = RoactNavigationModule.Parent
 	local Cryo = require(Packages.Cryo)
 	local Roact = require(Packages.Roact)
-	local StackRouter = require(script.Parent.Parent.StackRouter)
-	local TabRouter = require(script.Parent.Parent.TabRouter)
-	local SwitchRouter = require(script.Parent.Parent.SwitchRouter)
-	local NavigationActions = require(Root.NavigationActions)
-	local StackActions = require(Root.routers.StackActions)
-	local KeyGenerator = require(Root.utils.KeyGenerator)
-	local expectDeepEqual = require(Root.utils.expectDeepEqual)
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+
+	local StackRouter = require(routersModule.StackRouter)
+	local TabRouter = require(routersModule.TabRouter)
+	local SwitchRouter = require(routersModule.SwitchRouter)
+	local NavigationActions = require(RoactNavigationModule.NavigationActions)
+	local StackActions = require(RoactNavigationModule.routers.StackActions)
+	local KeyGenerator = require(RoactNavigationModule.utils.KeyGenerator)
 
 	beforeEach(function()
 		KeyGenerator._TESTING_ONLY_normalize_keys()
@@ -67,7 +68,7 @@ return function()
 					{ key = "A", routeName = "Baz", params = { id = "123" } },
 				}
 
-				expect(
+				jestExpect(
 					router.getScreenOptions(
 						{
 							state = routes[1],
@@ -76,8 +77,8 @@ return function()
 						},
 						{}
 					).title
-				).to.equal(nil)
-				expect(
+				).toEqual(nil)
+				jestExpect(
 					router.getScreenOptions(
 						{
 							state = routes[2],
@@ -86,8 +87,8 @@ return function()
 						},
 						{}
 					).title
-				).to.equal("BarTitle")
-				expect(
+				).toEqual("BarTitle")
+				jestExpect(
 					router.getScreenOptions(
 						{
 							state = routes[3],
@@ -96,7 +97,7 @@ return function()
 						},
 						{}
 					).title
-				).to.equal("Baz-123")
+				).toEqual("Baz-123")
 			end)
 
 			it(("set params works in %s"):format(routerName), function()
@@ -113,14 +114,14 @@ return function()
 				local initState = router.getStateForAction(NavigationActions.init())
 				local initRoute = initState.routes[initState.index]
 
-				expect(initRoute.params).to.equal(nil)
+				jestExpect(initRoute.params).toEqual(nil)
 
 				local state0 = router.getStateForAction(
 					NavigationActions.setParams({ params = {foo = 42}, key = initRoute.key }),
 					initState
 				)
 
-				expect(state0.routes[state0.index].params.foo).to.equal(42)
+				jestExpect(state0.routes[state0.index].params.foo).toEqual(42)
 			end)
 
 			it("merges existing params when set params on existing state", function()
@@ -136,16 +137,17 @@ return function()
 					key = key,
 				})
 
-				expect(state.index).to.equal(1)
-				expect(state.routes[1].key).to.equal(key)
-				expectDeepEqual(state.routes[1].params, { a = 1 })
+				jestExpect(state).toMatchObject({
+					index = 1,
+					routes = {{ key = key, params = { a = 1 } }}
+				})
 
 				local newState = router.getStateForAction(
 					NavigationActions.setParams({ key = key, params = { b = 2 } }),
 					state
 				)
 
-				expectDeepEqual(newState.routes[newState.index].params, { a = 1, b = 2 })
+				jestExpect(newState.routes[newState.index].params).toEqual({ a = 1, b = 2 })
 			end)
 
 			it("merges params when setting params during init", function()
@@ -159,8 +161,7 @@ return function()
 					NavigationActions.setParams({ key = "Foo", params = { b = 2 } })
 				)
 
-				expectDeepEqual(
-					newState.routes[newState.index].params,
+				jestExpect(newState.routes[newState.index].params).toEqual(
 					{ a = 1, b = 2 }
 				)
 			end)
@@ -211,18 +212,18 @@ return function()
 			state1
 		)
 
-		expect(state2.index).to.equal(2)
-		expect(state2.routes[2].index).to.equal(1)
-		expect(state2.routes[2].routes[1].index).to.equal(1)
+		jestExpect(state2.index).toEqual(2)
+		jestExpect(state2.routes[2].index).toEqual(1)
+		jestExpect(state2.routes[2].routes[1].index).toEqual(1)
 
 		local state3 = TestRouter.getStateForAction(
 			{ type = NavigationActions.Navigate, routeName = "Second2" },
 			state2
 		)
 
-		expect(state3.index).to.equal(2)
-		expect(state3.routes[2].index).to.equal(2) -- second
-		expect(state3.routes[2].routes[2].index).to.equal(2) -- second.second2
+		jestExpect(state3.index).toEqual(2)
+		jestExpect(state3.routes[2].index).toEqual(2) -- second
+		jestExpect(state3.routes[2].routes[2].index).toEqual(2) -- second.second2
 
 		local state4 = TestRouter.getStateForAction(
 			{
@@ -234,9 +235,9 @@ return function()
 			true
 		)
 
-		expect(state4.index).to.equal(2) -- main
-		expect(state4.routes[2].index).to.equal(1) -- first
-		expect(state4.routes[2].routes[1].index).to.equal(2) -- first2
+		jestExpect(state4.index).toEqual(2) -- main
+		jestExpect(state4.routes[2].index).toEqual(1) -- first
+		jestExpect(state4.routes[2].routes[1].index).toEqual(2) -- first2
 
 		local state5 = TestRouter.getStateForAction(
 			{
@@ -247,9 +248,9 @@ return function()
 			state3 -- second.second2 is active on state3
 		)
 
-		expect(state5.index).to.equal(2) -- main
-		expect(state5.routes[2].index).to.equal(1) -- first
-		expect(state5.routes[2].routes[1].index).to.equal(1) -- first.first1
+		jestExpect(state5.index).toEqual(2) -- main
+		jestExpect(state5.routes[2].index).toEqual(1) -- first
+		jestExpect(state5.routes[2].routes[1].index).toEqual(1) -- first.first1
 	end)
 
 	it("Handles no-op actions with tabs within stack router", function()
@@ -276,19 +277,19 @@ return function()
 			{ type = NavigationActions.Navigate, routeName = "Qux"}
 		)
 
-		expect(state1.routes[1].key).to.equal("id-0")
-		expect(state2.routes[1].key).to.equal("id-1")
+		jestExpect(state1.routes[1].key).toEqual("id-0")
+		jestExpect(state2.routes[1].key).toEqual("id-1")
 
 		state1.routes[1].key = state2.routes[1].key
 
-		expectDeepEqual(state1, state2)
+		jestExpect(state1).toEqual(state2)
 
 		local state3 = TestRouter.getStateForAction(
 			{ type = NavigationActions.Navigate, routeName = "Zap" },
 			state2
 		)
 
-		expectDeepEqual(state2, state3)
+		jestExpect(state2).toEqual(state3)
 	end)
 
 	it("Handles deep action", function()
@@ -320,7 +321,7 @@ return function()
 			},
 		}
 
-		expectDeepEqual(state1, expectedState)
+		jestExpect(state1).toEqual(expectedState)
 
 		local state2 = TestRouter.getStateForAction(
 			{
@@ -332,8 +333,8 @@ return function()
 			state1
 		)
 
-		expect(state2 and state2.index).to.equal(2)
-		expect(state2 and state2.routes[2].index).to.equal(2)
+		jestExpect(state2 and state2.index).toEqual(2)
+		jestExpect(state2 and state2.routes[2].index).toEqual(2)
 	end)
 
 	it("Handles the navigate action with params", function()
@@ -362,8 +363,8 @@ return function()
 			state
 		)
 
-		expectDeepEqual(state2 and state2.routes[2].params, { foo = "42" })
-		expectDeepEqual(state2 and state2.routes[2].routes, {
+		jestExpect(state2 and state2.routes[2].params).toEqual({ foo = "42" })
+		jestExpect(state2 and state2.routes[2].routes).toEqual({
 			{
 				key = "Baz",
 				routeName = "Baz",
@@ -401,8 +402,8 @@ return function()
 			state
 		)
 
-		expect(state2 and state2.index).to.equal(1)
-		expectDeepEqual(state2 and state2.routes[1].routes, {
+		jestExpect(state2 and state2.index).toEqual(1)
+		jestExpect(state2 and state2.routes[1].routes).toEqual({
 			{
 				key = "Baz",
 				routeName = "Baz",
@@ -434,19 +435,19 @@ return function()
 			{ type = NavigationActions.Navigate, immediate = true, routeName = "Qux" }
 		)
 
-		expect(state1.routes[1].key).to.equal("id-0")
-		expect(state2.routes[1].key).to.equal("id-1")
+		jestExpect(state1.routes[1].key).toEqual("id-0")
+		jestExpect(state2.routes[1].key).toEqual("id-1")
 
 		state1.routes[1].key = state2.routes[1].key
 
-		expectDeepEqual(state1, state2)
+		jestExpect(state1).toEqual(state2)
 
 		local state3 = TestRouter.getStateForAction(
 			{ type = NavigationActions.Navigate, immediate = true, routeName = "Zap" },
 			state2
 		)
 
-		expectDeepEqual(state2, state3)
+		jestExpect(state2).toEqual(state3)
 	end)
 
 	it("Does not switch tab index when TabRouter child handles COMPLETE_NAVIGATION or SET_PARAMS", function()
@@ -500,8 +501,8 @@ return function()
 			state3
 		)
 
-		expect(stateAfterCompleteTransition.index).to.equal(2)
-		expect(stateAfterSetParams.index).to.equal(2)
+		jestExpect(stateAfterCompleteTransition.index).toEqual(2)
+		jestExpect(stateAfterSetParams.index).toEqual(2)
 	end)
 
 	it("Inner actions are only unpacked if the current tab matches", function()
@@ -572,8 +573,7 @@ return function()
 
 		local innerState = state and state.routes[1] or state
 
-		expectDeepEqual(
-			expectedState and comparable(expectedState),
+		jestExpect(expectedState and comparable(expectedState)).toEqual(
 			innerState and comparable(innerState)
 		)
 	end)
