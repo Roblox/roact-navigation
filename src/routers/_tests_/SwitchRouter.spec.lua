@@ -199,10 +199,7 @@ return function()
 
 			navigateTo("B")
 			jestExpect(getState().index).toEqual(2)
-			jestExpect(getState().routeKeyHistory).toEqual({
-				"A",
-				"B",
-			})
+			jestExpect(getState().routeKeyHistory).toEqual({"A", "B"})
 
 			navigateTo("B2")
 			jestExpect(getState().index).toEqual(2)

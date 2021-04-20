@@ -22,6 +22,7 @@ return {
 	StackRouter = require(script.routers.StackRouter),
 	SwitchRouter = require(script.routers.SwitchRouter),
 	TabRouter = require(script.routers.TabRouter),
+	DontMatchEmptyPath = require(script.routers:FindFirstChild("NullPathSymbol.roblox")),
 
 	-- Navigation Actions
 	Actions = require(script.NavigationActions),

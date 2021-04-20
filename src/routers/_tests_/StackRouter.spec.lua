@@ -8,6 +8,7 @@ return function()
 	local Roact = require(Packages.Roact)
 	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
 
+	local RoactNavigation = require(RoactNavigationModule)
 	local StackRouter = require(routersModule.StackRouter)
 	local StackActions = require(RoactNavigationModule.routers.StackActions)
 	local NavigationActions = require(RoactNavigationModule.NavigationActions)
@@ -82,7 +83,9 @@ return function()
 
 	local TestStackRouter = StackRouter({
 		{ main = { screen = MainNavigator } },
-		{ baz = { path = nil, screen = FooNavigator } },
+		-- deviation: instead of using `null` paths, we have a special symbol to
+		-- not match on empty paths
+		{ baz = { path = RoactNavigation.DontMatchEmptyPath, screen = FooNavigator } },
 		{ auth = { screen = AuthNavigator } },
 		{ person = { path = "people/:id", screen = PersonScreen } },
 		{ foo = { path = "fo/:fooThing", screen = FooNavigator } },
@@ -203,8 +206,7 @@ return function()
 			jestExpect(router.getComponentForRouteName("baz")).toBe(BazScreen)
 		end)
 
-		-- deviation: StackRouter.getActionForPathAndParams not implemented
-		itSKIP("Parses simple paths", function()
+		it("Parses simple paths", function()
 			jestExpect(AuthNavigator.router.getActionForPathAndParams("login")).toEqual({
 				type = NavigationActions.Navigate,
 				routeName = "login",
@@ -212,8 +214,7 @@ return function()
 			})
 		end)
 
-		-- deviation: StackRouter.getActionForPathAndParams not implemented
-		itSKIP("Parses paths with a param", function()
+		it("Parses paths with a param", function()
 			jestExpect(TestStackRouter.getActionForPathAndParams("people/foo")).toEqual({
 				type = NavigationActions.Navigate,
 				routeName = "person",
@@ -221,8 +222,7 @@ return function()
 			})
 		end)
 
-		-- deviation: StackRouter.getActionForPathAndParams not implemented
-		itSKIP("Parses paths with a query", function()
+		it("Parses paths with a query", function()
 			jestExpect(
 				TestStackRouter.getActionForPathAndParams("people/foo", {
 					code = "test",
@@ -239,8 +239,7 @@ return function()
 			})
 		end)
 
-		-- deviation: StackRouter.getActionForPathAndParams not implemented
-		itSKIP("Parses paths with an empty query value", function()
+		it("Parses paths with an empty query value", function()
 			jestExpect(
 				TestStackRouter.getActionForPathAndParams("people/foo", {
 					code = "",
@@ -257,8 +256,7 @@ return function()
 			})
 		end)
 
-		-- deviation: StackRouter.getActionForPathAndParams not implemented
-		itSKIP("Correctly parses a path without arguments into an action chain", function()
+		it("Correctly parses a path without arguments into an action chain", function()
 			local uri = "auth/login"
 			local action = TestStackRouter.getActionForPathAndParams(uri)
 
@@ -274,8 +272,7 @@ return function()
 			})
 		end)
 
-		-- deviation: StackRouter.getActionForPathAndParams not implemented
-		itSKIP("Correctly parses a path with arguments into an action chain", function()
+		it("Correctly parses a path with arguments into an action chain", function()
 			local uri = "main/p/4/list/10259959195"
 			local action = TestStackRouter.getActionForPathAndParams(uri)
 
@@ -296,8 +293,7 @@ return function()
 			})
 		end)
 
-		-- deviation: StackRouter.getActionForPathAndParams not implemented
-		itSKIP("Correctly parses a path to the router connected to another router "
+		it("Correctly parses a path to the router connected to another router "
 				.. "through a pure wildcard route into an action chain", function()
 			local uri = "b/123"
 			local action = TestStackRouter.getActionForPathAndParams(uri)
@@ -316,16 +312,14 @@ return function()
 			})
 		end)
 
-		-- deviation: StackRouter.getActionForPathAndParams not implemented
-		itSKIP("Correctly returns null action for non-existent path", function()
+		it("Correctly returns null action for non-existent path", function()
 			local uri = "asdf/1234"
 			local action = TestStackRouter.getActionForPathAndParams(uri)
 
 			jestExpect(action).toEqual(nil)
 		end)
 
-		-- deviation: StackRouter.getActionForPathAndParams not implemented
-		itSKIP("Correctly returns action chain for partially matched path", function()
+		it("Correctly returns action chain for partially matched path", function()
 			local uri = "auth/login"
 			local action = TestStackRouter.getActionForPathAndParams(uri)
 
@@ -341,8 +335,7 @@ return function()
 			})
 		end)
 
-		-- deviation: StackRouter.getActionForPathAndParams not implemented
-		itSKIP("Correctly returns action for path with multiple parameters", function()
+		it("Correctly returns action for path with multiple parameters", function()
 			local path = "fo/22/b/hello"
 			local action = TestStackRouter.getActionForPathAndParams(path)
 
@@ -449,8 +442,7 @@ return function()
 			jestExpect(state3 and state3.index).toEqual(1)
 		end)
 
-		-- deviation: StackRouter.getActionForPathAndParams not implemented
-		itSKIP("Handle navigation to nested navigator", function()
+		it("Handle navigation to nested navigator", function()
 			local action = TestStackRouter.getActionForPathAndParams("fo/22/b/hello")
 			local state2 = TestStackRouter.getStateForAction(action)
 
@@ -553,34 +545,34 @@ return function()
 			}
 			local poppedState = TestRouter.getStateForAction(StackActions.pop(), state)
 
-			jestExpect(#poppedState.routes).toEqual(3)
-			jestExpect(poppedState.index).toEqual(3)
-			jestExpect(poppedState.isTransitioning).toEqual(true)
+			jestExpect(#poppedState.routes).toBe(3)
+			jestExpect(poppedState.index).toBe(3)
+			jestExpect(poppedState.isTransitioning).toBe(true)
 
 			local poppedState2 = TestRouter.getStateForAction(
 				StackActions.pop({ n = 2, immediate = true }),
 				state
 			)
 
-			jestExpect(#poppedState2.routes).toEqual(2)
-			jestExpect(poppedState2.index).toEqual(2)
-			jestExpect(poppedState2.isTransitioning).toEqual(false)
+			jestExpect(#poppedState2.routes).toBe(2)
+			jestExpect(poppedState2.index).toBe(2)
+			jestExpect(poppedState2.isTransitioning).toBe(false)
 
 			local poppedState3 = TestRouter.getStateForAction(
 				StackActions.pop({ n = 5 }),
 				state
 			)
-			jestExpect(#poppedState3.routes).toEqual(1)
-			jestExpect(poppedState3.index).toEqual(1)
-			jestExpect(poppedState3.isTransitioning).toEqual(true)
+			jestExpect(#poppedState3.routes).toBe(1)
+			jestExpect(poppedState3.index).toBe(1)
+			jestExpect(poppedState3.isTransitioning).toBe(true)
 			local poppedState4 = TestRouter.getStateForAction(
 				StackActions.pop({ key = "C", prune = false, immediate = true }),
 				state
 			)
 
-			jestExpect(#poppedState4.routes).toEqual(3)
-			jestExpect(poppedState4.index).toEqual(3)
-			jestExpect(poppedState4.isTransitioning).toEqual(false)
+			jestExpect(#poppedState4.routes).toBe(3)
+			jestExpect(poppedState4.index).toBe(3)
+			jestExpect(poppedState4.isTransitioning).toBe(false)
 			jestExpect(poppedState4.routes).toEqual({
 				{ key = "A", routeName = "foo" },
 				{ key = "B", routeName = "bar", params = { bazId = "321" } },
@@ -593,9 +585,9 @@ return function()
 				prune = false,
 			}), state)
 
-			jestExpect(#poppedState5.routes).toEqual(2)
-			jestExpect(poppedState5.index).toEqual(2)
-			jestExpect(poppedState5.isTransitioning).toEqual(true)
+			jestExpect(#poppedState5.routes).toBe(2)
+			jestExpect(poppedState5.index).toBe(2)
+			jestExpect(poppedState5.isTransitioning).toBe(true)
 			jestExpect(poppedState5.routes).toEqual({
 				{ key = "A", routeName = "foo" },
 				{ key = "D", routeName = "bar" },
@@ -633,7 +625,7 @@ return function()
 
 			jestExpect(#poppedImmediatelyState.routes).toBe(1)
 			jestExpect(poppedImmediatelyState.index).toBe(1)
-			jestExpect(poppedImmediatelyState.isTransitioning).toEqual(false)
+			jestExpect(poppedImmediatelyState.isTransitioning).toBe(false)
 		end)
 
 		it("Navigate does not push duplicate routeName", function()
@@ -856,7 +848,7 @@ return function()
 				initState
 			)
 
-			jestExpect(navigatedState).toEqual(nil)
+			jestExpect(navigatedState).toBe(nil)
 		end)
 
 		it("Push behaves like navigate, except for key", function()
@@ -1068,9 +1060,7 @@ return function()
 			jestExpect(replacedState.routes[2].routes[2].index).toEqual(3)
 			jestExpect(#replacedState.routes[2].routes[2].routes).toEqual(3)
 			jestExpect(replacedCurrentScreen.key).never.toEqual(originalCurrentScreen.key)
-			jestExpect(replacedCurrentScreen.routeName).never.toEqual(
-				originalCurrentScreen.routeName
-			)
+			jestExpect(replacedCurrentScreen.routeName).never.toEqual(originalCurrentScreen.routeName)
 			jestExpect(replacedCurrentScreen.routeName).toEqual("Woo")
 			jestExpect(replacedCurrentScreen.params.meaning).toEqual(42)
 		end)
@@ -1259,8 +1249,7 @@ return function()
 			})
 		end)
 
-		-- deviation: `getPathAndParamsForState` not implemented
-		itSKIP("Gets deep path (stack behavior)", function()
+		it("Gets deep path (stack behavior)", function()
 			local ScreenA = Roact.Component:extend("ScreenA")
 			function ScreenA:render()
 				return Roact.createElement("Frame")

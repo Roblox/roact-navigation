@@ -1,14 +1,14 @@
 -- upstream https://github.com/react-navigation/react-navigation/blob/9b55493e7662f4d54c21f75e53eb3911675f61bc/packages/core/src/views/__tests__/NavigationFocusEvents.test.js
 
 return function()
-	local routersModule = script.Parent.Parent
-	local RoactNavigationModule = routersModule.Parent
+	local viewsModule = script.Parent.Parent
+	local RoactNavigationModule = viewsModule.Parent
 	local Packages = RoactNavigationModule.Parent
 	local Cryo = require(Packages.Cryo)
 	local Roact = require(Packages.Roact)
 	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
 
-	local NavigationFocusEvents = require(routersModule.NavigationFocusEvents)
+	local NavigationFocusEvents = require(viewsModule.NavigationFocusEvents)
 	local getEventManager = require(RoactNavigationModule.getEventManager)
 	local NavigationActions = require(RoactNavigationModule.NavigationActions)
 	local StackActions = require(RoactNavigationModule.routers.StackActions)

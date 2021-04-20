@@ -56,6 +56,28 @@ createRobloxStackRouter({
 })
 ```
 
+## Null paths in route config
+
+In upstream, you can set the `path` property of a route to prevent this route to match againts empty paths. To have the same behavior in Luau, we expose `RoactNavigation.DontMatchEmptyPath`. For example:
+
+```js
+StackRouter({
+	foo: { screen: FooNavigator, path: null },
+})
+```
+
+Would translate to the following Luau code
+
+```lua
+StackRouter({
+	{ foo = { screen = FooNavigator, path = RoactNavigation.DontMatchEmptyPath } },
+})
+```
+
+## URLs parsing is case sensitive
+
+Because the underlying regular expression library does not support case insensitiveness, URL parsing will be case sensitive.
+
 ## Actions
 
 The different actions under NavigationActions, StackActions and SwitchActions do not have the same casing as in React Navigation. However, the action creators match, simply just not the action types themselves. There is a good chance you won't need those, but here are the differences:

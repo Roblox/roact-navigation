@@ -46,7 +46,11 @@ return function()
 			local success, message = TableUtilities.DeepEqual(1, "1")
 
 			expect(success).to.equal(false)
-			expect(message:find("first is of type number, but second is of type string")).to.be.ok()
+
+			assert(
+				message:find("first is of type number, but second is of type string"),
+				"cannot find substring in: " .. message
+			)
 		end)
 
 		it("should compare (and report about) nested tables", function()
@@ -78,7 +82,10 @@ return function()
 			local success, message = TableUtilities.DeepEqual(A, C)
 
 			expect(success).to.equal(false)
-			expect(message:find("first%[nested%]%[bar%] ~= second%[nested%]%[bar%]")).to.be.ok()
+			assert(
+				message:find("first%[nested%]%[bar%] ~= second%[nested%]%[bar%]"),
+				"cannot find substring in: " .. message
+			)
 		end)
 
 		it("should be commutative", function()

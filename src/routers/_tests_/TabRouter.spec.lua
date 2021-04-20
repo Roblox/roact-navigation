@@ -105,8 +105,8 @@ return function()
 			}
 
 			jestExpect(state2).toEqual(expectedState2)
-			jestExpect(router.getComponentForState(expectedState)).toEqual(ScreenA)
-			jestExpect(router.getComponentForState(expectedState2)).toEqual(ScreenB)
+			jestExpect(router.getComponentForState(expectedState)).toBe(ScreenA)
+			jestExpect(router.getComponentForState(expectedState2)).toBe(ScreenB)
 
 			local state3 = router.getStateForAction({
 				type = NavigationActions.Navigate,
@@ -172,7 +172,9 @@ return function()
 				key = "Foo",
 			})
 
-			jestExpect(state2 and state2.routes[1].params).toEqual({ name = "Qux" })
+			jestExpect(state2 and state2.routes[1].params).toEqual({
+				name = "Qux",
+			})
 		end)
 
 		it("Handles the SetParams action for inactive routes", function()
@@ -245,8 +247,7 @@ return function()
 			jestExpect(state and state.index).toEqual(1)
 		end)
 
-		-- deviation: Router.getActionForPathAndParams not implemented yet.
-		itSKIP("Handles nested tabs and nested actions", function()
+		it("Handles nested tabs and nested actions", function()
 			local ChildTabNavigator = Roact.Component:extend("ChildTabNavigator")
 
 			function ChildTabNavigator:render()
@@ -584,8 +585,7 @@ return function()
 			})
 		end)
 
-		-- deviation: Router.getActionForPathAndParams not implemented yet.
-		itSKIP("Handles path configuration", function()
+		it("Handles path configuration", function()
 			local function ScreenA()
 				return Roact.createElement("Frame")
 			end
@@ -634,14 +634,13 @@ return function()
 			}
 
 			jestExpect(state2).toEqual(expectedState2)
-			jestExpect(router.getComponentForState(expectedState)).toEqual(ScreenA)
-			jestExpect(router.getComponentForState(expectedState2)).toEqual(ScreenB)
+			jestExpect(router.getComponentForState(expectedState)).toBe(ScreenA)
+			jestExpect(router.getComponentForState(expectedState2)).toBe(ScreenB)
 			jestExpect(router.getPathAndParamsForState(expectedState).path).toEqual("f")
 			jestExpect(router.getPathAndParamsForState(expectedState2).path).toEqual("b/anything")
 		end)
 
-		-- deviation: Router.getActionForPathAndParams not implemented yet.
-		itSKIP("Handles default configuration", function()
+		it("Handles default configuration", function()
 			local function ScreenA()
 				return Roact.createElement("Frame")
 			end
@@ -661,8 +660,7 @@ return function()
 			})
 		end)
 
-		-- deviation: Router.getActionForPathAndParams not implemented yet.
-		itSKIP("Gets deep path", function()
+		it("Gets deep path", function()
 			local ScreenA = Roact.Component:extend("ScreenA")
 			function ScreenA:render()
 				return Roact.createElement("Frame")

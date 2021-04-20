@@ -12,6 +12,8 @@ local validateRouteConfigArray = require(script.Parent.validateRouteConfigArray)
 local invariant = require(Root.utils.invariant)
 local StackActions = require(Root.routers.StackActions)
 local SwitchActions = require(script.Parent.SwitchActions)
+local pathUtils = require(script.Parent.pathUtils)
+local createPathParser = pathUtils.createPathParser
 
 local function defaultActionCreators()
 	return {}
@@ -85,6 +87,10 @@ return function(routeArray, config)
 			return params
 		end
 	end
+
+	local pathParser = createPathParser(childRouters, routeConfigs, config)
+	local getPathAndParamsForRoute = pathParser.getPathAndParamsForRoute
+	local getActionForPathAndParams = pathParser.getActionForPathAndParams
 
 	local function resetChildRoute(routeName)
 		local initialParams = routeName == initialRouteName and initialRouteParams or nil
@@ -438,8 +444,14 @@ return function(routeArray, config)
 		return getScreenForRouteName(routeConfigs, routeName)
 	end
 
-	-- TODO: Implement SwitchRouter.getPathAndParamsForState after we add path expression support
-	-- TODO: Implement SwitchRouter.getActionForPathAndParams after we add path expression support
+	function SwitchRouter.getPathAndParamsForState(state)
+		local route = state.routes[state.index]
+		return getPathAndParamsForRoute(route)
+	end
+
+	function SwitchRouter.getActionForPathAndParams(path, params)
+		return getActionForPathAndParams(path, params)
+	end
 
 	return SwitchRouter
 end

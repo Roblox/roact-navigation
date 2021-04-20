@@ -13,13 +13,14 @@ local createConfigGetter = require(script.Parent.createConfigGetter)
 local validateRouteConfigArray = require(script.Parent.validateRouteConfigArray)
 local validateRouteConfigMap = require(script.Parent.validateRouteConfigMap)
 local invariant = require(root.utils.invariant)
-local NavigationSymbol = require(root.NavigationSymbol)
+local pathUtils = require(script.Parent.pathUtils)
+local createPathParser = pathUtils.createPathParser
 
 local STACK_ROUTER_ROOT_KEY = "StackRouterRoot"
 -- This symbol is used to differentiate if a router has a child router
 -- or if is a regular Roact component. React-navigation does it by using
--- undefined vs. null (that's why we need)
-local CHILD_IS_SCREEN = NavigationSymbol("CHILD_IS_SCREEN")
+-- undefined vs. null, so we use this symbol to represent the `null` routers.
+local CHILD_IS_SCREEN = require(script.Parent["ChildIsScreenRouterSymbol.roblox"])
 
 local defaultActionCreators = function()
 	return {}
@@ -168,6 +169,10 @@ return function(routeArray, config)
 		end
 	end
 
+	local pathParser = createPathParser(childRouters, routeConfigs, config)
+	local getPathAndParamsForRoute = pathParser.getPathAndParamsForRoute
+	local getActionForPathAndParams = pathParser.getActionForPathAndParams
+
 	-- Strip out the CHILD_IS_SCREEN hacked elements before exposing publicly.
 	local strippedChildRouters = {}
 	for routerName, router in pairs(childRouters) do
@@ -178,7 +183,6 @@ return function(routeArray, config)
 
 	local StackRouter = {
 		childRouters = strippedChildRouters,
-		getScreenOptions = createConfigGetter(routeConfigs, config.defaultNavigationOptions),
 		_CHILD_IS_SCREEN = CHILD_IS_SCREEN, -- expose symbol for testing purposes
 	}
 
@@ -661,8 +665,19 @@ return function(routeArray, config)
 		return state
 	end
 
-	-- TODO: Implement StackRouter.getPathAndParamsForState after we add path expression support
-	-- TODO: Implement StackRouter.getActionForPathAndParams after we add path expression support
+	function StackRouter.getPathAndParamsForState(state)
+		local route = state.routes[state.index]
+		return getPathAndParamsForRoute(route)
+	end
+
+	function StackRouter.getActionForPathAndParams(path, params)
+		return getActionForPathAndParams(path, params)
+	end
+
+	StackRouter.getScreenOptions = createConfigGetter(
+		routeConfigs,
+		config.defaultNavigationOptions
+	)
 
 	return StackRouter
 end

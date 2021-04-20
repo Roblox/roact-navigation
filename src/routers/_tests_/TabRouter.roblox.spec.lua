@@ -18,7 +18,7 @@ return function()
 		})
 
 		local component = router.getComponentForRouteName("Foo")
-		jestExpect(component).toEqual(testComponent)
+		jestExpect(component).toBe(testComponent)
 	end)
 
 	it("should not reset state for deactivated route", function()

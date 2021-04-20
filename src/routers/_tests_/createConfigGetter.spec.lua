@@ -4,8 +4,8 @@ return function()
 	local routersModule = script.Parent.Parent
 	local RoactNavigationModule = routersModule.Parent
 	local Packages = RoactNavigationModule.Parent
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
 	local Roact = require(Packages.Roact)
+	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
 
 	local createConfigGetter = require(routersModule.createConfigGetter)
 
@@ -102,6 +102,6 @@ return function()
 
 		jestExpect(function()
 			getScreenOptions({ state = routes[1] }, {})
-		end).toThrow("There is no route defined for key Settings.\nMust be one of: 'Home'")
+		end).toThrowError("There is no route defined for key Settings.\nMust be one of: 'Home'")
 	end)
 end
