@@ -1,5 +1,7 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Packages = script.Parent.Parent.Parent
+local Roact = require(Packages.Roact)
+local RoactNavigation = require(Packages.RoactNavigation)
+local Cryo = require(Packages.Cryo)
 
 --[[
 	This story demonstrates how to build modal dialogs using a StackNavigator.
@@ -10,7 +12,7 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 			MainContent
 			ExampleModalDialog
 ]]
-return function(target)
+return function(target, navigatorConfig)
 	local function MainContent(props)
 		local navigation = props.navigation
 
@@ -130,9 +132,9 @@ return function(target)
 				},
 			},
 		},
-	}, {
+	}, Cryo.Dictionary.join(navigatorConfig or {}, {
 		mode = RoactNavigation.StackPresentationStyle.Modal,
-	})
+	}))
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
 	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
 
