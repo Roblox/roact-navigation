@@ -5,6 +5,7 @@ ___
 
 Work in progress, to be added to next release notes.
 
+* Export `createSwitchNavigator`. ([#82](https://github.com/Roblox/roact-navigation/pull/82))
 * Implement `getActionForPathAndParams` and `getPathAndParamsForState` on routers to eventually support deep linking. ([#75](https://github.com/Roblox/roact-navigation/pull/75))
 * Align `createAppContainer` with React Navigation. ([#67](https://github.com/Roblox/roact-navigation/pull/67))
 * Prevent ref forwarding when the `withNavigation` config field `forwardRef` is false ([#73](https://github.com/Roblox/roact-navigation/pull/73))

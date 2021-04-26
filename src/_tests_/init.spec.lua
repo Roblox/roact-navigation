@@ -44,6 +44,10 @@ return function()
 		jestExpect(RoactNavigation.createRobloxStackNavigator).toEqual(jestExpect.any("function"))
 	end)
 
+	it("should return a function for createSwitchNavigator", function()
+		jestExpect(RoactNavigation.createSwitchNavigator).toEqual(jestExpect.any("function"))
+	end)
+
 	it("should return a function for createNavigator", function()
 		jestExpect(RoactNavigation.createNavigator).toEqual(jestExpect.any("function"))
 	end)

@@ -16,6 +16,7 @@ return {
 	-- Navigators
 	createRobloxStackNavigator = require(script.navigators.createRobloxStackNavigator),
 	createRobloxSwitchNavigator = require(script.navigators.createRobloxSwitchNavigator),
+	createSwitchNavigator = require(script.navigators.createSwitchNavigator),
 	createNavigator = require(script.navigators.createNavigator),
 
 	-- Routers
