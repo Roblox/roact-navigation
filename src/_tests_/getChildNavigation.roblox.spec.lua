@@ -53,7 +53,7 @@ return function()
 				index = 1,
 			},
 			router = {
-				getComponentForRouteName = function(routeName)
+				getComponentForRouteName = function(_routeName)
 					return function() end
 				end,
 				getActionCreators = function() end,
@@ -96,7 +96,7 @@ return function()
 				index = 1,
 			},
 			router = {
-				getComponentForRouteName = function(routeName)
+				getComponentForRouteName = function(_routeName)
 					return function() end
 				end,
 				getActionCreators = function() end,

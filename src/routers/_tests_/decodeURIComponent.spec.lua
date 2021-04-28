@@ -41,7 +41,7 @@ return function()
 		-- ["%%C2%B5%"] = "%µ%",
 	}
 
-	it("type error", function(t)
+	it("type error", function()
 		jestExpect(function()
 			return decodeURIComponent(5)
 		end).toThrow("Expected `encodedURI` to be of type `string`, got `number`")

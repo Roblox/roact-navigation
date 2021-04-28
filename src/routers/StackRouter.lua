@@ -40,7 +40,7 @@ local function mapToRouteName(element)
 	return routeName
 end
 
-local function foldToRoutes(routes, element, index)
+local function foldToRoutes(routes, element, _index)
 	local routeName, value = next(element)
 	routes[routeName] = value
 	return routes

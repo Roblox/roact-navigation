@@ -131,7 +131,7 @@ return function(target)
 		print("DetailPage: willUnmount")
 	end
 
-	function DetailPage:render(props)
+	function DetailPage:render(_props)
 		local bgColor = self.state.bgColor
 		local navigation = self.props.navigation
 

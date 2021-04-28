@@ -29,7 +29,11 @@ return function()
 	end)
 
 	it("should return raw table if screen and getScreen are not props", function()
-		local screenComponent = { render = function() return nil end }
+		local screenComponent = {
+			render = function()
+				return nil
+			end
+		}
 		local result = getScreenForRouteName({
 			myRoute = screenComponent
 		}, "myRoute")
@@ -38,7 +42,11 @@ return function()
 	end)
 
 	it("should return screen prop if it is set in route data table", function()
-		local screenComponent = { render = function() return nil end }
+		local screenComponent = {
+			render = function()
+				return nil
+			end
+		}
 		local result = getScreenForRouteName({
 			myRoute = {
 				screen = screenComponent
@@ -49,7 +57,11 @@ return function()
 	end)
 
 	it("should return object returned by getScreen function if object is valid Roact element", function()
-		local screenComponent = { render = function() return nil end }
+		local screenComponent = {
+			render = function()
+				return nil
+			end
+		}
 		local result = getScreenForRouteName({
 			myRoute = {
 				getScreen = function() return screenComponent end

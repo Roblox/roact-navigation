@@ -22,7 +22,7 @@ local FadeInPlace = {
 	screenInterpolator = StackViewInterpolator.forFade,
 }
 
-local function getDefaultTransitionConfig(transitionProps, prevTransitionProps, presentationStyle)
+local function getDefaultTransitionConfig(_transitionProps, _prevTransitionProps, presentationStyle)
 	if presentationStyle == StackPresentationStyle.Modal then
 		return ModalSlideFromBottom
 	elseif presentationStyle == StackPresentationStyle.Overlay then

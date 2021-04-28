@@ -132,7 +132,7 @@ local function customDecodeURIComponent(input)
 				table.insert(entries, match)
 			end
 			replaceMap[match] = replaceWith
-		end, function(err)
+		end, function(_err)
 			local result = decode(match)
 
 			if result ~= match then

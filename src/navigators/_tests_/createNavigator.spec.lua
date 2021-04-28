@@ -15,8 +15,12 @@ return function()
 		local testComponentMounted = nil
 		local TestViewComponent = Roact.Component:extend("TestViewComponent")
 		function TestViewComponent:render() end
-		function TestViewComponent:didMount() testComponentMounted = true end
-		function TestViewComponent:willUnmount() testComponentMounted = false end
+		function TestViewComponent:didMount()
+			testComponentMounted = true
+		end
+		function TestViewComponent:willUnmount()
+			testComponentMounted = false
+		end
 
 		local testNavOptions = {}
 

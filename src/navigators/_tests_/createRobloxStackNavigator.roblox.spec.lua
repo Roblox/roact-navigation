@@ -29,7 +29,7 @@ return function()
 			end)
 		end
 
-		function testNavigation.addListener(symbol, callback)
+		function testNavigation.addListener(_symbol, _callback)
 			return {
 				remove = function() end
 			}

@@ -186,7 +186,7 @@ function StackViewLayout:render()
 	}, renderedScenes)
 end
 
-function StackViewLayout.getDerivedStateFromProps(nextProps, lastState)
+function StackViewLayout.getDerivedStateFromProps(nextProps, _lastState)
 	local transitionProps = nextProps.transitionProps
 	local scenes = transitionProps.scenes
 	local state = transitionProps.navigation.state

@@ -583,7 +583,9 @@ return function()
 			-- need to properly initialize state because we're being abusive of getStateForAction
 			local initialState = router.getStateForAction(NavigationActions.init())
 
-			childRouter.getStateForAction = function() return nil end
+			childRouter.getStateForAction = function()
+				return nil
+			end
 
 			local state = router.getStateForAction(NavigationActions.navigate("Bar"), initialState)
 			jestExpect(state).toEqual(nil)

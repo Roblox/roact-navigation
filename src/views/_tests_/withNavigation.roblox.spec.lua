@@ -66,7 +66,7 @@ return function()
 	end)
 
 	it("should throw when used outside of a navigation provider", function()
-		local function Foo(props)
+		local function Foo(_props)
 			return nil
 		end
 

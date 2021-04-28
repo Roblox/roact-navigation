@@ -8,7 +8,7 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 ]]
 return function(target)
 	local function generatePageComponent(pageName)
-		return function(props)
+		return function(_props)
 			return Roact.createElement("TextLabel", {
 				Size = UDim2.new(1, 0, 1, 0),
 				TextSize = 18,

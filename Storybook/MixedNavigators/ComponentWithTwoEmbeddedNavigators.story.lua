@@ -18,7 +18,7 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 				TwoB
 ]]
 return function(target)
-	local function RootComponent(props)
+	local function RootComponent(_props)
 		local stackOneNavigator = RoactNavigation.createRobloxStackNavigator({
 			{
 				OneA = function(aProps)

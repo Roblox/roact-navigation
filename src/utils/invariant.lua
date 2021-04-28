@@ -9,7 +9,7 @@
  * will remain to ensure logic does not differ in production.
  ]]
 
-local validateFormat = function(format: string?) end
+local validateFormat = function(_format: string?) end
 
 if _G.__DEV__ then
 	validateFormat = function(format: string?)

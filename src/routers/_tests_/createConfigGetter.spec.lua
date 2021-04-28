@@ -20,14 +20,18 @@ return function()
 				gesturesEnabled = true,
 			}
 		end
-		function HomeScreen:render() return nil end
+		function HomeScreen:render()
+			return nil
+		end
 
 		local SettingsScreen = Roact.Component:extend("SettingsScreen")
 		SettingsScreen.navigationOptions = {
 			title = "Settings!!!",
 			gesturesEnabled = false,
 		}
-		function SettingsScreen:render() return nil end
+		function SettingsScreen:render()
+			return nil
+		end
 
 		local NotificationScreen = Roact.Component:extend("NotificationScreen")
 		NotificationScreen.navigationOptions = function(props)

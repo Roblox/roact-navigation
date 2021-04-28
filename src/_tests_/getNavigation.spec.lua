@@ -13,7 +13,7 @@ return function()
 			getActionCreators = function()
 				return {}
 			end,
-			getStateForAction = function(action, lastState)
+			getStateForAction = function(_action, lastState)
 				return lastState or {}
 			end,
 		}
@@ -47,7 +47,7 @@ return function()
 					end,
 				}
 			end,
-			getStateForAction = function(action, lastState)
+			getStateForAction = function(_action, lastState)
 				return lastState or {}
 			end,
 		}
@@ -83,7 +83,7 @@ return function()
 			getActionCreators = function()
 				return {}
 			end,
-			getStateForAction = function(action, lastState)
+			getStateForAction = function(_action, lastState)
 				return lastState or {}
 			end,
 		}
@@ -94,7 +94,7 @@ return function()
 			getActionCreators = function()
 				return {}
 			end,
-			getStateForAction = function(action, lastState)
+			getStateForAction = function(_action, lastState)
 				return lastState or {}
 			end,
 		}
