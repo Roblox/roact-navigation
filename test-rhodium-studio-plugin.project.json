@@ -1,0 +1,12 @@
+{
+  "name": "RoactNavigationStudioRhodiumPlugin",
+  "tree": {
+    "$className": "Folder",
+    "TestBundle": {
+      "$path": "test-bundle-rhodium.project"
+    },
+    "run-rhodium-test": {
+      "$path": "scripts/run-rhodium-tests.server.lua"
+    }
+  }
+}

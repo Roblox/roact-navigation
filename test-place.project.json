@@ -1,0 +1,22 @@
+{
+  "name": "RoactNavigation",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "$className": "ReplicatedStorage",
+
+      "Packages": {
+        "$path": "Packages",
+
+        "RoactNavigation": {
+          "$path": "src"
+        },
+
+        "RoactNavigationStorybook": {
+          "$path": "Storybook"
+        }
+      }
+    }
+  }
+}

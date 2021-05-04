@@ -1,9 +1,10 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ProcessService = game:GetService("ProcessService")
 
-local JestRoblox = require(ReplicatedStorage.Packages.Dev.JestRoblox)
+local root = script.Parent.TestBundle
 
-local RoactNavigation = ReplicatedStorage.Packages.RoactNavigation
+local JestRoblox = require(root.Packages.Dev.JestRoblox)
+
+local RoactNavigation = root.Packages.RoactNavigation
 
 local result = JestRoblox.TestBootstrap:run({ RoactNavigation }, JestRoblox.Reporters.TextReporterQuiet)
 

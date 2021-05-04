@@ -1,98 +1,66 @@
 <h1 align="center">Roact Navigation</h1>
 <div align="center">
-<a href="https://travis-ci.org/Roblox/roact-navigation">
-<img src="https://api.travis-ci.org/Roblox/roact-navigation.svg?branch=master" alt="Travis-CI Build Status" />
-</a>
+
+![CI](https://github.com/Roblox/roact-navigation/.github/workflows/ci.yml/badge.svg)
+
 <a href="https://coveralls.io/github/Roblox/roact-navigation?branch=master">
 <img src="https://coveralls.io/repos/github/Roblox/roact-navigation/badge.svg?branch=master" alt="Coveralls Coverage" />
 </a>
-<a href="https://roblox.github.io/roact-navigation">
+
+<a href="https://reactnavigation.org/docs/4.x/getting-started">
 <img src="https://img.shields.io/badge/docs-website-green.svg" alt="Documentation" />
 </a>
+
+<a href="https://roblox.slack.com/archives/C0109R8UFK2">
+<img src="https://img.shields.io/badge/slack-%23roact--navigation-ff68b4.svg" alt="Slack channel" />
+</a>
+
 </div>
 
-<div align="center">
-Roact Navigation provides a declarative navigation system for App UI, built on top of Roact.
-</div>
+Roact Navigation provides a declarative navigation system for App UI, built on top of Roact. Slack channel [#roact-navigation]().
 
-<div>&nbsp;</div>
+## Install with Rotriever
+
+### Adding Roact Navigation to your dependencies
+In your [rotriever.toml](https://pages.github.rbx.com/pdoyle/rotriever-docs/getting-started/) file from your project, add an entry in the `dependencies` section:
+
+```toml
+[package]
+name = "roblox/cool-plugin-that-uses-roact-navigation"
+version = "0.4.1"
+author = "Roblox"
+content_root = "src"
+
+[dependencies]
+# adding this line will make your project depend on version 0.4.1
+RoactNavigation = "roblox/roact-navigation@0.4.1"
+# ... the rest of your dependencies ...
+
+[dev_dependencies]
+# ...
+```
+
+To view a list of available version, visit the [releases](https://github.com/Roblox/roact-navigation/releases) page.
+
+### Get the source
+Now that Roact Navigation is added to your rotriever dependencies, simply run the following command to download the package:
+
+```bash
+rotrieve install
+```
+
+## Contributing
+
+Read the [contribute guide](CONTIBUTING.md) to get started.
 
 ## Documentation
 
-We are in the process of migrating documentation to GitHub Wiki for more convenient access.
+Since Roact Navigation is based on React Navigation version 4, a lot of the [documentation](https://reactnavigation.org/docs/4.x/getting-started) from the original JavaScript package can be used as a reference. There is also a [deviation document](docs/deviations.md) that highlights the main differences between the Lua version and the JavaScript version
 
-Until the migration is complete, you can view the original documentation on Roblox's internal Confluence, here:
-https://confluence.rbx.com/display/MOBAPP/Roact+Navigation
-
-## Installation
-
-### As a Rotriever dependency
-* Add a \[dependencies\] entry to your rotriever.toml file, ex: `RoactNavigation = "roblox/roact-navigation@0.2.8"`
-* Run `rotrieve install`
-
-### For development
-* Clone the repository, ex: `git clone https://github.com/Roblox/roact-navigation.git`.
-* Sync the required dev dependencies via submodules:  `git submodule update --init --recursive`
-* Get [foreman](https://github.com/Roblox/foreman/releases) to install the development tools. Run `foreman install`, which should install `rojo` and `rotriever`. If it's the first time you're using foreman, make sure to add `~/.foreman/bin` to your PATH and setup a [personal access token](https://github.com/Roblox/foreman#authentication) to foreman (needed for rotriever).
-* Run `rotrieve install` to sync the runtime dependencies.
-
-## Running the unit tests
-
-### With Lemur (standalone Lua)
-* Set up your system with Lua 5.1.
-* Install dependencies for [Lemur](https://github.com/LPGhatguy/lemur).
-* Follow the development installation instructions.
-* Run `lua bin/spec.lua`.
-
-### With roblox-cli
-* Build the storybook test place: `rojo build storybook.project.json --output test-place.rbxlx`
-* Run roblox-cli `roblox-cli run --load.place test-place.rbxlx --load.asRobloxScript --run scripts/run-tests.lua`
-
-## Running the Storybooks
-* Install the [Horsecat](https://github.com/Roblox/horsecat/blob/master/docs/index.md) plugin.
-* Build the Rojo storybook project `rojo build storybook.project.json -o roactnavigation.rbxlx`.
-* Serve the Rojo project to Roblox Studio `rojo serve storybook.project.json` so it can do dynamic updates when you edit files.
-* Launch Roblox Studio and open roactnavigation.rbxlx.
-* Go to Game Settings/Options and turn on "Allow HTTP Requests".
-* Connect to Rojo server on localhost via Plugins/Connect, usually localhost/34872.
-* Open the storybook in ReplicatedStorage/Packages/RoactNavigationStorybook.
-
-## Running the Rhodium tests
-
-### In Studio
-* Build the Rhodium project `rojo build rhodium.project.json -o RoactNavigationRhodiumTestRunner.rbxm`.
-* Copy the test runner rbxm to your Roblox Studio installation's BuiltInPlugins directory. Make sure the plugin is [signed](https://confluence.rbx.com/pages/viewpage.action?spaceKey=DEVSRVC&title=Signing+built-in+plugins+locally+on+your+development+machine)
-* Open any placefile.
-* Click the "Run Tests" button that shows up in the left panel.
-
-### With roblox-cli
-* Build the Rhodium test place project: `rojo build rhodium-place.project.json --output rhodium-test-place.rbxlx`
-* Run roblox-cli: `roblox-cli run --headlessRenderer on --virtualInput on --load.place rhodium-test-place.rbxlx --load.asRobloxScript --run scripts/run-rhodium-tests.lua`
-
-## Building the rbxm library module
-* Perform Rust and Rojo setup steps as per "Running the Storybooks"
-* Build Rojo project `rojo build -o RoactNavigation.rbxm`.
-
-## Publish Roact-Navigation
-1. **git**
-	1. Update the CHANGELOG.md to list all the changes since the last tag
-	2. Update version number in rotriever.toml
-	3. Generate a new tag in roact-navigation repository (pick ONE):
-		- Run "rotrieve publish" to automatically generate the tag.
-		- Note: if your origin remote is an ssh URL, rotrieve will fail. Use https checkouts for publishing.
-
-	
-2. **Publish to Roblox internal artifact repository**
-	1. go to: https://teamcity.simulpong.com/buildConfiguration/LuaAppsAndTools_CacheRotrieverPackage
-	2. Click run.
-	3. Put in the RN repository, e.g. `GitHub.com/roblox/roact-navigation`
-	4. Put in your new version number, e.g. `0.2.7`. (It will prepend 'v' automatically for the tag.)
-	5. Click "Run Build".
-		- Note: you may get a failure if a dependency package (e.g. testez) hasn't had its latest version cached by TeamCity.
-		  `Could not resolve dependencies: No matching versions found for package github.com/roblox/testez@^0.4.1`
+As part of the Lua tech talks, a presentation of Roact Navigation was recorded and available for employees. Visit the [Lua tech talk schedule](https://confluence.rbx.com/display/LG/Lua+Tech+Talk+Schedule) and look for the presentation on April 12th (2021).
 
 ## Caveats/Concerns
 * Otter version [9ad129e](https://github.com/Roblox/otter/commit/9ad129e70e103d0de71232a0d0e7a1527da7a51a) or later is required to avoid the motor:start() timing bugs.
 
 ## License
-Roact Navigation is closed source, for the time being. All rights are reserved to Roblox.
+Roact Navigation mostly kept the same license (MIT) as the original JavaScript version.

@@ -1,8 +1,8 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local ProcessService = game:GetService("ProcessService")
 
-local Packages = ReplicatedStorage.Packages
-local Tests = ReplicatedStorage.Tests
+local root = script.Parent.TestBundleRhodium
+local Packages = root.Packages
+local Tests = root.Tests
 
 local JestRoblox = require(Packages.Dev.JestRoblox)
 local Rhodium = require(Packages.Dev.Rhodium)

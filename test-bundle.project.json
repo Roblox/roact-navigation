@@ -1,0 +1,15 @@
+{
+  "name": "TestBundle",
+  "tree": {
+    "$className": "Folder",
+    "Packages": {
+      "$path": "Packages",
+      "RoactNavigation": {
+        "$path": "src"
+      },
+      "RoactNavigationStorybook": {
+        "$path": "Storybook"
+      }
+    }
+  }
+}

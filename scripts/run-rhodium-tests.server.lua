@@ -1,6 +1,7 @@
-local Packages = script.Parent.Packages
+local bundle = script.Parent.TestBundle
+local Packages = bundle.Packages
 local JestRoblox = require(Packages.Dev.JestRoblox)
-local Tests = script.Parent.Tests
+local Tests = bundle.Tests
 
 local dockWidgetInfo = DockWidgetPluginGuiInfo.new(
 	Enum.InitialDockState.Left,
