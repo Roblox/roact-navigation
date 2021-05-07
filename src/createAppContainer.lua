@@ -1,12 +1,19 @@
 -- upstream https://github.com/react-navigation/react-navigation/blob/9b55493e7662f4d54c21f75e53eb3911675f61bc/packages/native/src/createAppContainer.js
 
-local Roact = require(script.Parent.Parent.Roact)
-local Cryo = require(script.Parent.Parent.Cryo)
-local NavigationActions = require(script.Parent.NavigationActions)
-local Events = require(script.Parent.Events)
-local NavigationContext = require(script.Parent.views.NavigationContext)
-local getNavigation = require(script.Parent.getNavigation)
-local invariant = require(script.Parent.utils.invariant)
+local RoactNavigationModule = script.Parent
+local Packages = RoactNavigationModule.Parent
+local Roact = require(Packages.Roact)
+local Cryo = require(Packages.Cryo)
+local LuauPolyfill = require(Packages.LuauPolyfill)
+local console = LuauPolyfill.console
+local NavigationActions = require(RoactNavigationModule.NavigationActions)
+local Events = require(RoactNavigationModule.Events)
+local NavigationContext = require(RoactNavigationModule.views.NavigationContext)
+local getNavigation = require(RoactNavigationModule.getNavigation)
+local invariant = require(RoactNavigationModule.utils.invariant)
+local pathUtils = require(RoactNavigationModule.routers.pathUtils)
+
+local urlToPathAndParams = pathUtils.urlToPathAndParams
 
 local function isStateful(props)
 	return not props.navigation
@@ -30,8 +37,8 @@ local function validateProps(props)
 		screenProps = Cryo.None,
 		persistNavigationState = Cryo.None,
 		loadNavigationState = Cryo.None,
-		-- deviation: no support for theme
-		-- deviation: add key for external dispatch feature
+		-- Roblox deviation: no support for theme
+		-- Roblox deviation: add key for external dispatch feature
 		externalDispatchConnector = Cryo.None,
 	})
 
@@ -57,6 +64,27 @@ local function validateProps(props)
 		"both persistNavigationState and loadNavigationState must either be undefined, or be functions"
 	)
 end
+
+-- Track the number of stateful container instances. Warn if >0 and not using the
+-- detached prop to explicitly acknowledge the behavior. We should deprecated implicit
+-- stateful navigation containers in a future release and require a provider style pattern
+-- instead in order to eliminate confusion entirely.
+local _statefulContainerCount = 0
+local function _TESTING_ONLY_reset_container_count()
+	_statefulContainerCount = 0
+end
+
+-- We keep a global flag to catch errors during the state persistence hydrating scenario.
+-- The innermost navigator who catches the error will dispatch a new init action.
+
+-- Roblox TODO: Roact does not have a second argument like React does when
+-- calling `setState`, so this is commented as it is not used anywhere
+-- local _reactNavigationIsHydratingState = false
+
+-- Unfortunate to use global state here, but it seems necessesary for the time
+-- being. There seems to be some problems with cascading componentDidCatch
+-- handlers. Ideally the inner non-stateful navigator catches the error and
+-- re-throws it, to be caught by the top-level stateful navigator.
 
 --[[
 	Construct a container Roact component that will host the navigation hierarchy
@@ -87,7 +115,7 @@ end
 											externalDispatchConnector = connector,
 										})
 ]]
-return function(AppComponent)
+local function createAppContainer(AppComponent, linkingProtocol)
 	invariant(type(AppComponent) == "table" and AppComponent.router ~= nil,
 		"AppComponent must be a navigator or a stateful Roact component with a 'router' field")
 
@@ -107,6 +135,9 @@ return function(AppComponent)
 		self._actionEventSubscribers = {}
 		self._initialAction = NavigationActions.init()
 
+		-- Roblox deviation: we don't support the BackHandler connection directly
+		-- like in upstream
+
 		local initialNav = nil
 		local containerIsStateful = self:_isStateful()
 		if containerIsStateful and not self.props.loadNavigationState then
@@ -118,6 +149,8 @@ return function(AppComponent)
 		}
 	end
 
+	-- Roblox deviation: this function is used in the universal app to dispatch actions
+	-- using the existing mechanism around Rodux thunks
 	function NavigationContainer:_updateExternalDispatchConnector()
 		if self._disconnectExternalDispatch then
 			self._disconnectExternalDispatch()
@@ -145,31 +178,42 @@ return function(AppComponent)
 		return isStateful(self.props)
 	end
 
-	-- deviation: Not implementing _handleOpenURL because url features not implemented
-	-- function NavigationContainer:_handleOpenURL(args)
-	-- 	local url = args.url
-	-- 	local enableURLHandling = self.props.enableURLHandling
-	-- 	local uriPrefix = self.props.uriPrefix
+	function NavigationContainer:_handleOpenURL(args)
+		local url = args.url
+		local enableURLHandling = self.props.enableURLHandling
+		local uriPrefix = self.props.uriPrefix
 
-	-- 	if enableURLHandling == false then
-	-- 		return
-	-- 	end
-	-- 	local parsedUrl = urlToPathAndParams(url, uriPrefix)
-	-- 	if parsedUrl then
-	-- 		local path = parsedUrl.path
-	-- 		local params = parsedUrl.params
-	-- 		local action = AppComponent.router.getActionForPathAndParams(path, params);
-	-- 		if action then
-	-- 			self:dispatch(action)
-	-- 		end
-	-- 	end
-	-- end
+		if enableURLHandling == false then
+			return
+		end
+		local parsedUrl = urlToPathAndParams(url, uriPrefix)
+		if parsedUrl then
+			local path = parsedUrl.path
+			local params = parsedUrl.params
+			local action = AppComponent.router.getActionForPathAndParams(path, params)
+			if action then
+				self:dispatch(action)
+			end
+		end
+	end
 
-	function NavigationContainer:_onNavigationStateChange(prevNav, nextNav, action)
+	function NavigationContainer:_onNavigationStateChange(prevNav, nav, action)
 		local onNavigationStateChange = self.props.onNavigationStateChange
+		if onNavigationStateChange == nil
+			and self:_isStateful()
+			and _G.REACT_NAV_LOGGING
+		then
+			-- Roblox deviation: `console.group` is always defined
+			console.group("Navigation Dispatch: ")
+			console.log("Action: ", action)
+			console.log("New State: ", nav)
+			console.log("Last State: ", prevNav)
+			console.groupEnd()
+			return
+		end
 
 		if type(onNavigationStateChange) == "function" then
-			onNavigationStateChange(prevNav, nextNav, action)
+			onNavigationStateChange(prevNav, nav, action)
 		end
 	end
 
@@ -179,6 +223,8 @@ return function(AppComponent)
 			self._navState = nil
 		end
 
+		-- Roblox deviation: this dispatch connector feature is used by the universal app
+		-- to dispatch navigation actions externally.
 		if self.props.externalDispatchConnector ~= oldProps.externalDispatchConnector then
 			self:_updateExternalDispatchConnector()
 		end
@@ -187,20 +233,39 @@ return function(AppComponent)
 	function NavigationContainer:didMount()
 		self._isMounted = true
 
-		-- deviation: external dispatch connector
+		-- Roblox deviation: external dispatch connector
 		self:_updateExternalDispatchConnector()
 
 		if not self:_isStateful() then
 			return
 		end
 
+		if _G.__DEV__ and not self.props.detached then
+			if _statefulContainerCount > 0 then
+				console.warn(
+					"You should only render one navigator explicitly in your app, and other"
+						.. " navigators should be rendered by including them in that navigator."
+						.. " Full details at: "
+						.. "https://reactnavigation.org/docs/4.x/common-mistakes#explicitly-rendering-more-than-one-navigator"
+				)
+			end
+		end
+		_statefulContainerCount += 1
+
+		-- Roblox deviation: url linking is not aligned on the native Linking in upstream,
+		-- but similar enough so that the behavior does not deviate
+		if linkingProtocol then
+			linkingProtocol:listenForLuaURLs(function(url)
+				self:_handleOpenURL({ url = url })
+			end, false)
+		end
+
 		-- Pull out anything that can impact state
-		-- deviation: url not supported
-		-- local parsedUrl = nil
+		local parsedUrl = nil
 		local userProvidedStartupState = nil
 		if self.props.enableURLHandling ~= false then
 			local startupParams = self:getStartupParams()
-			-- parsedUrl = startupParams.parsedUrl
+			parsedUrl = startupParams.parsedUrl
 			userProvidedStartupState = startupParams.userProvidedStartupState
 		end
 
@@ -215,29 +280,30 @@ return function(AppComponent)
 		end
 
 		-- Pull user-provided persisted state
-		-- deviation: not implemented
 		if userProvidedStartupState then
 			startupState = userProvidedStartupState
-		--   _reactNavigationIsHydratingState = true
+			-- Roblox TODO: Roact does not have a second argument like React does when
+			-- calling `setState`, so this is commented as it is not used anywhere
+			-- _reactNavigationIsHydratingState = true
 		end
 
 		-- Pull state out of URL
-		-- deviation: url not implement
-		-- if parsedUrl then
-		-- 	local path = parsedUrl.path
-		-- 	local params = parsedUrl.params
-		-- 	local urlAction = AppComponent.router.getActionForPathAndParams(path, params)
-		-- 	if urlAction then
-		-- 		action = urlAction
-		-- 		startupState = AppComponent.router.getStateForAction(
-		-- 			urlAction,
-		-- 			startupState
-		-- 		)
-		-- 	end
-		-- end
+		if parsedUrl then
+			local path = parsedUrl.path
+			local params = parsedUrl.params
+			local urlAction = AppComponent.router.getActionForPathAndParams(path, params)
+			if urlAction then
+				-- Roblox deviation: environment based logging is not currently implemented
+				action = urlAction
+				startupState = AppComponent.router.getStateForAction(
+					urlAction,
+					startupState
+				)
+			end
+		end
 
 		local function dispatchAction()
-			-- _actionEventSubscribers maps callback to true, e.g. a Set container
+			-- Roblox deviation: _actionEventSubscribers maps callback to true, e.g. a Set container
 			for subscriber in pairs(self._actionEventSubscribers) do
 				subscriber({
 					type = Events.Action,
@@ -249,7 +315,8 @@ return function(AppComponent)
 		end
 
 		if startupState == self.state.nav then
-			-- This must be spawned until we get async setState callback handler in Roact
+			-- Roblox TODO: Roact does not have a second argument to `setState` like React
+			-- does, so instead we spawn the callback so that it does not run synchronously
 			spawn(dispatchAction)
 			return
 		end
@@ -259,25 +326,27 @@ return function(AppComponent)
 		})
 	end
 
-	-- deviation: url features not supported
 	function NavigationContainer:getStartupParams()
 		local props = self.props
-		-- local uriPrefix = props.uriPrefix
+		local uriPrefix = props.uriPrefix
 		local loadNavigationState = props.loadNavigationState
-		-- local url = nil
+		local url = nil
 		local loadedNavState = nil
 		pcall(function()
-			-- url = Linking.getInitialURL(),
+			-- Roblox comment: this function is not implemented yet by the linking protocol
+			url = linkingProtocol:getLastLuaURL()
+		end)
+		pcall(function()
 			loadedNavState = loadNavigationState and loadNavigationState()
 		end)
 
 		return {
-			-- parsedUrl = url && urlToPathAndParams(url, uriPrefix),
+			parsedUrl = url and urlToPathAndParams(url, uriPrefix),
 			userProvidedStartupState = loadedNavState,
 		}
 	end
 
-	-- deviation: no componentDidCatch lifecycle method in Roact
+	-- Roblox deviation: no componentDidCatch lifecycle method in Roact
 
 	function NavigationContainer:_persistNavigationState(nav)
 		local persistNavigationState = self.props.persistNavigationState
@@ -300,19 +369,28 @@ return function(AppComponent)
 	function NavigationContainer:willUnmount()
 		self._isMounted = false
 
-		-- deviation: no url feature connected
+		-- Roblox deviation: url linking is not aligned on the native Linking in upstream,
+		-- but similar enough so that the behavior does not deviate
+		-- Also, the current linking protocol allow only a single callback that listens
+		-- to URL changes.
+		if linkingProtocol then
+			linkingProtocol:stopListeningForLuaURLs()
+		end
 
-		-- deviation: clean up externalDispatchConnector if necessary
+		-- Roblox deviation: back button is not currently being connected by Roact Navigation
+
+		-- Roblox deviation: clean up externalDispatchConnector if necessary
 		if self._disconnectExternalDispatch then
 			self._disconnectExternalDispatch()
 			self._disconnectExternalDispatch = nil
 		end
 
-		-- deviation: no stateful container count
-		-- if self:_isStateful() then
-		-- 	_statefulContainerCount = _statefulContainerCount - 1
-		-- end
+		if self:_isStateful() then
+			_statefulContainerCount = _statefulContainerCount - 1
+		end
 	end
+
+	-- Per-tick temporary storage for state.nav
 
 	function NavigationContainer:dispatch(action)
 		if self.props.navigation then
@@ -331,7 +409,7 @@ return function(AppComponent)
 		end
 
 		local function dispatchActionEvents()
-			-- _actionEventSubscribers is a table(handler, true), e.g. a Set container
+			-- Roblox comment: _actionEventSubscribers is a Map<function, true>, e.g. a Set container
 			for subscriber in pairs(self._actionEventSubscribers) do
 				subscriber({
 					type = Events.Action,
@@ -355,7 +433,8 @@ return function(AppComponent)
 			self._navState = navState
 			self:setState({ nav = navState })
 
-			-- Must be spawned until we get async setState callback handler in Roact.
+			-- Roblox TODO: Roact does not have a second argument in `setState` like in React, so
+			-- instead we use `spawn`
 			spawn(function()
 				self:_onNavigationStateChange(lastNavState, navState, action)
 				dispatchActionEvents()
@@ -369,7 +448,7 @@ return function(AppComponent)
 		return false
 	end
 
-	-- deviation: additional functionality used in lua-apps
+	-- Roblox deviation: additional functionality used in lua-apps
 	function NavigationContainer:_getScreenProps(propKey, defaultValue)
 		if propKey == nil then
 			return self.props.screenProps
@@ -383,7 +462,7 @@ return function(AppComponent)
 		return screenProps[propKey]
 	end
 
-	-- deviation: removed '_getTheme' method because there is no support for theme
+	-- Roblox deviation: removed '_getTheme' method because there is no support for theme
 
 	function NavigationContainer:render()
 		local navigation = self.props.navigation
@@ -428,3 +507,8 @@ return function(AppComponent)
 
 	return NavigationContainer
 end
+
+return {
+	createAppContainer = createAppContainer,
+	_TESTING_ONLY_reset_container_count = _TESTING_ONLY_reset_container_count,
+}

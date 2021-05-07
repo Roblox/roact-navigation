@@ -2,7 +2,7 @@ local NavigationContext = require(script.views.NavigationContext)
 
 return {
 	-- Navigation container construction
-	createAppContainer = require(script.createAppContainer),
+	createAppContainer = require(script.createAppContainer).createAppContainer,
 	getNavigation = require(script.getNavigation),
 
 	-- Context Access

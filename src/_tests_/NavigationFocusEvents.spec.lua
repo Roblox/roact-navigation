@@ -4,7 +4,9 @@ return function()
 	local Packages = RoactNavigationModule.Parent
 
 	local TabRouter = require(RoactNavigationModule.routers.TabRouter)
-	local createAppContainer = require(RoactNavigationModule.createAppContainer)
+	local createAppContainerExports = require(RoactNavigationModule.createAppContainer)
+	local createAppContainer = createAppContainerExports.createAppContainer
+	local _TESTING_ONLY_reset_container_count = createAppContainerExports._TESTING_ONLY_reset_container_count
 	local createNavigator = require(RoactNavigationModule.navigators.createNavigator)
 	local Events = require(RoactNavigationModule.Events)
 	local NavigationActions = require(RoactNavigationModule.NavigationActions)
@@ -65,6 +67,10 @@ return function()
 
 		return TestComponent
 	end
+
+	beforeEach(function()
+		_TESTING_ONLY_reset_container_count()
+	end)
 
 	it("fires focus and blur events in root navigator", function()
 		local firstFocusCallback = createSpy()

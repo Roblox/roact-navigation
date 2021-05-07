@@ -7,7 +7,10 @@ return function()
 	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
 	local NavigationActions = require(RoactNavigationModule.NavigationActions)
 	local createNavigator = require(RoactNavigationModule.navigators.createNavigator)
-	local createAppContainer = require(RoactNavigationModule.createAppContainer)
+	local createAppContainerExports = require(RoactNavigationModule.createAppContainer)
+	local createAppContainer = createAppContainerExports.createAppContainer
+	local _TESTING_ONLY_reset_container_count = createAppContainerExports._TESTING_ONLY_reset_container_count
+
 	local StackRouter = require(RoactNavigationModule.routers.StackRouter)
 	local SwitchView = require(RoactNavigationModule.views.SwitchView.SwitchView)
 	local createSpy = require(RoactNavigationModule.utils.createSpy)
@@ -19,6 +22,10 @@ return function()
 	end
 
 	describe("NavigationContainer", function()
+		beforeEach(function()
+			_TESTING_ONLY_reset_container_count()
+		end)
+
 		local function FooScreen()
 			return Roact.createElement("Frame")
 		end
