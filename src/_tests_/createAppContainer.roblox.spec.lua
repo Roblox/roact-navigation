@@ -7,7 +7,7 @@ return function()
 	local createAppContainerExports = require(RoactNavigationModule.createAppContainer)
 	local createAppContainer = createAppContainerExports.createAppContainer
 	local _TESTING_ONLY_reset_container_count = createAppContainerExports._TESTING_ONLY_reset_container_count
-	local createRobloxSwitchNavigator = require(RoactNavigationModule.navigators.createRobloxSwitchNavigator)
+	local createSwitchNavigator = require(RoactNavigationModule.navigators.createSwitchNavigator)
 
 	beforeEach(function()
 		_TESTING_ONLY_reset_container_count()
@@ -18,7 +18,7 @@ return function()
 	end)
 
 	it("should return a valid component when mounting a switch navigator", function()
-		local TestNavigator = createRobloxSwitchNavigator({
+		local TestNavigator = createSwitchNavigator({
 			{ Foo = function() end },
 		})
 
@@ -64,7 +64,7 @@ return function()
 	end)
 
 	it("should accept actions from externalDispatchConnector", function()
-		local TestNavigator = createRobloxSwitchNavigator({
+		local TestNavigator = createSwitchNavigator({
 			{ Foo = function() end },
 		})
 
@@ -108,7 +108,7 @@ return function()
 			MyKey1 = "MyValue1",
 		}
 
-		local TestNavigator = createRobloxSwitchNavigator({
+		local TestNavigator = createSwitchNavigator({
 			{
 				Foo = function(props)
 					-- doing this in render is an abuse, but it's just a test
@@ -172,7 +172,7 @@ return function()
 			local function Screen(_props)
 				return nil
 			end
-			local testNavigator = createRobloxSwitchNavigator({
+			local testNavigator = createSwitchNavigator({
 				{ Foo = { screen = Screen, path = "foo" } },
 				{ Bar = { screen = Screen, path = "bar" } },
 			})
@@ -209,7 +209,7 @@ return function()
 				foo = {fooElementClass, barElementClass},
 				bar = {barElementClass, fooElementClass},
 			}) do
-				local testNavigator = createRobloxSwitchNavigator({
+				local testNavigator = createSwitchNavigator({
 					{ Foo = { screen = FooScreen, path = "foo" } },
 					{ Bar = { screen = BarScreen, path = "bar" } },
 				})
@@ -246,7 +246,7 @@ return function()
 				})
 			end
 
-			local testNavigator = createRobloxSwitchNavigator({
+			local testNavigator = createSwitchNavigator({
 				{ Foo = { screen = FooScreen, path = "foo" } },
 				{ Bar = { screen = BarScreen, path = "bar/:name" } },
 			})
@@ -264,6 +264,47 @@ return function()
 			local barInstance = screen:FindFirstChildOfClass(barElementClass)
 			jestExpect(barInstance).toBeDefined()
 			jestExpect(barInstance.Name).toEqual(expectName)
+			jestExpect(screen:FindFirstChildOfClass(fooElementClass)).toBeUndefined()
+
+			Roact.unmount(tree)
+		end)
+
+		it("updates the navigation state when the URL updates", function()
+			local fooElementClass = "TextLabel"
+			local barElementClass = "Frame"
+			local function FooScreen(_props)
+				return Roact.createElement(UNIQUE_CLASS_NAME, {}, {
+					Foo = Roact.createElement(fooElementClass),
+				})
+			end
+			local function BarScreen(_props)
+				return Roact.createElement(UNIQUE_CLASS_NAME, {}, {
+					Bar = Roact.createElement(barElementClass)
+				})
+			end
+
+			local testNavigator = createSwitchNavigator({
+				{ Foo = { screen = FooScreen, path = "foo" } },
+				{ Bar = { screen = BarScreen, path = "bar" } },
+			})
+
+			local protocolMock = getLinkingProtocolMock("foo")
+			local app = createAppContainer(testNavigator, protocolMock)
+
+			local element = Roact.createElement(app)
+			local parent = Instance.new("Folder")
+			local tree = Roact.mount(element, parent)
+
+			local screen = findFirstDescendantOfClass(parent, UNIQUE_CLASS_NAME)
+			jestExpect(screen).toBeDefined()
+			jestExpect(screen:FindFirstChildOfClass(fooElementClass)).toBeDefined()
+			jestExpect(screen:FindFirstChildOfClass(barElementClass)).toBeUndefined()
+
+			protocolMock.callback("bar")
+
+			screen = findFirstDescendantOfClass(parent, UNIQUE_CLASS_NAME)
+			jestExpect(screen).toBeDefined()
+			jestExpect(screen:FindFirstChildOfClass(barElementClass)).toBeDefined()
 			jestExpect(screen:FindFirstChildOfClass(fooElementClass)).toBeUndefined()
 
 			Roact.unmount(tree)
