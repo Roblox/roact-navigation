@@ -11,5 +11,5 @@ Otter = "github.com/roblox/otter@0.1"
 LuauPolyfill = "github.com/roblox/luau-polyfill@0.1.5"
 
 [dev_dependencies]
-JestRoblox = "github.com/roblox/jest-roblox@1.0.0"
+JestRoblox = "github.com/roblox/jest-roblox@1.1.1"
 Rhodium = "github.com/roblox/rhodium@0.2.4"
