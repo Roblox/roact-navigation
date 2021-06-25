@@ -159,13 +159,22 @@ return function(routeArray, config)
 	end
 
 	local function getParamsForRouteAndAction(routeName, action)
+		if action.params == Cryo.None then 
+			return nil
+		end
+
 		local routeConfig = routeConfigs[routeName]
 		-- we need to check if the routeConfig is a table because functions can't be
 		-- indexed in Lua.
 		if type(routeConfig) == "table" and routeConfig.params then
 			return Cryo.Dictionary.join(routeConfig.params, action.params)
 		else
-			return action.params
+			if action.params then
+				-- Use empty join to process None keys
+				return Cryo.Dictionary.join({}, action.params)
+			else
+				return nil
+			end
 		end
 	end
 
@@ -356,7 +365,7 @@ return function(routeArray, config)
 				if action.params then
 					local route = state.routes[lastRouteIndex]
 					routes[lastRouteIndex] = Cryo.Dictionary.join(route, {
-						params = Cryo.Dictionary.join(route.params or {}, action.params)
+						params = action.params == Cryo.None and Cryo.None or Cryo.Dictionary.join(route.params or {}, action.params)
 					})
 				end
 
@@ -524,7 +533,11 @@ return function(routeArray, config)
 
 			if lastRouteIndex then
 				local lastRoute = state.routes[lastRouteIndex]
-				local params = Cryo.Dictionary.join(lastRoute.params or {}, action.params or {})
+				-- ROBLOX deviation: accept RoactNavigation.None for params to allow resetting all params
+				local params = Cryo.None
+				if action.params ~= Cryo.None then
+					params = Cryo.Dictionary.join(lastRoute.params or {}, action.params or {})
+				end
 				local routes = Cryo.List.replaceIndex(
 					state.routes,
 					lastRouteIndex,

@@ -310,7 +310,7 @@ return function(routeArray, config)
 
 				if action.params then
 					newChildState = Cryo.Dictionary.join(newChildState, {
-						params = Cryo.Dictionary.join(
+						params = action.params == Cryo.None and Cryo.None or Cryo.Dictionary.join(
 							newChildState.params or {},
 							action.params
 						),
@@ -343,7 +343,11 @@ return function(routeArray, config)
 
 			if lastRouteIndex ~= nil then
 				local lastRoute = state.routes[lastRouteIndex]
-				local params = Cryo.Dictionary.join(lastRoute.params or {}, action.params)
+				-- ROBLOX deviation: accept RoactNavigation.None for params to allow resetting all params
+				local params = Cryo.None
+				if action.params ~= Cryo.None then
+					params = Cryo.Dictionary.join(lastRoute.params or {}, action.params or {})
+				end
 				local routes = Cryo.List.join(state.routes)
 
 				routes[lastRouteIndex] = Cryo.Dictionary.join(

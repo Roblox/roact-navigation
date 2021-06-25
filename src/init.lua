@@ -1,4 +1,5 @@
 local NavigationContext = require(script.views.NavigationContext)
+local Cryo = require(script.Parent.Cryo)
 
 return {
 	-- Navigation container construction
@@ -34,6 +35,9 @@ return {
 	-- Navigation Events
 	Events = require(script.Events),
 	NavigationEvents = require(script.views.NavigationEvents),
+
+	-- Util Types
+	None = Cryo.None,
 
 	-- Additional Types
 	StackPresentationStyle = require(script.views.RobloxStackView.StackPresentationStyle),
