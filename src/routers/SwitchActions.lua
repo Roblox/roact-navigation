@@ -10,7 +10,7 @@ local SwitchActions = {
 -- deviation: we using this metatable to error when SwitchActions is indexed
 -- with an unexpected key.
 setmetatable(SwitchActions, {
-	__index = function(self, key)
+	__index = function(_self, key)
 		error(("%q is not a valid member of SwitchActions"):format(tostring(key)), 2)
 	end,
 })

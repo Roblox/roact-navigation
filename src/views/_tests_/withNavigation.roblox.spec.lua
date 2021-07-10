@@ -1,7 +1,11 @@
 return function()
-	local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
-	local withNavigation = require(script.Parent.Parent.withNavigation)
-	local NavigationContext = require(script.Parent.Parent.NavigationContext)
+	local viewsModule = script.Parent.Parent
+	local RoactNavigationModule = viewsModule.Parent
+	local Packages = RoactNavigationModule.Parent
+
+	local Roact = require(Packages.Roact)
+	local withNavigation = require(viewsModule.withNavigation)
+	local NavigationContext = require(viewsModule.NavigationContext)
 
 	it("throws if no component is provided", function()
 		expect(function()

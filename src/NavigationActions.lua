@@ -21,7 +21,7 @@ local NavigationActions = {
 -- deviation: we using this metatable to error when NavigationActions is indexed
 -- with an unexpected key.
 setmetatable(NavigationActions, {
-	__index = function(self, key)
+	__index = function(_self, key)
 		error(("%q is not a valid member of NavigationActions"):format(tostring(key)), 2)
 	end,
 })

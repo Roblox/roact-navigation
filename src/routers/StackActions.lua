@@ -30,7 +30,7 @@ local StackActions = {
 -- deviation: we using this metatable to error when StackActions is indexed
 -- with an unexpected key.
 setmetatable(StackActions, {
-	__index = function(self, key)
+	__index = function(_self, key)
 		error(("%q is not a valid member of StackActions"):format(tostring(key)), 2)
 	end,
 })

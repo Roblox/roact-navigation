@@ -1,10 +1,12 @@
 return function()
-	local root = script.Parent.Parent.Parent
-	local Packages = root.Parent
+	local viewsModule = script.Parent.Parent
+	local RoactNavigationModule = viewsModule.Parent
+	local Packages = RoactNavigationModule.Parent
+
 	local Roact = require(Packages.Roact)
-	local NavigationContext = require(script.Parent.Parent.NavigationContext)
-	local Events = require(root.Events)
-	local withNavigationFocus = require(script.Parent.Parent.withNavigationFocus)
+	local NavigationContext = require(viewsModule.NavigationContext)
+	local Events = require(RoactNavigationModule.Events)
+	local withNavigationFocus = require(viewsModule.withNavigationFocus)
 
 	it("should pass focused=true when initially focused", function()
 		local testFocused = nil

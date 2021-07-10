@@ -34,6 +34,10 @@ function RobloxSwitchView.getDerivedStateFromProps(nextProps, prevState)
 	}
 end
 
+function RobloxSwitchView:init()
+	self.state = {}
+end
+
 function RobloxSwitchView:render()
 	local navState = self.props.navigation.state
 	local screenProps = self.props.screenProps

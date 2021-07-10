@@ -1,7 +1,12 @@
 return function()
-	local Otter = require(script.Parent.Parent.Parent.Parent.Parent.Otter)
-	local Roact = require(script.Parent.Parent.Parent.Parent.Parent.Roact)
-	local StackViewCard = require(script.Parent.Parent.StackViewCard)
+	local RobloxStackViewModule = script.Parent.Parent
+	local viewsModule = RobloxStackViewModule.Parent
+	local RoactNavigationModule = viewsModule.Parent
+	local Packages = RoactNavigationModule.Parent
+
+	local Otter = require(Packages.Otter)
+	local Roact = require(Packages.Roact)
+	local StackViewCard = require(RobloxStackViewModule.StackViewCard)
 
 	it("should mount its renderProp and pass it scene", function()
 		local didRender = false

@@ -1,5 +1,5 @@
 [package]
-name = "roblox/roact-navigation"
+name = "RoactNavigation"
 version = "0.4.1"
 author = "Roblox"
 content_root = "src"
@@ -13,3 +13,4 @@ LuauPolyfill = "github.com/roblox/luau-polyfill@0.1.5"
 [dev_dependencies]
 JestRoblox = "github.com/roblox/jest-roblox@1.1.1"
 Rhodium = "github.com/roblox/rhodium@0.2.4"
+RoactCompat = { git = "https://github.com/roblox/roact-alignment" }

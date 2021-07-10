@@ -1,14 +1,14 @@
-local Storybook = script.Parent
-local Packages = Storybook.Parent
-local Roact = require(Packages.Roact)
-local RoactNavigation = require(Packages.RoactNavigation)
-
-local WHITE = Color3.fromRGB(255, 255, 255)
-local BLACK = Color3.fromRGB(0, 0, 0)
-
-local createLinkingProtocolMock = require(Storybook.createLinkingProtocolMock)
-
 return function(target, linkingProtocolMock)
+	local Storybook = script.Parent
+	local Packages = Storybook.Parent
+	local Roact = require(Packages.Roact)
+	local RoactNavigation = require(Packages.RoactNavigation)
+
+	local WHITE = Color3.fromRGB(255, 255, 255)
+	local BLACK = Color3.fromRGB(0, 0, 0)
+
+	local createLinkingProtocolMock = require(Storybook.createLinkingProtocolMock)
+
 	if linkingProtocolMock == nil then
 		linkingProtocolMock = createLinkingProtocolMock("login")
 	end

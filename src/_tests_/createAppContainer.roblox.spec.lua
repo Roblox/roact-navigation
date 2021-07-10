@@ -242,7 +242,9 @@ return function()
 				local navigation = props.navigation
 				local name = navigation.getParam("name")
 				return Roact.createElement(UNIQUE_CLASS_NAME, {}, {
-					[name] = Roact.createElement(barElementClass)
+					[name] = Roact.createElement(barElementClass, {
+						Name = name,
+					})
 				})
 			end
 

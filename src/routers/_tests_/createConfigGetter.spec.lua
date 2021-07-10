@@ -46,6 +46,10 @@ return function()
 			}
 		end
 
+		function NotificationScreen:render()
+			return nil
+		end
+
 		local getScreenOptions = createConfigGetter({
 			Home = { screen = HomeScreen },
 			Settings = { screen = SettingsScreen },
