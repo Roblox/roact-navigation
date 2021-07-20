@@ -3,13 +3,14 @@ return function()
 	local Element = Rhodium.Element
 	local XPath = Rhodium.XPath
 
-	local Packages = script.Parent.Parent.Parent.Packages
+	local RhodiumTests = script.Parent.Parent
+	local Packages = RhodiumTests.Parent.Packages
 
 	local Cryo = require(Packages.Cryo)
 	local Roact = require(Packages.Roact)
 	local RoactNavigation = require(Packages.RoactNavigation)
 
-	local getUniqueName = require(script.Parent.Parent.getUniqueName)
+	local createScreenGui = require(RhodiumTests.createScreenGui)
 	local TrackNavigationEvents = require(Packages.RoactNavigation.utils.TrackNavigationEvents)
 	local PageNavigationEvent = require(Packages.RoactNavigation.utils.PageNavigationEvent)
 
@@ -45,47 +46,44 @@ return function()
 		local trackNavigationEvents = TrackNavigationEvents.new()
 
 		local transitionCallbackList = {}
+		local screen = createScreenGui(CoreGui)
 
-		local appContainer = Roact.createElement("ScreenGui", nil, {
-				AppContainer = Roact.createElement(RoactNavigation.createAppContainer(
-					RoactNavigation.createRobloxStackNavigator({
-						{ [pageOneName] = createButtonPage(pageOneName, pageTwoName, trackNavigationEvents) },
-						{ [pageTwoName] = createButtonPage(pageTwoName, pageOneName, trackNavigationEvents) },
-					}, {
-						mode = stackPresentationStyle,
-						onTransitionStart = function(nextNavigation, prevNavigation)
-							table.insert(transitionCallbackList, {
-								type = "start",
-								nextNavigation = nextNavigation,
-								prevNavigation = prevNavigation,
-							})
-						end,
-						onTransitionEnd = function(nextNavigation, prevNavigation)
-							table.insert(transitionCallbackList, {
-								type = "end",
-								nextNavigation = nextNavigation,
-								prevNavigation = prevNavigation,
-							})
-						end,
-						onTransitionStep = function(nextNavigation, prevNavigation, value)
-							table.insert(transitionCallbackList, {
-								type = "step",
-								nextNavigation = nextNavigation,
-								prevNavigation = prevNavigation,
-								value = value,
-							})
-						end,
+		local appContainer = Roact.createElement(RoactNavigation.createAppContainer(
+			RoactNavigation.createRobloxStackNavigator({
+				{ [pageOneName] = createButtonPage(pageOneName, pageTwoName, trackNavigationEvents) },
+				{ [pageTwoName] = createButtonPage(pageTwoName, pageOneName, trackNavigationEvents) },
+			}, {
+				mode = stackPresentationStyle,
+				onTransitionStart = function(nextNavigation, prevNavigation)
+					table.insert(transitionCallbackList, {
+						type = "start",
+						nextNavigation = nextNavigation,
+						prevNavigation = prevNavigation,
 					})
-				))
+				end,
+				onTransitionEnd = function(nextNavigation, prevNavigation)
+					table.insert(transitionCallbackList, {
+						type = "end",
+						nextNavigation = nextNavigation,
+						prevNavigation = prevNavigation,
+					})
+				end,
+				onTransitionStep = function(nextNavigation, prevNavigation, value)
+					table.insert(transitionCallbackList, {
+						type = "step",
+						nextNavigation = nextNavigation,
+						prevNavigation = prevNavigation,
+						value = value,
+					})
+				end,
 			})
+		))
 
-		local rootName = getUniqueName()
-		local rootPath = XPath.new("game.CoreGui"):cat(XPath.new(rootName))
-			:cat(XPath.new("View.TransitionerScenes"))
+		local rootPath = XPath.new(screen):cat(XPath.new("View.TransitionerScenes"))
 		local scene1Path = rootPath:cat(XPath.new("1.DynamicContent.*.Scene"))
 		local scene2Path = rootPath:cat(XPath.new("2.DynamicContent.*.Scene"))
 
-		local rootInstance = Roact.mount(appContainer, CoreGui, rootName)
+		local rootInstance = Roact.mount(appContainer, screen)
 
 		-- wait for expected events to fire
 		trackNavigationEvents:waitForNumberEventsMaxWaitTime(2, 1)

@@ -5,6 +5,7 @@ ___
 
 Work in progress, to be added to next release notes.
 
+* Add `RoactNavigation.None` to allow removal of params ([#90](https://github.com/Roblox/roact-navigation/pull/90))
 * Add second optional parameter to `createAppContainer` to provide a LinkingProtocol object. This will be used when connecting the universal app to use deep-linking ([#83](https://github.com/Roblox/roact-navigation/pull/83))
 * Export `createSwitchNavigator`. ([#82](https://github.com/Roblox/roact-navigation/pull/82))
 * Implement `getActionForPathAndParams` and `getPathAndParamsForState` on routers to eventually support deep linking. ([#75](https://github.com/Roblox/roact-navigation/pull/75))

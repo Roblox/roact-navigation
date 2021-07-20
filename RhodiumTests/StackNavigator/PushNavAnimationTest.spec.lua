@@ -3,12 +3,13 @@ return function()
 	local Element = Rhodium.Element
 	local XPath = Rhodium.XPath
 
-	local Packages = script.Parent.Parent.Parent.Packages
+	local RhodiumTests = script.Parent.Parent
+	local Packages = RhodiumTests.Parent.Packages
 
 	local Roact = require(Packages.Roact)
 	local RoactNavigation = require(Packages.RoactNavigation)
 
-	local getUniqueName = require(script.Parent.Parent.getUniqueName)
+	local createScreenGui = require(RhodiumTests.createScreenGui)
 
 	local function createButtonPage(pageName, clickTargetPageName)
 		return function(props)
@@ -28,22 +29,19 @@ return function()
 
 	describe("StackNavigator Tests", function()
 		it("should animate page change on navigate operation", function()
-			local appContainer = Roact.createElement("ScreenGui", nil, {
-				AppContainer = Roact.createElement(RoactNavigation.createAppContainer(
-					RoactNavigation.createRobloxStackNavigator({
-						{ PageOne = createButtonPage("PageOne", "PageTwo") },
-						{ PageTwo = createButtonPage("PageTwo", "PageOne") },
-					})
-				))
-			})
+			local appContainer = Roact.createElement(RoactNavigation.createAppContainer(
+				RoactNavigation.createRobloxStackNavigator({
+					{ PageOne = createButtonPage("PageOne", "PageTwo") },
+					{ PageTwo = createButtonPage("PageTwo", "PageOne") },
+				})
+			))
 
-			local rootName = getUniqueName()
-			local rootPath = XPath.new("game.CoreGui"):cat(XPath.new(rootName))
-				:cat(XPath.new("View.TransitionerScenes"))
+			local screen = createScreenGui(CoreGui)
+			local rootPath = XPath.new(screen):cat(XPath.new("View.TransitionerScenes"))
 			local scene1Path = rootPath:cat(XPath.new("1.DynamicContent.*.Scene"))
 			local scene2Path = rootPath:cat(XPath.new("2.DynamicContent.*.Scene"))
 
-			local rootInstance = Roact.mount(appContainer, CoreGui, rootName)
+			local rootInstance = Roact.mount(appContainer, screen)
 
 			local button1Element = Element.new(scene1Path)
 			expect(button1Element:waitForRbxInstance(1)).to.be.ok()

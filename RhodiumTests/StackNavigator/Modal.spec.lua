@@ -34,17 +34,19 @@ return function()
 	end)
 
 	it("dismisses a dialog", function()
-		local showModalButton = Element.new(screen:FindFirstChild("showModalButton", true))
-		expect(showModalButton).to.be.ok()
+		local showModalButtonInstance = screen:FindFirstChild("showModalButton", true)
+		expect(showModalButtonInstance).to.be.ok()
+		local showModalButton = Element.new(showModalButtonInstance)
 
 		showModalButton:click()
 		trackNavigator:waitForRoute(modalRoute)
 
-		local rootPath = XPath.new("game.CoreGui"):cat(XPath.new(screen.Name))
+		local rootPath = XPath.new(screen)
 		local scenesPath = rootPath:cat(XPath.new("View.TransitionerScenes"))
 		local dialogPath = scenesPath:cat(XPath.new("2.DynamicContent.*.Scene.dialog"))
 
 		local dismissDialog = Element.new(dialogPath:cat(XPath.new("dismissModalButton")))
+		expect(dismissDialog:getRbxInstance()).to.be.ok()
 
 		dismissDialog:click()
 
@@ -54,13 +56,14 @@ return function()
 	end)
 
 	it("can popToTop after pushing two dialogs", function()
-		local showModalButton = Element.new(screen:FindFirstChild("showModalButton", true))
-		expect(showModalButton).to.be.ok()
+		local showModalButtonInstance = screen:FindFirstChild("showModalButton", true)
+		expect(showModalButtonInstance).to.be.ok()
+		local showModalButton = Element.new(showModalButtonInstance)
 
 		showModalButton:click()
 		trackNavigator:waitForRoute(modalRoute)
 
-		local rootPath = XPath.new("game.CoreGui"):cat(XPath.new(screen.Name))
+		local rootPath = XPath.new(screen)
 		local scenesPath = rootPath:cat(XPath.new("View.TransitionerScenes"))
 		local dialogPath = scenesPath:cat(XPath.new("2.DynamicContent.*.Scene.dialog"))
 
@@ -84,13 +87,14 @@ return function()
 	end)
 
 	it("can dismiss each dialog after pushing two dialogs", function()
-		local showModalButton = Element.new(screen:FindFirstChild("showModalButton", true))
-		expect(showModalButton).to.be.ok()
+		local showModalButtonInstance = screen:FindFirstChild("showModalButton", true)
+		expect(showModalButtonInstance).to.be.ok()
+		local showModalButton = Element.new(showModalButtonInstance)
 
 		showModalButton:click()
 		trackNavigator:waitForRoute(modalRoute)
 
-		local rootPath = XPath.new("game.CoreGui"):cat(XPath.new(screen.Name))
+		local rootPath = XPath.new(screen)
 		local scenesPath = rootPath:cat(XPath.new("View.TransitionerScenes"))
 
 		local dialogPath = scenesPath:cat(XPath.new("2.DynamicContent.*.Scene.dialog"))
@@ -118,13 +122,14 @@ return function()
 
 	it("pushes, pops, pushes again and go back", function()
 		for _, buttonName in ipairs({"popToTopModalButton", "dismissModalButton"}) do
-			local showModalButton = Element.new(screen:FindFirstChild("showModalButton", true))
-			expect(showModalButton).to.be.ok()
+			local showModalButtonInstance = screen:FindFirstChild("showModalButton", true)
+			expect(showModalButtonInstance).to.be.ok()
+			local showModalButton = Element.new(showModalButtonInstance)
 
 			showModalButton:click()
 			trackNavigator:waitForRoute(modalRoute)
 
-			local rootPath = XPath.new("game.CoreGui"):cat(XPath.new(screen.Name))
+			local rootPath = XPath.new(screen)
 			local scenesPath = rootPath:cat(XPath.new("View.TransitionerScenes"))
 			local dialogPath = scenesPath:cat(XPath.new("2.DynamicContent.*.Scene.dialog"))
 
