@@ -8,12 +8,22 @@ local JestRoblox = require(Packages.Dev.JestRoblox)
 local RoactNavigation = Packages.RoactNavigation
 
 local requireOverride = require
+local cleanupAll = function() end
 
 if _G.__NEW_ROACT__ then
 	local requiredModules: { [ModuleScript]: any } = {
 		-- mock Roact with RoactCompat
 		[Packages.Roact] = require(Packages.Dev.RoactCompat),
 	}
+	type CleanupFn = () -> any
+	local moduleCleanup: { [ModuleScript]: (() -> any)? } = {}
+
+	function cleanupAll(): any
+		for script,cleanup in pairs(moduleCleanup) do
+			(cleanup :: CleanupFn)()
+		end
+		moduleCleanup = {}
+	end
 
 	function requireOverride(scriptInstance: ModuleScript): any
 		-- If already loaded and cached, return cached module. This should behave
@@ -24,8 +34,8 @@ if _G.__NEW_ROACT__ then
 
 		-- Narrowing this type here lets us appease the type checker while still
 		-- counting on types for the rest of this file
-		local loadmodule: (ModuleScript) -> (any, string) = debug["loadmodule"]
-		local moduleFunction, errorMessage = loadmodule(scriptInstance)
+		local loadmodule: (ModuleScript) -> (any, string, CleanupFn) = debug["loadmodule"]
+		local moduleFunction, errorMessage, cleanup = loadmodule(scriptInstance)
 		assert(moduleFunction ~= nil, errorMessage)
 
 		getfenv(moduleFunction).require = requireOverride
@@ -41,6 +51,7 @@ if _G.__NEW_ROACT__ then
 
 		-- Load normally into the require cache
 		requiredModules[scriptInstance] = moduleResult
+		moduleCleanup[scriptInstance] = cleanup
 
 		return moduleResult
 	end
@@ -55,6 +66,8 @@ local result = JestRoblox.TestBootstrap:run(
 		},
 	}
 )
+
+cleanupAll()
 
 if result.failureCount == 0 and #result.errors == 0 then
 	ProcessService:ExitAsync(0)
