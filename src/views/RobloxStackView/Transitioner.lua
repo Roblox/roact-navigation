@@ -143,7 +143,7 @@ function Transitioner:render()
 		Size = UDim2.new(1, 0, 1, 0),
 		BackgroundTransparency = 1,
 		BorderSizePixel = 0,
-		ClipsDescendants = true,
+		ClipsDescendants = false,
 		[Roact.Change.AbsoluteSize] = self._doOnAbsoluteSizeChanged,
 	}, {
 		["TransitionerScenes"] = self.props.render(

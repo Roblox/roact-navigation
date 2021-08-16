@@ -52,6 +52,7 @@ function StackViewOverlayFrame:willUnmount()
 	self._isMounted = false
 	if self._signalDisconnect then
 		self._signalDisconnect()
+		self._signalDisconnect = nil
 	end
 end
 
