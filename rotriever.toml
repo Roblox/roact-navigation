@@ -13,4 +13,4 @@ LuauPolyfill = "github.com/roblox/luau-polyfill@0.1.5"
 [dev_dependencies]
 JestRoblox = "github.com/roblox/jest-roblox@2.0.0"
 Rhodium = "github.com/roblox/rhodium@0.2.4"
-RoactCompat = { git = "https://github.com/roblox/roact-alignment" }
+RoactCompat = "github.com/roblox/roact-alignment@17.0.1-rc.2"
