@@ -4,7 +4,7 @@ return function()
 	local StackPresentationStyle = require(RoactNavigationModule.views.RobloxStackView.StackPresentationStyle)
 	local Packages = RoactNavigationModule.Parent
 	local Roact = require(Packages.Roact)
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	it("should return a function for createAppContainer", function()
 		jestExpect(RoactNavigation.createAppContainer).toEqual(jestExpect.any("function"))

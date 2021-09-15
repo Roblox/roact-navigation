@@ -3,7 +3,7 @@ local ProcessService = game:GetService("ProcessService")
 local root = script.Parent.TestBundle
 local Packages = root.Packages
 
-local JestRoblox = require(Packages.Dev.JestRoblox)
+local JestGlobals = require(Packages.Dev.JestGlobals)
 
 local RoactNavigation = Packages.RoactNavigation
 
@@ -57,9 +57,9 @@ if _G.__NEW_ROACT__ then
 	end
 end
 
-local result = JestRoblox.TestBootstrap:run(
+local result = JestGlobals.TestEZ.TestBootstrap:run(
 	{ RoactNavigation },
-	JestRoblox.Reporters.TextReporterQuiet,
+	JestGlobals.TestEZ.Reporters.TextReporterQuiet,
 	{
 		extraEnvironment = {
 			require = requireOverride,

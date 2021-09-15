@@ -3,7 +3,7 @@ return function()
 	local viewsModule = RobloxStackViewModule.Parent
 	local RoactNavigationModule = viewsModule.Parent
 	local Packages = RoactNavigationModule.Parent
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	local ScenesReducer = require(RobloxStackViewModule.ScenesReducer)
 

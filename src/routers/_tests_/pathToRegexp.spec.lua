@@ -6,7 +6,7 @@ return function()
 	local root = routers.Parent
 	local Packages = root.Parent
 	local Cryo = require(Packages.Cryo)
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 	local pathToRegexp = require(routers.pathToRegexp)
 
 	local undefined = {}

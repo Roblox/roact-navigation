@@ -3,7 +3,7 @@ return function()
 	local Events = require(RoactNavigationModule.Events)
 	local getNavigation = require(RoactNavigationModule.getNavigation)
 	local Packages = RoactNavigationModule.Parent
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	local function makeTestBundle(testState)
 		testState = testState or {

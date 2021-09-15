@@ -3,7 +3,7 @@ return function()
 	local RoactNavigationModule = routersModule.Parent
 	local Packages = RoactNavigationModule.Parent
 	local Roact = require(Packages.Roact)
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	local validateRouteConfigMap = require(routersModule.validateRouteConfigMap)
 

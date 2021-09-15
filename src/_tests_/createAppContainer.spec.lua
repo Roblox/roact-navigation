@@ -4,7 +4,7 @@ return function()
 	local RoactNavigationModule = script.Parent.Parent
 	local Packages = RoactNavigationModule.Parent
 	local Roact = require(Packages.Roact)
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 	local NavigationActions = require(RoactNavigationModule.NavigationActions)
 	local createNavigator = require(RoactNavigationModule.navigators.createNavigator)
 	local createAppContainerExports = require(RoactNavigationModule.createAppContainer)

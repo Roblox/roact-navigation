@@ -6,7 +6,7 @@ return function()
 	local Packages = RoactNavigationModule.Parent
 	local Roact = require(Packages.Roact)
 	local Cryo = require(Packages.Cryo)
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	local StackRouter = require(routersModule.StackRouter)
 	local SwitchRouter = require(routersModule.SwitchRouter)

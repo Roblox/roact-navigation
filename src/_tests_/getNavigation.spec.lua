@@ -5,7 +5,7 @@ return function()
 	local getNavigation = require(RoactNavigationModule.getNavigation)
 	local NavigationActions = require(RoactNavigationModule.NavigationActions)
 	local Packages = RoactNavigationModule.Parent
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 	local createSpy = require(RoactNavigationModule.utils.createSpy)
 
 	it("getNavigation provides default action helpers", function()

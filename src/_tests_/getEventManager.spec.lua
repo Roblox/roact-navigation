@@ -5,7 +5,7 @@ return function()
 	local Events = require(RoactNavigationModule.Events)
 	local createSpy = require(RoactNavigationModule.utils.createSpy)
 	local Packages = RoactNavigationModule.Parent
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	local TARGET = "target"
 

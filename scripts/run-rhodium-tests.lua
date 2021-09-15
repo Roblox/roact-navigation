@@ -4,7 +4,7 @@ local root = script.Parent.TestBundleRhodium
 local Packages = root.Packages
 local Tests = root.Tests
 
-local JestRoblox = require(Packages.Dev.JestRoblox)
+local JestGlobals = require(Packages.Dev.JestGlobals)
 local Rhodium = require(Packages.Dev.Rhodium)
 
 local requireOverride = require
@@ -57,9 +57,9 @@ if _G.__NEW_ROACT__ then
 	end
 end
 
-local result = JestRoblox.TestBootstrap:run(
+local result = JestGlobals.TestEZ.TestBootstrap:run(
 	{ Tests },
-	JestRoblox.Reporters.TextReporterQuiet,
+	JestGlobals.TestEZ.Reporters.TextReporterQuiet,
 	{
 		noXpcallByDefault = true,
 		extraEnvironment = {

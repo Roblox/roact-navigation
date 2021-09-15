@@ -4,7 +4,7 @@ return function()
 	local RoactNavigationModule = script.Parent.Parent
 	local NavigationActions = require(RoactNavigationModule.NavigationActions)
 	local Packages = RoactNavigationModule.Parent
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	describe("generic navigation actions", function()
 		local params = { foo = "bar" }

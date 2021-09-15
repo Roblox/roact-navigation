@@ -3,7 +3,7 @@ return function()
 	local RoactNavigationModule = script.Parent.Parent
 	local getChildrenNavigationCache = require(RoactNavigationModule.getChildrenNavigationCache)
 	local Packages = RoactNavigationModule.Parent
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	it("should return empty table if navigation arg not provided", function()
 		jestExpect(getChildrenNavigationCache()._childrenNavigation).toBeUndefined()

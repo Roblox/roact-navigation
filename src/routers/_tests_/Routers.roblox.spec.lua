@@ -4,7 +4,7 @@ return function()
 	local RoactNavigation = require(RoactNavigationModule)
 	local Packages = RoactNavigationModule.Parent
 	local Roact = require(Packages.Roact)
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	local StackRouter = require(routersModule.StackRouter)
 	local TabRouter = require(routersModule.TabRouter)
@@ -57,7 +57,7 @@ return function()
 				jestExpect(state1.routes[state1.index].params.foo).toBeNil()
 			end)
 
-			it("navigate clears individual params using RoactNavigation.None", function()	
+			it("navigate clears individual params using RoactNavigation.None", function()
 				local state0 = router.getStateForAction(
 					NavigationActions.setParams({ params = {foo = 10, bar = 20}, key = initRoute.key }),
 					initState
@@ -136,11 +136,11 @@ return function()
 				}),
 				initState
 			)
-	
+
 			jestExpect(state0.routes[state0.index]).toEqual(
 				jestExpect.objectContaining({ params = { foo = 42 } })
 			)
-	
+
 			local state1 = router.getStateForAction(
 				StackActions.push({
 					routeName = "Bar",
@@ -148,11 +148,11 @@ return function()
 				}),
 				initState
 			)
-	
+
 			jestExpect(state1.routes[state1.index].params.foo).toBeNil()
-	
+
 		end)
-	
+
 		it("StackActions.push clears entire params with RoactNavigation.None", function()
 			local state0 = router.getStateForAction(
 				StackActions.push({
@@ -161,11 +161,11 @@ return function()
 				}),
 				initState
 			)
-	
+
 			jestExpect(state0.routes[state0.index]).toEqual(
 				jestExpect.objectContaining({ params = { foo = 42 } })
 			)
-	
+
 			local state1 = router.getStateForAction(
 				StackActions.push({
 					routeName = "Bar",
@@ -173,7 +173,7 @@ return function()
 				}),
 				state0
 			)
-	
+
 			jestExpect(state1.routes[state1.index].params).toBeNil()
 		end)
 	end)

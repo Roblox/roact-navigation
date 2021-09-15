@@ -13,7 +13,7 @@ return function()
 	local createSpy = require(RoactNavigationModule.utils.createSpy)
 	local waitUntil = require(RoactNavigationModule.utils.waitUntil)
 
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 	local Cryo = require(Packages.Cryo)
 	local Roact = require(Packages.Roact)
 

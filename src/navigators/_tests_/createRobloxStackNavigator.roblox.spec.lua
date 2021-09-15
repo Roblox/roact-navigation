@@ -2,7 +2,7 @@ return function()
 	local navigatorsModule = script.Parent.Parent
 	local RoactNavigationModule = navigatorsModule.Parent
 	local Packages = RoactNavigationModule.Parent
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 	local Roact = require(Packages.Roact)
 
 	local createRobloxStackNavigator = require(navigatorsModule.createRobloxStackNavigator)

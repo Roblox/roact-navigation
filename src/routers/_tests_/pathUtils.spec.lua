@@ -3,7 +3,7 @@ return function()
 	local RoactNavigationModule = routersModule.Parent
 	local pathUtils = require(routersModule.pathUtils)
 	local Packages = RoactNavigationModule.Parent
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 	local urlToPathAndParams = pathUtils.urlToPathAndParams
 
 	it("urlToPathAndParams empty", function()

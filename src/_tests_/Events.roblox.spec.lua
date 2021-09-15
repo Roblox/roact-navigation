@@ -2,7 +2,7 @@ return function()
 	local RoactNavigationModule = script.Parent.Parent
 	local Events = require(RoactNavigationModule.Events)
 	local Packages = RoactNavigationModule.Parent
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	describe("Events token tests", function()
 		it("should return same object for each token for multiple calls", function()

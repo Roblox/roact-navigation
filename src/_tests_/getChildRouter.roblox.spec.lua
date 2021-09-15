@@ -2,7 +2,7 @@ return function()
 	local RoactNavigationModule = script.Parent.Parent
 	local getChildRouter = require(RoactNavigationModule.getChildRouter)
 	local Packages = RoactNavigationModule.Parent
-	local jestExpect = require(Packages.Dev.JestRoblox).Globals.expect
+	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	it("should throw if router is not a table", function()
 		jestExpect(function()
