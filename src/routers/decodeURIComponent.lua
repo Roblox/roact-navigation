@@ -4,7 +4,7 @@ local Packages = RoactNavigationModule.Parent
 
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local Array = LuauPolyfill.Array
-local RegExp = LuauPolyfill.RegExp
+local RegExp = require(Packages.RegExp)
 
 -- deviation: define this function to get an equivalent of String.match
 -- from JavaScript using our basic RegExp implementation

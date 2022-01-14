@@ -23,7 +23,7 @@ local Boolean = LuauPolyfill.Boolean
 local Object = LuauPolyfill.Object
 local String = LuauPolyfill.String
 local Number = LuauPolyfill.Number
-local RegExp = LuauPolyfill.RegExp
+local RegExp = require(Packages.RegExp)
 
 local function TypeError(message)
 	return message

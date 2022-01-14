@@ -29,7 +29,7 @@ local Packages = root.Parent
 local Cryo = require(Packages.Cryo)
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local Array = LuauPolyfill.Array
-local RegExp = LuauPolyfill.RegExp
+local RegExp = require(Packages.RegExp)
 
 type Record<T, U> = { [T]: U }
 
