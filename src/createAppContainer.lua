@@ -321,9 +321,19 @@ local function createAppContainer(AppComponent, linkingProtocol)
 			return
 		end
 
-		self:setState({
-			nav = startupState
-		})
+		if self.forceUpdate then
+			-- self.forceUpdate is only defined in Roact 17, so this code will only run in R17
+			self:setState({
+				nav = startupState
+			}, dispatchAction)
+		else
+			-- Legacy Roact does not allow callbacks in setState
+			self:setState({
+				nav = startupState
+			})
+
+			task.defer(dispatchAction)
+		end
 	end
 
 	function NavigationContainer:getStartupParams()
@@ -431,15 +441,24 @@ local function createAppContainer(AppComponent, linkingProtocol)
 			-- Cache updates to state.nav during the tick to ensure that subsequent calls
 			-- will not discard this change
 			self._navState = navState
-			self:setState({ nav = navState })
 
-			-- Roblox TODO: Roact does not have a second argument in `setState` like in React, so
-			-- instead we use `spawn`
-			spawn(function()
-				self:_onNavigationStateChange(lastNavState, navState, action)
-				dispatchActionEvents()
-				self:_persistNavigationState(navState)
-			end)
+			if self.forceUpdate then
+				-- self.forceUpdate is only defined in Roact 17, so this code will only run in R17
+				self:setState({ nav = navState }, function()
+					self:_onNavigationStateChange(lastNavState, navState, action)
+					task.defer(dispatchActionEvents)
+					self:_persistNavigationState(navState)
+				end)
+			else
+				self:setState({ nav = navState })
+
+				-- Legacy Roact does not have the setState callback, so we use task.defer
+				task.defer(function()
+					self:_onNavigationStateChange(lastNavState, navState, action)
+					dispatchActionEvents()
+					self:_persistNavigationState(navState)
+				end)
+			end
 
 			return true
 		end
