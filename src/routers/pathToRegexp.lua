@@ -408,7 +408,7 @@ export type TokensToFunctionOptions = {
 	--[[
 	 * When `false` the function can produce an invalid (unmatched) path. (default: `true`)
 	 ]]
-	validate: boolean,
+	validate: boolean?,
 }
 
 --[[
@@ -426,10 +426,11 @@ export type PathFunction<P> = (P?) -> string;
 --[[
  * Expose a method for transforming tokens into the path function.
  ]]
-function exports.tokensToFunction(tokens: { Token }, options: TokensToFunctionOptions)
-	if options == nil then
-		options = {}
+function exports.tokensToFunction(tokens: { Token }, optionalOptions: TokensToFunctionOptions?)
+	if optionalOptions == nil then
+		optionalOptions = {}
 	end
+	local options = optionalOptions :: TokensToFunctionOptions
 	local reFlags = flags(options)
 	local encode = options.encode or function(x: string): string
 		return x
@@ -689,7 +690,7 @@ export type Token = string | Key;
 local function arrayToRegexp(
 	paths: { string },
 	keys: { Key }?,
-	options: TokensToRegexpOptions & ParseOptions
+	options: (TokensToRegexpOptions & ParseOptions)?
 ): string
 	local parts = Cryo.List.map(paths, function(path)
 		return exports.pathToRegexp(path, keys, options).source
@@ -853,7 +854,7 @@ function exports.pathToRegexp(
 )
 	-- if (path instanceof RegExp) return regexpToRegexp(path, keys);
 	if Array.isArray(path) then
-		return arrayToRegexp(path, keys, options)
+		return arrayToRegexp(path :: {string}, keys, options)
 	end
 	return stringToRegexp(path, keys, options)
 end

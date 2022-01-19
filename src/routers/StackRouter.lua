@@ -93,7 +93,7 @@ return function(routeArray, config)
 	end
 
 	local function getInitialState(action)
-		local route = {}
+		local route = {} :: any
 		local childRouter = childRouters[action.routeName]
 
 		-- This is a push-like action, and childRouter will be a router or null
@@ -159,7 +159,7 @@ return function(routeArray, config)
 	end
 
 	local function getParamsForRouteAndAction(routeName, action)
-		if action.params == Cryo.None then 
+		if action.params == Cryo.None then
 			return nil
 		end
 

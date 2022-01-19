@@ -248,7 +248,7 @@ return function()
 				-- and probably should not be. Until lua-apps adopts it for the whole
 				-- app, Roact Navigation will probably need to support multiple
 				-- containers in the app.
-				itSKIP("warns when you render more than one container explicitly")
+				itSKIP("warns when you render more than one container explicitly", function() end)
 			end)
 		end)
 

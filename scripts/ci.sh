@@ -2,6 +2,7 @@
 
 set -ex
 
+roblox-cli analyze test-bundle.project.json
 selene src Storybook RhodiumTests
 
 robloxdev-cli run --load.model test-bundle.project.json --run ./scripts/run-tests.lua --fastFlags.overrides EnableLoadModule=true

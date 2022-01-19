@@ -8,8 +8,11 @@
 /*.rbxmx
 /*.sig
 /rotriever.lock
-/Packages
+
 .DS_Store
 .vscode
 .idea
 roblox.toml
+
+Packages/*
+!Packages/.robloxrc

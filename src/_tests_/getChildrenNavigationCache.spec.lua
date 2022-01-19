@@ -16,7 +16,7 @@ return function()
 					{ key = "one" },
 				}
 			},
-		}
+		} :: any
 		local result = getChildrenNavigationCache(navigation)
 		jestExpect(result).toBeDefined()
 		jestExpect(navigation._childrenNavigation).toBe(result)

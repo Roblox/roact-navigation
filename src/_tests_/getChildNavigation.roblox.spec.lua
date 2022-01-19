@@ -109,7 +109,7 @@ return function()
 			isFocused = function()
 				return true
 			end,
-		}
+		} :: any
 
 		local childNav = getChildNavigation(testNavigation, "a", function()
 			return testNavigation

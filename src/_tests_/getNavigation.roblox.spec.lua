@@ -25,7 +25,7 @@ return function()
 			testDispatch = function() end,
 			testActionSubscribers = {},
 			testGetScreenProps = function() end,
-		}
+		} :: any
 
 		function bundle.testGetCurrentNavigation()
 			return bundle.navigation

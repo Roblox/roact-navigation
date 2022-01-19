@@ -10,7 +10,7 @@ Roact = "github.com/roblox/roact@1.2"
 Cryo = "github.com/roblox/cryo@1.0"
 Otter = "github.com/roblox/otter@0.1"
 LuauPolyfill = "github.com/roblox/luau-polyfill@0.2.6"
-RegExp = "github.com/roblox/luau-regexp@0.1.3"
+RegExp = "github.com/roblox/luau-regexp@0.2.0"
 
 [dev_dependencies]
 JestGlobals = "github.com/roblox/jest-roblox@2.0.0"
