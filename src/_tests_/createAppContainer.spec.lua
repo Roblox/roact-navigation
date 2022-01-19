@@ -4,6 +4,7 @@ return function()
 	local RoactNavigationModule = script.Parent.Parent
 	local Packages = RoactNavigationModule.Parent
 	local Roact = require(Packages.Roact)
+	local jest = require(Packages.Dev.JestGlobals).jest
 	local jestExpect = require(Packages.Dev.JestGlobals).expect
 	local NavigationActions = require(RoactNavigationModule.NavigationActions)
 	local createNavigator = require(RoactNavigationModule.navigators.createNavigator)
@@ -22,6 +23,7 @@ return function()
 	end
 
 	describe("NavigationContainer", function()
+		jest.useFakeTimers()
 		beforeEach(function()
 			_TESTING_ONLY_reset_container_count()
 		end)
@@ -99,7 +101,7 @@ return function()
 
 				Roact.mount(Roact.createElement(NavigationContainer))
 
-				-- jest.runOnlyPendingTimers()
+				jest.runOnlyPendingTimers()
 
 				jestExpect(
 					navigationContainer:dispatch(
@@ -116,7 +118,7 @@ return function()
 
 				Roact.mount(Roact.createElement(NavigationContainer))
 
-				-- jest.runOnlyPendingTimers()
+				jest.runOnlyPendingTimers()
 				jestExpect(navigationContainer:dispatch(NavigationActions.back())).toEqual(false)
 			end)
 
@@ -135,7 +137,7 @@ return function()
 				).toEqual(true)
 
 				-- Fake the passing of a tick
-				-- jest.runOnlyPendingTimers()
+				jest.runOnlyPendingTimers()
 
 				jestExpect(navigationContainer.state.nav).toMatchObject({
 					index = 2,
@@ -168,7 +170,7 @@ return function()
 				).toEqual(true)
 
 				-- Fake the passing of a tick
-				-- jest.runOnlyPendingTimers()
+				jest.runOnlyPendingTimers()
 
 				jestExpect(navigationContainer.state.nav).toMatchObject({
 					index = 3,
@@ -226,7 +228,7 @@ return function()
 				).toEqual(true)
 
 				-- Fake the passing of a tick
-				-- jest.runOnlyPendingTimers()
+				jest.runOnlyPendingTimers()
 
 				jestExpect(navigationContainer.state.nav).toMatchObject({
 					index = 6,
@@ -302,13 +304,20 @@ return function()
 				local navigationContainer = createPersistenceEnabledContainer(loadNavigationState, persistNavigationState)
 
 				jestExpect(loadNavigationState.callCount).never.toEqual(0)
-				-- jest.runOnlyPendingTimers()
+				jest.runOnlyPendingTimers()
 				navigationContainer:dispatch(
 					NavigationActions.navigate({ routeName = "foo" })
 				)
 
-				-- jest.runOnlyPendingTimers()
-				wait()
+				jest.runOnlyPendingTimers()
+				if not _G.__NEW_ROACT__ then
+					--[[
+						ROBLOX DEVIATION: In Legacy Roact, this test breaks when we do not wait because we use
+						task.defer instead of the setState callback in createAppContainer:dispatch. The wait
+						ensures that the task.defer code actually gets run.
+					]]
+					wait()
+				end
 
 				persistNavigationState:assertCalledWithDeepEqual({
 					index = 1,
@@ -339,12 +348,12 @@ return function()
 				end)
 				local navigationContainer = createPersistenceEnabledContainer(loadNavigationState, persistNavigationState)
 
-				-- jest.runOnlyPendingTimers()
+				jest.runOnlyPendingTimers()
 				navigationContainer:dispatch(
 					NavigationActions.navigate({ routeName = "baz" })
 				)
 
-				-- jest.runOnlyPendingTimers()
+				jest.runOnlyPendingTimers()
 				waitUntil(function()
 					return warningFound
 				end)
@@ -360,7 +369,7 @@ return function()
 				local navigationContainer = createPersistenceEnabledContainer(loadNavigationState)
 
 				jestExpect(loadNavigationState.callCount).never.toEqual(0)
-				-- jest.runOnlyPendingTimers()
+				jest.runOnlyPendingTimers()
 				jestExpect(navigationContainer.state.nav).toMatchObject({
 					index = 1,
 					isTransitioning = false,
@@ -386,7 +395,7 @@ return function()
 					local navigationContainer = createPersistenceEnabledContainer(loadNavigationState)
 
 					jestExpect(loadNavigationState.callCount).never.toEqual(0)
-					-- jest.runOnlyPendingTimers()
+					jest.runOnlyPendingTimers()
 					jestExpect(navigationContainer.state.nav).toMatchObject({
 						index = 1,
 						isTransitioning = false,
