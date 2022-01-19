@@ -5,6 +5,9 @@ ___
 
 Work in progress, to be added to next release notes.
 
+### v0.5.0
+
+* Added compatibility for Roact 17 setState callbacks in createAppContainer dispatch and didMount. ([#104](https://github.com/Roblox/roact-navigation/pull/104))
 * Fix bug with StackView Transitioner where active screen content could remain hidden and prevent setState from being called while unmounting. ([#101](https://github.com/Roblox/roact-navigation/pull/101))
 * Allow for non-overlay screens to still use a transparent background and transparent background on non-overlay screens, change ClipsDescendants to false for navigator views and fix "Listener disconnected twice" error ([#97](https://github.com/Roblox/roact-navigation/pull/97))
 * Add `RoactNavigation.None` to allow removal of params ([#90](https://github.com/Roblox/roact-navigation/pull/90))
