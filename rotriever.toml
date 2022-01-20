@@ -1,9 +1,9 @@
 [package]
 name = "RoactNavigation"
-version = "0.5.0"
+version = "0.5.1"
 authors = ["Roblox"]
 content_root = "src"
-files = ["*", "!**/_tests_/**"]
+files = ["*", "!**/_tests_/**", "!.robloxrc"]
 
 [dependencies]
 Roact = "github.com/roblox/roact@1.2"

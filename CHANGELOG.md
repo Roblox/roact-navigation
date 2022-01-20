@@ -5,6 +5,11 @@ ___
 
 Work in progress, to be added to next release notes.
 
+### v0.5.1
+* Updated the rotriever.toml to exclude the .robloxrc file from the package ([#109](https://github.com/Roblox/roact-navigation/pull/109))
+* Added back jest FakeTimer logic to align with upstream ([#108](https://github.com/Roblox/roact-navigation/pull/108))
+
+___
 ### v0.5.0
 
 * Added compatibility for Roact 17 setState callbacks in createAppContainer dispatch and didMount. ([#104](https://github.com/Roblox/roact-navigation/pull/104))
