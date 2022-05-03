@@ -5,6 +5,8 @@ ___
 
 Work in progress, to be added to next release notes.
 
+* Upgrade to Roact 17 ([#112](https://github.com/Roblox/roact-navigation/pull/112))
+
 ### v0.5.1
 * Updated the rotriever.toml to exclude the .robloxrc file from the package ([#109](https://github.com/Roblox/roact-navigation/pull/109))
 * Added back jest FakeTimer logic to align with upstream ([#108](https://github.com/Roblox/roact-navigation/pull/108))

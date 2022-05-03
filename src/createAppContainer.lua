@@ -321,19 +321,9 @@ local function createAppContainer(AppComponent, linkingProtocol)
 			return
 		end
 
-		if self.forceUpdate then
-			-- self.forceUpdate is only defined in Roact 17, so this code will only run in R17
-			self:setState({
-				nav = startupState
-			}, dispatchAction)
-		else
-			-- Legacy Roact does not allow callbacks in setState
-			self:setState({
-				nav = startupState
-			})
-
-			task.defer(dispatchAction)
-		end
+		self:setState({
+			nav = startupState
+		}, dispatchAction)
 	end
 
 	function NavigationContainer:getStartupParams()
@@ -442,23 +432,11 @@ local function createAppContainer(AppComponent, linkingProtocol)
 			-- will not discard this change
 			self._navState = navState
 
-			if self.forceUpdate then
-				-- self.forceUpdate is only defined in Roact 17, so this code will only run in R17
-				self:setState({ nav = navState }, function()
-					self:_onNavigationStateChange(lastNavState, navState, action)
-					task.defer(dispatchActionEvents)
-					self:_persistNavigationState(navState)
-				end)
-			else
-				self:setState({ nav = navState })
-
-				-- Legacy Roact does not have the setState callback, so we use task.defer
-				task.defer(function()
-					self:_onNavigationStateChange(lastNavState, navState, action)
-					dispatchActionEvents()
-					self:_persistNavigationState(navState)
-				end)
-			end
+			self:setState({ nav = navState }, function()
+				self:_onNavigationStateChange(lastNavState, navState, action)
+				task.defer(dispatchActionEvents)
+				self:_persistNavigationState(navState)
+			end)
 
 			return true
 		end

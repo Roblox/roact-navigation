@@ -310,14 +310,6 @@ return function()
 				)
 
 				jest.runOnlyPendingTimers()
-				if not _G.__NEW_ROACT__ then
-					--[[
-						ROBLOX DEVIATION: In Legacy Roact, this test breaks when we do not wait because we use
-						task.defer instead of the setState callback in createAppContainer:dispatch. The wait
-						ensures that the task.defer code actually gets run.
-					]]
-					wait()
-				end
 
 				persistNavigationState:assertCalledWithDeepEqual({
 					index = 1,
