@@ -5,6 +5,8 @@ ___
 
 Work in progress, to be added to next release notes.
 
+### v0.5.2
+
 * Fixed race condition in StackView Transitioner ([#111](https://github.com/Roblox/roact-navigation/pull/111))
 * Upgrade to Roact 17 ([#112](https://github.com/Roblox/roact-navigation/pull/112))
 

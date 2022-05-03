@@ -1,13 +1,12 @@
 [package]
 name = "RoactNavigation"
-version = "0.5.1"
+version = "0.5.2"
 authors = ["Roblox"]
 content_root = "src"
 files = ["*", "!**/_tests_/**", "!.robloxrc"]
 
 [dependencies]
 Roact = { target = "github.com/roblox/roact-alignment", version = "17.0.1-rc.11", package = "RoactCompat"}
-
 Cryo = "github.com/roblox/cryo@1.0"
 Otter = "github.com/roblox/otter@0.1"
 LuauPolyfill = "github.com/roblox/luau-polyfill@0.2.6"
