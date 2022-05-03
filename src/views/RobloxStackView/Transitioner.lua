@@ -1,3 +1,4 @@
+-- upstream: https://github.com/react-navigation/stack/blob/676bc3b45a7715edecd13530ae3b39ee1fe48833/src/views/Transitioner.tsx
 local root = script.Parent.Parent.Parent
 local Packages = root.Parent
 local Cryo = require(Packages.Cryo)
@@ -128,7 +129,7 @@ function Transitioner:didUpdate(prevProps)
 		self:_onAbsoluteSizeChanged(self._ref.current)
 	end
 
-	-- React-navigation uses componentWillReceiveProps that is only called when Parent
+	-- ROBLOX DEVIATION: React-navigation uses componentWillReceiveProps that is only called when Parent
 	-- re-renders or when this component is actually being given new props, so we need to
 	-- filter here. If not, this would trigger on setState and enter an infinite loop.
 	if self.props ~= prevProps then
@@ -205,6 +206,10 @@ function Transitioner:_computeScenes(props, nextProps)
 		nextScenes = filterStale(nextScenes)
 	end
 
+	if nextProps.screenProps ~= self.props.screenProps then
+		self:setState({ scenes = nextScenes })
+	end
+
 	if nextScenes == self.state.scenes then
 		return nil
 	end
@@ -240,44 +245,48 @@ function Transitioner:_startTransition(props, nextProps)
 	self._transitionProps = buildTransitionProps(nextProps, nextState)
 	local isTransitioning = self._transitionProps.navigation.state.isTransitioning
 
-	if not isTransitioning or not indexHasChanged then
-		-- If state is not transitioning, then we go immediately to new index.
-		-- Likewise, if the index has not changed then we still need to set up initial
-		-- positions via setState.
-		self:setState(nextState)
-
-		if nextProps.onTransitionStart then
-			nextProps.onTransitionStart(self._transitionProps, self._prevTransitionProps)
-		end
-
-		-- motor will call _endTransition for us
-		position:setGoal(Otter.instant(toValue))
-	elseif isTransitioning then
+	if isTransitioning and indexHasChanged then
 		self._isTransitionRunning = true
-		self:setState(nextState)
+	end
 
-		if nextProps.onTransitionStart then
-			nextProps.onTransitionStart(self._transitionProps, self._prevTransitionProps)
-		end
+	self:setState(nextState, function()
+		if isTransitioning and indexHasChanged then
 
-		local positionHasChanged = self._positionLastValue ~= toValue
-		if indexHasChanged and positionHasChanged then
-			-- get transition spec
-			local transitionUserSpec = {}
-			if nextProps.configureTransition then
-				transitionUserSpec = nextProps.configureTransition(
-					self._transitionProps, self._prevTransitionProps) or {}
+			if nextProps.onTransitionStart then
+				nextProps.onTransitionStart(self._transitionProps, self._prevTransitionProps)
 			end
 
-			local transitionSpec = Cryo.Dictionary.join(DEFAULT_TRANSITION_SPEC, transitionUserSpec)
+			local positionHasChanged = self._positionLastValue ~= toValue
+			if positionHasChanged then
+				-- get transition spec
+				local transitionUserSpec = {}
+				if nextProps.configureTransition then
+					transitionUserSpec = nextProps.configureTransition(
+						self._transitionProps, self._prevTransitionProps) or {}
+				end
 
-			-- motor will call _endTransition for us
-			position:setGoal(Otter.spring(nextProps.navigation.state.index, transitionSpec))
+				local transitionSpec = Cryo.Dictionary.join(DEFAULT_TRANSITION_SPEC, transitionUserSpec)
+
+				-- motor will call _endTransition for us
+				position:setGoal(Otter.spring(nextProps.navigation.state.index, transitionSpec))
+			else
+				-- Set motor to current state to trigger _endTransition call with correct sequencing.
+				position:setGoal(Otter.instant(nextProps.navigation.state.index))
+			end
 		else
-			-- Set motor to current state to trigger _endTransition call with correct sequencing.
-			position:setGoal(Otter.instant(nextProps.navigation.state.index))
+			-- If state is not transitioning, then we go immediately to new index.
+			-- Likewise, if the index has not changed then we still need to set up initial
+			-- positions via setState.
+
+			if nextProps.onTransitionStart then
+				nextProps.onTransitionStart(self._transitionProps, self._prevTransitionProps)
+			end
+
+			-- ROBLOX DEVIATION: motor will call _endTransition for us
+			-- ROBLOX DEVIATION: upstream checks indexHasChanged here
+			position:setGoal(Otter.instant(toValue))
 		end
-	end
+	end)
 end
 
 function Transitioner:_onTransitionEnd()
@@ -292,22 +301,23 @@ function Transitioner:_onTransitionEnd()
 
 	self._transitionProps = buildTransitionProps(self.props, nextState)
 
-	self:setState(nextState)
+	self:setState(nextState, function()
+		if self.props.onTransitionEnd then
+			self.props.onTransitionEnd(self._transitionProps, prevTransitionProps)
+		end
 
-	if self.props.onTransitionEnd then
-		self.props.onTransitionEnd(self._transitionProps, prevTransitionProps)
-	end
-
-	local firstQueuedTransition = self._transitionQueue[1]
-	if firstQueuedTransition then
-		local prevProps = firstQueuedTransition.prevProps
-		self._transitionQueue = Cryo.List.removeIndex(self._transitionQueue, 1)
-		self:_startTransition(prevProps, self.props)
-	else
-		self._isTransitionRunning = false
-	end
+		local firstQueuedTransition = self._transitionQueue[1]
+		if firstQueuedTransition then
+			local prevProps = firstQueuedTransition.prevProps
+			self._transitionQueue = Cryo.List.removeIndex(self._transitionQueue, 1)
+			self:_startTransition(prevProps, self.props)
+		else
+			self._isTransitionRunning = false
+		end
+	end)
 end
 
+-- ROBLOX DEVIATION: Deviation for Otter usage
 function Transitioner:_onPositionStep(value)
 	self._positionLastValue = value
 
