@@ -5,6 +5,8 @@ ___
 
 Work in progress, to be added to next release notes.
 
+* Use unique key for stack screens rather than index ([#114](https://github.com/Roblox/roact-navigation/pull/114))
+
 ### v0.5.2
 
 * Fixed race condition in StackView Transitioner ([#111](https://github.com/Roblox/roact-navigation/pull/111))

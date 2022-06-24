@@ -106,7 +106,8 @@ function StackViewLayout:render()
 	local topMostOpaqueSceneIndex = self.state.topMostOpaqueSceneIndex
 	local scenes = transitionProps.scenes
 
-	local renderedScenes = Cryo.List.map(scenes, function(scene)
+	local renderedScenes = {}
+	for _, scene in ipairs(scenes) do
 		-- The card is obscured if:
 		-- 	It's not the active card (e.g. we're transitioning TO it).
 		-- 	It's hidden underneath an opaque card that is NOT currently transitioning.
@@ -153,7 +154,7 @@ function StackViewLayout:render()
 			})
 		end
 
-		return Roact.createFragment({
+		local renderedScene = Roact.createFragment({
 			AbsorbInput = absorbInputElement,
 			-- use scene index for key, it makes testing with Rhodium easier
 			[tostring(scene.index)] = Roact.createElement("Frame", {
@@ -178,7 +179,9 @@ function StackViewLayout:render()
 				})
 			}),
 		})
-	end)
+
+		renderedScenes[tostring(scene.key)] = renderedScene
+	end
 
 	return Roact.createElement("Frame", {
 		Size = UDim2.new(1, 0, 1, 0),
