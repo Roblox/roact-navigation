@@ -6,14 +6,15 @@ return function()
 	local Packages = RoactNavigationModule.Parent
 	local Cryo = require(Packages.Cryo)
 	local Roact = require(Packages.Roact)
-	local jestExpect = require(Packages.Dev.JestGlobals).expect
+	local JestGlobals = require(Packages.Dev.JestGlobals)
+	local expect = JestGlobals.expect
+	local jest = JestGlobals.jest
 
 	local NavigationFocusEvents = require(viewsModule.NavigationFocusEvents)
 	local getEventManager = require(RoactNavigationModule.getEventManager)
 	local NavigationActions = require(RoactNavigationModule.NavigationActions)
 	local StackActions = require(RoactNavigationModule.routers.StackActions)
 	local Events = require(RoactNavigationModule.Events)
-	local createSpy = require(RoactNavigationModule.utils.createSpy)
 
 	local function getNavigationMock(mock)
 	  local eventManager = getEventManager("target")
@@ -29,7 +30,7 @@ return function()
 		isFocused = function()
 			return true
 		end,
-		addListener = createSpy(eventManager.addListener),
+		addListener = jest.fn(eventManager.addListener),
 		emit = eventManager.emit,
 		_dangerouslyGetParent = function()
 			return nil
@@ -45,18 +46,18 @@ return function()
 
 	it("emits refocus event with current route key on refocus", function()
 		local navigation = getNavigationMock()
-		local onEvent = createSpy()
+		local onEvent, onEventFn = jest.fn()
 
 		Roact.mount(Roact.createElement(NavigationFocusEvents, {
 			navigation = navigation,
-			onEvent = onEvent.value,
+			onEvent = onEventFn,
 		}))
 
 		navigation.emit(Events.Refocus)
 
-		jestExpect(onEvent.callCount).toEqual(1)
+		expect(onEvent).toHaveBeenCalledTimes(1)
 		local key = navigation.state.routes[navigation.state.index].key
-		onEvent:assertCalledWith(key, Events.Refocus)
+		expect(onEvent).toHaveBeenCalledWith(key, Events.Refocus)
 	end)
 
 	describe("on navigation action emitted", function()
@@ -66,11 +67,11 @@ return function()
 					return false
 				end,
 			})
-			local onEvent = createSpy()
+			local onEvent, onEventFn = jest.fn()
 
 			Roact.mount(Roact.createElement(NavigationFocusEvents, {
 				navigation = navigation,
-				onEvent = onEvent.value,
+				onEvent = onEventFn,
 			}))
 
 			navigation.emit(Events.Action, {
@@ -79,7 +80,7 @@ return function()
 				type = Events.Action,
 			})
 
-			jestExpect(onEvent.callCount).toEqual(0)
+			expect(onEvent).never.toHaveBeenCalled()
 		end)
 
 		it("emits only willFocus and willBlur if state is transitioning", function()
@@ -97,11 +98,11 @@ return function()
 			local navigation = getNavigationMock({
 				state = state,
 			})
-			local onEvent = createSpy()
+			local onEvent, onEventFn = jest.fn()
 
 			Roact.mount(Roact.createElement(NavigationFocusEvents, {
 				navigation = navigation,
-				onEvent = onEvent.value,
+				onEvent = onEventFn,
 			}))
 
 			local lastState = {
@@ -127,7 +128,7 @@ return function()
 				type = Events.Action,
 			}
 
-			jestExpect(onEvent.calls).toEqual({
+			expect(onEvent.mock.calls).toEqual({
 				{"Second", Events.WillFocus, expectedPayload},
 				{"First", Events.WillBlur, expectedPayload},
 				{"Second", Events.Action, expectedPayload},
@@ -146,11 +147,11 @@ return function()
 			local action = NavigationActions.navigate({ routeName = "Second" })
 
 			local navigation = getNavigationMock({ state = state })
-			local onEvent = createSpy()
+			local onEvent, onEventFn = jest.fn()
 
 			Roact.mount(Roact.createElement(NavigationFocusEvents, {
 				navigation = navigation,
-				onEvent = onEvent.value,
+				onEvent = onEventFn,
 			}))
 
 			local lastState = {
@@ -176,7 +177,7 @@ return function()
 				type = Events.Action,
 			}
 
-			jestExpect(onEvent.calls).toEqual({
+			expect(onEvent.mock.calls).toEqual({
 				{"Second", Events.WillFocus, expectedPayload},
 				{"Second", Events.DidFocus, expectedPayload},
 				{"First", Events.WillBlur, expectedPayload},
@@ -219,11 +220,11 @@ return function()
 			local navigation = getNavigationMock({
 				state = intermediateState,
 			})
-			local onEvent = createSpy()
+			local onEvent, onEventFn = jest.fn()
 
 			Roact.mount(Roact.createElement(NavigationFocusEvents, {
 				navigation = navigation,
-				onEvent = onEvent.value,
+				onEvent = onEventFn,
 			}))
 
 			navigation.emit(Events.Action, {
@@ -241,7 +242,7 @@ return function()
 				type = Events.Action,
 			}
 
-			jestExpect(onEvent.calls).toEqual({
+			expect(onEvent.mock.calls).toEqual({
 				{"Second", Events.WillFocus, expectedPayloadNavigate},
 				{"First", Events.WillBlur, expectedPayloadNavigate},
 				{"Second", Events.Action, expectedPayloadNavigate},
@@ -263,7 +264,7 @@ return function()
 				type = Events.Action,
 			}
 
-			jestExpect(onEvent.calls).toEqual({
+			expect(onEvent.mock.calls).toEqual({
 				{"First", Events.DidBlur, expectedPayloadEndTransition},
 				{"Second", Events.DidFocus, expectedPayloadEndTransition},
 				{"Second", Events.Action, expectedPayloadEndTransition},
@@ -284,11 +285,11 @@ return function()
 					routeName = "First",
 				},
 			})
-			local onEvent = createSpy()
+			local onEvent, onEventFn = jest.fn()
 
 			Roact.mount(Roact.createElement(NavigationFocusEvents, {
 				navigation = navigation,
-				onEvent = onEvent.value,
+				onEvent = onEventFn,
 			}))
 
 			local lastState = { key = "Third", routeName = "Third" }
@@ -309,7 +310,7 @@ return function()
 				type = Events.Action,
 			}
 
-			jestExpect(onEvent.calls).toEqual({
+			expect(onEvent.mock.calls).toEqual({
 				{"FirstLanding", Events.WillFocus, expectedPayload},
 				{"FirstLanding", Events.DidFocus, expectedPayload},
 			})
@@ -324,7 +325,7 @@ return function()
 				type = Events.Action,
 			})
 
-			jestExpect(onEvent.callCount).toEqual(0)
+			expect(onEvent).never.toHaveBeenCalled()
 		end)
 	end)
 end

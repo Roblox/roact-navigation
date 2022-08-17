@@ -5,13 +5,16 @@ return function()
 	local Packages = root.Parent
 	local Cryo = require(Packages.Cryo)
 	local Roact = require(Packages.Roact)
+	local JestGlobals = require(Packages.Dev.JestGlobals)
+	local expect = JestGlobals.expect
+	local jest = JestGlobals.jest
+
 	local NavigationEvents = require(script.Parent.Parent.NavigationEvents)
 	local NavigationContext = require(root.views.NavigationContext)
 	local Events = require(root.Events)
-	local createSpy = require(root.utils.createSpy)
 
 	local function createPropListener()
-		return createSpy()
+		return jest.fn()
 	end
 
 	local EVENT_TO_PROP_NAME = {
@@ -22,11 +25,20 @@ return function()
 	};
 
 	local function createEventListenersProp()
+		local onWillFocus, onWillFocusFn = createPropListener()
+		local onDidFocus, onDidFocusFn = createPropListener()
+		local onWillBlur, onWillBlurFn = createPropListener()
+		local onDidBlur, onDidBlurFn = createPropListener()
 		return {
-			onWillFocus = createPropListener(),
-			onDidFocus = createPropListener(),
-			onWillBlur = createPropListener(),
-			onDidBlur = createPropListener(),
+			onWillFocus = onWillFocus,
+			onDidFocus = onDidFocus,
+			onWillBlur = onWillBlur,
+			onDidBlur = onDidBlur,
+		}, {
+			onWillFocus = onWillFocusFn,
+			onDidFocus = onDidFocusFn,
+			onWillBlur = onWillBlurFn,
+			onDidBlur = onDidBlurFn,
 		}
 	end
 
@@ -60,7 +72,7 @@ return function()
 		end)()
 
 		local navigation = {
-			addListener = createSpy(function(eventName, handler)
+			addListener = jest.fn(function(eventName, handler)
 				NavigationListenersAPI.add(eventName, handler)
 
 				return {
@@ -89,16 +101,16 @@ return function()
 					Roact.createElement(NavigationEvents, {navigation = navigation})
 				)
 
-				expect(#NavigationListenersAPI.get(Events.WillFocus)).to.equal(1)
-				expect(#NavigationListenersAPI.get(Events.DidFocus)).to.equal(1)
-				expect(#NavigationListenersAPI.get(Events.WillBlur)).to.equal(1)
-				expect(#NavigationListenersAPI.get(Events.DidBlur)).to.equal(1)
+				expect(#NavigationListenersAPI.get(Events.WillFocus)).toBe(1)
+				expect(#NavigationListenersAPI.get(Events.DidFocus)).toBe(1)
+				expect(#NavigationListenersAPI.get(Events.WillBlur)).toBe(1)
+				expect(#NavigationListenersAPI.get(Events.DidBlur)).toBe(1)
 
 				Roact.unmount(tree)
-				expect(#NavigationListenersAPI.get(Events.WillFocus)).to.equal(0)
-				expect(#NavigationListenersAPI.get(Events.DidFocus)).to.equal(0)
-				expect(#NavigationListenersAPI.get(Events.WillBlur)).to.equal(0)
-				expect(#NavigationListenersAPI.get(Events.DidBlur)).to.equal(0)
+				expect(#NavigationListenersAPI.get(Events.WillFocus)).toBe(0)
+				expect(#NavigationListenersAPI.get(Events.DidFocus)).toBe(0)
+				expect(#NavigationListenersAPI.get(Events.WillBlur)).toBe(0)
+				expect(#NavigationListenersAPI.get(Events.DidBlur)).toBe(0)
 			end
 		)
 
@@ -113,16 +125,16 @@ return function()
 				}, Roact.createElement(NavigationEvents))
 			)
 
-			expect(#NavigationListenersAPI.get(Events.WillFocus)).to.equal(1)
-			expect(#NavigationListenersAPI.get(Events.DidFocus)).to.equal(1)
-			expect(#NavigationListenersAPI.get(Events.WillBlur)).to.equal(1)
-			expect(#NavigationListenersAPI.get(Events.DidBlur)).to.equal(1)
+			expect(#NavigationListenersAPI.get(Events.WillFocus)).toBe(1)
+			expect(#NavigationListenersAPI.get(Events.DidFocus)).toBe(1)
+			expect(#NavigationListenersAPI.get(Events.WillBlur)).toBe(1)
+			expect(#NavigationListenersAPI.get(Events.DidBlur)).toBe(1)
 
 			Roact.unmount(tree)
-			expect(#NavigationListenersAPI.get(Events.WillFocus)).to.equal(0)
-			expect(#NavigationListenersAPI.get(Events.DidFocus)).to.equal(0)
-			expect(#NavigationListenersAPI.get(Events.WillBlur)).to.equal(0)
-			expect(#NavigationListenersAPI.get(Events.DidBlur)).to.equal(0)
+			expect(#NavigationListenersAPI.get(Events.WillFocus)).toBe(0)
+			expect(#NavigationListenersAPI.get(Events.DidFocus)).toBe(0)
+			expect(#NavigationListenersAPI.get(Events.WillBlur)).toBe(0)
+			expect(#NavigationListenersAPI.get(Events.DidBlur)).toBe(0)
 		end)
 
 		it("wire props listeners to navigation listeners", function()
@@ -130,19 +142,19 @@ return function()
 			local navigation = helper.navigation
 			local NavigationListenersAPI = helper.NavigationListenersAPI
 
-			local eventListenerProps = createEventListenersProp()
+			local eventListenerProps, eventListenerPropsFn = createEventListenersProp()
 
 			Roact.mount(
 				Roact.createElement(NavigationEvents, Cryo.Dictionary.join(
 					{navigation = navigation},
-					eventListenerProps
+					eventListenerPropsFn
 				))
 			)
 
 			local function checkPropListenerIsCalled(eventName, propName)
-				expect(eventListenerProps[propName].callCount).to.equal(0)
+				expect(eventListenerProps[propName]).toHaveBeenCalledTimes(0)
 				NavigationListenersAPI.call(eventName)
-				expect(eventListenerProps[propName].callCount).to.equal(1)
+				expect(eventListenerProps[propName]).toHaveBeenCalledTimes(1)
 			end
 
 			checkPropListenerIsCalled(Events.WillFocus, "onWillFocus")
@@ -159,18 +171,18 @@ return function()
 			local nextNavigation = nextHelper.navigation
 			local nextNavigationListenersAPI = nextHelper.NavigationListenersAPI
 
-			local eventListenerProps = createEventListenersProp()
+			local eventListenerProps, eventListenerPropsFn = createEventListenersProp()
 			local tree = Roact.mount(
 				Roact.createElement(NavigationEvents, Cryo.Dictionary.join(
 					{navigation = navigation},
-					eventListenerProps
+					eventListenerPropsFn
 				))
 			)
 
 			for eventName, propName in pairs(EVENT_TO_PROP_NAME) do
-				expect(eventListenerProps[propName].callCount).to.equal(0)
+				expect(eventListenerProps[propName]).toHaveBeenCalledTimes(0)
 				NavigationListenersAPI.call(eventName)
-				expect(eventListenerProps[propName].callCount).to.equal(1)
+				expect(eventListenerProps[propName]).toHaveBeenCalledTimes(1)
 			end
 
 			Roact.update(
@@ -183,9 +195,9 @@ return function()
 
 			for eventName, propName in pairs(EVENT_TO_PROP_NAME) do
 				NavigationListenersAPI.call(eventName)
-				expect(eventListenerProps[propName].callCount).to.equal(1)
+				expect(eventListenerProps[propName]).toHaveBeenCalledTimes(1)
 				nextNavigationListenersAPI.call(eventName)
-				expect(eventListenerProps[propName].callCount).to.equal(2)
+				expect(eventListenerProps[propName]).toHaveBeenCalledTimes(2)
 			end
 		end)
 
@@ -199,7 +211,7 @@ return function()
 				local tree = Roact.mount(
 					Roact.createElement(NavigationEvents, Cryo.Dictionary.join(
 						{navigation = navigation},
-						createEventListenersProp()
+						select(2, createEventListenersProp())
 					))
 				)
 
@@ -214,20 +226,20 @@ return function()
 				}))
 				Roact.update(tree, Roact.createElement(NavigationEvents, Cryo.Dictionary.join(
 					{navigation = navigation},
-					createEventListenersProp()
+					select(2, createEventListenersProp())
 				)))
 
-				local latestEventListenerProps = createEventListenersProp()
+				local latestEventListenerProps, latestEventListenerPropsFn = createEventListenersProp()
 
 				Roact.update(tree, Roact.createElement(NavigationEvents, Cryo.Dictionary.join(
 					{navigation = navigation},
-					latestEventListenerProps
+					latestEventListenerPropsFn
 				)))
 
 				local function checkLatestPropListenerCalled(eventName,  propName)
-					expect(latestEventListenerProps[propName].callCount).to.equal(0)
+					expect(latestEventListenerProps[propName]).toHaveBeenCalledTimes(0)
 					NavigationListenersAPI.call(eventName)
-					expect(latestEventListenerProps[propName].callCount).to.equal(1)
+					expect(latestEventListenerProps[propName]).toHaveBeenCalledTimes(1)
 				end
 
 				checkLatestPropListenerCalled(Events.WillFocus, "onWillFocus")

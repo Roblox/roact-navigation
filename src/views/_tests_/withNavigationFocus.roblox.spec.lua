@@ -4,6 +4,10 @@ return function()
 	local Packages = RoactNavigationModule.Parent
 
 	local Roact = require(Packages.Roact)
+	local JestGlobals = require(Packages.Dev.JestGlobals)
+
+	local expect = JestGlobals.expect
+
 	local NavigationContext = require(viewsModule.NavigationContext)
 	local Events = require(RoactNavigationModule.Events)
 	local withNavigationFocus = require(viewsModule.withNavigationFocus)
@@ -36,7 +40,7 @@ return function()
 		})
 
 		local tree = Roact.mount(rootElement)
-		expect(testFocused).to.equal(true)
+		expect(testFocused).toEqual(true)
 
 		Roact.unmount(tree)
 	end)
@@ -69,7 +73,7 @@ return function()
 		})
 
 		local tree = Roact.mount(rootElement)
-		expect(testFocused).to.equal(false)
+		expect(testFocused).toEqual(false)
 
 		Roact.unmount(tree)
 	end)
@@ -106,25 +110,25 @@ return function()
 		})
 
 		local tree = Roact.mount(rootElement)
-		expect(testFocused).to.equal(false)
-		expect(type(testListeners[Events.WillFocus])).to.equal("function")
-		expect(type(testListeners[Events.WillBlur])).to.equal("function")
+		expect(testFocused).toEqual(false)
+		expect(testListeners[Events.WillFocus]).toEqual(expect.any("function"))
+		expect(testListeners[Events.WillBlur]).toEqual(expect.any("function"))
 
 		testListeners[Events.WillFocus]()
-		expect(testFocused).to.equal(true)
+		expect(testFocused).toEqual(true)
 
 		testListeners[Events.WillBlur]()
-		expect(testFocused).to.equal(false)
+		expect(testFocused).toEqual(false)
 
 		Roact.unmount(tree)
-		expect(testListeners[Events.WillFocus]).to.equal(nil)
-		expect(testListeners[Events.WillBlur]).to.equal(nil)
+		expect(testListeners[Events.WillFocus]).toEqual(nil)
+		expect(testListeners[Events.WillBlur]).toEqual(nil)
 	end)
 
 	it("throws if component is not provided", function()
 		expect(function()
 			withNavigationFocus(nil)
-		end).to.throw("withNavigationFocus must be called with a Roact component (stateful or functional)")
+		end).toThrow("withNavigationFocus must be called with a Roact component (stateful or functional)")
 	end)
 
 	it("should throw when used outside of a navigation provider", function()
@@ -140,6 +144,6 @@ return function()
 
 		expect(function()
 			Roact.mount(Roact.createElement(FooWithNavigationFocus))
-		end).to.throw(errorMessage)
+		end).toThrow(errorMessage)
 	end)
 end

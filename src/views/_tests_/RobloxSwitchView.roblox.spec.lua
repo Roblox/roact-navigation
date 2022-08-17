@@ -1,6 +1,10 @@
 return function()
-	local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
+	local Packages = script.Parent.Parent.Parent.Parent
+	local Roact = require(Packages.Roact)
+	local JestGlobals = require(Packages.Dev.JestGlobals)
 	local RobloxSwitchView = require(script.Parent.Parent.RobloxSwitchView)
+
+	local expect = JestGlobals.expect
 
 	it("should mount and pass required props and context", function()
 		local testScreenProps = {}
@@ -41,8 +45,8 @@ return function()
 		local instance = Roact.mount(element)
 		Roact.unmount(instance)
 
-		expect(testComponentNavigationFromProp).to.equal(testNavigation)
-		expect(testComponentScreenProps).to.equal(testScreenProps)
+		expect(testComponentNavigationFromProp).toBe(testNavigation)
+		expect(testComponentScreenProps).toBe(testScreenProps)
 	end)
 
 	it("should unmount inactive pages when keepVisitedScreensMounted is false", function()
@@ -89,7 +93,7 @@ return function()
 		})
 
 		local instance = Roact.mount(element)
-		expect(fooUnmounted).to.equal(false)
+		expect(fooUnmounted).toEqual(false)
 
 		local testNavigation2 = {
 			state = {
@@ -110,7 +114,7 @@ return function()
 			}
 		}))
 
-		expect(fooUnmounted).to.equal(true)
+		expect(fooUnmounted).toEqual(true)
 		Roact.unmount(instance)
 	end)
 
@@ -158,7 +162,7 @@ return function()
 		})
 
 		local instance = Roact.mount(element)
-		expect(fooUnmounted).to.equal(false)
+		expect(fooUnmounted).toEqual(false)
 
 		local testNavigation2 = {
 			state = {
@@ -179,10 +183,10 @@ return function()
 			}
 		}))
 
-		expect(fooUnmounted).to.equal(false)
+		expect(fooUnmounted).toEqual(false)
 
 		Roact.unmount(instance)
-		expect(fooUnmounted).to.equal(true)
+		expect(fooUnmounted).toEqual(true)
 	end)
 
 	it("should unmount inactive pages when keepVisitedScreensMounted switches from true to false", function()
@@ -250,7 +254,7 @@ return function()
 			}
 		}))
 
-		expect(fooUnmounted).to.equal(false)
+		expect(fooUnmounted).toEqual(false)
 
 		instance = Roact.update(instance, Roact.createElement(RobloxSwitchView, {
 			screenProps = {},
@@ -261,7 +265,7 @@ return function()
 			}
 		}))
 
-		expect(fooUnmounted).to.equal(true)
+		expect(fooUnmounted).toEqual(true)
 
 		Roact.unmount(instance)
 	end)

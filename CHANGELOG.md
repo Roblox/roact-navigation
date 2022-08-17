@@ -5,6 +5,8 @@ ___
 
 Work in progress, to be added to next release notes.
 
+* Fix JavaScript mistranslation in path parsing ([#116](https://github.com/Roblox/roact-navigation/pull/116))
+
 * Add useNavigation hook ([#115](https://github.com/Roblox/roact-navigation/pull/115))
 
 * Use unique key for stack screens rather than index ([#114](https://github.com/Roblox/roact-navigation/pull/114))

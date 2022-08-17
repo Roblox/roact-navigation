@@ -10,10 +10,11 @@ return function()
 	local createNavigator = require(RoactNavigationModule.navigators.createNavigator)
 	local Events = require(RoactNavigationModule.Events)
 	local NavigationActions = require(RoactNavigationModule.NavigationActions)
-	local createSpy = require(RoactNavigationModule.utils.createSpy)
 	local waitUntil = require(RoactNavigationModule.utils.waitUntil)
 
-	local jestExpect = require(Packages.Dev.JestGlobals).expect
+	local JestGlobals = require(Packages.Dev.JestGlobals)
+	local expect = JestGlobals.expect
+	local jest = JestGlobals.jest
 	local Cryo = require(Packages.Cryo)
 	local Roact = require(Packages.Roact)
 
@@ -73,24 +74,24 @@ return function()
 	end)
 
 	it("fires focus and blur events in root navigator", function()
-		local firstFocusCallback = createSpy()
-		local firstBlurCallback = createSpy()
+		local firstFocusCallback, firstFocusCallbackFn = jest.fn()
+		local firstBlurCallback, firstBlurCallbackFn = jest.fn()
 
-		local secondFocusCallback = createSpy()
-		local secondBlurCallback = createSpy()
+		local secondFocusCallback, secondFocusCallbackFn = jest.fn()
+		local secondBlurCallback, secondBlurCallbackFn = jest.fn()
 
-		local thirdFocusCallback = createSpy()
-		local thirdBlurCallback = createSpy()
+		local thirdFocusCallback, thirdFocusCallbackFn = jest.fn()
+		local thirdBlurCallback, thirdBlurCallbackFn = jest.fn()
 
-		local fourthFocusCallback = createSpy()
-		local fourthBlurCallback = createSpy()
+		local fourthFocusCallback, fourthFocusCallbackFn = jest.fn()
+		local fourthBlurCallback, fourthBlurCallbackFn = jest.fn()
 
 		local Navigator = createAppContainer(
 			createTestNavigator({
-				{ first = createComponent(firstFocusCallback.value, firstBlurCallback.value) },
-				{ second = createComponent(secondFocusCallback.value, secondBlurCallback.value) },
-				{ third = createComponent(thirdFocusCallback.value, thirdBlurCallback.value) },
-				{ fourth = createComponent(fourthFocusCallback.value, fourthBlurCallback.value) },
+				{ first = createComponent(firstFocusCallbackFn, firstBlurCallbackFn) },
+				{ second = createComponent(secondFocusCallbackFn, secondBlurCallbackFn) },
+				{ third = createComponent(thirdFocusCallbackFn, thirdBlurCallbackFn) },
+				{ fourth = createComponent(fourthFocusCallbackFn, fourthBlurCallbackFn) },
 			})
 		)
 
@@ -107,64 +108,64 @@ return function()
 		Roact.mount(element)
 
 		waitUntil(function()
-			return firstFocusCallback.callCount > 0
+			return #firstFocusCallback.mock.calls > 0
 		end)
 
-		jestExpect(firstFocusCallback.callCount).toEqual(1)
-		jestExpect(firstBlurCallback.callCount).toEqual(0)
-		jestExpect(secondFocusCallback.callCount).toEqual(0)
-		jestExpect(secondBlurCallback.callCount).toEqual(0)
-		jestExpect(thirdFocusCallback.callCount).toEqual(0)
-		jestExpect(thirdBlurCallback.callCount).toEqual(0)
-		jestExpect(fourthFocusCallback.callCount).toEqual(0)
-		jestExpect(fourthBlurCallback.callCount).toEqual(0)
+		expect(firstFocusCallback).toHaveBeenCalledTimes(1)
+		expect(firstBlurCallback).toHaveBeenCalledTimes(0)
+		expect(secondFocusCallback).toHaveBeenCalledTimes(0)
+		expect(secondBlurCallback).toHaveBeenCalledTimes(0)
+		expect(thirdFocusCallback).toHaveBeenCalledTimes(0)
+		expect(thirdBlurCallback).toHaveBeenCalledTimes(0)
+		expect(fourthFocusCallback).toHaveBeenCalledTimes(0)
+		expect(fourthBlurCallback).toHaveBeenCalledTimes(0)
 
 		dispatch(NavigationActions.navigate({ routeName = 'second' }))
 
 		waitUntil(function()
-			return firstBlurCallback.callCount > 0
+			return #firstBlurCallback.mock.calls > 0
 		end)
 
-		jestExpect(firstBlurCallback.callCount).toEqual(1)
-		jestExpect(secondFocusCallback.callCount).toEqual(1)
+		expect(firstBlurCallback).toHaveBeenCalledTimes(1)
+		expect(secondFocusCallback).toHaveBeenCalledTimes(1)
 
 		dispatch(NavigationActions.navigate({ routeName = 'fourth' }))
 
 		waitUntil(function()
-			return secondBlurCallback.callCount > 0
+			return #secondBlurCallback.mock.calls > 0
 		end)
 
-		jestExpect(firstFocusCallback.callCount).toEqual(1)
-		jestExpect(firstBlurCallback.callCount).toEqual(1)
-		jestExpect(secondFocusCallback.callCount).toEqual(1)
-		jestExpect(secondBlurCallback.callCount).toEqual(1)
-		jestExpect(thirdFocusCallback.callCount).toEqual(0)
-		jestExpect(thirdBlurCallback.callCount).toEqual(0)
-		jestExpect(fourthFocusCallback.callCount).toEqual(1)
-		jestExpect(fourthBlurCallback.callCount).toEqual(0)
+		expect(firstFocusCallback).toHaveBeenCalledTimes(1)
+		expect(firstBlurCallback).toHaveBeenCalledTimes(1)
+		expect(secondFocusCallback).toHaveBeenCalledTimes(1)
+		expect(secondBlurCallback).toHaveBeenCalledTimes(1)
+		expect(thirdFocusCallback).toHaveBeenCalledTimes(0)
+		expect(thirdBlurCallback).toHaveBeenCalledTimes(0)
+		expect(fourthFocusCallback).toHaveBeenCalledTimes(1)
+		expect(fourthBlurCallback).toHaveBeenCalledTimes(0)
 	end)
 
 	it('fires focus and blur events in nested navigator', function()
-		local firstFocusCallback = createSpy()
-		local firstBlurCallback = createSpy()
+		local firstFocusCallback, firstFocusCallbackFn = jest.fn()
+		local firstBlurCallback, firstBlurCallbackFn = jest.fn()
 
-		local secondFocusCallback = createSpy()
-		local secondBlurCallback = createSpy()
+		local secondFocusCallback, secondFocusCallbackFn = jest.fn()
+		local secondBlurCallback, secondBlurCallbackFn = jest.fn()
 
-		local thirdFocusCallback = createSpy()
-		local thirdBlurCallback = createSpy()
+		local thirdFocusCallback, thirdFocusCallbackFn = jest.fn()
+		local thirdBlurCallback, thirdBlurCallbackFn = jest.fn()
 
-		local fourthFocusCallback = createSpy()
-		local fourthBlurCallback = createSpy()
+		local fourthFocusCallback, fourthFocusCallbackFn = jest.fn()
+		local fourthBlurCallback, fourthBlurCallbackFn = jest.fn()
 
 		local Navigator = createAppContainer(
 			createTestNavigator({
-				{ first = createComponent(firstFocusCallback.value, firstBlurCallback.value) },
-				{ second = createComponent(secondFocusCallback.value, secondBlurCallback.value) },
+				{ first = createComponent(firstFocusCallbackFn, firstBlurCallbackFn) },
+				{ second = createComponent(secondFocusCallbackFn, secondBlurCallbackFn) },
 				{
 					nested = createTestNavigator({
-						{ third = createComponent(thirdFocusCallback.value, thirdBlurCallback.value) },
-						{ fourth = createComponent(fourthFocusCallback.value, fourthBlurCallback.value) },
+						{ third = createComponent(thirdFocusCallbackFn, thirdBlurCallbackFn) },
+						{ fourth = createComponent(fourthFocusCallbackFn, fourthBlurCallbackFn) },
 					})
 				},
 			})
@@ -183,87 +184,87 @@ return function()
 		Roact.mount(element)
 
 		waitUntil(function()
-			return firstFocusCallback.callCount > 0
+			return #firstFocusCallback.mock.calls > 0
 		end)
 
-		jestExpect(thirdFocusCallback.callCount).toEqual(0)
-		jestExpect(firstFocusCallback.callCount).toEqual(1)
+		expect(thirdFocusCallback).toHaveBeenCalledTimes(0)
+		expect(firstFocusCallback).toHaveBeenCalledTimes(1)
 
 		dispatch(NavigationActions.navigate({ routeName = 'nested' }))
 
 		waitUntil(function()
-			return thirdFocusCallback.callCount > 0
+			return #thirdFocusCallback.mock.calls > 0
 		end)
 
-		jestExpect(firstFocusCallback.callCount).toEqual(1)
-		jestExpect(fourthFocusCallback.callCount).toEqual(0)
-		jestExpect(thirdFocusCallback.callCount).toEqual(1)
+		expect(firstFocusCallback).toHaveBeenCalledTimes(1)
+		expect(fourthFocusCallback).toHaveBeenCalledTimes(0)
+		expect(thirdFocusCallback).toHaveBeenCalledTimes(1)
 
 		dispatch(NavigationActions.navigate({ routeName = 'second' }))
 
 		waitUntil(function()
-			return secondFocusCallback.callCount > 0
+			return #secondFocusCallback.mock.calls > 0
 		end)
 
-		jestExpect(thirdFocusCallback.callCount).toEqual(1)
-		jestExpect(secondFocusCallback.callCount).toEqual(1)
-		jestExpect(fourthBlurCallback.callCount).toEqual(0)
+		expect(thirdFocusCallback).toHaveBeenCalledTimes(1)
+		expect(secondFocusCallback).toHaveBeenCalledTimes(1)
+		expect(fourthBlurCallback).toHaveBeenCalledTimes(0)
 
 		dispatch(NavigationActions.navigate({ routeName = 'nested' }))
 
 		waitUntil(function()
-			return thirdFocusCallback.callCount > 1
+			return #thirdFocusCallback.mock.calls > 1
 		end)
 
-		jestExpect(firstBlurCallback.callCount).toEqual(1)
-		jestExpect(secondBlurCallback.callCount).toEqual(1)
-		jestExpect(thirdFocusCallback.callCount).toEqual(2)
-		jestExpect(fourthFocusCallback.callCount).toEqual(0)
+		expect(firstBlurCallback).toHaveBeenCalledTimes(1)
+		expect(secondBlurCallback).toHaveBeenCalledTimes(1)
+		expect(thirdFocusCallback).toHaveBeenCalledTimes(2)
+		expect(fourthFocusCallback).toHaveBeenCalledTimes(0)
 
 		dispatch(NavigationActions.navigate({ routeName = 'third' }))
 
-		jestExpect(fourthBlurCallback.callCount).toEqual(0)
-		jestExpect(thirdFocusCallback.callCount).toEqual(2)
+		expect(fourthBlurCallback).toHaveBeenCalledTimes(0)
+		expect(thirdFocusCallback).toHaveBeenCalledTimes(2)
 
 		dispatch(NavigationActions.navigate({ routeName = 'first' }))
 
 		waitUntil(function()
-			return firstFocusCallback.callCount > 1
+			return #firstFocusCallback.mock.calls > 1
 		end)
 
-		jestExpect(firstFocusCallback.callCount).toEqual(2)
-		jestExpect(thirdBlurCallback.callCount).toEqual(2)
+		expect(firstFocusCallback).toHaveBeenCalledTimes(2)
+		expect(thirdBlurCallback).toHaveBeenCalledTimes(2)
 
 		dispatch(NavigationActions.navigate({ routeName = 'fourth' }))
 
 		waitUntil(function()
-			return fourthFocusCallback.callCount > 0
+			return #fourthFocusCallback.mock.calls > 0
 		end)
 
-		jestExpect(fourthFocusCallback.callCount).toEqual(1)
-		jestExpect(thirdBlurCallback.callCount).toEqual(2)
-		jestExpect(firstBlurCallback.callCount).toEqual(2)
+		expect(fourthFocusCallback).toHaveBeenCalledTimes(1)
+		expect(thirdBlurCallback).toHaveBeenCalledTimes(2)
+		expect(firstBlurCallback).toHaveBeenCalledTimes(2)
 
 		dispatch(NavigationActions.navigate({ routeName = 'third' }))
 
 		waitUntil(function()
-			return thirdFocusCallback.callCount > 2
+			return #thirdFocusCallback.mock.calls > 2
 		end)
 
-		jestExpect(thirdFocusCallback.callCount).toEqual(3)
-		jestExpect(fourthBlurCallback.callCount).toEqual(1)
+		expect(thirdFocusCallback).toHaveBeenCalledTimes(3)
+		expect(fourthBlurCallback).toHaveBeenCalledTimes(1)
 
 		-- Make sure nothing else has changed
-		jestExpect(firstFocusCallback.callCount).toEqual(2)
-		jestExpect(firstBlurCallback.callCount).toEqual(2)
+		expect(firstFocusCallback).toHaveBeenCalledTimes(2)
+		expect(firstBlurCallback).toHaveBeenCalledTimes(2)
 
-		jestExpect(secondFocusCallback.callCount).toEqual(1)
-		jestExpect(secondBlurCallback.callCount).toEqual(1)
+		expect(secondFocusCallback).toHaveBeenCalledTimes(1)
+		expect(secondBlurCallback).toHaveBeenCalledTimes(1)
 
-		jestExpect(thirdFocusCallback.callCount).toEqual(3)
-		jestExpect(thirdBlurCallback.callCount).toEqual(2)
+		expect(thirdFocusCallback).toHaveBeenCalledTimes(3)
+		expect(thirdBlurCallback).toHaveBeenCalledTimes(2)
 
-		jestExpect(fourthFocusCallback.callCount).toEqual(1)
-		jestExpect(fourthBlurCallback.callCount).toEqual(1)
+		expect(fourthFocusCallback).toHaveBeenCalledTimes(1)
+		expect(fourthBlurCallback).toHaveBeenCalledTimes(1)
 	end)
 end

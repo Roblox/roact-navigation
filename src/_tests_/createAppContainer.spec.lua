@@ -1,11 +1,14 @@
-local LogService = game:GetService("LogService")
-
 return function()
+	local LogService = game:GetService("LogService")
+
 	local RoactNavigationModule = script.Parent.Parent
 	local Packages = RoactNavigationModule.Parent
+
 	local Roact = require(Packages.Roact)
-	local jest = require(Packages.Dev.JestGlobals).jest
-	local jestExpect = require(Packages.Dev.JestGlobals).expect
+	local JestGlobals = require(Packages.Dev.JestGlobals)
+	local jest = JestGlobals.jest
+	local expect = JestGlobals.expect
+
 	local NavigationActions = require(RoactNavigationModule.NavigationActions)
 	local createNavigator = require(RoactNavigationModule.navigators.createNavigator)
 	local createAppContainerExports = require(RoactNavigationModule.createAppContainer)
@@ -14,7 +17,6 @@ return function()
 
 	local StackRouter = require(RoactNavigationModule.routers.StackRouter)
 	local SwitchView = require(RoactNavigationModule.views.SwitchView.SwitchView)
-	local createSpy = require(RoactNavigationModule.utils.createSpy)
 	local waitUntil = require(RoactNavigationModule.utils.waitUntil)
 
 	local function createStackNavigator(routeConfigMap, stackConfig)
@@ -83,10 +85,10 @@ return function()
 
 				Roact.mount(Roact.createElement(NavigationContainer))
 
-				jestExpect(navigationContainer.state.nav).toMatchObject({ index = 1 })
-				jestExpect(navigationContainer.state.nav.routes).toEqual(jestExpect.any("table"))
-				jestExpect(#navigationContainer.state.nav.routes).toBe(1)
-				jestExpect(navigationContainer.state.nav.routes[1]).toMatchObject({
+				expect(navigationContainer.state.nav).toMatchObject({ index = 1 })
+				expect(navigationContainer.state.nav.routes).toEqual(expect.any("table"))
+				expect(#navigationContainer.state.nav.routes).toBe(1)
+				expect(navigationContainer.state.nav.routes[1]).toMatchObject({
 					routeName = "foo",
 				})
 			end)
@@ -103,7 +105,7 @@ return function()
 
 				jest.runOnlyPendingTimers()
 
-				jestExpect(
+				expect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "bar" })
 					)
@@ -119,7 +121,7 @@ return function()
 				Roact.mount(Roact.createElement(NavigationContainer))
 
 				jest.runOnlyPendingTimers()
-				jestExpect(navigationContainer:dispatch(NavigationActions.back())).toEqual(false)
+				expect(navigationContainer:dispatch(NavigationActions.back())).toEqual(false)
 			end)
 
 			it("updates state.nav with an action by the next tick", function()
@@ -130,7 +132,7 @@ return function()
 
 				Roact.mount(Roact.createElement(NavigationContainer))
 
-				jestExpect(
+				expect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "bar" })
 					)
@@ -139,7 +141,7 @@ return function()
 				-- Fake the passing of a tick
 				jest.runOnlyPendingTimers()
 
-				jestExpect(navigationContainer.state.nav).toMatchObject({
+				expect(navigationContainer.state.nav).toMatchObject({
 					index = 2,
 					routes = {{ routeName = "foo" }, { routeName = "bar" }},
 				})
@@ -153,7 +155,7 @@ return function()
 				Roact.mount(Roact.createElement(NavigationContainer))
 
 				-- First dispatch
-				jestExpect(
+				expect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "bar" })
 					)
@@ -163,7 +165,7 @@ return function()
 				-- jestExpect(navigationContainer.state.nav).toMatchObject(initialState)
 
 				-- Second dispatch
-				jestExpect(
+				expect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "baz" })
 					)
@@ -172,7 +174,7 @@ return function()
 				-- Fake the passing of a tick
 				jest.runOnlyPendingTimers()
 
-				jestExpect(navigationContainer.state.nav).toMatchObject({
+				expect(navigationContainer.state.nav).toMatchObject({
 					index = 3,
 					routes = {
 						{ routeName = "foo" },
@@ -190,7 +192,7 @@ return function()
 				Roact.mount(Roact.createElement(NavigationContainer))
 
 				-- First dispatch
-				jestExpect(
+				expect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "bar" })
 					)
@@ -200,28 +202,28 @@ return function()
 				-- jestExpect(navigationContainer.state.nav).toMatchObject(initialState);
 
 				-- Second dispatch
-				jestExpect(
+				expect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "baz" })
 					)
 				).toEqual(true)
 
 				-- Third dispatch
-				jestExpect(
+				expect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "car" })
 					)
 				).toEqual(true)
 
 				-- Fourth dispatch
-				jestExpect(
+				expect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "dog" })
 					)
 				).toEqual(true)
 
 				-- Fifth dispatch
-				jestExpect(
+				expect(
 					navigationContainer:dispatch(
 						NavigationActions.navigate({ routeName = "elk" })
 					)
@@ -230,7 +232,7 @@ return function()
 				-- Fake the passing of a tick
 				jest.runOnlyPendingTimers()
 
-				jestExpect(navigationContainer.state.nav).toMatchObject({
+				expect(navigationContainer.state.nav).toMatchObject({
 					index = 6,
 					routes = {
 						{ routeName = "foo" },
@@ -259,7 +261,7 @@ return function()
 		describe("state persistence", function()
 			local function createPersistenceEnabledContainer(loadNavigationState, persistNavigationState)
 				if persistNavigationState == nil then
-					persistNavigationState = createSpy()
+					persistNavigationState = jest.fn()
 				end
 				local navContainer = nil
 				local NavigationContainer = createTestableNavigationContainer(function(value)
@@ -270,9 +272,13 @@ return function()
 				local loadNavigationDone = false
 
 				Roact.mount(Roact.createElement(NavigationContainer, {
-					persistNavigationState = persistNavigationState.value,
+					persistNavigationState = function(...)
+						return persistNavigationState(...)
+					end,
 					loadNavigationState = function(...)
-						local success, resultOrError = pcall(loadNavigationState.value, ...)
+						local success, resultOrError = pcall(function(...)
+							return loadNavigationState(...)
+						end, ...)
 						loadNavigationDone = true
 						if not success then
 							error(resultOrError)
@@ -291,8 +297,8 @@ return function()
 			end
 
 			it("loadNavigationState is called upon mount and persistNavigationState is called on a nav state change", function()
-				local persistNavigationState = createSpy()
-				local loadNavigationState = createSpy(function()
+				local persistNavigationState = jest.fn()
+				local loadNavigationState = jest.fn(function()
 					return {
 						index = 2,
 						routes = {
@@ -303,7 +309,7 @@ return function()
 				end)
 				local navigationContainer = createPersistenceEnabledContainer(loadNavigationState, persistNavigationState)
 
-				jestExpect(loadNavigationState.callCount).never.toEqual(0)
+				expect(loadNavigationState.callCount).never.toEqual(0)
 				jest.runOnlyPendingTimers()
 				navigationContainer:dispatch(
 					NavigationActions.navigate({ routeName = "foo" })
@@ -311,7 +317,7 @@ return function()
 
 				jest.runOnlyPendingTimers()
 
-				persistNavigationState:assertCalledWithDeepEqual({
+				expect(persistNavigationState).toHaveBeenCalledWith({
 					index = 1,
 					isTransitioning = true,
 					routes = {
@@ -332,10 +338,10 @@ return function()
 					end
 				end)
 
-				local persistNavigationState = createSpy(function()
+				local persistNavigationState = jest.fn(function()
 					error('persistNavigationState failed')
 				end)
-				local loadNavigationState = createSpy(function()
+				local loadNavigationState = jest.fn(function()
 					return nil
 				end)
 				local navigationContainer = createPersistenceEnabledContainer(loadNavigationState, persistNavigationState)
@@ -351,18 +357,18 @@ return function()
 				end)
 				connection:Disconnect()
 
-				jestExpect(warningFound).toEqual(true)
+				expect(warningFound).toEqual(true)
 			end)
 
 			it("when loadNavigationState rejects, navigator ignores the rejection and starts from the initial state", function()
-				local loadNavigationState = createSpy(function()
+				local loadNavigationState = jest.fn(function()
 					error("loadNavigationState failed")
 				end)
 				local navigationContainer = createPersistenceEnabledContainer(loadNavigationState)
 
-				jestExpect(loadNavigationState.callCount).never.toEqual(0)
+				expect(loadNavigationState.callCount).never.toEqual(0)
 				jest.runOnlyPendingTimers()
-				jestExpect(navigationContainer.state.nav).toMatchObject({
+				expect(navigationContainer.state.nav).toMatchObject({
 					index = 1,
 					isTransitioning = false,
 					key = "StackRouterRoot",
@@ -375,7 +381,7 @@ return function()
 			itSKIP(
 				"when loadNavigationState resolves with an invalid nav state object, navigator starts from the initial state",
 				function()
-					local loadNavigationState = createSpy(function()
+					local loadNavigationState = jest.fn(function()
 						return {
 							index = 20,
 							routes = {
@@ -386,9 +392,9 @@ return function()
 					end)
 					local navigationContainer = createPersistenceEnabledContainer(loadNavigationState)
 
-					jestExpect(loadNavigationState.callCount).never.toEqual(0)
+					expect(loadNavigationState).toHaveBeenCalled(0)
 					jest.runOnlyPendingTimers()
-					jestExpect(navigationContainer.state.nav).toMatchObject({
+					expect(navigationContainer.state.nav).toMatchObject({
 						index = 1,
 						isTransitioning = false,
 						key = "StackRouterRoot",
@@ -400,7 +406,7 @@ return function()
 			it("throws when persistNavigationState and loadNavigationState do not pass validation", function()
 				local NavigationContainer = createAppContainer(Stack)
 
-				jestExpect(function()
+				expect(function()
 					Roact.mount(Roact.createElement(NavigationContainer, {
 						persistNavigationState = function() end,
 					}))

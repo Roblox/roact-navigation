@@ -5,8 +5,9 @@ return function()
 	local getNavigation = require(RoactNavigationModule.getNavigation)
 	local NavigationActions = require(RoactNavigationModule.NavigationActions)
 	local Packages = RoactNavigationModule.Parent
-	local jestExpect = require(Packages.Dev.JestGlobals).expect
-	local createSpy = require(RoactNavigationModule.utils.createSpy)
+	local JestGlobals = require(Packages.Dev.JestGlobals)
+	local expect = JestGlobals.expect
+	local jest = JestGlobals.jest
 
 	it("getNavigation provides default action helpers", function()
 		local router = {
@@ -18,12 +19,12 @@ return function()
 			end,
 		}
 
-		local dispatchSpy = createSpy()
+		local dispatchSpy, dispatchSpyFn = jest.fn()
 
 		local topNav = getNavigation(
 			router,
 			{},
-			dispatchSpy.value,
+			dispatchSpyFn,
 			{},
 			function()
 				return {}
@@ -33,9 +34,9 @@ return function()
 
 		topNav.navigate("GreatRoute")
 
-		jestExpect(dispatchSpy.callCount).toBe(1)
-		jestExpect(dispatchSpy.values[1].type).toBe(NavigationActions.Navigate)
-		jestExpect(dispatchSpy.values[1].routeName).toBe("GreatRoute")
+		expect(dispatchSpy).toHaveBeenCalledTimes(1)
+		expect(dispatchSpy.mock.calls[1][1].type).toBe(NavigationActions.Navigate)
+		expect(dispatchSpy.mock.calls[1][1].routeName).toBe("GreatRoute")
 	end)
 
 	it("getNavigation provides router action helpers", function()
@@ -52,13 +53,13 @@ return function()
 			end,
 		}
 
-		local dispatchSpy = createSpy()
+		local dispatchSpy, dispatchSpyFn = jest.fn()
 
 		local topNav = nil
 		topNav = getNavigation(
 			router,
 			{},
-			dispatchSpy.value,
+			dispatchSpyFn,
 			{},
 			function()
 				return {}
@@ -70,9 +71,9 @@ return function()
 
 		topNav.foo("Great")
 
-		jestExpect(dispatchSpy.callCount).toBe(1)
-		jestExpect(dispatchSpy.values[1].type).toBe("FooBarAction")
-		jestExpect(dispatchSpy.values[1].bar).toBe("Great")
+		expect(dispatchSpy).toHaveBeenCalledTimes(1)
+		expect(dispatchSpy.mock.calls[1][1].type).toBe("FooBarAction")
+		expect(dispatchSpy.mock.calls[1][1].bar).toBe("Great")
 	end)
 
 	it("getNavigation get child navigation with router", function()
@@ -127,6 +128,6 @@ return function()
 
 		local childNavA = topNav.getChildNavigation("a")
 
-		jestExpect(childNavA.router).toBe(routerA)
+		expect(childNavA.router).toBe(routerA)
 	end)
 end

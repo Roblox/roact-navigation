@@ -3,54 +3,55 @@ return function()
 	local RoactNavigationModule = script.Parent.Parent
 	local getEventManager = require(RoactNavigationModule.getEventManager)
 	local Events = require(RoactNavigationModule.Events)
-	local createSpy = require(RoactNavigationModule.utils.createSpy)
 	local Packages = RoactNavigationModule.Parent
-	local jestExpect = require(Packages.Dev.JestGlobals).expect
+	local JestGlobals = require(Packages.Dev.JestGlobals)
+	local expect = JestGlobals.expect
+	local jest = JestGlobals.jest
 
 	local TARGET = "target"
 
 	it("calls listeners to emitted event", function()
 		local eventManager = getEventManager(TARGET)
-		local callback = createSpy()
-		eventManager.addListener(Events.DidFocus, callback.value)
+		local callback, callbackFn = jest.fn()
+		eventManager.addListener(Events.DidFocus, callbackFn)
 
 		eventManager.emit(Events.DidFocus)
 
-		jestExpect(callback.callCount).toEqual(1)
+		expect(callback).toHaveBeenCalledTimes(1)
 	end)
 
 	it("does not call listeners connected to a different event", function()
 		local eventManager = getEventManager(TARGET)
-		local callback = createSpy()
-		eventManager.addListener(Events.DidFocus, callback.value)
+		local callback, callbackFn = jest.fn()
+		eventManager.addListener(Events.DidFocus, callbackFn)
 
 		eventManager.emit("didBlur")
 
-		jestExpect(callback.callCount).toEqual(0)
+		expect(callback).toHaveBeenCalledTimes(0)
 	end)
 
 	it("does not call removed listeners", function()
 		local eventManager = getEventManager(TARGET)
-		local callback = createSpy()
-		local remove = eventManager.addListener(Events.DidFocus, callback.value).remove
+		local callback, callbackFn = jest.fn()
+		local remove = eventManager.addListener(Events.DidFocus, callbackFn).remove
 
 		eventManager.emit(Events.DidFocus)
-		jestExpect(callback.callCount).toEqual(1)
+		expect(callback).toHaveBeenCalledTimes(1)
 
 		remove()
 
 		eventManager.emit(Events.DidFocus)
-		jestExpect(callback.callCount).toEqual(1)
+		expect(callback).toHaveBeenCalledTimes(1)
 	end)
 
 	it("calls the listeners with the given payload", function()
 		local eventManager = getEventManager(TARGET)
-		local callback = createSpy()
-		eventManager.addListener(Events.DidFocus, callback.value)
+		local callback, callbackFn = jest.fn()
+		eventManager.addListener(Events.DidFocus, callbackFn)
 
 		local payload = { foo = 0 }
 		eventManager.emit(Events.DidFocus, payload)
 
-		callback:assertCalledWithDeepEqual(payload)
+		expect(callback).toHaveBeenCalledWith(payload)
 	end)
 end

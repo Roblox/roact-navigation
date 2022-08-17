@@ -376,7 +376,7 @@ function exports.parse(str: string, optionalOptions: ParseOptions?): { Token }
 			end
 			-- Roblox deviation: we need to check if name is not 0, because 0 is false in JavaScript, and
 			-- it could be number because it could be assigned to the key value
-			if (name ~= "" and name ~= 0) and not pattern ~= "" then
+			if (name ~= "" and name ~= 0) and (pattern == nil or pattern == "") then
 				pattern = defaultPattern
 			end
 

@@ -4,13 +4,17 @@ return function()
 	local Packages = RoactNavigationModule.Parent
 
 	local Roact = require(Packages.Roact)
+	local JestGlobals = require(Packages.Dev.JestGlobals)
+
+	local expect = JestGlobals.expect
+
 	local withNavigation = require(viewsModule.withNavigation)
 	local NavigationContext = require(viewsModule.NavigationContext)
 
 	it("throws if no component is provided", function()
 		expect(function()
 			withNavigation(nil)
-		end).to.throw("withNavigation must be called with a Roact component (stateful or functional)")
+		end).toThrow("withNavigation must be called with a Roact component (stateful or functional)")
 	end)
 
 	it("should extract navigation object from provider and pass it through", function()
@@ -33,7 +37,7 @@ return function()
 		local tree = Roact.mount(rootElement)
 		Roact.unmount(tree)
 
-		expect(extractedNavigation).to.equal(testNavigation)
+		expect(extractedNavigation).toBe(testNavigation)
 	end)
 
 	it("should update with new navigation when navigation is updated", function()
@@ -66,7 +70,7 @@ return function()
 
 		Roact.unmount(tree)
 
-		expect(extractedNavigation).to.equal(testNavigation2)
+		expect(extractedNavigation).toBe(testNavigation2)
 	end)
 
 	it("should throw when used outside of a navigation provider", function()
@@ -84,6 +88,6 @@ return function()
 
 		expect(function()
 			Roact.mount(element)
-		end).to.throw(errorMessage)
+		end).toThrow(errorMessage)
 	end)
 end
