@@ -5,6 +5,8 @@ ___
 
 Work in progress, to be added to next release notes.
 
+### v0.5.3
+
 * Fix JavaScript mistranslation in path parsing ([#116](https://github.com/Roblox/roact-navigation/pull/116))
 
 * Add useNavigation hook ([#115](https://github.com/Roblox/roact-navigation/pull/115))
