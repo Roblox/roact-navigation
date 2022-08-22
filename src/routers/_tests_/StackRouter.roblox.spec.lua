@@ -87,19 +87,19 @@ return function()
 					Foo = {
 						screen = {
 							render = function() end,
-						}
-					}
+						},
+					},
 				},
 			}, {
 				defaultNavigationOptions = {
 					title = "FooTitle",
-				}
+				},
 			})
 
 			local screenOptions = router.getScreenOptions({
 				state = {
 					routeName = "Foo",
-				}
+				},
 			})
 
 			jestExpect(screenOptions.title).toEqual("FooTitle")
@@ -113,7 +113,7 @@ return function()
 							render = function() end,
 						},
 						navigationOptions = { title = "RouteFooTitle" },
-					}
+					},
 				},
 			}, {
 				defaultNavigationOptions = {
@@ -124,7 +124,7 @@ return function()
 			local screenOptions = router.getScreenOptions({
 				state = {
 					routeName = "Foo",
-				}
+				},
 			})
 
 			jestExpect(screenOptions.title).toEqual("RouteFooTitle")
@@ -138,7 +138,7 @@ return function()
 							render = function() end,
 							navigationOptions = { title = "ComponentFooTitle" },
 						},
-					}
+					},
 				},
 			}, {
 				defaultNavigationOptions = {
@@ -149,7 +149,7 @@ return function()
 			local screenOptions = router.getScreenOptions({
 				state = {
 					routeName = "Foo",
-				}
+				},
 			})
 
 			jestExpect(screenOptions.title).toEqual("ComponentFooTitle")
@@ -271,9 +271,9 @@ return function()
 				{ Foo = { screen = function() end } },
 			})
 
-			local message = "There is no route defined for index '2'. " ..
-				"Make sure that you passed in a navigation state with a " ..
-				"valid stack index."
+			local message = "There is no route defined for index '2'. "
+				.. "Make sure that you passed in a navigation state with a "
+				.. "valid stack index."
 			jestExpect(function()
 				router.getComponentForState({
 					routes = {
@@ -296,7 +296,7 @@ return function()
 						screen = {
 							render = function() end,
 							router = childRouter,
-						}
+						},
 					},
 				},
 			})
@@ -308,7 +308,7 @@ return function()
 						routes = { -- Child router's routes
 							{ routeName = "Bar" },
 						},
-						index = 1
+						index = 1,
 					},
 				},
 				index = 1,
@@ -340,7 +340,7 @@ return function()
 
 	describe("getStateForAction tests", function()
 		it("should return initial state for init action", function()
-			local router =  StackRouter({
+			local router = StackRouter({
 				{ Foo = { screen = function() end } },
 				{ Bar = { screen = function() end } },
 			})
@@ -352,7 +352,7 @@ return function()
 		end)
 
 		it("should adjust initial state index to match initialRouteName's index", function()
-			local router =  StackRouter({
+			local router = StackRouter({
 				{ Foo = { screen = function() end } },
 				{ Bar = { screen = function() end } },
 			})
@@ -360,7 +360,7 @@ return function()
 			local state = router.getStateForAction(NavigationActions.init(), nil)
 			jestExpect(state.routes[state.index].routeName).toEqual("Foo")
 
-			local router2 =  StackRouter({
+			local router2 = StackRouter({
 				{ Foo = { screen = function() end } },
 				{ Bar = { screen = function() end } },
 			}, {
@@ -404,7 +404,7 @@ return function()
 					Bar = {
 						render = function() end,
 						router = childRouter,
-					}
+					},
 				},
 			})
 
@@ -415,16 +415,17 @@ return function()
 						routeName = "Bar",
 						key = "Bar",
 						routes = {
-							{ routeName = "City", key = "City", },
+							{ routeName = "City", key = "City" },
 						},
-						index = 1
+						index = 1,
 					},
 					{ routeName = "Foo", key = "Foo2" },
 				},
 				index = 3,
 			}
 
-			local resultState = router.getStateForAction(NavigationActions.navigate({ routeName = "State" }), initialState)
+			local resultState =
+				router.getStateForAction(NavigationActions.navigate({ routeName = "State" }), initialState)
 			jestExpect(resultState.routes[2].index).toEqual(2)
 			jestExpect(resultState.routes[2].routes[2].routeName).toEqual("State")
 			jestExpect(#resultState.routes[2].routes).toEqual(2)
@@ -447,7 +448,7 @@ return function()
 					{
 						routeName = "Bar",
 						key = "Bar",
-					}
+					},
 				},
 				index = 2,
 			}
@@ -511,10 +512,10 @@ return function()
 							{
 								routeName = "Bar",
 								key = "Bar",
-							}
+							},
 						},
 						index = 1,
-					}
+					},
 				},
 				index = 2,
 			}
@@ -564,7 +565,7 @@ return function()
 							},
 						},
 						index = 2,
-					}
+					},
 				},
 				index = 2,
 			}
@@ -650,7 +651,7 @@ return function()
 							},
 						},
 						index = 2,
-					}
+					},
 				},
 				index = 2,
 			}
@@ -673,12 +674,13 @@ return function()
 					{
 						routeName = "Foo",
 						key = "Foo",
-					}
+					},
 				},
 				index = 1,
 			}
 
-			local resultState = router.getStateForAction(NavigationActions.navigate({ routeName = "Bar" }), initialState)
+			local resultState =
+				router.getStateForAction(NavigationActions.navigate({ routeName = "Bar" }), initialState)
 			jestExpect(#resultState.routes).toEqual(2)
 			jestExpect(resultState.index).toEqual(2)
 			jestExpect(resultState.routes[2].routeName).toEqual("Bar")
@@ -710,10 +712,13 @@ return function()
 				index = 3,
 			}
 
-			local resultState = router.getStateForAction(NavigationActions.navigate({
-				routeName = "Bar",
-				params = { a = 1 },
-			}), initialState)
+			local resultState = router.getStateForAction(
+				NavigationActions.navigate({
+					routeName = "Bar",
+					params = { a = 1 },
+				}),
+				initialState
+			)
 			jestExpect(#resultState.routes).toEqual(2)
 			jestExpect(resultState.index).toEqual(2)
 			jestExpect(resultState.routes[2].routeName).toEqual("Bar")
@@ -746,46 +751,51 @@ return function()
 				index = 3,
 			}
 
-			local resultState = router.getStateForAction(NavigationActions.navigate({ routeName = "Bar" }), initialState)
+			local resultState =
+				router.getStateForAction(NavigationActions.navigate({ routeName = "Bar" }), initialState)
 			jestExpect(#resultState.routes).toEqual(2)
 			jestExpect(resultState.index).toEqual(2)
 			jestExpect(resultState.routes[2].routeName).toEqual("Bar")
 			jestExpect(resultState.routes[2].params).toEqual(nil)
 		end)
 
-		it("should jump to existing entry in stack with existing params if params is not provided, on navigate", function()
-			local router = StackRouter({
-				{ Foo = function() end },
-				{ Bar = function() end },
-				{ City = function() end },
-			})
+		it(
+			"should jump to existing entry in stack with existing params if params is not provided, on navigate",
+			function()
+				local router = StackRouter({
+					{ Foo = function() end },
+					{ Bar = function() end },
+					{ City = function() end },
+				})
 
-			local initialState = {
-				key = "root",
-				routes = {
-					{
-						routeName = "Foo",
-						key = "Foo",
+				local initialState = {
+					key = "root",
+					routes = {
+						{
+							routeName = "Foo",
+							key = "Foo",
+						},
+						{
+							routeName = "Bar",
+							key = "Bar",
+							params = { a = 1 },
+						},
+						{
+							routeName = "City",
+							key = "City",
+						},
 					},
-					{
-						routeName = "Bar",
-						key = "Bar",
-						params = { a = 1 },
-					},
-					{
-						routeName = "City",
-						key = "City",
-					},
-				},
-				index = 3,
-			}
+					index = 3,
+				}
 
-			local resultState = router.getStateForAction(NavigationActions.navigate({ routeName = "Bar" }), initialState)
-			jestExpect(#resultState.routes).toEqual(2)
-			jestExpect(resultState.index).toEqual(2)
-			jestExpect(resultState.routes[2].routeName).toEqual("Bar")
-			jestExpect(resultState.routes[2].params.a).toEqual(1)
-		end)
+				local resultState =
+					router.getStateForAction(NavigationActions.navigate({ routeName = "Bar" }), initialState)
+				jestExpect(#resultState.routes).toEqual(2)
+				jestExpect(resultState.index).toEqual(2)
+				jestExpect(resultState.routes[2].routeName).toEqual("Bar")
+				jestExpect(resultState.routes[2].params.a).toEqual(1)
+			end
+		)
 
 		it("should jump to existing entry in stack with updated params if params is provided, on navigate", function()
 			local router = StackRouter({
@@ -814,10 +824,13 @@ return function()
 				index = 3,
 			}
 
-			local resultState = router.getStateForAction(NavigationActions.navigate({
-				routeName = "Bar",
-				params = { a = 2 },
-			}), initialState)
+			local resultState = router.getStateForAction(
+				NavigationActions.navigate({
+					routeName = "Bar",
+					params = { a = 2 },
+				}),
+				initialState
+			)
 			jestExpect(#resultState.routes).toEqual(2)
 			jestExpect(resultState.index).toEqual(2)
 			jestExpect(resultState.routes[2].routeName).toEqual("Bar")
@@ -840,10 +853,13 @@ return function()
 				index = 1,
 			}
 
-			local resultState = router.getStateForAction(NavigationActions.navigate({
-				routeName = "Foo",
-				params = { a = 1 },
-			}), initialState)
+			local resultState = router.getStateForAction(
+				NavigationActions.navigate({
+					routeName = "Foo",
+					params = { a = 1 },
+				}),
+				initialState
+			)
 			jestExpect(#resultState.routes).toEqual(1)
 			jestExpect(resultState.index).toEqual(1)
 			jestExpect(resultState.routes[1].routeName).toEqual("Foo")
@@ -867,10 +883,13 @@ return function()
 				index = 1,
 			}
 
-			local resultState = router.getStateForAction(NavigationActions.navigate({
-				routeName = "Foo",
-				params = {},
-			}), initialState)
+			local resultState = router.getStateForAction(
+				NavigationActions.navigate({
+					routeName = "Foo",
+					params = {},
+				}),
+				initialState
+			)
 			jestExpect(#resultState.routes).toEqual(1)
 			jestExpect(resultState.index).toEqual(1)
 			jestExpect(resultState.routes[1].routeName).toEqual("Foo")
@@ -938,7 +957,8 @@ return function()
 				index = 1,
 			}
 
-			local resultState = router.getStateForAction(NavigationActions.navigate({ routeName = "City" }), initialState)
+			local resultState =
+				router.getStateForAction(NavigationActions.navigate({ routeName = "City" }), initialState)
 			jestExpect(#resultState.routes).toEqual(2)
 			jestExpect(resultState.index).toEqual(2)
 			jestExpect(resultState.routes[2].routeName).toEqual("Foo")
@@ -976,10 +996,8 @@ return function()
 			})
 
 			local state = router.getStateForAction(NavigationActions.init())
-			local newState = router.getStateForAction(
-				NavigationActions.navigate({ routeName = "Bar", params = { b = 2 } }),
-				state
-			)
+			local newState =
+				router.getStateForAction(NavigationActions.navigate({ routeName = "Bar", params = { b = 2 } }), state)
 
 			jestExpect(newState.routes[2].params.a).toEqual(1)
 			jestExpect(newState.routes[2].params.b).toEqual(2)
@@ -997,14 +1015,17 @@ return function()
 					{
 						routeName = "Foo",
 						key = "Foo",
-					}
+					},
 				},
 				index = 1,
 			}
 
-			local newState = router.getStateForAction(StackActions.replace({
-				routeName = "Bar",
-			}), initialState)
+			local newState = router.getStateForAction(
+				StackActions.replace({
+					routeName = "Bar",
+				}),
+				initialState
+			)
 
 			jestExpect(#newState.routes).toEqual(1)
 			jestExpect(newState.index).toEqual(1)
@@ -1027,16 +1048,19 @@ return function()
 					{
 						routeName = "Bar",
 						key = "Bar",
-					}
+					},
 				},
 				index = 2,
 			}
 
-			local newState = router.getStateForAction(StackActions.replace({
-				routeName = "Foo",
-				key = "Bar",
-				newKey = "NewFoo",
-			}), initialState)
+			local newState = router.getStateForAction(
+				StackActions.replace({
+					routeName = "Foo",
+					key = "Bar",
+					newKey = "NewFoo",
+				}),
+				initialState
+			)
 
 			jestExpect(#newState.routes).toEqual(2)
 			jestExpect(newState.index).toEqual(2)
@@ -1059,12 +1083,15 @@ return function()
 				index = 2,
 			}
 
-			local resultState = router.getStateForAction(StackActions.reset({
-				index = 1,
-				actions = {
-					NavigationActions.navigate({ routeName = "Bar" })
-				}
-			}), initialState)
+			local resultState = router.getStateForAction(
+				StackActions.reset({
+					index = 1,
+					actions = {
+						NavigationActions.navigate({ routeName = "Bar" }),
+					},
+				}),
+				initialState
+			)
 
 			-- "actions" array replaces entire state, bypassing initial route config!
 			jestExpect(#resultState.routes).toEqual(1)
@@ -1104,7 +1131,7 @@ return function()
 							{
 								routeName = "City",
 								key = "City",
-							}
+							},
 						},
 						index = 1,
 					},
@@ -1112,12 +1139,15 @@ return function()
 				index = 2,
 			}
 
-			local resultState = router.getStateForAction(StackActions.reset({
-				actions = {
-					NavigationActions.navigate({ routeName = "State" })
-				},
-				key = "Bar",
-			}), initialState)
+			local resultState = router.getStateForAction(
+				StackActions.reset({
+					actions = {
+						NavigationActions.navigate({ routeName = "State" }),
+					},
+					key = "Bar",
+				}),
+				initialState
+			)
 
 			-- "actions" array replaces entire state, bypassing initial route config!
 			jestExpect(#resultState.routes).toEqual(2)
@@ -1138,7 +1168,7 @@ return function()
 					{
 						routeName = "Foo",
 						key = "Foo",
-					}
+					},
 				},
 				index = 1,
 			}
@@ -1146,59 +1176,71 @@ return function()
 			local transitioningState = router.getStateForAction(StackActions.push({ routeName = "Bar" }), initialState)
 			jestExpect(transitioningState.isTransitioning).toEqual(true)
 
-			local completedState = router.getStateForAction(StackActions.completeTransition({
-				toChildKey = transitioningState.routes[2].key, -- Need actual key to identify target
-			}), transitioningState)
+			local completedState = router.getStateForAction(
+				StackActions.completeTransition({
+					toChildKey = transitioningState.routes[2].key, -- Need actual key to identify target
+				}),
+				transitioningState
+			)
 
 			jestExpect(completedState.isTransitioning).toEqual(false)
 		end)
 
-		it("should mark root and child states as transitioning, then separately clear them on CompleteTransition", function()
-			local childRouter = StackRouter({
-				{ BarA = function() end },
-				{ BarB = function() end },
-			})
-			local router = StackRouter({
-				{ Foo = function() end },
-				{
-					Bar = {
-						screen = {
-							render = function() end,
-							router = childRouter,
+		it(
+			"should mark root and child states as transitioning, then separately clear them on CompleteTransition",
+			function()
+				local childRouter = StackRouter({
+					{ BarA = function() end },
+					{ BarB = function() end },
+				})
+				local router = StackRouter({
+					{ Foo = function() end },
+					{
+						Bar = {
+							screen = {
+								render = function() end,
+								router = childRouter,
+							},
 						},
 					},
-				},
-			})
+				})
 
-			local initialState = {
-				key = "root",
-				routes = {
-					{
-						routeName = "Foo",
-						key = "Foo",
+				local initialState = {
+					key = "root",
+					routes = {
+						{
+							routeName = "Foo",
+							key = "Foo",
+						},
 					},
-				},
-				index = 1,
-			}
+					index = 1,
+				}
 
-			local transitioningState = router.getStateForAction(NavigationActions.navigate({ routeName = "BarB" }), initialState)
-			jestExpect(transitioningState).toBeDefined()
-			jestExpect(transitioningState.isTransitioning).toEqual(true)
-			jestExpect(transitioningState.routes[2].isTransitioning).toEqual(true)
-			jestExpect(transitioningState.routes[2].routes[2].routeName).toEqual("BarB")
+				local transitioningState =
+					router.getStateForAction(NavigationActions.navigate({ routeName = "BarB" }), initialState)
+				jestExpect(transitioningState).toBeDefined()
+				jestExpect(transitioningState.isTransitioning).toEqual(true)
+				jestExpect(transitioningState.routes[2].isTransitioning).toEqual(true)
+				jestExpect(transitioningState.routes[2].routes[2].routeName).toEqual("BarB")
 
-			local childOnlyCompletedState = router.getStateForAction(StackActions.completeTransition({
-				toChildKey = transitioningState.routes[2].routes[2].key,
-			}), transitioningState)
-			jestExpect(childOnlyCompletedState.isTransitioning).toEqual(true) -- *** parent needs its own completeTransition call ***
-			jestExpect(childOnlyCompletedState.routes[2].isTransitioning).toEqual(false)
+				local childOnlyCompletedState = router.getStateForAction(
+					StackActions.completeTransition({
+						toChildKey = transitioningState.routes[2].routes[2].key,
+					}),
+					transitioningState
+				)
+				jestExpect(childOnlyCompletedState.isTransitioning).toEqual(true) -- *** parent needs its own completeTransition call ***
+				jestExpect(childOnlyCompletedState.routes[2].isTransitioning).toEqual(false)
 
-			local completedState = router.getStateForAction(StackActions.completeTransition({
-				toChildKey = transitioningState.routes[2].key,
-			}), childOnlyCompletedState)
-			jestExpect(completedState.isTransitioning).toEqual(false)
-			jestExpect(completedState.routes[2].isTransitioning).toEqual(false)
-		end)
+				local completedState = router.getStateForAction(
+					StackActions.completeTransition({
+						toChildKey = transitioningState.routes[2].key,
+					}),
+					childOnlyCompletedState
+				)
+				jestExpect(completedState.isTransitioning).toEqual(false)
+				jestExpect(completedState.routes[2].isTransitioning).toEqual(false)
+			end
+		)
 	end)
 end
-

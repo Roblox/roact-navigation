@@ -9,7 +9,7 @@ return function()
 	it("throws when indexing an unknown field", function()
 		jestExpect(function()
 			return SwitchActions.foo
-		end).toThrow("\"foo\" is not a valid member of SwitchActions")
+		end).toThrow('"foo" is not a valid member of SwitchActions')
 	end)
 
 	describe("token tests", function()

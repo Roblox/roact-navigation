@@ -29,12 +29,11 @@ return function()
 
 	describe("StackNavigator Tests", function()
 		it("should animate page change on navigate operation", function()
-			local appContainer = Roact.createElement(RoactNavigation.createAppContainer(
-				RoactNavigation.createRobloxStackNavigator({
+			local appContainer =
+				Roact.createElement(RoactNavigation.createAppContainer(RoactNavigation.createRobloxStackNavigator({
 					{ PageOne = createButtonPage("PageOne", "PageTwo") },
 					{ PageTwo = createButtonPage("PageTwo", "PageOne") },
-				})
-			))
+				})))
 
 			local screen = createScreenGui(CoreGui)
 			local rootPath = XPath.new(screen):cat(XPath.new("View.TransitionerScenes"))
@@ -57,4 +56,3 @@ return function()
 		end)
 	end)
 end
-

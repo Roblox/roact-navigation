@@ -35,7 +35,7 @@ return function()
 					props.navigation.navigate(clickTargetPageName)
 				end,
 			}, {
-				NavigationEvents = trackNavigationEvents:createNavigationAdapter(pageName)
+				NavigationEvents = trackNavigationEvents:createNavigationAdapter(pageName),
 			})
 		end
 	end
@@ -48,8 +48,8 @@ return function()
 		local transitionCallbackList = {}
 		local screen = createScreenGui(CoreGui)
 
-		local appContainer = Roact.createElement(RoactNavigation.createAppContainer(
-			RoactNavigation.createRobloxStackNavigator({
+		local appContainer =
+			Roact.createElement(RoactNavigation.createAppContainer(RoactNavigation.createRobloxStackNavigator({
 				{ [pageOneName] = createButtonPage(pageOneName, pageTwoName, trackNavigationEvents) },
 				{ [pageTwoName] = createButtonPage(pageTwoName, pageOneName, trackNavigationEvents) },
 			}, {
@@ -76,8 +76,7 @@ return function()
 						value = value,
 					})
 				end,
-			})
-		))
+			})))
 
 		local rootPath = XPath.new(screen):cat(XPath.new("View.TransitionerScenes"))
 		local scene1Path = rootPath:cat(XPath.new("1.DynamicContent.*.Scene"))
@@ -151,8 +150,8 @@ return function()
 
 		expect(lastEntry.nextNavigation).to.equal(firstEntry.nextNavigation)
 
-		for i=3, #transitionCallbackList-1, 1 do
-			expect(transitionCallbackList[i].value > transitionCallbackList[i-1].value).to.equal(true)
+		for i = 3, #transitionCallbackList - 1, 1 do
+			expect(transitionCallbackList[i].value > transitionCallbackList[i - 1].value).to.equal(true)
 			expect(transitionCallbackList[i].nextNavigation).to.equal(firstEntry.nextNavigation)
 			expect(transitionCallbackList[i].prevNavigation).to.equal(firstEntry.prevNavigation)
 		end

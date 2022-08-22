@@ -76,8 +76,16 @@ return function()
 				return Roact.createElement("Frame")
 			end
 			local router = TabRouter({
-				{ Foo = { getScreen = function() return ScreenA end } },
-				{ Bar = { getScreen = function() return ScreenB end } },
+				{ Foo = {
+					getScreen = function()
+						return ScreenA
+					end,
+				} },
+				{ Bar = {
+					getScreen = function()
+						return ScreenB
+					end,
+				} },
 			})
 			local state = router.getStateForAction({
 				type = NavigationActions.Init,
@@ -157,12 +165,16 @@ return function()
 			local router = TabRouter({
 				{
 					Foo = {
-						screen = function() return Roact.createElement("Frame") end,
+						screen = function()
+							return Roact.createElement("Frame")
+						end,
 					},
 				},
 				{
 					Bar = {
-						screen = function() return Roact.createElement("Frame") end,
+						screen = function()
+							return Roact.createElement("Frame")
+						end,
 					},
 				},
 			})
@@ -181,12 +193,16 @@ return function()
 			local router = TabRouter({
 				{
 					Foo = {
-						screen = function() return Roact.createElement("Frame") end,
+						screen = function()
+							return Roact.createElement("Frame")
+						end,
 					},
 				},
 				{
 					Bar = {
-						screen = function() return Roact.createElement("Frame") end,
+						screen = function()
+							return Roact.createElement("Frame")
+						end,
 					},
 				},
 			}, {
@@ -342,14 +358,8 @@ return function()
 			})
 
 			-- Ensure that navigating back and forth doesn't overwrite
-			state = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Bar" },
-				state
-			)
-			state = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Boo" },
-				state
-			)
+			state = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Bar" }, state)
+			state = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Boo" }, state)
 
 			jestExpect(state and state.routes[2]).toEqual({
 				index = 1,
@@ -401,10 +411,7 @@ return function()
 				},
 			})
 
-			local state2 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Foo" },
-				state
-			)
+			local state2 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Foo" }, state)
 			jestExpect(state2).toEqual({
 				index = 2,
 				routes = {
@@ -422,10 +429,7 @@ return function()
 				},
 			})
 
-			local state3 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Foo" },
-				state2
-			)
+			local state3 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Foo" }, state2)
 			jestExpect(state3).toEqual(nil)
 		end)
 
@@ -498,10 +502,7 @@ return function()
 				},
 			})
 
-			local state2 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Zap" },
-				state
-			)
+			local state2 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Zap" }, state)
 
 			jestExpect(state2).toEqual({
 				index = 1,
@@ -535,10 +536,7 @@ return function()
 				},
 			})
 
-			local state3 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Zap" },
-				state2
-			)
+			local state3 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Zap" }, state2)
 
 			jestExpect(state3).toEqual(nil)
 
@@ -762,18 +760,9 @@ return function()
 				backBehavior = BackBehavior.None,
 			})
 			local state0 = router.getStateForAction(INIT_ACTION)
-			local state1 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "b" },
-				state0
-			)
-			local state2 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "c" },
-				state1
-			)
-			local state3 = router.getStateForAction(
-				{ type = NavigationActions.Back },
-				state2
-			)
+			local state1 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "b" }, state0)
+			local state2 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "c" }, state1)
+			local state3 = router.getStateForAction({ type = NavigationActions.Back }, state2)
 
 			jestExpect(state3).toEqual(state2)
 		end)
@@ -790,14 +779,8 @@ return function()
 				{ b = { screen = ScreenB } },
 			})
 			local state0 = router.getStateForAction(INIT_ACTION)
-			local state1 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "b" },
-				state0
-			)
-			local state2 = router.getStateForAction(
-				{ type = NavigationActions.Back },
-				state1
-			)
+			local state1 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "b" }, state0)
+			local state2 = router.getStateForAction({ type = NavigationActions.Back }, state1)
 
 			jestExpect(state2).toEqual(state0)
 		end)
@@ -846,9 +829,9 @@ return function()
 				if typeof(state.routeName) == "string" then
 					result.routeName = state.routeName
 				end
-				if typeof(state.routes) == 'table' then
+				if typeof(state.routes) == "table" then
 					result.routes = {}
-					for i=1, #state.routes do
+					for i = 1, #state.routes do
 						result.routes[i] = comparable(state.routes[i])
 					end
 				end
@@ -865,9 +848,7 @@ return function()
 			local innerState = state and state.routes[1] or state
 
 			jestExpect(innerState.routes[2].index).toEqual(2)
-			jestExpect(expectedState and comparable(expectedState)).toEqual(
-				innerState and comparable(innerState)
-			)
+			jestExpect(expectedState and comparable(expectedState)).toEqual(innerState and comparable(innerState))
 
 			local noMatchAction = NavigationActions.navigate({
 				routeName = "Qux",
@@ -878,9 +859,7 @@ return function()
 			local innerState2 = state2 and state2.routes[1] or state2
 
 			jestExpect(innerState2.routes[2].index).toEqual(1)
-			jestExpect(expectedState2 and comparable(expectedState2)).toEqual(
-				innerState2 and comparable(innerState2)
-			)
+			jestExpect(expectedState2 and comparable(expectedState2)).toEqual(innerState2 and comparable(innerState2))
 		end)
 	end)
 end

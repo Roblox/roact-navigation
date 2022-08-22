@@ -30,8 +30,8 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("Detail")
-				end
-			})
+				end,
+			}),
 		})
 	end
 
@@ -63,7 +63,7 @@ return function(target)
 						routeName = "Detail",
 						key = tostring(pushCount),
 						params = {
-							pushCount = pushCount + 1
+							pushCount = pushCount + 1,
 						},
 					})
 				end,
@@ -84,7 +84,7 @@ return function(target)
 				navigationOptions = function(navProps)
 					local navigation = navProps.navigation
 					return {
-						title = "Detail " .. tostring(navigation.getParam("pushCount", 0))
+						title = "Detail " .. tostring(navigation.getParam("pushCount", 0)),
 					}
 				end,
 			},

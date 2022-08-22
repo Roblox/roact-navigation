@@ -17,24 +17,24 @@ return function()
 	local Events = require(RoactNavigationModule.Events)
 
 	local function getNavigationMock(mock)
-	  local eventManager = getEventManager("target")
+		local eventManager = getEventManager("target")
 
-	  local default = {
-		state = {
-			routes = {
-				{ key = "a", routeName = "foo" },
-				{ key = "b", routeName = "bar" },
+		local default = {
+			state = {
+				routes = {
+					{ key = "a", routeName = "foo" },
+					{ key = "b", routeName = "bar" },
+				},
+				index = 1,
 			},
-			index = 1,
-		},
-		isFocused = function()
-			return true
-		end,
-		addListener = jest.fn(eventManager.addListener),
-		emit = eventManager.emit,
-		_dangerouslyGetParent = function()
-			return nil
-		end,
+			isFocused = function()
+				return true
+			end,
+			addListener = jest.fn(eventManager.addListener),
+			emit = eventManager.emit,
+			_dangerouslyGetParent = function()
+				return nil
+			end,
 		}
 
 		if mock then
@@ -129,9 +129,9 @@ return function()
 			}
 
 			expect(onEvent.mock.calls).toEqual({
-				{"Second", Events.WillFocus, expectedPayload},
-				{"First", Events.WillBlur, expectedPayload},
-				{"Second", Events.Action, expectedPayload},
+				{ "Second", Events.WillFocus, expectedPayload },
+				{ "First", Events.WillBlur, expectedPayload },
+				{ "Second", Events.Action, expectedPayload },
 			})
 		end)
 
@@ -178,11 +178,11 @@ return function()
 			}
 
 			expect(onEvent.mock.calls).toEqual({
-				{"Second", Events.WillFocus, expectedPayload},
-				{"Second", Events.DidFocus, expectedPayload},
-				{"First", Events.WillBlur, expectedPayload},
-				{"First", Events.DidBlur, expectedPayload},
-				{"Second", Events.Action, expectedPayload},
+				{ "Second", Events.WillFocus, expectedPayload },
+				{ "Second", Events.DidFocus, expectedPayload },
+				{ "First", Events.WillBlur, expectedPayload },
+				{ "First", Events.DidBlur, expectedPayload },
+				{ "Second", Events.Action, expectedPayload },
 			})
 		end)
 
@@ -197,13 +197,13 @@ return function()
 				isTransitioning = true,
 			}
 			local intermediateState = {
-			routes = {
-				{ key = "First", routeName = "First" },
-				{ key = "Second", routeName = "Second" },
-			},
-			index = 2,
-			routeKeyHistory = { "First", "Second" },
-			isTransitioning = true,
+				routes = {
+					{ key = "First", routeName = "First" },
+					{ key = "Second", routeName = "Second" },
+				},
+				index = 2,
+				routeKeyHistory = { "First", "Second" },
+				isTransitioning = true,
 			}
 			local finalState = {
 				routes = {
@@ -243,9 +243,9 @@ return function()
 			}
 
 			expect(onEvent.mock.calls).toEqual({
-				{"Second", Events.WillFocus, expectedPayloadNavigate},
-				{"First", Events.WillBlur, expectedPayloadNavigate},
-				{"Second", Events.Action, expectedPayloadNavigate},
+				{ "Second", Events.WillFocus, expectedPayloadNavigate },
+				{ "First", Events.WillBlur, expectedPayloadNavigate },
+				{ "Second", Events.Action, expectedPayloadNavigate },
 			})
 			onEvent:mockClear()
 
@@ -265,9 +265,9 @@ return function()
 			}
 
 			expect(onEvent.mock.calls).toEqual({
-				{"First", Events.DidBlur, expectedPayloadEndTransition},
-				{"Second", Events.DidFocus, expectedPayloadEndTransition},
-				{"Second", Events.Action, expectedPayloadEndTransition},
+				{ "First", Events.DidBlur, expectedPayloadEndTransition },
+				{ "Second", Events.DidFocus, expectedPayloadEndTransition },
+				{ "Second", Events.Action, expectedPayloadEndTransition },
 			})
 		end)
 	end)
@@ -305,14 +305,13 @@ return function()
 			local expectedPayload = {
 				action = action,
 				state = { key = "FirstLanding", routeName = "FirstLanding" },
-				context =
-					"FirstLanding:NAVIGATE_First:NAVIGATE_Root",
+				context = "FirstLanding:NAVIGATE_First:NAVIGATE_Root",
 				type = Events.Action,
 			}
 
 			expect(onEvent.mock.calls).toEqual({
-				{"FirstLanding", Events.WillFocus, expectedPayload},
-				{"FirstLanding", Events.DidFocus, expectedPayload},
+				{ "FirstLanding", Events.WillFocus, expectedPayload },
+				{ "FirstLanding", Events.DidFocus, expectedPayload },
 			})
 
 			onEvent:mockClear()

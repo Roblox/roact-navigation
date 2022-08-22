@@ -30,7 +30,7 @@ local function getSceneIndicesForInterpolationInputRange(props)
 		elseif index == targetSceneIndex and currentSceneIndexInScenes == targetSceneIndexInScenes then
 			return {
 				first = index - 1,
-				last = math.max(lastSceneIndex, index + 1)
+				last = math.max(lastSceneIndex, index + 1),
 			}
 		elseif index == targetSceneIndex or currentSceneIndexInScenes > targetSceneIndexInScenes then
 			return nil
@@ -39,7 +39,7 @@ local function getSceneIndicesForInterpolationInputRange(props)
 
 	return {
 		first = index - 1,
-		last = index + 1
+		last = index + 1,
 	}
 end
 

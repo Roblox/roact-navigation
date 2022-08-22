@@ -73,8 +73,7 @@ function TrackRobloxStackNavigatorRoute:isRoute(routeName, params)
 	end
 
 	if params then
-		return self.currentRoute.routeName == routeName
-			and compareParams(params, self.currentRoute.params or {})
+		return self.currentRoute.routeName == routeName and compareParams(params, self.currentRoute.params or {})
 	end
 
 	return self.currentRoute.routeName == routeName

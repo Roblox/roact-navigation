@@ -105,11 +105,7 @@ return function()
 
 				jest.runOnlyPendingTimers()
 
-				expect(
-					navigationContainer:dispatch(
-						NavigationActions.navigate({ routeName = "bar" })
-					)
-				).toEqual(true)
+				expect(navigationContainer:dispatch(NavigationActions.navigate({ routeName = "bar" }))).toEqual(true)
 			end)
 
 			it("returns false when given an invalid action", function()
@@ -132,18 +128,14 @@ return function()
 
 				Roact.mount(Roact.createElement(NavigationContainer))
 
-				expect(
-					navigationContainer:dispatch(
-						NavigationActions.navigate({ routeName = "bar" })
-					)
-				).toEqual(true)
+				expect(navigationContainer:dispatch(NavigationActions.navigate({ routeName = "bar" }))).toEqual(true)
 
 				-- Fake the passing of a tick
 				jest.runOnlyPendingTimers()
 
 				expect(navigationContainer.state.nav).toMatchObject({
 					index = 2,
-					routes = {{ routeName = "foo" }, { routeName = "bar" }},
+					routes = { { routeName = "foo" }, { routeName = "bar" } },
 				})
 			end)
 
@@ -155,21 +147,13 @@ return function()
 				Roact.mount(Roact.createElement(NavigationContainer))
 
 				-- First dispatch
-				expect(
-					navigationContainer:dispatch(
-						NavigationActions.navigate({ routeName = "bar" })
-					)
-				).toEqual(true)
+				expect(navigationContainer:dispatch(NavigationActions.navigate({ routeName = "bar" }))).toEqual(true)
 
 				-- Make sure that the test runner has NOT synchronously applied setState before the tick
 				-- jestExpect(navigationContainer.state.nav).toMatchObject(initialState)
 
 				-- Second dispatch
-				expect(
-					navigationContainer:dispatch(
-						NavigationActions.navigate({ routeName = "baz" })
-					)
-				).toEqual(true)
+				expect(navigationContainer:dispatch(NavigationActions.navigate({ routeName = "baz" }))).toEqual(true)
 
 				-- Fake the passing of a tick
 				jest.runOnlyPendingTimers()
@@ -192,42 +176,22 @@ return function()
 				Roact.mount(Roact.createElement(NavigationContainer))
 
 				-- First dispatch
-				expect(
-					navigationContainer:dispatch(
-						NavigationActions.navigate({ routeName = "bar" })
-					)
-				).toEqual(true)
+				expect(navigationContainer:dispatch(NavigationActions.navigate({ routeName = "bar" }))).toEqual(true)
 
 				-- Make sure that the test runner has NOT synchronously applied setState before the tick
 				-- jestExpect(navigationContainer.state.nav).toMatchObject(initialState);
 
 				-- Second dispatch
-				expect(
-					navigationContainer:dispatch(
-						NavigationActions.navigate({ routeName = "baz" })
-					)
-				).toEqual(true)
+				expect(navigationContainer:dispatch(NavigationActions.navigate({ routeName = "baz" }))).toEqual(true)
 
 				-- Third dispatch
-				expect(
-					navigationContainer:dispatch(
-						NavigationActions.navigate({ routeName = "car" })
-					)
-				).toEqual(true)
+				expect(navigationContainer:dispatch(NavigationActions.navigate({ routeName = "car" }))).toEqual(true)
 
 				-- Fourth dispatch
-				expect(
-					navigationContainer:dispatch(
-						NavigationActions.navigate({ routeName = "dog" })
-					)
-				).toEqual(true)
+				expect(navigationContainer:dispatch(NavigationActions.navigate({ routeName = "dog" }))).toEqual(true)
 
 				-- Fifth dispatch
-				expect(
-					navigationContainer:dispatch(
-						NavigationActions.navigate({ routeName = "elk" })
-					)
-				).toEqual(true)
+				expect(navigationContainer:dispatch(NavigationActions.navigate({ routeName = "elk" }))).toEqual(true)
 
 				-- Fake the passing of a tick
 				jest.runOnlyPendingTimers()
@@ -296,35 +260,37 @@ return function()
 				return navContainer
 			end
 
-			it("loadNavigationState is called upon mount and persistNavigationState is called on a nav state change", function()
-				local persistNavigationState = jest.fn()
-				local loadNavigationState = jest.fn(function()
-					return {
-						index = 2,
+			it(
+				"loadNavigationState is called upon mount and persistNavigationState is called on a nav state change",
+				function()
+					local persistNavigationState = jest.fn()
+					local loadNavigationState = jest.fn(function()
+						return {
+							index = 2,
+							routes = {
+								{ routeName = "foo", key = "foo" },
+								{ routeName = "bar", key = "bar" },
+							},
+						}
+					end)
+					local navigationContainer =
+						createPersistenceEnabledContainer(loadNavigationState, persistNavigationState)
+
+					expect(loadNavigationState.callCount).never.toEqual(0)
+					jest.runOnlyPendingTimers()
+					navigationContainer:dispatch(NavigationActions.navigate({ routeName = "foo" }))
+
+					jest.runOnlyPendingTimers()
+
+					expect(persistNavigationState).toHaveBeenCalledWith({
+						index = 1,
+						isTransitioning = true,
 						routes = {
 							{ routeName = "foo", key = "foo" },
-							{ routeName = "bar", key = "bar" },
 						},
-					}
-				end)
-				local navigationContainer = createPersistenceEnabledContainer(loadNavigationState, persistNavigationState)
-
-				expect(loadNavigationState.callCount).never.toEqual(0)
-				jest.runOnlyPendingTimers()
-				navigationContainer:dispatch(
-					NavigationActions.navigate({ routeName = "foo" })
-				)
-
-				jest.runOnlyPendingTimers()
-
-				expect(persistNavigationState).toHaveBeenCalledWith({
-					index = 1,
-					isTransitioning = true,
-					routes = {
-						{ routeName = "foo", key = "foo" },
-					},
-				})
-			end)
+					})
+				end
+			)
 
 			it("when persistNavigationState rejects, a console warning is shown", function()
 				-- deviation: instead of spying on warn, we simply connect to MessageOut event
@@ -339,17 +305,16 @@ return function()
 				end)
 
 				local persistNavigationState = jest.fn(function()
-					error('persistNavigationState failed')
+					error("persistNavigationState failed")
 				end)
 				local loadNavigationState = jest.fn(function()
 					return nil
 				end)
-				local navigationContainer = createPersistenceEnabledContainer(loadNavigationState, persistNavigationState)
+				local navigationContainer =
+					createPersistenceEnabledContainer(loadNavigationState, persistNavigationState)
 
 				jest.runOnlyPendingTimers()
-				navigationContainer:dispatch(
-					NavigationActions.navigate({ routeName = "baz" })
-				)
+				navigationContainer:dispatch(NavigationActions.navigate({ routeName = "baz" }))
 
 				jest.runOnlyPendingTimers()
 				waitUntil(function()
@@ -360,21 +325,24 @@ return function()
 				expect(warningFound).toEqual(true)
 			end)
 
-			it("when loadNavigationState rejects, navigator ignores the rejection and starts from the initial state", function()
-				local loadNavigationState = jest.fn(function()
-					error("loadNavigationState failed")
-				end)
-				local navigationContainer = createPersistenceEnabledContainer(loadNavigationState)
+			it(
+				"when loadNavigationState rejects, navigator ignores the rejection and starts from the initial state",
+				function()
+					local loadNavigationState = jest.fn(function()
+						error("loadNavigationState failed")
+					end)
+					local navigationContainer = createPersistenceEnabledContainer(loadNavigationState)
 
-				expect(loadNavigationState.callCount).never.toEqual(0)
-				jest.runOnlyPendingTimers()
-				expect(navigationContainer.state.nav).toMatchObject({
-					index = 1,
-					isTransitioning = false,
-					key = "StackRouterRoot",
-					routes = {{ routeName = "foo" }}
-				})
-			end)
+					expect(loadNavigationState.callCount).never.toEqual(0)
+					jest.runOnlyPendingTimers()
+					expect(navigationContainer.state.nav).toMatchObject({
+						index = 1,
+						isTransitioning = false,
+						key = "StackRouterRoot",
+						routes = { { routeName = "foo" } },
+					})
+				end
+			)
 
 			-- deviation: Roact does not have componendDidCatch which is used
 			-- to implement that feature upstream
@@ -398,7 +366,7 @@ return function()
 						index = 1,
 						isTransitioning = false,
 						key = "StackRouterRoot",
-						routes = {{ routeName = "foo" }},
+						routes = { { routeName = "foo" } },
 					})
 				end
 			)
@@ -410,7 +378,9 @@ return function()
 					Roact.mount(Roact.createElement(NavigationContainer, {
 						persistNavigationState = function() end,
 					}))
-				end).toThrow("both persistNavigationState and loadNavigationState must either be undefined, or be functions")
+				end).toThrow(
+					"both persistNavigationState and loadNavigationState must either be undefined, or be functions"
+				)
 			end)
 		end)
 	end)

@@ -36,8 +36,8 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("ModalDialog")
-				end
-			})
+				end,
+			}),
 		})
 	end
 
@@ -64,8 +64,8 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("PageTwo")
-				end
-			})
+				end,
+			}),
 		})
 	end
 
@@ -94,8 +94,8 @@ return function(target)
 					-- Dismiss pops this entire inner stack by directing a Back action to
 					-- the parent navigator.
 					navigation.dismiss()
-				end
-			})
+				end,
+			}),
 		})
 	end
 

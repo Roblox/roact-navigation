@@ -9,8 +9,10 @@ return function(router, routeName)
 		return router.childRouters[routeName]
 	end
 
-	invariant(type(router.getComponentForRouteName) == "function",
-		"router.getComponentForRouteName must be a function if no child routers are specified")
+	invariant(
+		type(router.getComponentForRouteName) == "function",
+		"router.getComponentForRouteName must be a function if no child routers are specified"
+	)
 	local component = router.getComponentForRouteName(routeName)
 
 	-- deviation: functional components cannot be indexed in Lua

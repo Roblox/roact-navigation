@@ -28,8 +28,8 @@ return function()
 			navigation = {
 				state = {
 					index = 1,
-				}
-			}
+				},
+			},
 		})
 
 		local instance = Roact.mount(element)

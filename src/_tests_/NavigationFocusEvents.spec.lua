@@ -24,25 +24,21 @@ return function()
 		config = config or {}
 		local router = TabRouter(routeConfigMap, config)
 
-		return createNavigator(
-			function(props)
-				local navigation = props.navigation
-				local descriptors = props.descriptors
+		return createNavigator(function(props)
+			local navigation = props.navigation
+			local descriptors = props.descriptors
 
-				local children = Cryo.List.foldLeft(navigation.state.routes, function(acc, route)
-					local Comp = descriptors[route.key].getComponent()
-					acc[route.key] = Roact.createElement(Comp, {
-						key = route.key,
-						navigation = descriptors[route.key].navigation
-					})
-					return acc
-				end, {})
+			local children = Cryo.List.foldLeft(navigation.state.routes, function(acc, route)
+				local Comp = descriptors[route.key].getComponent()
+				acc[route.key] = Roact.createElement(Comp, {
+					key = route.key,
+					navigation = descriptors[route.key].navigation,
+				})
+				return acc
+			end, {})
 
-				return Roact.createFragment(children)
-			end,
-			router,
-			config
-		)
+			return Roact.createFragment(children)
+		end, router, config)
 	end
 
 	-- deviation: utility function moved out of test scope because
@@ -86,23 +82,21 @@ return function()
 		local fourthFocusCallback, fourthFocusCallbackFn = jest.fn()
 		local fourthBlurCallback, fourthBlurCallbackFn = jest.fn()
 
-		local Navigator = createAppContainer(
-			createTestNavigator({
-				{ first = createComponent(firstFocusCallbackFn, firstBlurCallbackFn) },
-				{ second = createComponent(secondFocusCallbackFn, secondBlurCallbackFn) },
-				{ third = createComponent(thirdFocusCallbackFn, thirdBlurCallbackFn) },
-				{ fourth = createComponent(fourthFocusCallbackFn, fourthBlurCallbackFn) },
-			})
-		)
+		local Navigator = createAppContainer(createTestNavigator({
+			{ first = createComponent(firstFocusCallbackFn, firstBlurCallbackFn) },
+			{ second = createComponent(secondFocusCallbackFn, secondBlurCallbackFn) },
+			{ third = createComponent(thirdFocusCallbackFn, thirdBlurCallbackFn) },
+			{ fourth = createComponent(fourthFocusCallbackFn, fourthBlurCallbackFn) },
+		}))
 
 		local dispatch
 		local element = Roact.createElement(Navigator, {
 			externalDispatchConnector = function(currentDispatch)
 				dispatch = currentDispatch
-				return function ()
+				return function()
 					dispatch = nil
 				end
-			end
+			end,
 		})
 
 		Roact.mount(element)
@@ -120,7 +114,7 @@ return function()
 		expect(fourthFocusCallback).toHaveBeenCalledTimes(0)
 		expect(fourthBlurCallback).toHaveBeenCalledTimes(0)
 
-		dispatch(NavigationActions.navigate({ routeName = 'second' }))
+		dispatch(NavigationActions.navigate({ routeName = "second" }))
 
 		waitUntil(function()
 			return #firstBlurCallback.mock.calls > 0
@@ -129,7 +123,7 @@ return function()
 		expect(firstBlurCallback).toHaveBeenCalledTimes(1)
 		expect(secondFocusCallback).toHaveBeenCalledTimes(1)
 
-		dispatch(NavigationActions.navigate({ routeName = 'fourth' }))
+		dispatch(NavigationActions.navigate({ routeName = "fourth" }))
 
 		waitUntil(function()
 			return #secondBlurCallback.mock.calls > 0
@@ -145,7 +139,7 @@ return function()
 		expect(fourthBlurCallback).toHaveBeenCalledTimes(0)
 	end)
 
-	it('fires focus and blur events in nested navigator', function()
+	it("fires focus and blur events in nested navigator", function()
 		local firstFocusCallback, firstFocusCallbackFn = jest.fn()
 		local firstBlurCallback, firstBlurCallbackFn = jest.fn()
 
@@ -158,27 +152,25 @@ return function()
 		local fourthFocusCallback, fourthFocusCallbackFn = jest.fn()
 		local fourthBlurCallback, fourthBlurCallbackFn = jest.fn()
 
-		local Navigator = createAppContainer(
-			createTestNavigator({
-				{ first = createComponent(firstFocusCallbackFn, firstBlurCallbackFn) },
-				{ second = createComponent(secondFocusCallbackFn, secondBlurCallbackFn) },
-				{
-					nested = createTestNavigator({
-						{ third = createComponent(thirdFocusCallbackFn, thirdBlurCallbackFn) },
-						{ fourth = createComponent(fourthFocusCallbackFn, fourthBlurCallbackFn) },
-					})
-				},
-			})
-		)
+		local Navigator = createAppContainer(createTestNavigator({
+			{ first = createComponent(firstFocusCallbackFn, firstBlurCallbackFn) },
+			{ second = createComponent(secondFocusCallbackFn, secondBlurCallbackFn) },
+			{
+				nested = createTestNavigator({
+					{ third = createComponent(thirdFocusCallbackFn, thirdBlurCallbackFn) },
+					{ fourth = createComponent(fourthFocusCallbackFn, fourthBlurCallbackFn) },
+				}),
+			},
+		}))
 
 		local dispatch
 		local element = Roact.createElement(Navigator, {
 			externalDispatchConnector = function(currentDispatch)
 				dispatch = currentDispatch
-				return function ()
+				return function()
 					dispatch = nil
 				end
-			end
+			end,
 		})
 
 		Roact.mount(element)
@@ -190,7 +182,7 @@ return function()
 		expect(thirdFocusCallback).toHaveBeenCalledTimes(0)
 		expect(firstFocusCallback).toHaveBeenCalledTimes(1)
 
-		dispatch(NavigationActions.navigate({ routeName = 'nested' }))
+		dispatch(NavigationActions.navigate({ routeName = "nested" }))
 
 		waitUntil(function()
 			return #thirdFocusCallback.mock.calls > 0
@@ -200,7 +192,7 @@ return function()
 		expect(fourthFocusCallback).toHaveBeenCalledTimes(0)
 		expect(thirdFocusCallback).toHaveBeenCalledTimes(1)
 
-		dispatch(NavigationActions.navigate({ routeName = 'second' }))
+		dispatch(NavigationActions.navigate({ routeName = "second" }))
 
 		waitUntil(function()
 			return #secondFocusCallback.mock.calls > 0
@@ -210,7 +202,7 @@ return function()
 		expect(secondFocusCallback).toHaveBeenCalledTimes(1)
 		expect(fourthBlurCallback).toHaveBeenCalledTimes(0)
 
-		dispatch(NavigationActions.navigate({ routeName = 'nested' }))
+		dispatch(NavigationActions.navigate({ routeName = "nested" }))
 
 		waitUntil(function()
 			return #thirdFocusCallback.mock.calls > 1
@@ -221,12 +213,12 @@ return function()
 		expect(thirdFocusCallback).toHaveBeenCalledTimes(2)
 		expect(fourthFocusCallback).toHaveBeenCalledTimes(0)
 
-		dispatch(NavigationActions.navigate({ routeName = 'third' }))
+		dispatch(NavigationActions.navigate({ routeName = "third" }))
 
 		expect(fourthBlurCallback).toHaveBeenCalledTimes(0)
 		expect(thirdFocusCallback).toHaveBeenCalledTimes(2)
 
-		dispatch(NavigationActions.navigate({ routeName = 'first' }))
+		dispatch(NavigationActions.navigate({ routeName = "first" }))
 
 		waitUntil(function()
 			return #firstFocusCallback.mock.calls > 1
@@ -235,7 +227,7 @@ return function()
 		expect(firstFocusCallback).toHaveBeenCalledTimes(2)
 		expect(thirdBlurCallback).toHaveBeenCalledTimes(2)
 
-		dispatch(NavigationActions.navigate({ routeName = 'fourth' }))
+		dispatch(NavigationActions.navigate({ routeName = "fourth" }))
 
 		waitUntil(function()
 			return #fourthFocusCallback.mock.calls > 0
@@ -245,7 +237,7 @@ return function()
 		expect(thirdBlurCallback).toHaveBeenCalledTimes(2)
 		expect(firstBlurCallback).toHaveBeenCalledTimes(2)
 
-		dispatch(NavigationActions.navigate({ routeName = 'third' }))
+		dispatch(NavigationActions.navigate({ routeName = "third" }))
 
 		waitUntil(function()
 			return #thirdFocusCallback.mock.calls > 2

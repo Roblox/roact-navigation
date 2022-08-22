@@ -12,8 +12,7 @@ return function()
 	local Transitioner = require(Packages.RoactNavigation.views.RobloxStackView.Transitioner)
 
 	it("should not invoke setState after unmounting", function()
-		local noop = function()
-		end
+		local noop = function() end
 
 		local transitionerComponent
 		local element = Roact.createElement(Transitioner, {
@@ -31,8 +30,8 @@ return function()
 						{
 							routeName = "Route1",
 							key = "Route1",
-						}
-					}
+						},
+					},
 				},
 			},
 			screenProps = {},

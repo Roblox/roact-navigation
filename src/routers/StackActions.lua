@@ -58,17 +58,11 @@ end
 
 -- Replace the route for the given key with a new route.
 function StackActions.replace(payload)
-	return Cryo.Dictionary.join(
-		{ type = REPLACE_TOKEN, preserveFocus = true },
-		payload or {}
-	)
+	return Cryo.Dictionary.join({ type = REPLACE_TOKEN, preserveFocus = true }, payload or {})
 end
 
 function StackActions.completeTransition(payload)
-	return Cryo.Dictionary.join(
-		{ type = COMPLETE_TRANSITION_TOKEN, preserveFocus = true },
-		payload or {}
-	)
+	return Cryo.Dictionary.join({ type = COMPLETE_TRANSITION_TOKEN, preserveFocus = true }, payload or {})
 end
 
 return StackActions

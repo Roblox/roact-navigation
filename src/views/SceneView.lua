@@ -16,7 +16,7 @@ function SceneView:render()
 		Scene = Roact.createElement(component, {
 			screenProps = screenProps,
 			navigation = navigation,
-		})
+		}),
 	})
 end
 

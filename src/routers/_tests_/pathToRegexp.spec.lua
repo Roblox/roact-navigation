@@ -34,10 +34,7 @@ return function()
 		if typeof(object) == "table" then
 			local entries = {}
 			for key, value in pairs(object) do
-				table.insert(entries, ("%s = %s"):format(
-					util.inspect(key),
-					util.inspect(value)
-				))
+				table.insert(entries, ("%s = %s"):format(util.inspect(key), util.inspect(value)))
 			end
 			return ("{ %s } (%s)"):format(table.concat(entries, ", "), tostring(object):sub(8))
 		end
@@ -48,42 +45,42 @@ return function()
 		{
 			"/",
 			undefined,
-			{"/"},
+			{ "/" },
 			{
-				{"/", {"/"}, { path = "/", index = 1, params = {} } },
-				{"/route", null, false},
+				{ "/", { "/" }, { path = "/", index = 1, params = {} } },
+				{ "/route", null, false },
 			},
 			{
-				{null, "/"},
-				{{}, "/"},
-				{{ id = 123 }, "/"},
+				{ null, "/" },
+				{ {}, "/" },
+				{ { id = 123 }, "/" },
 			},
 		},
 		{
 			"/test",
 			undefined,
-			{"/test"},
+			{ "/test" },
 			{
-				{"/test", {"/test"}, { path = "/test", index = 1, params = {} }},
-				{"/route", null, false},
-				{"/test/route", null, false},
-				{"/test/", {"/test/"}, { path = "/test/", index = 1, params = {} }},
+				{ "/test", { "/test" }, { path = "/test", index = 1, params = {} } },
+				{ "/route", null, false },
+				{ "/test/route", null, false },
+				{ "/test/", { "/test/" }, { path = "/test/", index = 1, params = {} } },
 			},
 			{
-				{null, "/test"},
-				{{}, "/test"},
+				{ null, "/test" },
+				{ {}, "/test" },
 			},
 		},
 		{
 			"/test/",
 			undefined,
-			{"/test/"},
+			{ "/test/" },
 			{
-				{"/test", null},
-				{"/test/", {"/test/"}},
-				{"/test//", {"/test//"}},
+				{ "/test", null },
+				{ "/test/", { "/test/" } },
+				{ "/test//", { "/test//" } },
 			},
-			{{null, "/test/"}},
+			{ { null, "/test/" } },
 		},
 
 		--[[
@@ -94,24 +91,24 @@ return function()
 			{
 				sensitive = true,
 			},
-			{"/test"},
+			{ "/test" },
 			{
-				{"/test", {"/test"}},
-				{"/TEST", null},
+				{ "/test", { "/test" } },
+				{ "/TEST", null },
 			},
-			{{null, "/test"}},
+			{ { null, "/test" } },
 		},
 		{
 			"/TEST",
 			{
 				sensitive = true,
 			},
-			{"/TEST"},
+			{ "/TEST" },
 			{
-				{"/test", null},
-				{"/TEST", {"/TEST"}},
+				{ "/test", null },
+				{ "/TEST", { "/TEST" } },
 			},
-			{{null, "/TEST"}},
+			{ { null, "/TEST" } },
 		},
 
 		--[[
@@ -122,28 +119,28 @@ return function()
 			{
 				strict = true,
 			},
-			{"/test"},
+			{ "/test" },
 			{
-				{"/test", {"/test"}},
-				{"/test/", null},
+				{ "/test", { "/test" } },
+				{ "/test/", null },
 				-- Roblox deviation: this does not match because the current
 				-- Regex implementation is always case sensitive
 				-- {"/TEST", {"/TEST"}},
 			},
-			{{null, "/test"}},
+			{ { null, "/test" } },
 		},
 		{
 			"/test/",
 			{
 				strict = true,
 			},
-			{"/test/"},
+			{ "/test/" },
 			{
-				{"/test", null},
-				{"/test/", {"/test/"}},
-				{"/test//", null},
+				{ "/test", null },
+				{ "/test/", { "/test/" } },
+				{ "/test//", null },
 			},
-			{{null, "/test/"}},
+			{ { null, "/test/" } },
 		},
 
 		--[[
@@ -154,28 +151,28 @@ return function()
 			{
 				end_ = false,
 			},
-			{"/test"},
+			{ "/test" },
 			{
-				{"/test", {"/test"}},
-				{"/test/", {"/test/"}},
-				{"/test/route", {"/test"}},
-				{"/route", null},
+				{ "/test", { "/test" } },
+				{ "/test/", { "/test/" } },
+				{ "/test/route", { "/test" } },
+				{ "/route", null },
 			},
-			{{null, "/test"}},
+			{ { null, "/test" } },
 		},
 		{
 			"/test/",
 			{
 				end_ = false,
 			},
-			{"/test/"},
+			{ "/test/" },
 			{
-				{"/test", null},
-				{"/test/route", {"/test/"}},
-				{"/test//", {"/test//"}},
-				{"/test//route", {"/test/"}},
+				{ "/test", null },
+				{ "/test/route", { "/test/" } },
+				{ "/test//", { "/test//" } },
+				{ "/test//route", { "/test/" } },
 			},
-			{{null, "/test/"}},
+			{ { null, "/test/" } },
 		},
 		{
 			"/:test",
@@ -194,12 +191,12 @@ return function()
 			{
 				{
 					"/route",
-					{"/route", "route"},
+					{ "/route", "route" },
 					{ path = "/route", index = 1, params = { test = "route" } },
 				},
 				{
 					"/caf%C3%A9",
-					{"/caf%C3%A9", "caf%C3%A9"},
+					{ "/caf%C3%A9", "caf%C3%A9" },
 					{ path = "/caf%C3%A9", index = 1, params = { test = "caf%C3%A9" } },
 				},
 				-- Roblox deviation: this failure may comes from our custom decodeURIComponent
@@ -212,15 +209,19 @@ return function()
 				-- },
 			},
 			{
-				{{}, null},
-				{{ test = "abc" }, "/abc"},
-				{{ test = "a+b" }, "/a+b"},
-				{{ test = "a+b" }, '/test', {
-					encode = function(_, token)
-						return tostring(token.name)
-					end,
-				}},
-				{{ test = 'a+b' }, '/a%2Bb', { encode = encodeURIComponent }},
+				{ {}, null },
+				{ { test = "abc" }, "/abc" },
+				{ { test = "a+b" }, "/a+b" },
+				{
+					{ test = "a+b" },
+					"/test",
+					{
+						encode = function(_, token)
+							return tostring(token.name)
+						end,
+					},
+				},
+				{ { test = "a+b" }, "/a%2Bb", { encode = encodeURIComponent } },
 			},
 		},
 		{
@@ -239,11 +240,11 @@ return function()
 				"/",
 			},
 			{
-				{"/route", null},
-				{"/route/", {"/route/", "route"}},
+				{ "/route", null },
+				{ "/route/", { "/route/", "route" } },
 			},
 			{
-				{{ test = "abc" }, "/abc/"},
+				{ { test = "abc" }, "/abc/" },
 			},
 		},
 		{
@@ -253,13 +254,13 @@ return function()
 			},
 			{},
 			{
-				{"", {""}},
-				{"/", {"/"}},
-				{"route", {""}},
-				{"/route", {""}},
-				{"/route/", {""}},
+				{ "", { "" } },
+				{ "/", { "/" } },
+				{ "route", { "" } },
+				{ "/route", { "" } },
+				{ "/route/", { "" } },
 			},
-			{{null, ""}},
+			{ { null, "" } },
 		},
 
 		--[[
@@ -270,31 +271,31 @@ return function()
 			{
 				start = false,
 			},
-			{"/test"},
+			{ "/test" },
 			{
-				{"/test", {"/test"}},
-				{"/test/", {"/test/"}},
-				{"/route/test", {"/test"}},
-				{"/test/route", null},
-				{"/route/test/deep", null},
-				{"/route", null},
+				{ "/test", { "/test" } },
+				{ "/test/", { "/test/" } },
+				{ "/route/test", { "/test" } },
+				{ "/test/route", null },
+				{ "/route/test/deep", null },
+				{ "/route", null },
 			},
-			{{null, "/test"}},
+			{ { null, "/test" } },
 		},
 		{
 			"/test/",
 			{
 				start = false,
 			},
-			{"/test/"},
+			{ "/test/" },
 			{
-				{"/test", null},
-				{"/test/route", null},
-				{"/test//route", null},
-				{"/test//", {"/test//"}},
-				{"/route/test/", {"/test/"}},
+				{ "/test", null },
+				{ "/test/route", null },
+				{ "/test//route", null },
+				{ "/test//", { "/test//" } },
+				{ "/route/test/", { "/test/" } },
 			},
-			{{null, "/test/"}},
+			{ { null, "/test/" } },
 		},
 		{
 			"/:test",
@@ -310,17 +311,21 @@ return function()
 					pattern = "[^\\/#\\?]+?",
 				},
 			},
-			{{"/route", {"/route", "route"}}},
+			{ { "/route", { "/route", "route" } } },
 			{
-				{{}, null},
-				{{ test = "abc" }, "/abc"},
-				{{ test = "a+b" }, "/a+b"},
-				{{ test = "a+b" }, "/test", {
-					encode = function(_, token)
-						return tostring(token.name)
-					end,
-				}},
-				{{ test = "a+b" }, "/a%2Bb", { encode = encodeURIComponent }},
+				{ {}, null },
+				{ { test = "abc" }, "/abc" },
+				{ { test = "a+b" }, "/a+b" },
+				{
+					{ test = "a+b" },
+					"/test",
+					{
+						encode = function(_, token)
+							return tostring(token.name)
+						end,
+					},
+				},
+				{ { test = "a+b" }, "/a%2Bb", { encode = encodeURIComponent } },
 			},
 		},
 		{
@@ -339,10 +344,10 @@ return function()
 				"/",
 			},
 			{
-				{"/route", null},
-				{"/route/", {"/route/", "route"}},
+				{ "/route", null },
+				{ "/route/", { "/route/", "route" } },
 			},
-			{{{ test = "abc" }, "/abc/"}},
+			{ { { test = "abc" }, "/abc/" } },
 		},
 		{
 			"",
@@ -351,13 +356,13 @@ return function()
 			},
 			{},
 			{
-				{"", {""}},
-				{"/", {"/"}},
-				{"route", {""}},
-				{"/route", {""}},
-				{"/route/", {"/"}},
+				{ "", { "" } },
+				{ "/", { "/" } },
+				{ "route", { "" } },
+				{ "/route", { "" } },
+				{ "/route/", { "/" } },
 			},
-			{{null, ""}},
+			{ { null, "" } },
 		},
 
 		--[[
@@ -369,14 +374,14 @@ return function()
 				end_ = false,
 				strict = true,
 			},
-			{"/test"},
+			{ "/test" },
 			{
-				{"/test", {"/test"}},
-				{"/test/", {"/test"}},
-				{"/test/route", {"/test"}},
+				{ "/test", { "/test" } },
+				{ "/test/", { "/test" } },
+				{ "/test/route", { "/test" } },
 			},
 			{
-				{null, "/test"},
+				{ null, "/test" },
 			},
 		},
 		{
@@ -385,14 +390,14 @@ return function()
 				end_ = false,
 				strict = true,
 			},
-			{"/test/"},
+			{ "/test/" },
 			{
-				{"/test", null},
-				{"/test/", {"/test/"}},
-				{"/test//", {"/test/"}},
-				{"/test/route", {"/test/"}},
+				{ "/test", null },
+				{ "/test/", { "/test/" } },
+				{ "/test//", { "/test/" } },
+				{ "/test/route", { "/test/" } },
 			},
-			{{null, "/test/"}},
+			{ { null, "/test/" } },
 		},
 		{
 			"/test.json",
@@ -400,13 +405,13 @@ return function()
 				end_ = false,
 				strict = true,
 			},
-			{"/test.json"},
+			{ "/test.json" },
 			{
-				{"/test.json", {"/test.json"}},
-				{"/test.json.hbs", null},
-				{"/test.json/route", {"/test.json"}},
+				{ "/test.json", { "/test.json" } },
+				{ "/test.json.hbs", null },
+				{ "/test.json/route", { "/test.json" } },
 			},
-			{{null, "/test.json"}},
+			{ { null, "/test.json" } },
 		},
 		{
 			"/:test",
@@ -424,12 +429,12 @@ return function()
 				},
 			},
 			{
-				{"/route", {"/route", "route"}},
-				{"/route/", {"/route", "route"}},
+				{ "/route", { "/route", "route" } },
+				{ "/route/", { "/route", "route" } },
 			},
 			{
-				{{}, null},
-				{{ test = "abc" }, "/abc"},
+				{ {}, null },
+				{ { test = "abc" }, "/abc" },
 			},
 		},
 		{
@@ -449,11 +454,11 @@ return function()
 				"/",
 			},
 			{
-				{"/route", null},
-				{"/route/", {"/route/", "route"}},
+				{ "/route", null },
+				{ "/route/", { "/route/", "route" } },
 			},
 			{
-				{{ test = "foobar" }, "/foobar/"},
+				{ { test = "foobar" }, "/foobar/" },
 			},
 		},
 		{
@@ -462,14 +467,14 @@ return function()
 				start = false,
 				end_ = false,
 			},
-			{"/test"},
+			{ "/test" },
 			{
-				{"/test", {"/test"}},
-				{"/test/", {"/test/"}},
-				{"/test/route", {"/test"}},
-				{"/route/test/deep", {"/test"}},
+				{ "/test", { "/test" } },
+				{ "/test/", { "/test/" } },
+				{ "/test/route", { "/test" } },
+				{ "/route/test/deep", { "/test" } },
 			},
-			{{null, "/test"}},
+			{ { null, "/test" } },
 		},
 		{
 			"/test/",
@@ -477,16 +482,16 @@ return function()
 				start = false,
 				end_ = false,
 			},
-			{"/test/"},
+			{ "/test/" },
 			{
-				{"/test", null},
-				{"/test/", {"/test/"}},
-				{"/test//", {"/test//"}},
-				{"/test/route", {"/test/"}},
-				{"/route/test/deep", {"/test/"}},
+				{ "/test", null },
+				{ "/test/", { "/test/" } },
+				{ "/test//", { "/test//" } },
+				{ "/test/route", { "/test/" } },
+				{ "/route/test/deep", { "/test/" } },
 			},
 			{
-				{null, "/test/"},
+				{ null, "/test/" },
 			},
 		},
 		{
@@ -495,15 +500,15 @@ return function()
 				start = false,
 				end_ = false,
 			},
-			{"/test.json"},
+			{ "/test.json" },
 			{
-				{"/test.json", {"/test.json"}},
-				{"/test.json.hbs", null},
-				{"/test.json/route", {"/test.json"}},
-				{"/route/test.json/deep", {"/test.json"}},
+				{ "/test.json", { "/test.json" } },
+				{ "/test.json.hbs", null },
+				{ "/test.json/route", { "/test.json" } },
+				{ "/route/test.json/deep", { "/test.json" } },
 			},
 			{
-				{null, "/test.json"},
+				{ null, "/test.json" },
 			},
 		},
 		{
@@ -522,12 +527,12 @@ return function()
 				},
 			},
 			{
-				{"/route", {"/route", "route"}},
-				{"/route/", {"/route/", "route"}},
+				{ "/route", { "/route", "route" } },
+				{ "/route/", { "/route/", "route" } },
 			},
 			{
-				{{}, null},
-				{{ test = "abc" }, "/abc"},
+				{ {}, null },
+				{ { test = "abc" }, "/abc" },
 			},
 		},
 		{
@@ -547,24 +552,24 @@ return function()
 				"/",
 			},
 			{
-				{"/route", null},
-				{"/route/", {"/route/", "route"}},
+				{ "/route", null },
+				{ "/route/", { "/route/", "route" } },
 			},
-			{{{ test = "foobar" }, "/foobar/"}},
+			{ { { test = "foobar" }, "/foobar/" } },
 		},
 
 		--[[
 		 * Arrays of simple paths.
 		 ]]
 		{
-			{"/one", "/two"},
+			{ "/one", "/two" },
 			null,
 			{},
 			{
-				{"/one", {"/one"}},
-				{"/two", {"/two"}},
-				{"/three", null},
-				{"/one/two", null},
+				{ "/one", { "/one" } },
+				{ "/two", { "/two" } },
+				{ "/three", null },
+				{ "/one/two", null },
 			},
 			{},
 		},
@@ -577,9 +582,9 @@ return function()
 			{
 				end_ = false,
 			},
-			{"/test"},
-			{{"/test/route", {"/test"}}},
-			{{null, "/test"}},
+			{ "/test" },
+			{ { "/test/route", { "/test" } } },
+			{ { null, "/test" } },
 		},
 
 		--[[
@@ -598,26 +603,26 @@ return function()
 				},
 			},
 			{
-				{"/route", {"/route", "route"}},
-				{"/another", {"/another", "another"}},
-				{"/something/else", null},
-				{"/route.json", {"/route.json", "route.json"}},
-				{"/something%2Felse", {"/something%2Felse", "something%2Felse"}},
+				{ "/route", { "/route", "route" } },
+				{ "/another", { "/another", "another" } },
+				{ "/something/else", null },
+				{ "/route.json", { "/route.json", "route.json" } },
+				{ "/something%2Felse", { "/something%2Felse", "something%2Felse" } },
 				{
 					"/something%2Felse%2Fmore",
-					{"/something%2Felse%2Fmore", "something%2Felse%2Fmore"},
+					{ "/something%2Felse%2Fmore", "something%2Felse%2Fmore" },
 				},
-				{"/;,:@&=+$-_.!~*()", {"/;,:@&=+$-_.!~*()", ";,:@&=+$-_.!~*()"}},
+				{ "/;,:@&=+$-_.!~*()", { "/;,:@&=+$-_.!~*()", ";,:@&=+$-_.!~*()" } },
 			},
 			{
-				{{ test = "route" }, "/route"},
+				{ { test = "route" }, "/route" },
 				{
 					{ test = "something/else" },
 					"/something%2Felse",
 					{ encode = encodeURIComponent },
 				},
 				{
-					{ test = "something/else/more"},
+					{ test = "something/else/more" },
 					"/something%2Felse%2Fmore",
 					{ encode = encodeURIComponent },
 				},
@@ -638,15 +643,15 @@ return function()
 				},
 			},
 			{
-				{"/route", {"/route", "route"}},
-				{"/route/", null},
+				{ "/route", { "/route", "route" } },
+				{ "/route/", null },
 			},
-			{{{ test = "route" }, "/route"}},
+			{ { { test = "route" }, "/route" } },
 		},
 		{
 			"/:test/",
 			{
-				strict = true
+				strict = true,
 			},
 			{
 				{
@@ -659,10 +664,10 @@ return function()
 				"/",
 			},
 			{
-				{"/route/", {"/route/", "route"}},
-				{"/route//", null},
+				{ "/route/", { "/route/", "route" } },
+				{ "/route//", null },
 			},
-			{{{ test = "route" }, "/route/"}},
+			{ { { test = "route" }, "/route/" } },
 		},
 		{
 			"/:test",
@@ -679,10 +684,10 @@ return function()
 				},
 			},
 			{
-				{"/route.json", {"/route.json", "route.json"}},
-				{"/route//", {"/route", "route"}},
+				{ "/route.json", { "/route.json", "route.json" } },
+				{ "/route//", { "/route", "route" } },
 			},
-			{{{ test = "route" }, "/route"}},
+			{ { { test = "route" }, "/route" } },
 		},
 
 		--[[
@@ -703,16 +708,16 @@ return function()
 			{
 				{
 					"/route",
-					{"/route", "route"},
+					{ "/route", "route" },
 					{ path = "/route", index = 1, params = { test = "route" } },
 				},
-				{"/route/nested", null, false},
-				{"/", {"/", undefined}, { path = "/", index = 1, params = {}}},
-				{"//", null},
+				{ "/route/nested", null, false },
+				{ "/", { "/", undefined }, { path = "/", index = 1, params = {} } },
+				{ "//", null },
 			},
 			{
-				{null, ""},
-				{{ test = "foobar" }, "/foobar"},
+				{ null, "" },
+				{ { test = "foobar" }, "/foobar" },
 			},
 		},
 		{
@@ -730,19 +735,19 @@ return function()
 				},
 			},
 			{
-				{"/route", {"/route", "route"}},
-				{"/", null}, -- // Questionable behaviour.
-				{"//", null},
+				{ "/route", { "/route", "route" } },
+				{ "/", null }, -- // Questionable behaviour.
+				{ "//", null },
 			},
 			{
-				{null, ""},
-				{{ test = "foobar" }, "/foobar"},
+				{ null, "" },
+				{ { test = "foobar" }, "/foobar" },
 			},
 		},
 		{
 			"/:test?/",
 			{
-				strict = true
+				strict = true,
 			},
 			{
 				{
@@ -755,14 +760,14 @@ return function()
 				"/",
 			},
 			{
-				{"/route", null},
-				{"/route/", {"/route/", "route"}},
-				{"/", {"/", undefined}},
-				{"//", null},
+				{ "/route", null },
+				{ "/route/", { "/route/", "route" } },
+				{ "/", { "/", undefined } },
+				{ "//", null },
 			},
 			{
-				{null, "/"},
-				{{ test = "foobar" }, "/foobar/"},
+				{ null, "/" },
+				{ { test = "foobar" }, "/foobar/" },
 			},
 		},
 		{
@@ -779,12 +784,12 @@ return function()
 				"/bar",
 			},
 			{
-				{"/bar", {"/bar", undefined}},
-				{"/foo/bar", {"/foo/bar", "foo"}},
+				{ "/bar", { "/bar", undefined } },
+				{ "/foo/bar", { "/foo/bar", "foo" } },
 			},
 			{
-				{null, "/bar"},
-				{{ test = "foo" }, "/foo/bar"},
+				{ null, "/bar" },
+				{ { test = "foo" }, "/foo/bar" },
 			},
 		},
 		{
@@ -801,13 +806,13 @@ return function()
 				"-bar",
 			},
 			{
-				{"-bar", {"-bar", undefined}},
-				{"/-bar", null},
-				{"/foo-bar", {"/foo-bar", "foo"}},
+				{ "-bar", { "-bar", undefined } },
+				{ "/-bar", null },
+				{ "/foo-bar", { "/foo-bar", "foo" } },
 			},
 			{
-				{undefined, "-bar"},
-				{{ test = "foo" }, "/foo-bar"},
+				{ undefined, "-bar" },
+				{ { test = "foo" }, "/foo-bar" },
 			},
 		},
 		{
@@ -824,12 +829,12 @@ return function()
 				"-bar",
 			},
 			{
-				{"-bar", {"-bar", undefined}},
-				{"/-bar", null},
-				{"/foo-bar", {"/foo-bar", "foo"}},
-				{"/foo/baz-bar", {"/foo/baz-bar", "foo/baz"}},
+				{ "-bar", { "-bar", undefined } },
+				{ "/-bar", null },
+				{ "/foo-bar", { "/foo-bar", "foo" } },
+				{ "/foo/baz-bar", { "/foo/baz-bar", "foo/baz" } },
 			},
-			{{{ test = "foo" }, "/foo-bar"}},
+			{ { { test = "foo" }, "/foo-bar" } },
 		},
 
 		--[[
@@ -848,27 +853,27 @@ return function()
 				},
 			},
 			{
-				{"/", null, false},
+				{ "/", null, false },
 				{
 					"/route",
-					{"/route", "route"},
-					{ path = "/route", index = 1, params = { test = {"route"}}},
+					{ "/route", "route" },
+					{ path = "/route", index = 1, params = { test = { "route" } } },
 				},
 				{
 					"/some/basic/route",
-					{"/some/basic/route", "some/basic/route"},
+					{ "/some/basic/route", "some/basic/route" },
 					{
 						path = "/some/basic/route",
 						index = 1,
-						params = { test = {"some", "basic", "route"} },
+						params = { test = { "some", "basic", "route" } },
 					},
 				},
-				{"//", null, false},
+				{ "//", null, false },
 			},
 			{
-				{{}, null},
-				{{ test = "foobar" }, "/foobar"},
-				{{ test = {"a", "b", "c"} }, "/a/b/c"},
+				{ {}, null },
+				{ { test = "foobar" }, "/foobar" },
+				{ { test = { "a", "b", "c" } }, "/a/b/c" },
 			},
 		},
 		{
@@ -884,13 +889,13 @@ return function()
 				},
 			},
 			{
-				{"/abc/456/789", null},
-				{"/123/456/789", {"/123/456/789", "123/456/789"}},
+				{ "/abc/456/789", null },
+				{ "/123/456/789", { "/123/456/789", "123/456/789" } },
 			},
 			{
-				{{ test = "abc" }, null},
-				{{ test = 123 }, "/123"},
-				{{ test = {1, 2, 3} }, "/1/2/3"},
+				{ { test = "abc" }, null },
+				{ { test = 123 }, "/123" },
+				{ { test = { 1, 2, 3 } }, "/1/2/3" },
 			},
 		},
 		{
@@ -907,15 +912,15 @@ return function()
 				},
 			},
 			{
-				{"/route", null},
-				{"/route.json", {"/route.json", "json"}},
-				{"/route.xml.json", {"/route.xml.json", "xml.json"}},
-				{"/route.html", null},
+				{ "/route", null },
+				{ "/route.json", { "/route.json", "json" } },
+				{ "/route.xml.json", { "/route.xml.json", "xml.json" } },
+				{ "/route.html", null },
 			},
 			{
-				{{ ext = "foobar" }, null},
-				{{ ext = "xml" }, "/route.xml"},
-				{{ ext = {"xml", "json"} }, "/route.xml.json"},
+				{ { ext = "foobar" }, null },
+				{ { ext = "xml" }, "/route.xml" },
+				{ { ext = { "xml", "json" } }, "/route.xml.json" },
 			},
 		},
 		{
@@ -933,12 +938,12 @@ return function()
 				"/test",
 			},
 			{
-				{"/route", null},
-				{"/route.json", null},
-				{"/route.xml/test", {"/route.xml/test", "xml"}},
-				{"/route.json.gz/test", null},
+				{ "/route", null },
+				{ "/route.json", null },
+				{ "/route.xml/test", { "/route.xml/test", "xml" } },
+				{ "/route.json.gz/test", null },
 			},
-			{{{ ext = "xml" }, "/route.xml/test"}},
+			{ { { ext = "xml" }, "/route.xml/test" } },
 		},
 
 		--[[
@@ -957,28 +962,28 @@ return function()
 				},
 			},
 			{
-				{"/", {"/", undefined}, { path = "/", index = 1, params = {} }},
-				{"//", null, false},
+				{ "/", { "/", undefined }, { path = "/", index = 1, params = {} } },
+				{ "//", null, false },
 				{
 					"/route",
-					{"/route", "route"},
-					{ path = "/route", index = 1, params = { test = {"route"} } },
+					{ "/route", "route" },
+					{ path = "/route", index = 1, params = { test = { "route" } } },
 				},
 				{
 					"/some/basic/route",
-					{"/some/basic/route", "some/basic/route"},
+					{ "/some/basic/route", "some/basic/route" },
 					{
 						path = "/some/basic/route",
 						index = 1,
-						params = { test = {"some", "basic", "route"} },
+						params = { test = { "some", "basic", "route" } },
 					},
 				},
 			},
 			{
-				{{}, ""},
-				{{ test = {} }, ""},
-				{{ test = "foobar" }, "/foobar"},
-				{{ test = {"foo", "bar"} }, "/foo/bar"},
+				{ {}, "" },
+				{ { test = {} }, "" },
+				{ { test = "foobar" }, "/foobar" },
+				{ { test = { "foo", "bar" } }, "/foo/bar" },
 			},
 		},
 		{
@@ -995,17 +1000,17 @@ return function()
 				},
 			},
 			{
-				{"/route", {"/route", undefined}},
-				{"/route.json", {"/route.json", "json"}},
-				{"/route.json.xml", {"/route.json.xml", "json.xml"}},
-				{"/route.123", null},
+				{ "/route", { "/route", undefined } },
+				{ "/route.json", { "/route.json", "json" } },
+				{ "/route.json.xml", { "/route.json.xml", "json.xml" } },
+				{ "/route.123", null },
 			},
 			{
-				{{}, "/route"},
-				{{ ext = {} }, "/route"},
-				{{ ext = "123" }, null},
-				{{ ext = "foobar" }, "/route.foobar"},
-				{{ ext = {"foo", "bar"} }, "/route.foo.bar"},
+				{ {}, "/route" },
+				{ { ext = {} }, "/route" },
+				{ { ext = "123" }, null },
+				{ { ext = "foobar" }, "/route.foobar" },
+				{ { ext = { "foo", "bar" } }, "/route.foo.bar" },
 			},
 		},
 
@@ -1025,14 +1030,14 @@ return function()
 				},
 			},
 			{
-				{"/123", {"/123", "123"}},
-				{"/abc", null},
-				{"/123/abc", null},
+				{ "/123", { "/123", "123" } },
+				{ "/abc", null },
+				{ "/123/abc", null },
 			},
 			{
-				{{ test = "abc" }, null},
-				{{ test = "abc" }, "/abc", { validate = false }},
-				{{ test = "123" }, "/123"},
+				{ { test = "abc" }, null },
+				{ { test = "abc" }, "/abc", { validate = false } },
+				{ { test = "123" }, "/123" },
 			},
 		},
 		{
@@ -1050,11 +1055,11 @@ return function()
 				},
 			},
 			{
-				{"/123", {"/123", "123"}},
-				{"/abc", null},
-				{"/123/abc", {"/123", "123"}},
+				{ "/123", { "/123", "123" } },
+				{ "/abc", null },
+				{ "/123/abc", { "/123", "123" } },
 			},
-			{{{ test = "123" }, "/123"}},
+			{ { { test = "123" }, "/123" } },
 		},
 		{
 			"/:test(.*)",
@@ -1069,13 +1074,13 @@ return function()
 				},
 			},
 			{
-				{"/anything/goes/here", {"/anything/goes/here", "anything/goes/here"}},
-				{"/;,:@&=/+$-_.!/~*()", {"/;,:@&=/+$-_.!/~*()", ";,:@&=/+$-_.!/~*()"}},
+				{ "/anything/goes/here", { "/anything/goes/here", "anything/goes/here" } },
+				{ "/;,:@&=/+$-_.!/~*()", { "/;,:@&=/+$-_.!/~*()", ";,:@&=/+$-_.!/~*()" } },
 			},
 			{
-				{{ test = "" }, "/"},
-				{{ test = "abc" }, "/abc"},
-				{{ test = "abc/123" }, "/abc%2F123", { encode = encodeURIComponent }},
+				{ { test = "" }, "/" },
+				{ { test = "abc" }, "/abc" },
+				{ { test = "abc/123" }, "/abc%2F123", { encode = encodeURIComponent } },
 				{
 					{ test = "abc/123/456" },
 					"/abc%2F123%2F456",
@@ -1096,15 +1101,15 @@ return function()
 				},
 			},
 			{
-				{"/abcde", {"/abcde", "abcde"}},
-				{"/12345", null},
+				{ "/abcde", { "/abcde", "abcde" } },
+				{ "/12345", null },
 			},
 			{
-				{{ route = "" }, null},
-				{{ route = "" }, "/", { validate = false }},
-				{{ route = "123" }, null},
-				{{ route = "123" }, "/123", { validate = false }},
-				{{ route = "abc" }, "/abc"},
+				{ { route = "" }, null },
+				{ { route = "" }, "/", { validate = false } },
+				{ { route = "123" }, null },
+				{ { route = "123" }, "/123", { validate = false } },
+				{ { route = "abc" }, "/abc" },
 			},
 		},
 		{
@@ -1120,15 +1125,15 @@ return function()
 				},
 			},
 			{
-				{"/this", {"/this", "this"}},
-				{"/that", {"/that", "that"}},
-				{"/foo", null},
+				{ "/this", { "/this", "this" } },
+				{ "/that", { "/that", "that" } },
+				{ "/foo", null },
 			},
 			{
-				{{ route = "this" }, "/this"},
-				{{ route = "foo" }, null},
-				{{ route = "foo" }, "/foo", { validate = false }},
-				{{ route = "that" }, "/that"},
+				{ { route = "this" }, "/this" },
+				{ { route = "foo" }, null },
+				{ { route = "foo" }, "/foo", { validate = false } },
+				{ { route = "that" }, "/that" },
 			},
 		},
 		{
@@ -1144,21 +1149,21 @@ return function()
 				},
 			},
 			{
-				{"/abc", {"/abc", "abc"}},
-				{"/abc/abc", {"/abc/abc", "abc/abc"}},
-				{"/xyz/xyz", {"/xyz/xyz", "xyz/xyz"}},
-				{"/abc/xyz", {"/abc/xyz", "abc/xyz"}},
-				{"/abc/xyz/abc/xyz", {"/abc/xyz/abc/xyz", "abc/xyz/abc/xyz"}},
-				{"/xyzxyz", null},
+				{ "/abc", { "/abc", "abc" } },
+				{ "/abc/abc", { "/abc/abc", "abc/abc" } },
+				{ "/xyz/xyz", { "/xyz/xyz", "xyz/xyz" } },
+				{ "/abc/xyz", { "/abc/xyz", "abc/xyz" } },
+				{ "/abc/xyz/abc/xyz", { "/abc/xyz/abc/xyz", "abc/xyz/abc/xyz" } },
+				{ "/xyzxyz", null },
 			},
 			{
-				{{ path = "abc" }, "/abc"},
-				{{ path = {"abc", "xyz"} }, "/abc/xyz"},
-				{{ path = {"xyz", "abc", "xyz"}}, "/xyz/abc/xyz"},
-				{{ path = "abc123" }, null},
-				{{ path = "abc123" }, "/abc123", { validate = false }},
-				{{ path = "abcxyz" }, null},
-				{{ path = "abcxyz" }, "/abcxyz", { validate = false }},
+				{ { path = "abc" }, "/abc" },
+				{ { path = { "abc", "xyz" } }, "/abc/xyz" },
+				{ { path = { "xyz", "abc", "xyz" } }, "/xyz/abc/xyz" },
+				{ { path = "abc123" }, null },
+				{ { path = "abc123" }, "/abc123", { validate = false } },
+				{ { path = "abcxyz" }, null },
+				{ { path = "abcxyz" }, "/abcxyz", { validate = false } },
 			},
 		},
 
@@ -1168,12 +1173,12 @@ return function()
 		{
 			"test",
 			undefined,
-			{"test"},
+			{ "test" },
 			{
-				{"test", {"test"}},
-				{"/test", null},
+				{ "test", { "test" } },
+				{ "/test", null },
 			},
-			{{null, "test"}},
+			{ { null, "test" } },
 		},
 		{
 			":test",
@@ -1188,15 +1193,15 @@ return function()
 				},
 			},
 			{
-				{"route", {"route", "route"}},
-				{"/route", null},
-				{"route/", {"route/", "route"}},
+				{ "route", { "route", "route" } },
+				{ "/route", null },
+				{ "route/", { "route/", "route" } },
 			},
 			{
-				{{ test = "" }, null},
-				{{}, null},
-				{{ test = null }, null},
-				{{ test = "route" }, "route"},
+				{ { test = "" }, null },
+				{ {}, null },
+				{ { test = null }, null },
+				{ { test = "route" }, "route" },
 			},
 		},
 		{
@@ -1214,11 +1219,11 @@ return function()
 				},
 			},
 			{
-				{"route", {"route", "route"}},
-				{"/route", null},
-				{"route/", null},
+				{ "route", { "route", "route" } },
+				{ "/route", null },
+				{ "route/", null },
 			},
-			{{{ test = "route" }, "route"}},
+			{ { { test = "route" }, "route" } },
 		},
 		{
 			":test",
@@ -1235,12 +1240,12 @@ return function()
 				},
 			},
 			{
-				{"route", {"route", "route"}},
-				{"/route", null},
-				{"route/", {"route/", "route"}},
-				{"route/foobar", {"route", "route"}},
+				{ "route", { "route", "route" } },
+				{ "/route", null },
+				{ "route/", { "route/", "route" } },
+				{ "route/foobar", { "route", "route" } },
 			},
-			{{{ test = "route" }, "route"}},
+			{ { { test = "route" }, "route" } },
 		},
 		{
 			":test?",
@@ -1255,15 +1260,15 @@ return function()
 				},
 			},
 			{
-				{"route", {"route", "route"}},
-				{"/route", null},
-				{"", {"", undefined}},
-				{"route/foobar", null},
+				{ "route", { "route", "route" } },
+				{ "/route", null },
+				{ "", { "", undefined } },
+				{ "route/foobar", null },
 			},
 			{
-				{{}, ""},
-				{{ test = "" }, null},
-				{{ test = "route" }, "route"},
+				{ {}, "" },
+				{ { test = "" }, null },
+				{ { test = "route" }, "route" },
 			},
 		},
 		{
@@ -1279,16 +1284,16 @@ return function()
 				},
 			},
 			{
-				{"route/", {"route/", "route"}},
-				{"/route", null},
-				{"", null},
-				{"foo/bar/", {"foo/bar/", "foo/bar"}},
+				{ "route/", { "route/", "route" } },
+				{ "/route", null },
+				{ "", null },
+				{ "foo/bar/", { "foo/bar/", "foo/bar" } },
 			},
 			{
-				{{}, null},
-				{{ test = "" }, null},
-				{{ test = {"route"} }, "route/"},
-				{{ test = {"foo", "bar"}}, "foo/bar/"},
+				{ {}, null },
+				{ { test = "" }, null },
+				{ { test = { "route" } }, "route/" },
+				{ { test = { "foo", "bar" } }, "foo/bar/" },
 			},
 		},
 
@@ -1298,12 +1303,12 @@ return function()
 		{
 			"/test.json",
 			undefined,
-			{"/test.json"},
+			{ "/test.json" },
 			{
-				{"/test.json", {"/test.json"}},
-				{"/route.json", null},
+				{ "/test.json", { "/test.json" } },
+				{ "/route.json", null },
 			},
-			{{{}, "/test.json"}},
+			{ { {}, "/test.json" } },
 		},
 		{
 			"/:test.json",
@@ -1319,14 +1324,14 @@ return function()
 				".json",
 			},
 			{
-				{"/.json", null},
-				{"/test.json", {"/test.json", "test"}},
-				{"/route.json", {"/route.json", "route"}},
-				{"/route.json.json", {"/route.json.json", "route.json"}},
+				{ "/.json", null },
+				{ "/test.json", { "/test.json", "test" } },
+				{ "/route.json", { "/route.json", "route" } },
+				{ "/route.json.json", { "/route.json.json", "route.json" } },
 			},
 			{
-				{{ test = "" }, null},
-				{{ test = "foo" }, "/foo.json"},
+				{ { test = "" }, null },
+				{ { test = "foo" }, "/foo.json" },
 			},
 		},
 
@@ -1347,13 +1352,13 @@ return function()
 				},
 			},
 			{
-				{"/test.html", {"/test.html", "html"}},
-				{"/test.hbs.html", null},
+				{ "/test.html", { "/test.html", "html" } },
+				{ "/test.hbs.html", null },
 			},
 			{
-				{{}, null},
-				{{ format = "" }, null},
-				{{ format = "foo" }, "/test.foo"},
+				{ {}, null },
+				{ { format = "" }, null },
+				{ { format = "foo" }, "/test.foo" },
 			},
 		},
 		{
@@ -1377,12 +1382,12 @@ return function()
 				},
 			},
 			{
-				{"/test.html", null},
-				{"/test.hbs.html", {"/test.hbs.html", "hbs", "html"}},
+				{ "/test.html", null },
+				{ "/test.hbs.html", { "/test.hbs.html", "hbs", "html" } },
 			},
 			{
-				{{ format = "foo.bar" }, null},
-				{{ format = "foo" }, "/test.foo.foo"},
+				{ { format = "foo.bar" }, null },
+				{ { format = "foo" }, "/test.foo.foo" },
 			},
 		},
 		{
@@ -1399,13 +1404,13 @@ return function()
 				},
 			},
 			{
-				{"/test.html", {"/test.html", "html"}},
-				{"/test.hbs.html", {"/test.hbs.html", "hbs.html"}},
+				{ "/test.html", { "/test.html", "html" } },
+				{ "/test.hbs.html", { "/test.hbs.html", "hbs.html" } },
 			},
 			{
-				{{ format = {} }, null},
-				{{ format = "foo" }, "/test.foo"},
-				{{ format = {"foo", "bar"}}, "/test.foo.bar"},
+				{ { format = {} }, null },
+				{ { format = "foo" }, "/test.foo" },
+				{ { format = { "foo", "bar" } }, "/test.foo.bar" },
 			},
 		},
 		{
@@ -1424,11 +1429,11 @@ return function()
 				},
 			},
 			{
-				{"/test.html", {"/test.html", "html"}},
-				{"/test.hbs.html", null},
+				{ "/test.html", { "/test.html", "html" } },
+				{ "/test.hbs.html", null },
 			},
 			{
-				{{ format = "foo" }, "/test.foo"},
+				{ { format = "foo" }, "/test.foo" },
 			},
 		},
 		{
@@ -1446,12 +1451,12 @@ return function()
 				".",
 			},
 			{
-				{"/test.html.", {"/test.html.", "html"}},
-				{"/test.hbs.html", null},
+				{ "/test.html.", { "/test.html.", "html" } },
+				{ "/test.hbs.html", null },
 			},
 			{
-				{{ format = "" }, null},
-				{{ format = "foo" }, "/test.foo."},
+				{ { format = "" }, null },
+				{ { format = "foo" }, "/test.foo." },
 			},
 		},
 
@@ -1478,13 +1483,13 @@ return function()
 				},
 			},
 			{
-				{"/route.html", {"/route.html", "route", "html"}},
-				{"/route", null},
-				{"/route.html.json", {"/route.html.json", "route", "html.json"}},
+				{ "/route.html", { "/route.html", "route", "html" } },
+				{ "/route", null },
+				{ "/route.html.json", { "/route.html.json", "route", "html.json" } },
 			},
 			{
-				{{}, null},
-				{{ test = "route", format = "foo" }, "/route.foo"},
+				{ {}, null },
+				{ { test = "route", format = "foo" }, "/route.foo" },
 			},
 		},
 		{
@@ -1507,14 +1512,14 @@ return function()
 				},
 			},
 			{
-				{"/route", {"/route", "route", undefined}},
-				{"/route.json", {"/route.json", "route", "json"}},
-				{"/route.json.html", {"/route.json.html", "route", "json.html"}},
+				{ "/route", { "/route", "route", undefined } },
+				{ "/route.json", { "/route.json", "route", "json" } },
+				{ "/route.json.html", { "/route.json.html", "route", "json.html" } },
 			},
 			{
-				{{ test = "route" }, "/route"},
-				{{ test = "route", format = "" }, null},
-				{{ test = "route", format = "foo" }, "/route.foo"},
+				{ { test = "route" }, "/route" },
+				{ { test = "route", format = "" }, null },
+				{ { test = "route", format = "foo" }, "/route.foo" },
 			},
 		},
 		{
@@ -1539,21 +1544,21 @@ return function()
 				},
 			},
 			{
-				{"/route", {"/route", "route", undefined}},
-				{"/route.json", {"/route.json", "route", "json"}},
-				{"/route.json.html", {"/route.json.html", "route", "json.html"}},
+				{ "/route", { "/route", "route", undefined } },
+				{ "/route.json", { "/route.json", "route", "json" } },
+				{ "/route.json.html", { "/route.json.html", "route", "json.html" } },
 			},
 			{
-				{{ test = "route" }, "/route"},
-				{{ test = "route", format = nil }, "/route"},
-				{{ test = "route", format = "" }, null},
-				{{ test = "route", format = "foo" }, "/route.foo"},
+				{ { test = "route" }, "/route" },
+				{ { test = "route", format = nil }, "/route" },
+				{ { test = "route", format = "" }, null },
+				{ { test = "route", format = "foo" }, "/route.foo" },
 			},
 		},
 		{
 			"/test.:format(.*)z",
 			{
-				end_ = false
+				end_ = false,
 			},
 			{
 				"/test",
@@ -1567,14 +1572,14 @@ return function()
 				"z",
 			},
 			{
-				{"/test.abc", null},
-				{"/test.z", {"/test.z", ""}},
-				{"/test.abcz", {"/test.abcz", "abc"}},
+				{ "/test.abc", null },
+				{ "/test.z", { "/test.z", "" } },
+				{ "/test.abcz", { "/test.abcz", "abc" } },
 			},
 			{
-				{{}, null},
-				{{ format = "" }, "/test.z"},
-				{{ format = "foo" }, "/test.fooz"},
+				{ {}, null },
+				{ { format = "" }, "/test.z" },
+				{ { format = "foo" }, "/test.fooz" },
 			},
 		},
 
@@ -1594,13 +1599,13 @@ return function()
 				},
 			},
 			{
-				{"/123", {"/123", "123"}},
-				{"/abc", null},
-				{"/123/abc", null},
+				{ "/123", { "/123", "123" } },
+				{ "/abc", null },
+				{ "/123/abc", null },
 			},
 			{
-				{{}, null},
-				{{ ["0"] = "123" }, "/123"},
+				{ {}, null },
+				{ { ["0"] = "123" }, "/123" },
 			},
 		},
 		{
@@ -1618,13 +1623,13 @@ return function()
 				},
 			},
 			{
-				{"/123", {"/123", "123"}},
-				{"/abc", null},
-				{"/123/abc", {"/123", "123"}},
-				{"/123/", {"/123/", "123"}},
+				{ "/123", { "/123", "123" } },
+				{ "/abc", null },
+				{ "/123/abc", { "/123", "123" } },
+				{ "/123/", { "/123/", "123" } },
 			},
 			{
-				{{ ["0"] = "123" }, "/123"},
+				{ { ["0"] = "123" }, "/123" },
 			},
 		},
 		{
@@ -1640,12 +1645,12 @@ return function()
 				},
 			},
 			{
-				{"/", {"/", undefined}},
-				{"/123", {"/123", "123"}},
+				{ "/", { "/", undefined } },
+				{ "/123", { "/123", "123" } },
 			},
 			{
-				{{}, ""},
-				{{ ["0"] = "123"}, "/123"},
+				{ {}, "" },
+				{ { ["0"] = "123" }, "/123" },
 			},
 		},
 		{
@@ -1661,13 +1666,13 @@ return function()
 				},
 			},
 			{
-				{"/", {"/", ""}},
-				{"/route", {"/route", "route"}},
-				{"/route/nested", {"/route/nested", "route/nested"}},
+				{ "/", { "/", "" } },
+				{ "/route", { "/route", "route" } },
+				{ "/route/nested", { "/route/nested", "route/nested" } },
 			},
 			{
-				{{ ["0"] = "" }, "/"},
-				{{ ["0"] = "123" }, "/123"},
+				{ { ["0"] = "" }, "/" },
+				{ { ["0"] = "123" }, "/123" },
 			},
 		},
 		{
@@ -1684,7 +1689,7 @@ return function()
 				},
 				")",
 			},
-			{{"/route(\\123\\)", {"/route(\\123\\)", "123\\"}}},
+			{ { "/route(\\123\\)", { "/route(\\123\\)", "123\\" } } },
 			{},
 		},
 		{
@@ -1700,12 +1705,12 @@ return function()
 				},
 			},
 			{
-				{"/", {"/"}},
-				{"/login", {"/login"}},
+				{ "/", { "/" } },
+				{ "/login", { "/login" } },
 			},
 			{
-				{null, ""},
-				{{ [""] = "" }, "/login"},
+				{ null, "" },
+				{ { [""] = "" }, "/login" },
 			},
 		},
 		{
@@ -1721,10 +1726,10 @@ return function()
 				},
 			},
 			{
-				{"/", null},
-				{"/login", {"/login"}},
+				{ "/", null },
+				{ "/login", { "/login" } },
 			},
-			{{{ [""] = "" }, "/login"}},
+			{ { { [""] = "" }, "/login" } },
 		},
 		{
 			"{/(.*)}",
@@ -1739,10 +1744,10 @@ return function()
 				},
 			},
 			{
-				{"/", {"/", ""}},
-				{"/login", {"/login", "login"}},
+				{ "/", { "/", "" } },
+				{ "/login", { "/login", "login" } },
 			},
-			{{{ ["0"] = "test" }, "/test"}},
+			{ { { ["0"] = "test" }, "/test" } },
 		},
 
 		--[[
@@ -1834,7 +1839,7 @@ return function()
 		 * Correct names and indexes.
 		 ]]
 		{
-			{"/:test", "/route/:test"},
+			{ "/:test", "/route/:test" },
 			undefined,
 			{
 				{
@@ -1853,8 +1858,8 @@ return function()
 				},
 			},
 			{
-				{"/test", {"/test", "test", undefined}},
-				{"/route/test", {"/route/test", undefined, "test"}},
+				{ "/test", { "/test", "test", undefined } },
+				{ "/route/test", { "/route/test", undefined, "test" } },
 			},
 			{},
 		},
@@ -1911,19 +1916,19 @@ return function()
 		{
 			"/\\(testing\\)",
 			undefined,
-			{"/(testing)"},
+			{ "/(testing)" },
 			{
-				{"/testing", null},
-				{"/(testing)", {"/(testing)"}},
+				{ "/testing", null },
+				{ "/(testing)", { "/(testing)" } },
 			},
-			{{null, "/(testing)"}},
+			{ { null, "/(testing)" } },
 		},
 		{
 			"/.\\+\\*\\?\\{\\}=^!\\:$[]|",
 			undefined,
-			{"/.+*?{}=^!:$[]|"},
-			{{"/.+*?{}=^!:$[]|", {"/.+*?{}=^!:$[]|"}}},
-			{{null, "/.+*?{}=^!:$[]|"}},
+			{ "/.+*?{}=^!:$[]|" },
+			{ { "/.+*?{}=^!:$[]|", { "/.+*?{}=^!:$[]|" } } },
+			{ { null, "/.+*?{}=^!:$[]|" } },
 		},
 		{
 			"/test\\/:uid(u\\d+)?:cid(c\\d+)?",
@@ -1946,15 +1951,15 @@ return function()
 				},
 			},
 			{
-				{"/test", null},
-				{"/test/", {"/test/", undefined, undefined}},
-				{"/test/u123", {"/test/u123", "u123", undefined}},
-				{"/test/c123", {"/test/c123", undefined, "c123"}},
+				{ "/test", null },
+				{ "/test/", { "/test/", undefined, undefined } },
+				{ "/test/u123", { "/test/u123", "u123", undefined } },
+				{ "/test/c123", { "/test/c123", undefined, "c123" } },
 			},
 			{
-				{{ uid = "u123" }, "/test/u123"},
-				{{ cid = "c123" }, "/test/c123"},
-				{{ cid = "u123" }, null},
+				{ { uid = "u123" }, "/test/u123" },
+				{ { cid = "c123" }, "/test/c123" },
+				{ { cid = "u123" }, null },
 			},
 		},
 
@@ -1984,8 +1989,8 @@ return function()
 				".png",
 			},
 			{
-				{"/icon-240.png", {"/icon-240.png", "240"}},
-				{"/apple-icon-240.png", {"/apple-icon-240.png", "240"}},
+				{ "/icon-240.png", { "/icon-240.png", "240" } },
+				{ "/apple-icon-240.png", { "/apple-icon-240.png", "240" } },
 			},
 			{},
 		},
@@ -2012,8 +2017,8 @@ return function()
 					pattern = "[^\\/#\\?]+?",
 				},
 			},
-			{{"/match/route", {"/match/route", "match", "route"}}},
-			{{{ foo = "a", bar = "b" }, "/a/b"}},
+			{ { "/match/route", { "/match/route", "match", "route" } } },
+			{ { { foo = "a", bar = "b" }, "/a/b" } },
 		},
 		{
 			"/:foo\\(test\\)/bar",
@@ -2051,13 +2056,13 @@ return function()
 				},
 			},
 			{
-				{"/endpoint/user", {"/endpoint/user", "endpoint", "user"}},
-				{"/endpoint/user-name", {"/endpoint/user-name", "endpoint", "user-name"}},
-				{"/foo.bar/user-name", {"/foo.bar/user-name", "foo.bar", "user-name"}},
+				{ "/endpoint/user", { "/endpoint/user", "endpoint", "user" } },
+				{ "/endpoint/user-name", { "/endpoint/user-name", "endpoint", "user-name" } },
+				{ "/foo.bar/user-name", { "/foo.bar/user-name", "foo.bar", "user-name" } },
 			},
 			{
-				{{ remote = "foo", user = "bar" }, "/foo/bar"},
-				{{ remote = "foo.bar", user = "uno" }, "/foo.bar/uno"},
+				{ { remote = "foo", user = "bar" }, "/foo/bar" },
+				{ { remote = "foo.bar", user = "uno" }, "/foo.bar/uno" },
 			},
 		},
 		{
@@ -2073,8 +2078,8 @@ return function()
 				},
 				"?",
 			},
-			{{"/route?", {"/route?", "route"}}},
-			{{{ foo = "bar" }, "/bar?"}},
+			{ { "/route?", { "/route?", "route" } } },
+			{ { { foo = "bar" }, "/bar?" } },
 		},
 		{
 			"/:foo+baz",
@@ -2090,14 +2095,14 @@ return function()
 				"baz",
 			},
 			{
-				{"/foobaz", {"/foobaz", "foo"}},
-				{"/foo/barbaz", {"/foo/barbaz", "foo/bar"}},
-				{"/baz", null},
+				{ "/foobaz", { "/foobaz", "foo" } },
+				{ "/foo/barbaz", { "/foo/barbaz", "foo/bar" } },
+				{ "/baz", null },
 			},
 			{
-				{{ foo = "foo" }, "/foobaz"},
-				{{ foo = "foo/bar" }, "/foo%2Fbarbaz", { encode = encodeURIComponent }},
-				{{ foo = {"foo", "bar"}}, "/foo/barbaz"},
+				{ { foo = "foo" }, "/foobaz" },
+				{ { foo = "foo/bar" }, "/foo%2Fbarbaz", { encode = encodeURIComponent } },
+				{ { foo = { "foo", "bar" } }, "/foo/barbaz" },
 			},
 		},
 		{
@@ -2115,12 +2120,12 @@ return function()
 				"baz",
 			},
 			{
-				{"/foobaz", {"/foobaz", "foo"}},
-				{"/baz", {"/baz", undefined}},
+				{ "/foobaz", { "/foobaz", "foo" } },
+				{ "/baz", { "/baz", undefined } },
 			},
 			{
-				{{}, "/baz"},
-				{{ pre = "foo" }, "/foobaz"},
+				{ {}, "/baz" },
+				{ { pre = "foo" }, "/foobaz" },
 			},
 		},
 		{
@@ -2145,12 +2150,12 @@ return function()
 				")",
 			},
 			{
-				{"/hello(world)", {"/hello(world)", "hello", "world"}},
-				{"/hello()", {"/hello()", "hello", undefined}},
+				{ "/hello(world)", { "/hello(world)", "hello", "world" } },
+				{ "/hello()", { "/hello()", "hello", undefined } },
 			},
 			{
-				{{ foo = "hello", bar = "world" }, "/hello(world)"},
-				{{ foo = "hello" }, "/hello()"},
+				{ { foo = "hello", bar = "world" }, "/hello(world)" },
+				{ { foo = "hello" }, "/hello()" },
 			},
 		},
 		{
@@ -2173,13 +2178,13 @@ return function()
 				},
 			},
 			{
-				{"/video", {"/video", "video", undefined}},
-				{"/video+test", {"/video+test", "video", "+test"}},
-				{"/video+", null},
+				{ "/video", { "/video", "video", undefined } },
+				{ "/video+test", { "/video+test", "video", "+test" } },
+				{ "/video+", null },
 			},
 			{
-				{{ postType = "video" }, "/video"},
-				{{ postType = "random" }, null},
+				{ { postType = "video" }, "/video" },
+				{ { postType = "random" }, null },
 			},
 		},
 		{
@@ -2203,17 +2208,17 @@ return function()
 				"-ext",
 			},
 			{
-				{"/-ext", null},
-				{"-ext", {"-ext", undefined, undefined}},
-				{"/foo-ext", {"/foo-ext", "foo", undefined}},
-				{"/foo/bar-ext", {"/foo/bar-ext", "foo", "bar"}},
-				{"/foo/-ext", null},
+				{ "/-ext", null },
+				{ "-ext", { "-ext", undefined, undefined } },
+				{ "/foo-ext", { "/foo-ext", "foo", undefined } },
+				{ "/foo/bar-ext", { "/foo/bar-ext", "foo", "bar" } },
+				{ "/foo/-ext", null },
 			},
 			{
-				{{}, "-ext"},
-				{{ foo = "foo" }, "/foo-ext"},
-				{{ bar = "bar" }, "/bar-ext"},
-				{{ foo = "foo", bar = "bar" }, "/foo/bar-ext"},
+				{ {}, "-ext" },
+				{ { foo = "foo" }, "/foo-ext" },
+				{ { bar = "bar" }, "/bar-ext" },
+				{ { foo = "foo", bar = "bar" }, "/foo/bar-ext" },
 			},
 		},
 		{
@@ -2237,11 +2242,11 @@ return function()
 				"-ext",
 			},
 			{
-				{"/foo-ext", {"/foo-ext", "foo", undefined}},
-				{"/foo/bar-ext", {"/foo/bar-ext", "foo", "bar"}},
-				{"/foo/-ext", null},
+				{ "/foo-ext", { "/foo-ext", "foo", undefined } },
+				{ "/foo/bar-ext", { "/foo/bar-ext", "foo", "bar" } },
+				{ "/foo/-ext", null },
 			},
-			{{{ required = "foo" }, "/foo-ext"}},
+			{ { { required = "foo" }, "/foo-ext" } },
 		},
 
 		--[[
@@ -2259,29 +2264,29 @@ return function()
 					pattern = "[^\\/#\\?]+?",
 				},
 			},
-			{{"/café", {"/café", "café"}}},
+			{ { "/café", { "/café", "café" } } },
 			{
-				{{ foo = "café" }, "/café"},
-				{{ foo = "café" }, "/caf%C3%A9", { encode = encodeURIComponent }},
+				{ { foo = "café" }, "/café" },
+				{ { foo = "café" }, "/caf%C3%A9", { encode = encodeURIComponent } },
 			},
 		},
-		{"/café", undefined, {"/café"}, {{"/café", {"/café"}}}, {{null, "/café"}}},
+		{ "/café", undefined, { "/café" }, { { "/café", { "/café" } } }, { { null, "/café" } } },
 		{
 			"/café",
 			{ encode = encodeURI },
-			{"/café"},
-			{{"/caf%C3%A9", {"/caf%C3%A9"}}},
-			{{null, "/café"}},
+			{ "/café" },
+			{ { "/caf%C3%A9", { "/caf%C3%A9" } } },
+			{ { null, "/café" } },
 		},
 		{
 			"packages/",
 			undefined,
-			{"packages/"},
+			{ "packages/" },
 			{
-				{"packages", null},
-				{"packages/", {"packages/"}},
+				{ "packages", null },
+				{ "packages/", { "packages/" } },
 			},
-			{{null, "packages/"}},
+			{ { null, "packages/" } },
 		},
 
 		--[[
@@ -2303,12 +2308,12 @@ return function()
 				".com",
 			},
 			{
-				{"example.com", {"example.com", "example"}},
-				{"github.com", {"github.com", "github"}},
+				{ "example.com", { "example.com", "example" } },
+				{ "github.com", { "github.com", "github" } },
 			},
 			{
-				{{ domain = "example" }, "example.com"},
-				{{ domain = "github" }, "github.com"},
+				{ { domain = "example" }, "example.com" },
+				{ { domain = "github" }, "github.com" },
 			},
 		},
 		{
@@ -2328,12 +2333,12 @@ return function()
 				".com",
 			},
 			{
-				{"mail.example.com", {"mail.example.com", "example"}},
-				{"mail.github.com", {"mail.github.com", "github"}},
+				{ "mail.example.com", { "mail.example.com", "example" } },
+				{ "mail.github.com", { "mail.github.com", "github" } },
 			},
 			{
-				{{ domain = "example" }, "mail.example.com"},
-				{{ domain = "github" }, "mail.github.com"},
+				{ { domain = "example" }, "mail.example.com" },
+				{ { domain = "github" }, "mail.github.com" },
 			},
 		},
 		{
@@ -2350,12 +2355,12 @@ return function()
 				},
 			},
 			{
-				{"example.com", {"example.com", "com"}},
-				{"example.org", {"example.org", "org"}},
+				{ "example.com", { "example.com", "com" } },
+				{ "example.org", { "example.org", "org" } },
 			},
 			{
-				{{ ext = "com" }, "example.com"},
-				{{ ext = "org" }, "example.org"},
+				{ { ext = "com" }, "example.com" },
+				{ { ext = "org" }, "example.org" },
 			},
 		},
 		{
@@ -2364,12 +2369,12 @@ return function()
 				delimiter = " ",
 				end_ = false,
 			},
-			{"this is"},
+			{ "this is" },
 			{
-				{"this is a test", {"this is"}},
-				{"this isn't", null},
+				{ "this is a test", { "this is" } },
+				{ "this isn't", null },
 			},
-			{{null, "this is"}},
+			{ { null, "this is" } },
 		},
 
 		--[[
@@ -2380,14 +2385,14 @@ return function()
 			{
 				endsWith = "?",
 			},
-			{"/test"},
+			{ "/test" },
 			{
-				{"/test", {"/test"}},
-				{"/test?query=string", {"/test"}},
-				{"/test/?query=string", {"/test/"}},
-				{"/testx", null},
+				{ "/test", { "/test" } },
+				{ "/test?query=string", { "/test" } },
+				{ "/test/?query=string", { "/test/" } },
+				{ "/testx", null },
 			},
-			{{null, "/test"}},
+			{ { null, "/test" } },
 		},
 		{
 			"/test",
@@ -2395,12 +2400,12 @@ return function()
 				endsWith = "?",
 				strict = true,
 			},
-			{"/test"},
+			{ "/test" },
 			{
-				{"/test?query=string", {"/test"}},
-				{"/test/?query=string", null},
+				{ "/test?query=string", { "/test" } },
+				{ "/test/?query=string", null },
 			},
-			{{null, "/test"}},
+			{ { null, "/test" } },
 		},
 
 		--[[
@@ -2426,53 +2431,53 @@ return function()
 				},
 			},
 			{
-				{"$x", {"$x", "x", undefined}},
-				{"$x$y", {"$x$y", "x", "y"}},
+				{ "$x", { "$x", "x", undefined } },
+				{ "$x$y", { "$x$y", "x", "y" } },
 			},
 			{
-				{{ foo = "foo" }, "$foo"},
-				{{ foo = "foo", bar = "bar" }, "$foo$bar"},
+				{ { foo = "foo" }, "$foo" },
+				{ { foo = "foo", bar = "bar" }, "$foo$bar" },
 			},
 		},
 		{
-			'name/:attr1?{-:attr2}?{-:attr3}?',
+			"name/:attr1?{-:attr2}?{-:attr3}?",
 			{},
 			{
-				'name',
+				"name",
 				{
-					name = 'attr1',
-					pattern = '[^\\/#\\?]+?',
-					prefix = '/',
-					suffix = '',
-					modifier = '?',
+					name = "attr1",
+					pattern = "[^\\/#\\?]+?",
+					prefix = "/",
+					suffix = "",
+					modifier = "?",
 				},
 				{
-					name = 'attr2',
-					pattern = '[^\\/#\\?]+?',
-					prefix = '-',
-					suffix = '',
-					modifier = '?',
+					name = "attr2",
+					pattern = "[^\\/#\\?]+?",
+					prefix = "-",
+					suffix = "",
+					modifier = "?",
 				},
 				{
-					name = 'attr3',
-					pattern = '[^\\/#\\?]+?',
-					prefix = '-',
-					suffix = '',
-					modifier = '?',
+					name = "attr3",
+					pattern = "[^\\/#\\?]+?",
+					prefix = "-",
+					suffix = "",
+					modifier = "?",
 				},
 			},
 			{
-				{'name/test', {'name/test', 'test', undefined, undefined}},
-				{'name/1', {'name/1', '1', undefined, undefined}},
-				{'name/1-2', {'name/1-2', '1', '2', undefined}},
-				{'name/1-2-3', {'name/1-2-3', '1', '2', '3'}},
-				{'name/foo-bar/route', null},
-				{'name/test/route', null},
+				{ "name/test", { "name/test", "test", undefined, undefined } },
+				{ "name/1", { "name/1", "1", undefined, undefined } },
+				{ "name/1-2", { "name/1-2", "1", "2", undefined } },
+				{ "name/1-2-3", { "name/1-2-3", "1", "2", "3" } },
+				{ "name/foo-bar/route", null },
+				{ "name/test/route", null },
 			},
 			{
-				{{}, 'name'},
-				{{ attr1 = 'test' }, 'name/test'},
-				{{ attr2 = 'attr' }, 'name-attr'},
+				{ {}, "name" },
+				{ { attr1 = "test" }, "name/test" },
+				{ { attr2 = "attr" }, "name-attr" },
 			},
 		},
 
@@ -2480,48 +2485,48 @@ return function()
 		 * Case-sensitive compile tokensToFunction params.
 		 ]]
 		{
-			'/:test(abc)',
+			"/:test(abc)",
 			{
 				sensitive = true,
 			},
 			{
 				{
-					name = 'test',
-					prefix = '/',
-					suffix = '',
-					modifier = '',
-					pattern = 'abc',
+					name = "test",
+					prefix = "/",
+					suffix = "",
+					modifier = "",
+					pattern = "abc",
 				},
 			},
 			{
-				{'/abc', {'/abc', 'abc'}},
-				{'/ABC', null},
+				{ "/abc", { "/abc", "abc" } },
+				{ "/ABC", null },
 			},
 			{
-				{{ test = 'abc'}, '/abc'},
-				{{ test = 'ABC'}, null},
+				{ { test = "abc" }, "/abc" },
+				{ { test = "ABC" }, null },
 			},
 		},
 		{
-			'/:test(abc)',
+			"/:test(abc)",
 			{},
 			{
 				{
-					name = 'test',
-					prefix = '/',
-					suffix = '',
-					modifier = '',
-					pattern = 'abc',
+					name = "test",
+					prefix = "/",
+					suffix = "",
+					modifier = "",
+					pattern = "abc",
 				},
 			},
 			{
-				{'/abc', {'/abc', 'abc'}},
+				{ "/abc", { "/abc", "abc" } },
 				-- Roblox deviation: this does not match because the current
 				-- Regex implementation is always case sensitive
 				-- {'/ABC', {'/ABC', 'ABC'}},
 			},
 			{
-				{{ test = 'abc' }, '/abc'},
+				{ { test = "abc" }, "/abc" },
 				-- Roblox deviation: this does not match because the current
 				-- Regex implementation is always case sensitive
 				-- {{ test = 'ABC' }, '/ABC'},
@@ -2532,52 +2537,52 @@ return function()
 		 * Nested parentheses.
 		 ]]
 		{
-			'/:test(\\d+(?:\\.\\d+)?)',
+			"/:test(\\d+(?:\\.\\d+)?)",
 			undefined,
 			{
 				{
-					name = 'test',
-					prefix = '/',
-					suffix = '',
-					modifier = '',
-					pattern = '\\d+(?:\\.\\d+)?',
+					name = "test",
+					prefix = "/",
+					suffix = "",
+					modifier = "",
+					pattern = "\\d+(?:\\.\\d+)?",
 				},
 			},
 			{
-				{'/123', {'/123', '123'}},
-				{'/abc', null},
-				{'/123/abc', null},
-				{'/123.123', {'/123.123', '123.123'}},
-				{'/123.abc', null},
+				{ "/123", { "/123", "123" } },
+				{ "/abc", null },
+				{ "/123/abc", null },
+				{ "/123.123", { "/123.123", "123.123" } },
+				{ "/123.abc", null },
 			},
 			{
-				{{ test = 123 }, '/123'},
-				{{ test = 123.123 }, '/123.123'},
-				{{ test = 'abc' }, null},
-				{{ test = '123'}, '/123'},
-				{{ test = '123.123' }, '/123.123'},
-				{{ test = '123.abc' }, null},
+				{ { test = 123 }, "/123" },
+				{ { test = 123.123 }, "/123.123" },
+				{ { test = "abc" }, null },
+				{ { test = "123" }, "/123" },
+				{ { test = "123.123" }, "/123.123" },
+				{ { test = "123.abc" }, null },
 			},
 		},
 		{
-			'/:test((?!login)[^/]+)',
+			"/:test((?!login)[^/]+)",
 			undefined,
 			{
 				{
-					name = 'test',
-					prefix = '/',
-					suffix = '',
-					modifier = '',
-					pattern = '(?!login)[^/]+',
+					name = "test",
+					prefix = "/",
+					suffix = "",
+					modifier = "",
+					pattern = "(?!login)[^/]+",
 				},
 			},
 			{
-				{'/route', {'/route', 'route'}},
-				{'/login', null},
+				{ "/route", { "/route", "route" } },
+				{ "/login", null },
 			},
 			{
-				{{ test = 'route' }, '/route'},
-				{{ test = 'login'}, null},
+				{ { test = "route" }, "/route" },
+				{ { test = "login" }, null },
 			},
 		},
 
@@ -2585,78 +2590,78 @@ return function()
 		 * https://github.com/pillarjs/path-to-regexp/issues/206
 		 ]]
 		{
-			'/user(s)?/:user',
+			"/user(s)?/:user",
 			undefined,
 			{
-				'/user',
+				"/user",
 				{
 					name = 0,
-					prefix = '',
-					suffix = '',
-					modifier = '?',
-					pattern = 's',
+					prefix = "",
+					suffix = "",
+					modifier = "?",
+					pattern = "s",
 				},
 				{
-					name = 'user',
-					prefix = '/',
-					suffix = '',
-					modifier = '',
+					name = "user",
+					prefix = "/",
+					suffix = "",
+					modifier = "",
 					pattern = "[^\\/#\\?]+?",
 				},
 			},
 			{
-				{'/user/123', {'/user/123', undefined, '123'}},
-				{'/users/123', {'/users/123', 's', '123'}},
+				{ "/user/123", { "/user/123", undefined, "123" } },
+				{ "/users/123", { "/users/123", "s", "123" } },
 			},
-			{{{ user = '123' }, '/user/123'}},
+			{ { { user = "123" }, "/user/123" } },
 		},
 
 		--[[
 		 * https://github.com/pillarjs/path-to-regexp/issues/209
 		 ]]
 		{
-			'/whatever/:foo\\?query=str',
+			"/whatever/:foo\\?query=str",
 			undefined,
 			{
-				'/whatever',
+				"/whatever",
 				{
-					name = 'foo',
-					prefix = '/',
-					suffix = '',
-					modifier = '',
+					name = "foo",
+					prefix = "/",
+					suffix = "",
+					modifier = "",
 					pattern = "[^\\/#\\?]+?",
 				},
-				'?query=str',
+				"?query=str",
 			},
 			{
-				{'/whatever/123?query=str', {'/whatever/123?query=str', '123'}}
+				{ "/whatever/123?query=str", { "/whatever/123?query=str", "123" } },
 			},
-			{{{ foo = '123' }, '/whatever/123?query=str'}},
+			{ { { foo = "123" }, "/whatever/123?query=str" } },
 		},
 		{
-			'/whatever/:foo',
+			"/whatever/:foo",
 			{
 				end_ = false,
 			},
 			{
-				'/whatever',
+				"/whatever",
 				{
-					name = 'foo',
-					prefix = '/',
-					suffix = '',
-					modifier = '',
+					name = "foo",
+					prefix = "/",
+					suffix = "",
+					modifier = "",
 					pattern = "[^\\/#\\?]+?",
 				},
 			},
 			{
-				{'/whatever/123', {'/whatever/123', '123'}},
-				{'/whatever/123/path', {'/whatever/123', '123'}},
-				{'/whatever/123#fragment', {'/whatever/123', '123'}},
-				{'/whatever/123?query=str', {'/whatever/123', '123'}},
+				{ "/whatever/123", { "/whatever/123", "123" } },
+				{ "/whatever/123/path", { "/whatever/123", "123" } },
+				{ "/whatever/123#fragment", { "/whatever/123", "123" } },
+				{ "/whatever/123?query=str", { "/whatever/123", "123" } },
 			},
 			{
-				{{ foo = "123" }, "/whatever/123"},
-				{{ foo = "#" }, null},
+				{ { foo = "123" }, "/whatever/123" },
+				{ { foo = "#" }, null },
 			},
 		},
 	}
@@ -2778,39 +2783,39 @@ return function()
 	--[[
 	 * Dynamically generate the entire test suite.
 	 ]]
-	describe('path-to-regexp', function()
-		local TEST_PATH = '/user/:id'
+	describe("path-to-regexp", function()
+		local TEST_PATH = "/user/:id"
 
 		local TEST_PARAM = {
-			name = 'id',
-			prefix = '/',
-			suffix = '',
-			modifier = '',
+			name = "id",
+			prefix = "/",
+			suffix = "",
+			modifier = "",
 			pattern = "[^\\/#\\?]+?",
 		}
 
-		describe('arguments', function()
-			it('should work without different call combinations', function()
-				pathToRegexp.pathToRegexp('/test')
-				pathToRegexp.pathToRegexp('/test', {})
-				pathToRegexp.pathToRegexp('/test', undefined, {})
+		describe("arguments", function()
+			it("should work without different call combinations", function()
+				pathToRegexp.pathToRegexp("/test")
+				pathToRegexp.pathToRegexp("/test", {})
+				pathToRegexp.pathToRegexp("/test", undefined, {})
 
 				-- Roblox deviation: does not support RegExp expressions
 				-- pathToRegexp.pathToRegexp("^/test")
 				-- pathToRegexp.pathToRegexp("^/test", {})
 				-- pathToRegexp.pathToRegexp("^/test", undefined, {})
 
-				pathToRegexp.pathToRegexp({'/a', '/b'})
-				pathToRegexp.pathToRegexp({'/a', '/b'}, {})
-				pathToRegexp.pathToRegexp({'/a', '/b'}, undefined, {})
+				pathToRegexp.pathToRegexp({ "/a", "/b" })
+				pathToRegexp.pathToRegexp({ "/a", "/b" }, {})
+				pathToRegexp.pathToRegexp({ "/a", "/b" }, undefined, {})
 			end)
 
-			it('should accept an array of keys as the second argument', function()
+			it("should accept an array of keys as the second argument", function()
 				local keys: { pathToRegexp.Key } = {}
 				local re = pathToRegexp.pathToRegexp(TEST_PATH, keys, { end_ = false })
 
-				jestExpect(keys).toEqual({TEST_PARAM})
-				jestExpect(exec(re, '/user/123/show')).toEqual({'/user/123', '123'})
+				jestExpect(keys).toEqual({ TEST_PARAM })
+				jestExpect(exec(re, "/user/123/show")).toEqual({ "/user/123", "123" })
 			end)
 
 			it("should throw on non-capturing pattern", function()
@@ -2862,13 +2867,13 @@ return function()
 			it("should expose method to compile tokens to regexp", function()
 				local re = pathToRegexp.tokensToRegexp(tokens)
 
-				jestExpect(exec(re, "/user/123")).toEqual({"/user/123", "123"})
+				jestExpect(exec(re, "/user/123")).toEqual({ "/user/123", "123" })
 			end)
 
 			it("should expose method to compile tokens to a path function", function()
 				local fn = pathToRegexp.tokensToFunction(tokens)
 
-				jestExpect(fn({id = 123})).toEqual("/user/123")
+				jestExpect(fn({ id = 123 })).toEqual("/user/123")
 			end)
 		end)
 
@@ -2896,10 +2901,8 @@ return function()
 									params = nil
 								end
 
-								local toPath = pathToRegexp.compile(path, Cryo.Dictionary.join(
-									opts or {},
-									options or {}
-								))
+								local toPath =
+									pathToRegexp.compile(path, Cryo.Dictionary.join(opts or {}, options or {}))
 
 								if result ~= nil and result ~= null then
 									it("should compile using " .. util.inspect(params), function()
@@ -2916,11 +2919,9 @@ return function()
 						end)
 					else
 						it("should parse keys", function()
-							jestExpect(keys).toEqual(
-								Cryo.List.filter(tokens, function(token)
-									return typeof(token) ~= "string"
-								end)
-							)
+							jestExpect(keys).toEqual(Cryo.List.filter(tokens, function(token)
+								return typeof(token) ~= "string"
+							end))
 						end)
 					end
 
@@ -2975,7 +2976,7 @@ return function()
 				local toPath = pathToRegexp.compile("/:foo(\\d+)")
 
 				jestExpect(function()
-					toPath({ foo = 'abc' })
+					toPath({ foo = "abc" })
 				end).toThrow(TypeError('Expected "foo" to match "\\d+", but got "abc"'))
 			end)
 
@@ -2999,7 +3000,7 @@ return function()
 				local toPath = pathToRegexp.compile("/:foo(\\d+)+")
 
 				jestExpect(function()
-					toPath({ foo = {1, 2, 3, "a"} })
+					toPath({ foo = { 1, 2, 3, "a" } })
 				end).toThrow(TypeError('Expected all "foo" to match "\\d+", but got "a"'))
 			end)
 		end)

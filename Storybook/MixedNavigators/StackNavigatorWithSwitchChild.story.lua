@@ -37,7 +37,7 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("Detail")
-				end
+				end,
 			}),
 			subButton = Roact.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
@@ -50,8 +50,8 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("SubA")
-				end
-			})
+				end,
+			}),
 		})
 	end
 
@@ -77,8 +77,8 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("Two")
-				end
-			})
+				end,
+			}),
 		})
 	end
 
@@ -104,7 +104,7 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("SubB")
-				end
+				end,
 			}),
 			switchButton = Roact.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
@@ -117,8 +117,8 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("One")
-				end
-			})
+				end,
+			}),
 		})
 	end
 
@@ -144,7 +144,7 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.push("SubB")
-				end
+				end,
 			}),
 			popToTopButton = Roact.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
@@ -159,8 +159,8 @@ return function(target)
 					-- PopToTop only goes to root of immediate stack navigator. A second
 					-- attempt (or embedded action) would send us to root of the parent
 					navigation.popToTop()
-				end
-			})
+				end,
+			}),
 		})
 	end
 

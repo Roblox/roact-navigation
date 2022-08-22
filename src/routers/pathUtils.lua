@@ -161,10 +161,8 @@ function exports.createPathParser(childRouters, routeConfigs, config)
 		-- deviation: we are using a more recent pathToRegexp version, so the syntax
 		-- is not quite exactly the same. For a wildcard match, we need to specify `.*`
 		-- instead of only `*`
-		local extendedPathRe = pathToRegexp(
-			isWildcard and "(.*)" or ("%s/(.*)"):format(pathPattern),
-			extendedPathReKeys
-		)
+		local extendedPathRe =
+			pathToRegexp(isWildcard and "(.*)" or ("%s/(.*)"):format(pathPattern), extendedPathReKeys)
 
 		pathsByRouteNames[routeName] = {
 			exactRe = exactRe,
@@ -172,11 +170,9 @@ function exports.createPathParser(childRouters, routeConfigs, config)
 			extendedPathRe = extendedPathRe,
 			extendedPathReKeys = extendedPathReKeys,
 			isWildcard = isWildcard,
-			toPath = pathPattern == NullPathSymbol
-				and function()
-					return ""
-				end
-				or compile(pathPattern),
+			toPath = pathPattern == NullPathSymbol and function()
+				return ""
+			end or compile(pathPattern),
 		}
 	end
 
@@ -208,10 +204,7 @@ function exports.createPathParser(childRouters, routeConfigs, config)
 
 				if extendedMatch and childRouter then
 					local restOfPath = getRestOfPath(extendedMatch, extendedPathReKeys)
-					childAction = childRouter.getActionForPathAndParams(
-						restOfPath,
-						inputParams
-					)
+					childAction = childRouter.getActionForPathAndParams(restOfPath, inputParams)
 				end
 
 				return NavigationActions.navigate({
@@ -262,14 +255,11 @@ function exports.createPathParser(childRouters, routeConfigs, config)
 		local subPath = toPath(params)
 		local nonPathParams = {}
 		if params then
-			local filteredPaths = Cryo.List.filter(
-				Cryo.Dictionary.keys(params),
-				function(paramName)
-					return not Array.find(exactReKeys, function(k)
-						return k.name == paramName
-					end)
-				end
-			)
+			local filteredPaths = Cryo.List.filter(Cryo.Dictionary.keys(params), function(paramName)
+				return not Array.find(exactReKeys, function(k)
+					return k.name == paramName
+				end)
+			end)
 			for _, paramName in ipairs(filteredPaths) do
 				nonPathParams[paramName] = params[paramName]
 			end
@@ -284,12 +274,8 @@ function exports.createPathParser(childRouters, routeConfigs, config)
 			-- // If it doesn't have router it's an ordinary React component.
 			local child = childRouter.getPathAndParamsForState(route)
 			return {
-				path = (subPath and subPath ~= "")
-					and ("%s/%s"):format(subPath, child.path)
-					or child.path,
-				params = child.params
-					and Cryo.Dictionary.join(nonPathParams, child.params)
-					or nonPathParams,
+				path = (subPath and subPath ~= "") and ("%s/%s"):format(subPath, child.path) or child.path,
+				params = child.params and Cryo.Dictionary.join(nonPathParams, child.params) or nonPathParams,
 			}
 		end
 

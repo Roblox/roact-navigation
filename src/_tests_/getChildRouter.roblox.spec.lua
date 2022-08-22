@@ -21,7 +21,7 @@ return function()
 		local result = getChildRouter({
 			childRouters = {
 				myRoute = childRouter,
-			}
+			},
 		}, "myRoute")
 
 		jestExpect(result).toBe(childRouter)
@@ -37,7 +37,7 @@ return function()
 				else
 					return nil
 				end
-			end
+			end,
 		}, "myRoute")
 
 		jestExpect(result).toBe(component.router)
@@ -46,7 +46,7 @@ return function()
 	it("should throw if no child routers are specified and getComponentForRouteName is not a function", function()
 		jestExpect(function()
 			getChildRouter({
-				getComponentForRouteName = 5
+				getComponentForRouteName = 5,
 			}, "myRoute")
 		end).toThrow("router.getComponentForRouteName must be a function if no child routers are specified")
 	end)

@@ -28,10 +28,7 @@ end
 	return withNavigation(MyComponent)
 ]]
 return function(component, config)
-	assert(
-		isComponent(component),
-		"withNavigation must be called with a Roact component (stateful or functional)"
-	)
+	assert(isComponent(component), "withNavigation must be called with a Roact component (stateful or functional)")
 	config = config or {}
 
 	if config.forwardRef == nil then
@@ -43,13 +40,19 @@ return function(component, config)
 		return Roact.createElement(NavigationContext.Consumer, {
 			render = function(navigationContext)
 				local navigation = navigationProp or navigationContext
-				invariant(navigation, "withNavigation and withNavigationFocus can only " ..
-					"be used on a view hierarchy of a navigator. The wrapped component is " ..
-					"unable to get access to navigation from props or context.")
-				return Roact.createElement(component, Cryo.Dictionary.join(props, {
-					navigation = navigation,
-					[Roact.Ref] = config.forwardRef and props[Roact.Ref] or Cryo.None,
-				}))
+				invariant(
+					navigation,
+					"withNavigation and withNavigationFocus can only "
+						.. "be used on a view hierarchy of a navigator. The wrapped component is "
+						.. "unable to get access to navigation from props or context."
+				)
+				return Roact.createElement(
+					component,
+					Cryo.Dictionary.join(props, {
+						navigation = navigation,
+						[Roact.Ref] = config.forwardRef and props[Roact.Ref] or Cryo.None,
+					})
+				)
 			end,
 		})
 	end

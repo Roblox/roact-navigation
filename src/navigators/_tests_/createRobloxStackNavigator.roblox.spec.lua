@@ -18,9 +18,9 @@ return function()
 				routes = {
 					{ routeName = "Foo", key = "Foo" },
 				},
-				index = 1
+				index = 1,
 			},
-			router = navigator.router
+			router = navigator.router,
 		}
 
 		function testNavigation.getChildNavigation(childKey)
@@ -31,17 +31,16 @@ return function()
 
 		function testNavigation.addListener(_symbol, _callback)
 			return {
-				remove = function() end
+				remove = function() end,
 			}
 		end
 
 		jestExpect(function()
 			local instance = Roact.mount(Roact.createElement(navigator, {
-				navigation = testNavigation
+				navigation = testNavigation,
 			}))
 
 			Roact.unmount(instance)
 		end).never.toThrow()
 	end)
 end
-

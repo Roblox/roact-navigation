@@ -12,10 +12,9 @@ return function()
 		local navigation = {
 			state = {
 				routes = {
-					{ key = "123" }
+					{ key = "123" },
 				},
 				index = 1,
-
 			},
 			router = {}, -- stub
 		}
@@ -39,9 +38,7 @@ return function()
 			end
 		end
 
-		expect(getActiveChildNavigationOptions(navigation, testInputScreenOpts))
-			.to.equal(testScreenOpts)
+		expect(getActiveChildNavigationOptions(navigation, testInputScreenOpts)).to.equal(testScreenOpts)
 		expect(testOutputScreenOpts).to.equal(testInputScreenOpts)
 	end)
 end
-

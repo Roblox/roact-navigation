@@ -50,8 +50,8 @@ local NavigationEvents = Roact.Component:extend("NavigationEvents")
 
 function NavigationEvents:didMount()
 	-- We register all navigation listeners on mount to ensure listener stability across re-render
-    -- A former implementation was replacing (removing/adding) listeners on all update (if prop provided)
-    -- but there were issues (see https://github.com/react-navigation/react-navigation/issues/5058)
+	-- A former implementation was replacing (removing/adding) listeners on all update (if prop provided)
+	-- but there were issues (see https://github.com/react-navigation/react-navigation/issues/5058)
 	self:subscribeAll()
 end
 

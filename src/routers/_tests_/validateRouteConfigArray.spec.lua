@@ -51,10 +51,14 @@ return function()
 	it("should throw when both screen and getScreen are provided for same component", function()
 		jestExpect(function()
 			validateRouteConfigArray({
-				{myRoute = {
-					screen = "TheScreen",
-					getScreen = function() return TestComponent end,
-				}}
+				{
+					myRoute = {
+						screen = "TheScreen",
+						getScreen = function()
+							return TestComponent
+						end,
+					},
+				},
 			})
 		end).toThrow("Route 'myRoute' should provide 'screen' or 'getScreen', but not both")
 	end)
@@ -132,7 +136,11 @@ return function()
 
 	it("should pass for valid getScreen route configs", function()
 		validateRouteConfigArray({
-			{ getScreenRoute = { getScreen = function() return TestComponent end } },
+			{ getScreenRoute = {
+				getScreen = function()
+					return TestComponent
+				end,
+			} },
 		})
 	end)
 end

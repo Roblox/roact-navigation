@@ -47,7 +47,7 @@ local flags
  * Tokenizer results.
  ]]
 type LexToken = {
-  type: string,
+	type: string,
 	-- | "OPEN"
 	-- | "CLOSE"
 	-- | "PATTERN"
@@ -56,8 +56,8 @@ type LexToken = {
 	-- | "ESCAPED_CHAR"
 	-- | "MODIFIER"
 	-- | "END",
-  index: number,
-  value: string,
+	index: number,
+	value: string,
 }
 
 --[[
@@ -137,13 +137,13 @@ local function lexer(str: string): { LexToken }
 
 				if
 					-- // `0-9`
-					(code >= 48 and code <= 57) or
+					(code >= 48 and code <= 57)
 					-- // `A-Z`
-					(code >= 65 and code <= 90) or
+					or (code >= 65 and code <= 90)
 					-- // `a-z`
-					(code >= 97 and code <= 122) or
+					or (code >= 97 and code <= 122)
 					-- // `_`
-					code == 95
+					or code == 95
 				then
 					name = name .. getChar(preIncrement_j(j))
 					continue
@@ -414,14 +414,11 @@ export type TokensToFunctionOptions = {
 --[[
  * Compile a string to a template function for the path.
  ]]
-function exports.compile(
-	str: string,
-	options: (ParseOptions & TokensToFunctionOptions)?
-)
+function exports.compile(str: string, options: (ParseOptions & TokensToFunctionOptions)?)
 	return exports.tokensToFunction(exports.parse(str, options), options)
 end
 
-export type PathFunction<P> = (P?) -> string;
+export type PathFunction<P> = (P?) -> string
 
 --[[
  * Expose a method for transforming tokens into the path function.
@@ -467,9 +464,7 @@ function exports.tokensToFunction(tokens: { Token }, optionalOptions: TokensToFu
 
 			if Array.isArray(value) then
 				if not repeat_ then
-					error(TypeError(
-						('Expected "%s" to not repeat, but got an array'):format(token.name)
-					))
+					error(TypeError(('Expected "%s" to not repeat, but got an array'):format(token.name)))
 				end
 
 				if #value == 0 then
@@ -480,17 +475,19 @@ function exports.tokensToFunction(tokens: { Token }, optionalOptions: TokensToFu
 					error(TypeError(('Expected "%s" to not be empty'):format(token.name)))
 				end
 
-				for j=1, #value do
+				for j = 1, #value do
 					local segment = encode(value[j], token)
 
 					if validate and not matches[i]:test(segment) then
-						error(TypeError(
-							('Expected all "%s" to match "%s", but got "%s"'):format(
-								token.name,
-								token.pattern,
-								segment
+						error(
+							TypeError(
+								('Expected all "%s" to match "%s", but got "%s"'):format(
+									token.name,
+									token.pattern,
+									segment
+								)
 							)
-						))
+						)
 					end
 
 					path ..= token.prefix .. segment .. token.suffix
@@ -503,7 +500,11 @@ function exports.tokensToFunction(tokens: { Token }, optionalOptions: TokensToFu
 				local segment = encode(tostring(value), token)
 
 				if validate and not matches[i]:test(segment) then
-					error(TypeError(('Expected "%s" to match "%s", but got "%s"'):format(token.name, token.pattern, segment)))
+					error(
+						TypeError(
+							('Expected "%s" to match "%s", but got "%s"'):format(token.name, token.pattern, segment)
+						)
+					)
 				end
 
 				path ..= token.prefix .. segment .. token.suffix
@@ -523,31 +524,31 @@ function exports.tokensToFunction(tokens: { Token }, optionalOptions: TokensToFu
 end
 
 export type RegexpToFunctionOptions = {
-  --[[
+	--[[
    * Function for decoding strings for params.
    ]]
-  decode: nil | (string, Key) -> string,
+	decode: nil | (string, Key) -> string,
 }
 
 --[[
  * A match result contains data about the path match.
  ]]
 export type MatchResult<P> = {
-  path: string,
-  index: number,
-  params: P,
+	path: string,
+	index: number,
+	params: P,
 }
 
 --[[
  * A match is either `false` (no match) or a match result.
  ]]
 -- export type Match<P> = false | MatchResult<P>
-export type Match<P> = boolean | MatchResult<P>;
+export type Match<P> = boolean | MatchResult<P>
 
 --[[
  * The match function takes a string and returns whether it matched the path.
  ]]
-export type MatchFunction<P> = (string) -> Match<P>;
+export type MatchFunction<P> = (string) -> Match<P>
 
 --[[
  * Create path match function from `path-to-regexp` spec.
@@ -590,12 +591,9 @@ function exports.regexpToFunction(re: any, keys: { Key }, options: RegexpToFunct
 			-- so the loop starts at index 2 (index 1 is the full matched string)
 			local key = keys[i - 1]
 			if key.modifier == "*" or key.modifier == "+" then
-				params[key.name] = Cryo.List.map(
-					matches[i]:split(key.prefix .. key.suffix),
-					function(value)
-						return decode(value, key)
-					end
-				)
+				params[key.name] = Cryo.List.map(matches[i]:split(key.prefix .. key.suffix), function(value)
+					return decode(value, key)
+				end)
 			else
 				params[key.name] = decode(matches[i], key)
 			end
@@ -633,17 +631,17 @@ end
  * Metadata about a key.
  ]]
 export type Key = {
-  name: string | number,
-  prefix: string,
-  suffix: string,
-  pattern: string,
-  modifier: string,
+	name: string | number,
+	prefix: string,
+	suffix: string,
+	pattern: string,
+	modifier: string,
 }
 
 --[[
  * A token is a string (nothing special) or key metadata (capture group).
  ]]
-export type Token = string | Key;
+export type Token = string | Key
 
 -- Roblox deviation: this functionality is not required so it has been omitted
 --[[
@@ -740,11 +738,7 @@ export type TokensToRegexpOptions = {
 --[[
    * Expose a function for taking tokens and returning a RegExp.
  ]]
-function exports.tokensToRegexp(
-	tokens: { Token },
-	keys: { Key }?,
-	optionalOptions: TokensToRegexpOptions?
-)
+function exports.tokensToRegexp(tokens: { Token }, keys: { Key }?, optionalOptions: TokensToRegexpOptions?)
 	local options = {}
 	if optionalOptions ~= nil then
 		options = optionalOptions
@@ -838,7 +832,7 @@ end
 --[[
  * Supported `path-to-regexp` input types.
  ]]
-export type Path = string | { string };
+export type Path = string | { string }
 
 --[[
  * Normalize the given path string, returning a regular expression.
@@ -847,14 +841,10 @@ export type Path = string | { string };
  * placeholder key descriptions. For example, using `/user/:id`, `keys` will
  * contain `[{ name: 'id', delimiter: '/', optional: false, repeat: false }]`.
  ]]
-function exports.pathToRegexp(
-	path: Path,
-	keys: { Key }?,
-	options: (TokensToRegexpOptions & ParseOptions)?
-)
+function exports.pathToRegexp(path: Path, keys: { Key }?, options: (TokensToRegexpOptions & ParseOptions)?)
 	-- if (path instanceof RegExp) return regexpToRegexp(path, keys);
 	if Array.isArray(path) then
-		return arrayToRegexp(path :: {string}, keys, options)
+		return arrayToRegexp(path :: { string }, keys, options)
 	end
 	return stringToRegexp(path, keys, options)
 end

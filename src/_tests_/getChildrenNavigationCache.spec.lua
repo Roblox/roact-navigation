@@ -14,7 +14,7 @@ return function()
 			state = {
 				routes = {
 					{ key = "one" },
-				}
+				},
 			},
 		} :: any
 		local result = getChildrenNavigationCache(navigation)
@@ -29,14 +29,14 @@ return function()
 					{ key = "one" },
 					{ key = "two" },
 					{ key = "three" },
-				}
+				},
 			},
 			_childrenNavigation = {
 				one = {},
 				two = {},
 				three = {},
 				four = {},
-			}
+			},
 		}
 
 		local result = getChildrenNavigationCache(navigation)
@@ -62,7 +62,7 @@ return function()
 				two = {},
 				three = {},
 				four = {},
-			}
+			},
 		}
 
 		local result = getChildrenNavigationCache(navigation)

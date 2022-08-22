@@ -36,11 +36,11 @@ end
 
 local function scenesAreShallowEqual(a, b)
 	return
-		a.key == b.key and
-		a.index == b.index and
-		a.isStale == b.isStale and
-		a.isActive == b.isActive and
-		routesAreShallowEqual(a, b)
+		a.key == b.key
+			and a.index == b.index
+			and a.isStale == b.isStale
+			and a.isActive == b.isActive
+			and routesAreShallowEqual(a, b)
 end
 
 return function(scenes, nextState, prevState, descriptors)

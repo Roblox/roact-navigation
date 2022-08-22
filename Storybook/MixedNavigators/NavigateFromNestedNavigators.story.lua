@@ -53,21 +53,21 @@ return function(target)
 				Text = "Go to pages",
 				Click = function()
 					navigation.navigate("Pages")
-				end
+				end,
 			}),
 			showPageOne = Roact.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, BUTTON_HEIGHT),
 				Text = "Open on Page One",
 				Click = function()
 					navigation.navigate("PageOne")
-				end
+				end,
 			}),
 			showPageTwo = Roact.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, 2 * BUTTON_HEIGHT),
 				Text = "Open on Page Two",
 				Click = function()
 					navigation.navigate("PageTwo")
-				end
+				end,
 			}),
 		})
 	end
@@ -83,21 +83,21 @@ return function(target)
 				Text = "Go to page B",
 				Click = function()
 					navigation.navigate("PageB")
-				end
+				end,
 			}),
 			showPageOne = Roact.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, BUTTON_HEIGHT),
 				Text = "Open on Page One",
 				Click = function()
 					navigation.navigate("PageOne")
-				end
+				end,
 			}),
 			showPageTwo = Roact.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, 2 * BUTTON_HEIGHT),
 				Text = "Open on Page Two",
 				Click = function()
 					navigation.navigate("PageTwo")
-				end
+				end,
 			}),
 		})
 	end
@@ -113,21 +113,21 @@ return function(target)
 				Text = "Go to Initial Page",
 				Click = function()
 					navigation.navigate("Initial")
-				end
+				end,
 			}),
 			showPageOne = Roact.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, BUTTON_HEIGHT),
 				Text = "Open on Page One",
 				Click = function()
 					navigation.navigate("PageOne")
-				end
+				end,
 			}),
 			showPageTwo = Roact.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, 2 * BUTTON_HEIGHT),
 				Text = "Open on Page Two",
 				Click = function()
 					navigation.navigate("PageTwo")
-				end
+				end,
 			}),
 		})
 	end
@@ -143,8 +143,8 @@ return function(target)
 				Text = "Go to Page 2",
 				Click = function()
 					navigation.navigate("PageTwo")
-				end
-			})
+				end,
+			}),
 		})
 	end
 
@@ -161,8 +161,8 @@ return function(target)
 					-- Dismiss pops this entire inner stack by directing a Back action to
 					-- the parent navigator.
 					navigation.dismiss()
-				end
-			})
+				end,
+			}),
 		})
 	end
 

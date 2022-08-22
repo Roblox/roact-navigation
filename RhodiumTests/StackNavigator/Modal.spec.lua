@@ -7,9 +7,7 @@ return function()
 	local Element = Rhodium.Element
 	local XPath = Rhodium.XPath
 
-	local SimpleModalStackNavigator = require(
-		Storybook.StackNavigator["SimpleModalStackNavigator.story"]
-	)
+	local SimpleModalStackNavigator = require(Storybook.StackNavigator["SimpleModalStackNavigator.story"])
 
 	local createScreenGui = require(RhodiumTests.createScreenGui)
 	local TrackRobloxStackNavigatorRoute = require(RhodiumTests.TrackRobloxStackNavigatorRoute)
@@ -121,7 +119,7 @@ return function()
 	end)
 
 	it("pushes, pops, pushes again and go back", function()
-		for _, buttonName in ipairs({"popToTopModalButton", "dismissModalButton"}) do
+		for _, buttonName in ipairs({ "popToTopModalButton", "dismissModalButton" }) do
 			local showModalButtonInstance = screen:FindFirstChild("showModalButton", true)
 			expect(showModalButtonInstance).to.be.ok()
 			local showModalButton = Element.new(showModalButtonInstance)

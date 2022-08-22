@@ -15,7 +15,7 @@ local function getSubStateRecursive(state, level)
 		return state
 	else
 		local directSubState = state.routes[state.index]
-		return getSubStateRecursive(directSubState, level -1 )
+		return getSubStateRecursive(directSubState, level - 1)
 	end
 end
 
@@ -80,7 +80,7 @@ local function getRouterTestHelper(router, options)
 		return getSubStateRecursive(state, level)
 	end
 
-	return{
+	return {
 		applyAction = applyAction,
 		navigateTo = navigateTo,
 		jumpTo = jumpTo,

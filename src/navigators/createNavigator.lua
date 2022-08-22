@@ -30,22 +30,28 @@ return function(navigatorViewComponent, router, navigationConfig)
 		local navigation = nextProps.navigation
 		local screenProps = nextProps.screenProps
 
-		invariant(navigation ~= nil, "The navigation prop is missing for this navigator. " ..
-			"In react-navigation v3 and v4 you must set up your app container directly. " ..
-			"More info: https://reactnavigation.org/docs/en/app-containers.html")
+		invariant(
+			navigation ~= nil,
+			"The navigation prop is missing for this navigator. "
+				.. "In react-navigation v3 and v4 you must set up your app container directly. "
+				.. "More info: https://reactnavigation.org/docs/en/app-containers.html"
+		)
 
 		local routes = navigation.state.routes
 
-		invariant(type(routes) == "table", 'No "routes" found in navigation state. ' ..
-			"Did you try to pass the navigation prop of a React component to a Navigator child? " ..
-			"See https://reactnavigation.org/docs/en/custom-navigators.html#navigator-navigation-prop")
+		invariant(
+			type(routes) == "table",
+			'No "routes" found in navigation state. '
+				.. "Did you try to pass the navigation prop of a React component to a Navigator child? "
+				.. "See https://reactnavigation.org/docs/en/custom-navigators.html#navigator-navigation-prop"
+		)
 
 		local descriptors = Cryo.List.foldLeft(routes, function(descriptors, route)
 			if
-				prevDescriptors and
-				prevDescriptors[route.key] and
-				route == prevDescriptors[route.key].state and
-				screenProps == prevState.screenProps
+				prevDescriptors
+				and prevDescriptors[route.key]
+				and route == prevDescriptors[route.key].state
+				and screenProps == prevState.screenProps
 				-- deviation: no theme support
 			then
 				descriptors[route.key] = prevDescriptors[route.key]
@@ -88,16 +94,19 @@ return function(navigatorViewComponent, router, navigationConfig)
 				navigation = navigation,
 				onEvent = function(target, type_, data)
 					if descriptors[target] then
-						descriptors[target].navigation.emit(type_, data);
+						descriptors[target].navigation.emit(type_, data)
 					end
 				end,
 			}),
-			View = Roact.createElement(navigatorViewComponent, Cryo.Dictionary.join(self.props, {
-				screenProps = screenProps,
-				navigation = navigation,
-				navigationConfig = navigationConfig,
-				descriptors = descriptors,
-			}))
+			View = Roact.createElement(
+				navigatorViewComponent,
+				Cryo.Dictionary.join(self.props, {
+					screenProps = screenProps,
+					navigation = navigation,
+					navigationConfig = navigationConfig,
+					descriptors = descriptors,
+				})
+			),
 		})
 	end
 

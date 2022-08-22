@@ -101,7 +101,7 @@ return function(target, navigatorOptions)
 						})
 					end,
 				}),
-			})
+			}),
 		})
 	end
 

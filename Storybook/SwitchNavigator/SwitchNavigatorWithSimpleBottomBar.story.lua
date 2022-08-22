@@ -56,15 +56,18 @@ return function(target)
 
 		local buttons = {}
 		for idx, pageName in ipairs(tabOrder) do
-			table.insert(buttons, Roact.createElement(BarButtonItem, {
-				title = pageName,
-				totalCount = #tabOrder,
-				index = idx,
-				selected = idx == navigation.state.index,
-				onActivated = function()
-					navigation.navigate(pageName)
-				end,
-			}))
+			table.insert(
+				buttons,
+				Roact.createElement(BarButtonItem, {
+					title = pageName,
+					totalCount = #tabOrder,
+					index = idx,
+					selected = idx == navigation.state.index,
+					onActivated = function()
+						navigation.navigate(pageName)
+					end,
+				})
+			)
 		end
 
 		return Roact.createElement("Folder", nil, {
@@ -81,7 +84,7 @@ return function(target)
 				Position = UDim2.new(0, 0, 1, -80),
 				BackgroundColor3 = Color3.new(0.9, 0.9, 0.9),
 				ZIndex = 1,
-			}, buttons)
+			}, buttons),
 		})
 	end
 

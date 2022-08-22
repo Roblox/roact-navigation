@@ -47,8 +47,9 @@ local function getChildNavigation(navigation, childKey, getCurrentParentNavigati
 		focusedGrandChildRoute = childRoute.routes[childRoute.index]
 	end
 
-	local childRouterActionCreators = childRouter and
-		childRouter.getActionCreators(focusedGrandChildRoute, childRoute.key) or {}
+	local childRouterActionCreators = childRouter
+			and childRouter.getActionCreators(focusedGrandChildRoute, childRoute.key)
+		or {}
 
 	local actionCreators = Cryo.Dictionary.join(
 		navigation.actions or {},
@@ -65,12 +66,12 @@ local function getChildNavigation(navigation, childKey, getCurrentParentNavigati
 		end
 	end
 
-	local isFirstRouteInParent = true;
+	local isFirstRouteInParent = true
 
-	local parentNavigation = getCurrentParentNavigation();
+	local parentNavigation = getCurrentParentNavigation()
 
 	if parentNavigation then
-		isFirstRouteInParent = Cryo.List.find(parentNavigation.state.routes, childRoute) == 1;
+		isFirstRouteInParent = Cryo.List.find(parentNavigation.state.routes, childRoute) == 1
 	end
 
 	if requestedChild and requestedChild.isFirstRouteInParent() == isFirstRouteInParent then

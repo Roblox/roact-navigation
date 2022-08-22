@@ -19,7 +19,7 @@ return function()
 
 	it("query strings starting with a `&`", function()
 		jestExpect(queryString.parse("&foo=bar&foo=baz")).toEqual({
-			foo = {"bar", "baz"},
+			foo = { "bar", "baz" },
 		})
 	end)
 
@@ -35,8 +35,8 @@ return function()
 	end)
 
 	itSKIP("parse multiple query string retain order when not sorted", function()
-		local expectedKeys = {"b", "a", "c"}
-		local parsed = queryString.parse("b=foo&a=bar&c=yay", {sort = false})
+		local expectedKeys = { "b", "a", "c" }
+		local parsed = queryString.parse("b=foo&a=bar&c=yay", { sort = false })
 
 		local index = 1
 		for key in pairs(parsed) do
@@ -46,7 +46,7 @@ return function()
 	end)
 
 	itSKIP("parse multiple query string sorted keys", function()
-		local fixture = {"a", "b", "c"}
+		local fixture = { "a", "b", "c" }
 		local parsed = queryString.parse("a=foo&c=bar&b=yay")
 
 		local index = 1
@@ -57,11 +57,11 @@ return function()
 	end)
 
 	itSKIP("should sort parsed keys in given order", function()
-		local fixture = {"c", "a", "b"}
+		local fixture = { "c", "a", "b" }
 		local function sort(key1, key2)
 			return Array.indexOf(fixture, key1) - Array.indexOf(fixture, key2)
 		end
-		local parsed = queryString.parse("a=foo&b=bar&c=yay", {sort = sort})
+		local parsed = queryString.parse("a=foo&b=bar&c=yay", { sort = sort })
 
 		local index = 1
 		for key in pairs(parsed) do
@@ -71,11 +71,11 @@ return function()
 	end)
 
 	itSKIP("parse query string without a value", function()
-		jestExpect(queryString.parse("foo"), {foo = nil})
+		jestExpect(queryString.parse("foo"), { foo = nil })
 		jestExpect(queryString.parse("foo&key"), { foo = nil, key = nil })
 		jestExpect(queryString.parse("foo=bar&key"), { foo = "bar", key = nil })
-		jestExpect(queryString.parse("a&a"), { a = {nil, nil} })
-		jestExpect(queryString.parse("a=&a"), { a = {"", nil} })
+		jestExpect(queryString.parse("a&a"), { a = { nil, nil } })
+		jestExpect(queryString.parse("a=&a"), { a = { "", nil } })
 	end)
 
 	it("return empty object if no qss can be found", function()
@@ -86,7 +86,7 @@ return function()
 	end)
 
 	it("handle `+` correctly", function()
-		jestExpect(queryString.parse("foo+faz=bar+baz++")).toEqual({ ["foo faz"] = "bar baz  "})
+		jestExpect(queryString.parse("foo+faz=bar+baz++")).toEqual({ ["foo faz"] = "bar baz  " })
 	end)
 
 	it("parses numbers with exponential notation as string", function()
@@ -95,38 +95,38 @@ return function()
 	end)
 
 	it("handle `+` correctly when not decoding", function()
-		jestExpect(queryString.parse("foo+faz=bar+baz++", {decode = false})).toEqual({
+		jestExpect(queryString.parse("foo+faz=bar+baz++", { decode = false })).toEqual({
 			["foo+faz"] = "bar+baz++",
 		})
 	end)
 
 	it("handle multiple of the same key", function()
 		jestExpect(queryString.parse("foo=bar&foo=baz")).toEqual({
-			foo = {"bar", "baz"},
+			foo = { "bar", "baz" },
 		})
 	end)
 
 	it("handle multiple values and preserve appearence order", function()
-		jestExpect(queryString.parse("a=value&a=")).toEqual({ a = {"value", ""} })
-		jestExpect(queryString.parse("a=&a=value")).toEqual({ a = {"", "value"} })
+		jestExpect(queryString.parse("a=value&a=")).toEqual({ a = { "value", "" } })
+		jestExpect(queryString.parse("a=&a=value")).toEqual({ a = { "", "value" } })
 	end)
 
 	it("handle multiple values and preserve appearance order with brackets", function()
 		jestExpect(queryString.parse("a[]=value&a[]=", {
 			arrayFormat = "bracket",
-		})).toEqual({ a = {"value", ""} })
+		})).toEqual({ a = { "value", "" } })
 		jestExpect(queryString.parse("a[]=&a[]=value", {
 			arrayFormat = "bracket",
-		})).toEqual({ a = {"", "value"} })
+		})).toEqual({ a = { "", "value" } })
 	end)
 
 	it("handle multiple values and preserve appearance order with indexes", function()
 		jestExpect(queryString.parse("a[0]=value&a[1]=", {
 			arrayFormat = "index",
-		})).toEqual({ a = {"value", ""} })
+		})).toEqual({ a = { "value", "" } })
 		jestExpect(queryString.parse("a[1]=&a[0]=value", {
 			arrayFormat = "index",
-		})).toEqual({ a = {"value", ""} })
+		})).toEqual({ a = { "value", "" } })
 	end)
 
 	it("query strings params including embedded `=`", function()
@@ -151,7 +151,7 @@ return function()
 
 	it("query strings having brackets arrays", function()
 		jestExpect(queryString.parse("foo[]=bar&foo[]=baz")).toEqual({
-			["foo[]"] = {"bar", "baz"},
+			["foo[]"] = { "bar", "baz" },
 		})
 	end)
 
@@ -166,7 +166,7 @@ return function()
 		jestExpect(queryString.parse("foo[]=bar", {
 			arrayFormat = "bracket",
 		})).toEqual({
-			foo = {"bar"},
+			foo = { "bar" },
 		})
 	end)
 
@@ -183,7 +183,7 @@ return function()
 			arrayFormat = "bracket",
 		})).toEqual({
 			foo = "bar",
-			baz = {"bar"},
+			baz = { "bar" },
 		})
 	end)
 
@@ -230,7 +230,7 @@ return function()
 				nil,
 				"",
 			},
-			bar = {nil},
+			bar = { nil },
 		})
 	end)
 
@@ -238,7 +238,7 @@ return function()
 		jestExpect(queryString.parse("bar&foo=a,", {
 			arrayFormat = "comma",
 		})).toEqual({
-			foo = {"a", ""},
+			foo = { "a", "" },
 			bar = nil,
 		})
 	end)
@@ -246,45 +246,45 @@ return function()
 	it("query strings having indexed arrays and format option as `index`", function()
 		jestExpect(queryString.parse("foo[0]=bar&foo[1]=baz", {
 			arrayFormat = "index",
-		})).toEqual({ foo = {"bar", "baz"} })
+		})).toEqual({ foo = { "bar", "baz" } })
 	end)
 
 	it("query strings having = within parameters (i.e. GraphQL IDs)", function()
 		jestExpect(queryString.parse("foo=bar=&foo=ba=z=")).toEqual({
-			foo = {"bar=", "ba=z="},
+			foo = { "bar=", "ba=z=" },
 		})
 	end)
 
 	it("query strings having ordered index arrays and format option as `index`", function()
 		jestExpect(queryString.parse("foo[1]=bar&foo[0]=baz&foo[3]=one&foo[2]=two", {
 			arrayFormat = "index",
-		})).toEqual({ foo = {"baz", "bar", "two", "one"} })
+		})).toEqual({ foo = { "baz", "bar", "two", "one" } })
 		jestExpect(queryString.parse("foo[0]=bar&foo[1]=baz&foo[2]=one&foo[3]=two", {
 			arrayFormat = "index",
-		})).toEqual({ foo = {"bar", "baz", "one", "two"} })
+		})).toEqual({ foo = { "bar", "baz", "one", "two" } })
 		jestExpect(queryString.parse("foo[3]=three&foo[2]=two&foo[1]=one&foo[0]=zero", {
 			arrayFormat = "index",
-		})).toEqual({ foo = {"zero", "one", "two", "three"} })
+		})).toEqual({ foo = { "zero", "one", "two", "three" } })
 		jestExpect(queryString.parse("foo[3]=three&foo[2]=two&foo[1]=one&foo[0]=zero&bat=buz", {
 			arrayFormat = "index",
 		})).toEqual({
-			foo = {"zero", "one", "two", "three"},
+			foo = { "zero", "one", "two", "three" },
 			bat = "buz",
 		})
 		jestExpect(queryString.parse("foo[1]=bar&foo[0]=baz", {
 			arrayFormat = "index",
-		})).toEqual({ foo = {"baz", "bar"} })
+		})).toEqual({ foo = { "baz", "bar" } })
 		jestExpect(queryString.parse("foo[102]=three&foo[2]=two&foo[1]=one&foo[0]=zero&bat=buz", {
 			arrayFormat = "index",
 		})).toEqual({
 			bat = "buz",
-			foo = {"zero", "one", "two", "three"},
+			foo = { "zero", "one", "two", "three" },
 		})
 		jestExpect(queryString.parse("foo[102]=three&foo[2]=two&foo[100]=one&foo[0]=zero&bat=buz", {
 			arrayFormat = "index",
 		})).toEqual({
 			bat = "buz",
-			foo = {"zero", "two", "one", "three"},
+			foo = { "zero", "two", "one", "three" },
 		})
 	end)
 
@@ -293,7 +293,7 @@ return function()
 		local sortedOriginal = "bat=buz&foo[0]=&foo[1]=one&foo[2]&foo[3]=foo"
 		local expected = {
 			bat = "buz",
-			foo = {"", "one", nil, "foo"},
+			foo = { "", "one", nil, "foo" },
 		}
 		local options = { arrayFormat = "index" }
 
@@ -311,15 +311,15 @@ return function()
 
 	itSKIP("decode keys and values", function()
 		jestExpect(queryString.parse("st%C3%A5le=foo")).toEqual({ ["ståle"] = "foo" })
-		jestExpect(queryString.parse("foo=%7B%ab%%7C%de%%7D+%%7Bst%C3%A5le%7D%")).toEqual(
-			{ foo = "{%ab%|%de%} %{ståle}%" }
-		)
+		jestExpect(queryString.parse("foo=%7B%ab%%7C%de%%7D+%%7Bst%C3%A5le%7D%")).toEqual({
+			foo = "{%ab%|%de%} %{ståle}%",
+		})
 	end)
 
 	it("disable decoding of keys and values", function()
-		jestExpect(
-			queryString.parse("tags=postal%20office,burger%2C%20fries%20and%20coke", { decode = false })
-		).toEqual({ tags = "postal%20office,burger%2C%20fries%20and%20coke" })
+		jestExpect(queryString.parse("tags=postal%20office,burger%2C%20fries%20and%20coke", { decode = false })).toEqual({
+			tags = "postal%20office,burger%2C%20fries%20and%20coke",
+		})
 	end)
 
 	it("number value returns as string by default", function()
@@ -360,7 +360,7 @@ return function()
 			parseNumbers = true,
 			arrayFormat = "bracket",
 		})).toEqual({
-			foo = {1, 2, 3},
+			foo = { 1, 2, 3 },
 			bar = 1,
 		})
 		jestExpect(queryString.parse("foo=1,2,a", {
@@ -388,10 +388,10 @@ return function()
 			parseNumbers = true,
 			arrayFormat = "index",
 		})).toEqual({
-			foo = {1, 2, nil},
+			foo = { 1, 2, nil },
 		})
 		jestExpect(queryString.parse("foo=1&foo=2&foo=3", { parseNumbers = true })).toEqual({
-			foo = {1, 2, 3},
+			foo = { 1, 2, 3 },
 		})
 	end)
 
@@ -403,9 +403,10 @@ return function()
 
 	it("boolean value returns as boolean if option is set", function()
 		jestExpect(queryString.parse("foo=true", { parseBooleans = true })).toEqual({ foo = true })
-		jestExpect(
-			queryString.parse("foo=false&bar=true", { parseBooleans = true })
-		).toEqual({ foo = false, bar = true })
+		jestExpect(queryString.parse("foo=false&bar=true", { parseBooleans = true })).toEqual({
+			foo = false,
+			bar = true,
+		})
 	end)
 
 	it("parseBooleans works with arrayFormat", function()
@@ -413,7 +414,7 @@ return function()
 			parseBooleans = true,
 			arrayFormat = "bracket",
 		})).toEqual({
-			foo = {true, false, true},
+			foo = { true, false, true },
 			bar = "1",
 		})
 		jestExpect(queryString.parse("foo=true,false,a", {
@@ -430,7 +431,7 @@ return function()
 			parseBooleans = true,
 			arrayFormat = "index",
 		})).toEqual({
-			foo = {true, false, nil},
+			foo = { true, false, nil },
 		})
 		jestExpect(queryString.parse("foo=true&foo=false&foo=3", { parseBooleans = true })).toEqual({
 			foo = {
@@ -463,32 +464,32 @@ return function()
 			parseNumbers = true,
 			parseBooleans = true,
 		})).toEqual({
-			foo = {true, false},
-			bar = {1.12, 2},
+			foo = { true, false },
+			bar = { 1.12, 2 },
 		})
 		jestExpect(queryString.parse("foo[]=true&foo[]=false&foo[]=true&bar[]=1&bar[]=2", {
 			parseNumbers = true,
 			parseBooleans = true,
 			arrayFormat = "bracket",
 		})).toEqual({
-			foo = {true, false, true},
-			bar = {1, 2},
+			foo = { true, false, true },
+			bar = { 1, 2 },
 		})
 		jestExpect(queryString.parse("foo=true,false&bar=1,2", {
 			parseNumbers = true,
 			parseBooleans = true,
 			arrayFormat = "comma",
 		})).toEqual({
-			foo = {true, false},
-			bar = {1, 2},
+			foo = { true, false },
+			bar = { 1, 2 },
 		})
 		jestExpect(queryString.parse("foo[0]=true&foo[1]=false&bar[0]=1&bar[1]=2", {
 			parseNumbers = true,
 			parseBooleans = true,
 			arrayFormat = "index",
 		})).toEqual({
-			foo = {true, false},
-			bar = {1, 2},
+			foo = { true, false },
+			bar = { 1, 2 },
 		})
 	end)
 
@@ -499,7 +500,7 @@ return function()
 			})
 		end).toThrow()
 		jestExpect(function()
-			return queryString.parse("", {arrayFormatSeparator = {}})
+			return queryString.parse("", { arrayFormatSeparator = {} })
 		end).toThrow()
 	end)
 
@@ -507,7 +508,7 @@ return function()
 		jestExpect(queryString.parse("foo=zero%2Cone,two%2Cthree", {
 			arrayFormat = "comma",
 		})).toEqual({
-			foo = {"zero,one", "two,three"},
+			foo = { "zero,one", "two,three" },
 		})
 	end)
 
@@ -517,10 +518,13 @@ return function()
 		})).toEqual({ foo = "2020-01-01T00:00:00+03:00" })
 	end)
 
-	itSKIP("value separated by encoded comma will not be parsed as array with `arrayFormat` option set to `comma`", function()
-		jestExpect(queryString.parse("id=1%2C2%2C3", {
-			arrayFormat = "comma",
-			parseNumbers = true,
-		})).toEqual({ id = {1, 2, 3} })
-	end)
+	itSKIP(
+		"value separated by encoded comma will not be parsed as array with `arrayFormat` option set to `comma`",
+		function()
+			jestExpect(queryString.parse("id=1%2C2%2C3", {
+				arrayFormat = "comma",
+				parseNumbers = true,
+			})).toEqual({ id = { 1, 2, 3 } })
+		end
+	)
 end

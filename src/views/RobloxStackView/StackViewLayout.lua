@@ -28,7 +28,6 @@ local function calculateTransitionValue(index, position)
 	return math.max(math.min(1 + position - index, 1), 0)
 end
 
-
 local StackViewLayout = Roact.Component:extend("StackViewLayout")
 
 function StackViewLayout:init()
@@ -68,17 +67,16 @@ function StackViewLayout:_renderCard(scene, navigationOptions)
 	local cardInterpolationProps = {}
 	local screenInterpolator = transitionConfig.screenInterpolator
 	if screenInterpolator then
-		cardInterpolationProps = screenInterpolator(
-			Cryo.Dictionary.join(transitionProps, {
-				initialPositionValue = initialPositionValue,
-				scene = scene,
-			})
-		)
+		cardInterpolationProps = screenInterpolator(Cryo.Dictionary.join(transitionProps, {
+			initialPositionValue = initialPositionValue,
+			scene = scene,
+		}))
 	end
 
 	-- Merge down the various prop packages to be applied to StackViewCard.
-	return Roact.createElement(StackViewCard, Cryo.Dictionary.join(
-		transitionProps, cardInterpolationProps, {
+	return Roact.createElement(
+		StackViewCard,
+		Cryo.Dictionary.join(transitionProps, cardInterpolationProps, {
 			key = "card_" .. tostring(scene.key),
 			scene = scene,
 			renderScene = self._renderScene,
@@ -131,7 +129,8 @@ function StackViewLayout:render()
 				Overlay = renderOverlay(
 					screenOptions,
 					calculateTransitionValue(scene.index, self._positionLastValue),
-					self._subscribeToOverlayUpdates)
+					self._subscribeToOverlayUpdates
+				),
 			})
 		end
 
@@ -176,7 +175,7 @@ function StackViewLayout:render()
 					-- Cards need to have unique keys so that instances of the same components are not
 					-- reused for different scenes. (Could lead to unanticipated lifecycle problems).
 					["card_" .. scene.key] = self:_renderCard(scene, screenOptions),
-				})
+				}),
 			}),
 		})
 
@@ -198,8 +197,8 @@ function StackViewLayout.getDerivedStateFromProps(nextProps, _lastState)
 	local isTransitioning = state.isTransitioning
 	local topMostIndex = #scenes
 
-	local isOverlayMode = nextProps.mode == StackPresentationStyle.Modal or
-		nextProps.mode == StackPresentationStyle.Overlay
+	local isOverlayMode = nextProps.mode == StackPresentationStyle.Modal
+		or nextProps.mode == StackPresentationStyle.Overlay
 
 	-- Find the last opaque scene in a modal stack so that we can optimize rendering.
 	local topMostOpaqueSceneIndex = 0
@@ -229,7 +228,8 @@ function StackViewLayout.getDerivedStateFromProps(nextProps, _lastState)
 			nextProps.transitionConfig,
 			nextProps.transitionProps,
 			nextProps.lastTransitionProps,
-			nextProps.mode),
+			nextProps.mode
+		),
 	}
 end
 

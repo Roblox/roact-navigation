@@ -21,16 +21,9 @@ return function()
 
 		local dispatchSpy, dispatchSpyFn = jest.fn()
 
-		local topNav = getNavigation(
-			router,
-			{},
-			dispatchSpyFn,
-			{},
-			function()
-				return {}
-			end,
-			function() end
-		)
+		local topNav = getNavigation(router, {}, dispatchSpyFn, {}, function()
+			return {}
+		end, function() end)
 
 		topNav.navigate("GreatRoute")
 
@@ -56,18 +49,11 @@ return function()
 		local dispatchSpy, dispatchSpyFn = jest.fn()
 
 		local topNav = nil
-		topNav = getNavigation(
-			router,
-			{},
-			dispatchSpyFn,
-			{},
-			function()
-				return {}
-			end,
-			function()
-				return topNav
-			end
-		)
+		topNav = getNavigation(router, {}, dispatchSpyFn, {}, function()
+			return {}
+		end, function()
+			return topNav
+		end)
 
 		topNav.foo("Great")
 
@@ -90,7 +76,7 @@ return function()
 		}
 		local router = {
 			childRouters = {
-			RouteA = routerA,
+				RouteA = routerA,
 			},
 			getActionCreators = function()
 				return {}
@@ -106,25 +92,18 @@ return function()
 				{
 					key = "a",
 					routeName = "RouteA",
-					routes = {{ key = "c", routeName = "RouteC" }},
+					routes = { { key = "c", routeName = "RouteC" } },
 					index = 0,
 				},
 				{ key = "b", routeName = "RouteB" },
 			},
 		}
 
-		local topNav = getNavigation(
-			router,
-			initState,
-			function() end,
-			actionSubscribers,
-			function()
-				return {}
-			end,
-			function()
-				return navigation
-			end
-		)
+		local topNav = getNavigation(router, initState, function() end, actionSubscribers, function()
+			return {}
+		end, function()
+			return navigation
+		end)
 
 		local childNavA = topNav.getChildNavigation("a")
 

@@ -14,7 +14,7 @@ return function()
 		key = initialRouteKey,
 	}
 
-	local initialState =  {
+	local initialState = {
 		index = 1,
 		key = "StackRouterRoot",
 		isTransitioning = false,
@@ -29,7 +29,7 @@ return function()
 			navigation = {
 				state = initialRoute,
 			},
-			state =  initialRoute,
+			state = initialRoute,
 		},
 	}
 
@@ -41,7 +41,7 @@ return function()
 				index = 1,
 				isActive = true,
 				isStale = false,
-			})
+			}),
 		})
 	end)
 
@@ -57,7 +57,7 @@ return function()
 				index = 1,
 				isActive = true,
 				isStale = false,
-			})
+			}),
 		})
 	end)
 
@@ -69,8 +69,8 @@ return function()
 		jestExpect(scenes).toBe(initialScenes)
 	end)
 
-	local secondRouteKey =  "id-2"
-	local secondRouteName =  "Second Route"
+	local secondRouteKey = "id-2"
+	local secondRouteName = "Second Route"
 	local secondRoute = {
 		key = secondRouteKey,
 		routeName = secondRouteName,
@@ -88,7 +88,7 @@ return function()
 
 	local secondDescriptors = {
 		[initialRouteKey] = initialDescriptors[initialRouteKey],
-		[secondRouteKey] ={
+		[secondRouteKey] = {
 			key = secondRouteKey,
 			navigation = {
 				state = secondRoute,
@@ -119,8 +119,8 @@ return function()
 		})
 	end)
 
-	local thirdRouteKey =  "id-3"
-	local thirdRouteName =  "Third Route"
+	local thirdRouteKey = "id-3"
+	local thirdRouteName = "Third Route"
 	local thirdRoute = {
 		key = thirdRouteKey,
 		routeName = thirdRouteName,
@@ -206,8 +206,8 @@ return function()
 		})
 	end)
 
-	local secondScreenReplacementKey =  "id-22"
-	local secondScreenReplacementName =  "Second Route Replacement"
+	local secondScreenReplacementKey = "id-22"
+	local secondScreenReplacementName = "Second Route Replacement"
 	local secondScreenReplacementRoute = {
 		key = secondScreenReplacementKey,
 		routeName = secondScreenReplacementName,
@@ -229,7 +229,7 @@ return function()
 		[secondRouteKey] = {
 			key = secondScreenReplacementKey,
 			navigation = {
-				state = secondScreenReplacementRoute
+				state = secondScreenReplacementRoute,
 			},
 			state = secondScreenReplacementRoute,
 		},

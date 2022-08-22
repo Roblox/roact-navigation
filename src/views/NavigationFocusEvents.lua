@@ -11,47 +11,29 @@ local NavigationEventManager = Roact.Component:extend("NavigationEventManager")
 function NavigationEventManager:didMount()
 	local navigation = self.props.navigation
 
-	self._actionSubscription = navigation.addListener(
-		Events.Action,
-		function(...)
-			return self:_handleAction(...)
-		end
-	)
+	self._actionSubscription = navigation.addListener(Events.Action, function(...)
+		return self:_handleAction(...)
+	end)
 
-	self._willFocusSubscription = navigation.addListener(
-		Events.WillFocus,
-		function(...)
-			return self:_handleWillFocus(...)
-		end
-	)
+	self._willFocusSubscription = navigation.addListener(Events.WillFocus, function(...)
+		return self:_handleWillFocus(...)
+	end)
 
-	self._willBlurSubscription = navigation.addListener(
-		Events.WillBlur,
-		function(...)
-			return self:_handleWillBlur(...)
-		end
-	)
+	self._willBlurSubscription = navigation.addListener(Events.WillBlur, function(...)
+		return self:_handleWillBlur(...)
+	end)
 
-	self._didFocusSubscription = navigation.addListener(
-		Events.DidFocus,
-		function(...)
-			return self:_handleDidFocus(...)
-		end
-	)
+	self._didFocusSubscription = navigation.addListener(Events.DidFocus, function(...)
+		return self:_handleDidFocus(...)
+	end)
 
-	self._didBlurSubscription = navigation.addListener(
-		Events.DidBlur,
-		function(...)
-			return self:_handleDidBlur(...)
-		end
-	)
+	self._didBlurSubscription = navigation.addListener(Events.DidBlur, function(...)
+		return self:_handleDidBlur(...)
+	end)
 
-	self._refocusSubscription = navigation.addListener(
-		Events.Refocus,
-		function(...)
-			return self:_handleRefocus(...)
-		end
-	)
+	self._refocusSubscription = navigation.addListener(Events.Refocus, function(...)
+		return self:_handleRefocus(...)
+	end)
 end
 
 function NavigationEventManager:willUnmount()
@@ -113,9 +95,7 @@ function NavigationEventManager:_handleAction(actionPayload)
 		end
 	end
 
-	if lastState and lastState.isTransitioning ~= state.isTransitioning and
-		state.isTransitioning == false
-	then
+	if lastState and lastState.isTransitioning ~= state.isTransitioning and state.isTransitioning == false then
 		if self._lastWillBlurKey then
 			self:_emitDidBlur(self._lastWillBlurKey, payload)
 		end
@@ -181,7 +161,7 @@ function NavigationEventManager:_handleWillBlur(args)
 		lastState = nextLastState,
 		action = action,
 		type = type_,
-	});
+	})
 end
 
 function NavigationEventManager:_handleDidFocus(args)
@@ -216,7 +196,7 @@ function NavigationEventManager:_handleDidFocus(args)
 				lastState = nextLastState,
 				action = action,
 				type = type_,
-			});
+			})
 		end
 	end
 end
@@ -253,7 +233,7 @@ function NavigationEventManager:_handleDidBlur(args)
 				lastState = nextLastState,
 				action = action,
 				type = type_,
-			});
+			})
 		end
 	end
 end
@@ -281,11 +261,11 @@ function NavigationEventManager:_emitWillFocus(target, payload)
 	local navigation = self.props.navigation
 	local onEvent = self.props.onEvent
 
-	onEvent(target, Events.WillFocus, payload);
+	onEvent(target, Events.WillFocus, payload)
 
-	if typeof(navigation.state.isTransitioning) ~= "boolean" or
-		(navigation.state.isTransitioning ~= true and
-			not navigation._dangerouslyGetParent()) -- TODO: what should we do with dangerouslyGetParent
+	if
+		typeof(navigation.state.isTransitioning) ~= "boolean"
+		or (navigation.state.isTransitioning ~= true and not navigation._dangerouslyGetParent()) -- TODO: what should we do with dangerouslyGetParent
 	then
 		self:_emitDidFocus(target, payload)
 	end
@@ -308,9 +288,9 @@ function NavigationEventManager:_emitWillBlur(target, payload)
 
 	onEvent(target, Events.WillBlur, payload)
 
-	if typeof(navigation.state.isTransitioning) ~= "boolean" or
-		(navigation.state.isTransitioning ~= true and
-			not navigation._dangerouslyGetParent())
+	if
+		typeof(navigation.state.isTransitioning) ~= "boolean"
+		or (navigation.state.isTransitioning ~= true and not navigation._dangerouslyGetParent())
 	then
 		self:_emitDidBlur(target, payload)
 	end

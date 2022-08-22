@@ -7,9 +7,7 @@ return function()
 	local Element = Rhodium.Element
 	local XPath = Rhodium.XPath
 
-	local createDeepLinkingIntegration = require(
-		Storybook["DeepLinkingIntegration.story"]
-	)
+	local createDeepLinkingIntegration = require(Storybook["DeepLinkingIntegration.story"])
 	local createLinkingProtocolMock = require(Storybook.createLinkingProtocolMock)
 	local createScreenGui = require(RhodiumTests.createScreenGui)
 

@@ -23,10 +23,9 @@ return function()
 				}
 
 				jestExpect(StateUtils.get(state, "a")).toEqual({
-						key = "a",
-						routeName = routeName,
-					}
-				)
+					key = "a",
+					routeName = routeName,
+				})
 			end)
 
 			it("returns null when getting an unknown route", function()
@@ -92,7 +91,7 @@ return function()
 			it("pushes a route", function()
 				local state = {
 					index = 1,
-					routes = {{ key = "a", routeName = routeName }},
+					routes = { { key = "a", routeName = routeName } },
 					isTransitioning = false,
 				}
 				local newState = {
@@ -104,15 +103,13 @@ return function()
 					},
 				}
 
-				jestExpect(
-					StateUtils.push(state, { key = "b", routeName = routeName })
-				).toEqual(newState)
+				jestExpect(StateUtils.push(state, { key = "b", routeName = routeName })).toEqual(newState)
 			end)
 
 			it("does not push duplicated route", function()
 				local state = {
 					index = 1,
-					routes = {{ key = "a", routeName = routeName }},
+					routes = { { key = "a", routeName = routeName } },
 					isTransitioning = false,
 				}
 
@@ -134,7 +131,7 @@ return function()
 				}
 				local newState = {
 					index = 1,
-					routes = {{ key = "a", routeName = routeName }},
+					routes = { { key = "a", routeName = routeName } },
 					isTransitioning = false,
 				}
 
@@ -144,7 +141,7 @@ return function()
 			it("does not pop route if not applicable with single route config", function()
 				local state = {
 					index = 1,
-					routes = {{ key = "a", routeName = routeName }},
+					routes = { { key = "a", routeName = routeName } },
 					isTransitioning = false,
 				}
 				jestExpect(StateUtils.pop(state)).toBe(state)
@@ -248,7 +245,7 @@ return function()
 
 				jestExpect(function()
 					StateUtils.jumpTo(state, "c")
-				end).toThrow("attempt to jump to unknown key \"c\"")
+				end).toThrow('attempt to jump to unknown key "c"')
 			end)
 		end)
 
@@ -340,9 +337,7 @@ return function()
 					isTransitioning = false,
 				}
 
-				jestExpect(
-					StateUtils.replaceAt(state, "b", { key = "c", routeName = routeName })
-				).toEqual(newState)
+				jestExpect(StateUtils.replaceAt(state, "b", { key = "c", routeName = routeName })).toEqual(newState)
 			end)
 
 			it("Replaces by index", function()
@@ -363,9 +358,7 @@ return function()
 					isTransitioning = false,
 				}
 
-				jestExpect(
-					StateUtils.replaceAtIndex(state, 2, { key = "c", routeName = routeName })
-				).toEqual(newState)
+				jestExpect(StateUtils.replaceAtIndex(state, 2, { key = "c", routeName = routeName })).toEqual(newState)
 			end)
 
 			it("Returns the state with updated index if route is unchanged but index changes", function()
@@ -378,9 +371,7 @@ return function()
 					isTransitioning = false,
 				}
 
-				jestExpect(
-					StateUtils.replaceAtIndex(state, 2, state.routes[2])
-				).toEqual({
+				jestExpect(StateUtils.replaceAtIndex(state, 2, state.routes[2])).toEqual({
 					index = 2,
 					routes = {
 						{ key = "a", routeName = routeName },
@@ -410,12 +401,10 @@ return function()
 					isTransitioning = false,
 				}
 
-				jestExpect(
-					StateUtils.reset(state, {
-						{ key = "x", routeName = routeName },
-						{ key = "y", routeName = routeName },
-					})
-				).toEqual(newState)
+				jestExpect(StateUtils.reset(state, {
+					{ key = "x", routeName = routeName },
+					{ key = "y", routeName = routeName },
+				})).toEqual(newState)
 			end)
 
 			it("throws when attempting to set empty state", function()
@@ -450,12 +439,10 @@ return function()
 					isTransitioning = false,
 				}
 
-				jestExpect(
-					StateUtils.reset(state, {
-						{ key = "x", routeName = routeName },
-						{ key = "y", routeName = routeName },
-					}, 1)
-				).toEqual(newState)
+				jestExpect(StateUtils.reset(state, {
+					{ key = "x", routeName = routeName },
+					{ key = "y", routeName = routeName },
+				}, 1)).toEqual(newState)
 			end)
 
 			it("throws when attempting to set an out of range route index", function()

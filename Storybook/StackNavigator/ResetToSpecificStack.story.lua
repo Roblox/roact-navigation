@@ -51,8 +51,8 @@ return function(target)
 							},
 						}),
 					})
-				end
-			})
+				end,
+			}),
 		})
 	end
 
@@ -101,7 +101,7 @@ return function(target)
 							},
 						}),
 					})
-				end
+				end,
 			}),
 			goNextDetailButton = Roact.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
@@ -128,7 +128,7 @@ return function(target)
 				[Roact.Event.Activated] = function()
 					navigation.goBack()
 				end,
-			})
+			}),
 		})
 	end
 

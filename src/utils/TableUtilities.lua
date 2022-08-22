@@ -66,9 +66,7 @@ local function formatDeepEqualMessage(message, level)
 		return message
 	end
 
-	return message
-		:gsub("{1}", "first")
-		:gsub("{2}", "second")
+	return message:gsub("{1}", "first"):gsub("{2}", "second")
 end
 
 --[[
@@ -81,10 +79,7 @@ function TableUtilities.DeepEqual(a, b, level)
 	end
 
 	if typeof(a) ~= typeof(b) then
-		local message = ("{1} is of type %s, but {2} is of type %s"):format(
-			typeof(a),
-			typeof(b)
-		)
+		local message = ("{1} is of type %s, but {2} is of type %s"):format(typeof(a), typeof(b))
 
 		return false, formatDeepEqualMessage(message, level)
 	end
@@ -152,7 +147,6 @@ function TableUtilities.TableDifference(A, B)
 	return new
 end
 
-
 --[[
 	Takes a list and returns a table whose
 	keys are elements of the list and whose
@@ -166,18 +160,16 @@ local function membershipTable(list)
 	return result
 end
 
-
 --[[
 	Takes a table and returns a list of keys in that table
 ]]
 local function listOfKeys(t)
 	local result = {}
-	for key,_ in pairs(t) do
+	for key, _ in pairs(t) do
 		table.insert(result, key)
 	end
 	return result
 end
-
 
 --[[
 	Takes two lists A and B, returns a new list of elements of A
@@ -186,7 +178,6 @@ end
 function TableUtilities.ListDifference(A, B)
 	return listOfKeys(TableUtilities.TableDifference(membershipTable(A), membershipTable(B)))
 end
-
 
 --[[
 	For debugging.  Returns false if the given table has any of the following:
@@ -201,9 +192,9 @@ function TableUtilities.CheckListConsistency(t)
 
 	local index = 1
 	for x, _ in pairs(t) do
-		if type(x) == 'string' then
+		if type(x) == "string" then
 			containsStringKey = true
-		elseif type(x) == 'number' then
+		elseif type(x) == "number" then
 			if index ~= x then
 				numberConsistency = false
 			end
@@ -226,31 +217,30 @@ function TableUtilities.CheckListConsistency(t)
 	return true
 end
 
-
 --[[
 	For debugging, serializes the given table to a reasonable string that might even interpret as lua.
 ]]
 function TableUtilities.RecursiveToString(t, indent)
-	indent = indent or ''
+	indent = indent or ""
 
-	if type(t) == 'table' then
+	if type(t) == "table" then
 		local result = ""
 		if not TableUtilities.CheckListConsistency(t) then
 			result = result .. "-- WARNING: this table fails the list consistency test\n"
 		end
 		result = result .. "{\n"
-		for k,v in pairs(t) do
-			if type(k) == 'string' then
+		for k, v in pairs(t) do
+			if type(k) == "string" then
 				result = result
 					.. "  "
 					.. indent
 					.. tostring(k)
 					.. " = "
-					.. TableUtilities.RecursiveToString(v, "  "..indent)
-					..";\n"
+					.. TableUtilities.RecursiveToString(v, "  " .. indent)
+					.. ";\n"
 			end
-			if type(k) == 'number' then
-				result = result .. "  " .. indent .. TableUtilities.RecursiveToString(v, "  "..indent)..",\n"
+			if type(k) == "number" then
+				result = result .. "  " .. indent .. TableUtilities.RecursiveToString(v, "  " .. indent) .. ",\n"
 			end
 		end
 		result = result .. indent .. "}"
@@ -265,7 +255,7 @@ end
 	limitations which are otherwise necessary for performance. Use sparingly.
 ]]
 function TableUtilities.Print(t, indent)
-	indent = indent or '  '
+	indent = indent or "  "
 
 	if type(t) ~= "table" then
 		error("TableUtilities.Print must be passed a table", 2)
@@ -309,12 +299,11 @@ end
     Takes a table and returns the field count
 ]]
 function TableUtilities.FieldCount(t)
-    local fieldCount = 0
-    for _ in pairs(t) do
-        fieldCount = fieldCount + 1
-    end
-    return fieldCount
+	local fieldCount = 0
+	for _ in pairs(t) do
+		fieldCount = fieldCount + 1
+	end
+	return fieldCount
 end
 
 return TableUtilities
-

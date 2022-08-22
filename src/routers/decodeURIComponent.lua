@@ -119,7 +119,7 @@ local function customDecodeURIComponent(input)
 
 	-- deviation: collect the order of the keys from `replaceMap` so that we can iterate
 	-- on the insertion order
-	local entries = {"%FE%FF", "%FF%FE"}
+	local entries = { "%FE%FF", "%FF%FE" }
 
 	local matches = multiMatcher:exec(input)
 	while matches do

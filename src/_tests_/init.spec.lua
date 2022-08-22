@@ -89,8 +89,8 @@ return function()
 			value = {
 				addListener = function()
 					return { remove = function() end }
-				end
-			}
+				end,
+			},
 		}, {
 			Events = Roact.createElement(RoactNavigation.NavigationEvents),
 		}))
@@ -114,10 +114,10 @@ return function()
 		local testNavigation = {
 			state = {
 				routes = {
-					{ routeName = "Foo", key = "Foo", }
+					{ routeName = "Foo", key = "Foo" },
 				},
 				index = 1,
-			}
+			},
 		}
 
 		local instance = Roact.mount(Roact.createElement(RoactNavigation.RobloxSwitchView, {
@@ -127,7 +127,7 @@ return function()
 						return function() end
 					end,
 					navigation = testNavigation,
-				}
+				},
 			},
 			navigation = testNavigation,
 		}))

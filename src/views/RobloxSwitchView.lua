@@ -17,7 +17,7 @@ function RobloxSwitchView.getDerivedStateFromProps(nextProps, prevState)
 	local keepVisitedScreensMounted = navigationConfig.keepVisitedScreensMounted
 
 	local visitedScreenKeys = {
-		[activeKey] = true
+		[activeKey] = true,
 	}
 
 	if keepVisitedScreensMounted then
@@ -61,7 +61,7 @@ function RobloxSwitchView:render()
 					component = descriptor.getComponent(),
 					navigation = descriptor.navigation,
 					screenProps = screenProps,
-				})
+				}),
 			})
 		end
 	end

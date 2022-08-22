@@ -35,8 +35,8 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("AppMain")
-				end
-			})
+				end,
+			}),
 		})
 	end
 
@@ -62,8 +62,8 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("Two")
-				end
-			})
+				end,
+			}),
 		})
 	end
 
@@ -89,8 +89,8 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("Login")
-				end
-			})
+				end,
+			}),
 		})
 	end
 

@@ -12,7 +12,7 @@ local function applyConfig(configurer, navigationOptions, configProps)
 		return Cryo.Dictionary.join(
 			navigationOptions,
 			configurer(Cryo.Dictionary.join(configProps, {
-				navigationOptions = navigationOptions
+				navigationOptions = navigationOptions,
 			}))
 		)
 	elseif configurerType == "table" then
@@ -28,10 +28,7 @@ return function(routeConfigs, navigatorScreenConfig)
 		local route = navigation.state
 
 		invariant(typeof(route) == "table", "navigation.state must be a table")
-		invariant(
-			typeof(route.routeName) == "string",
-			"Cannot get config because the route does not have a routeName."
-		)
+		invariant(typeof(route.routeName) == "string", "Cannot get config because the route does not have a routeName.")
 
 		local component = getScreenForRouteName(routeConfigs, route.routeName)
 		local routeConfig = routeConfigs[route.routeName]
@@ -43,8 +40,7 @@ return function(routeConfigs, navigatorScreenConfig)
 
 		-- deviation: check if the component is a table, because it could be a
 		-- function and it can't be indexed in Lua.
-		local componentScreenConfig = type(component) == "table"
-			and component.navigationOptions or {}
+		local componentScreenConfig = type(component) == "table" and component.navigationOptions or {}
 
 		local configOptions = {
 			navigation = navigation,

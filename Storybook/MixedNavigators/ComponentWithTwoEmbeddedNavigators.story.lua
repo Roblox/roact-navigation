@@ -59,8 +59,8 @@ return function(target)
 							TextSize = 18,
 							[Roact.Event.Activated] = function()
 								bProps.navigation.goBack()
-							end
-						})
+							end,
+						}),
 					})
 				end,
 			},
@@ -106,8 +106,8 @@ return function(target)
 							TextSize = 18,
 							[Roact.Event.Activated] = function()
 								bProps.navigation.goBack()
-							end
-						})
+							end,
+						}),
 					})
 				end,
 			},

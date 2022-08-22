@@ -33,10 +33,10 @@ return function()
 			expect(TableUtilities.DeepEqual(someFunction, theSameFunction)).to.equal(true)
 
 			local A = {
-				foo = someFunction
+				foo = someFunction,
 			}
 			local B = {
-				foo = theSameFunction
+				foo = theSameFunction,
 			}
 
 			expect(TableUtilities.DeepEqual(A, B)).to.equal(true)
@@ -59,14 +59,14 @@ return function()
 				nested = {
 					foo = 1,
 					bar = 2,
-				}
+				},
 			}
 			local B = {
 				foo = "bar",
 				nested = {
 					foo = 1,
 					bar = 2,
-				}
+				},
 			}
 
 			expect(TableUtilities.DeepEqual(A, B)).to.equal(true)
@@ -76,7 +76,7 @@ return function()
 				nested = {
 					foo = 1,
 					bar = 3,
-				}
+				},
 			}
 
 			local success, message = TableUtilities.DeepEqual(A, C)

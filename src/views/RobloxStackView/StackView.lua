@@ -12,7 +12,6 @@ local defaultNavigationConfig = {
 	mode = StackPresentationStyle.Default,
 }
 
-
 local StackView = Roact.Component:extend("StackView")
 
 function StackView:init()
@@ -70,12 +69,15 @@ function StackView:_render(transition, lastTransition)
 	local navigationConfig = Cryo.Dictionary.join(defaultNavigationConfig, self.props.navigationConfig)
 	local descriptors = self.props.descriptors
 
-	return Roact.createElement(StackViewLayout, Cryo.Dictionary.join(navigationConfig, {
-		screenProps = screenProps,
-		descriptors = descriptors,
-		transitionProps = transition,
-		lastTransitionProps = lastTransition,
-	}))
+	return Roact.createElement(
+		StackViewLayout,
+		Cryo.Dictionary.join(navigationConfig, {
+			screenProps = screenProps,
+			descriptors = descriptors,
+			transitionProps = transition,
+			lastTransitionProps = lastTransition,
+		})
+	)
 end
 
 function StackView:_configureTransition(transition, lastTransition)
@@ -88,8 +90,7 @@ function StackView:_configureTransition(transition, lastTransition)
 end
 
 function StackView:_onTransitionStart(transition, lastTransition)
-	local onTransitionStart = self.props.onTransitionStart
-		or self.props.navigationConfig.onTransitionStart
+	local onTransitionStart = self.props.onTransitionStart or self.props.navigationConfig.onTransitionStart
 
 	-- Only propagate transition changes to caller for transitions where the actual
 	-- index has changed. Transitioner sends updates for _all_ transitions, including
@@ -122,8 +123,7 @@ function StackView:_onTransitionEnd(transition, lastTransition)
 end
 
 function StackView:_onTransitionStep(transition, lastTransition, value)
-	local onTransitionStep = self.props.onTransitionStep
-		or self.props.navigationConfig.onTransitionStep
+	local onTransitionStep = self.props.onTransitionStep or self.props.navigationConfig.onTransitionStep
 
 	-- Only propagate transition changes to caller for transitions where the actual
 	-- index has changed. Transitioner sends updates for _all_ transitions, including

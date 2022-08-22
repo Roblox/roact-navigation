@@ -36,8 +36,8 @@ return function(target, navigatorConfig)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("ModalDialog")
-				end
-			})
+				end,
+			}),
 		})
 	end
 
@@ -110,7 +110,7 @@ return function(target, navigatorConfig)
 						navigation.goBack()
 					end,
 				}),
-			})
+			}),
 		})
 	end
 
@@ -118,23 +118,26 @@ return function(target, navigatorConfig)
 	-- with mode=StackPresentationStyle.Modal. Your main app content goes inside
 	-- a Page or navigator at this level. Note that to hide the automatic top bar
 	-- for the root stack navigator, you have to set headerMode=StackHeaderMode.None.
-	local rootNavigator = RoactNavigation.createRobloxStackNavigator({
-		{ MainContent = MainContent },
+	local rootNavigator = RoactNavigation.createRobloxStackNavigator(
 		{
-			ModalDialog = {
-				screen = ModalDialog,
-				navigationOptions = {
-					-- Draw an overlay effect under this page.
-					-- You may use overlayColor3 to set a custom overlay color, and
-					-- overlayTransparency to set a custom darkening amount if you
-					-- need specific settings.
-					overlayEnabled = true,
+			{ MainContent = MainContent },
+			{
+				ModalDialog = {
+					screen = ModalDialog,
+					navigationOptions = {
+						-- Draw an overlay effect under this page.
+						-- You may use overlayColor3 to set a custom overlay color, and
+						-- overlayTransparency to set a custom darkening amount if you
+						-- need specific settings.
+						overlayEnabled = true,
+					},
 				},
 			},
 		},
-	}, Cryo.Dictionary.join(navigatorConfig or {}, {
-		mode = RoactNavigation.StackPresentationStyle.Modal,
-	}))
+		Cryo.Dictionary.join(navigatorConfig or {}, {
+			mode = RoactNavigation.StackPresentationStyle.Modal,
+		})
+	)
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
 	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
 

@@ -34,9 +34,7 @@ end
 function TrackNavigationEvents:waitForNumberEventsMaxWaitTime(numberOfEvents, maxWaitTimeInSeconds)
 	local secondsWaitedFor = 0
 	local waitDurationPerIteration = 0.33
-	while #self.navigationEvents < numberOfEvents
-		and secondsWaitedFor <= maxWaitTimeInSeconds
-	do
+	while #self.navigationEvents < numberOfEvents and secondsWaitedFor <= maxWaitTimeInSeconds do
 		wait(waitDurationPerIteration)
 		-- print("waiting for number of events to reach:", numberOfEvents, "waited for:", secondsWaitedFor)
 		secondsWaitedFor = secondsWaitedFor + waitDurationPerIteration
@@ -74,7 +72,7 @@ function TrackNavigationEvents:equalTo(pageNavigationEventList)
 		return false, "different amount of events"
 	end
 
-	for i=1, numberOfEvents do
+	for i = 1, numberOfEvents do
 		if not self.navigationEvents[i]:equalTo(pageNavigationEventList[i]) then
 			return false, ("events at position %d do not match"):format(i)
 		end
@@ -91,27 +89,15 @@ function TrackNavigationEvents:expect(pageNavigationEventList)
 		local expectedEvents = "{}"
 
 		if #self.navigationEvents > 0 then
-			selfEvents = ("{\n  %s,\n}"):format(
-				table.concat(
-					Cryo.List.map(self.navigationEvents, tostring),
-					',\n  '
-				)
-			)
+			selfEvents = ("{\n  %s,\n}"):format(table.concat(Cryo.List.map(self.navigationEvents, tostring), ",\n  "))
 		end
 		if #pageNavigationEventList > 0 then
 			expectedEvents = ("{\n  %s,\n}"):format(
-				table.concat(
-					Cryo.List.map(pageNavigationEventList, tostring),
-					',\n  '
-				)
+				table.concat(Cryo.List.map(pageNavigationEventList, tostring), ",\n  ")
 			)
 		end
 
-		error(("%s\nGot events: %s\n\nExpected events: %s"):format(
-			message,
-			selfEvents,
-			expectedEvents
-		))
+		error(("%s\nGot events: %s\n\nExpected events: %s"):format(message, selfEvents, expectedEvents))
 	end
 end
 

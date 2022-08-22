@@ -8,7 +8,9 @@ return function()
 	local createNavigator = require(navigatorsModule.createNavigator)
 
 	local testRouter = {
-		getScreenOptions = function() return nil end,
+		getScreenOptions = function()
+			return nil
+		end,
 	}
 
 	it("should return a Roact component that exposes navigator fields", function()
@@ -37,15 +39,17 @@ return function()
 				routes = {
 					{ routeName = "Foo", key = "Foo" },
 				},
-				index = 1
+				index = 1,
 			},
-			getChildNavigation = function() return nil end, -- stub
+			getChildNavigation = function()
+				return nil
+			end, -- stub
 			addListener = function() end,
 		}
 
 		-- Try to mount it
 		local instance = Roact.mount(Roact.createElement(navigator, {
-			navigation = testNavigation
+			navigation = testNavigation,
 		}))
 
 		jestExpect(testComponentMounted).toEqual(true)
@@ -57,7 +61,7 @@ return function()
 		local TestViewComponent = function() end
 
 		local navigator = createNavigator(TestViewComponent, testRouter, {
-			navigationOptions = {}
+			navigationOptions = {},
 		})
 
 		jestExpect(function()
@@ -69,19 +73,21 @@ return function()
 		local TestViewComponent = function() end
 
 		local navigator = createNavigator(TestViewComponent, testRouter, {
-			navigationOptions = {}
+			navigationOptions = {},
 		})
 
 		local testNavigation = {
 			state = {
-				index = 1
+				index = 1,
 			},
-			getChildNavigation = function() return nil end, -- stub
+			getChildNavigation = function()
+				return nil
+			end, -- stub
 		}
 
 		jestExpect(function()
 			Roact.mount(Roact.createElement(navigator, {
-				navigation = testNavigation
+				navigation = testNavigation,
 			}))
 		end).toThrow()
 	end)

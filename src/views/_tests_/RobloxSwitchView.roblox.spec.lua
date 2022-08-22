@@ -11,7 +11,7 @@ return function()
 		local testNavigation = {
 			state = {
 				routes = {
-					{ routeName = "Foo", key = "Foo" }
+					{ routeName = "Foo", key = "Foo" },
 				},
 				index = 1,
 			},
@@ -33,7 +33,7 @@ return function()
 					return TestComponent
 				end,
 				navigation = testNavigation,
-			}
+			},
 		}
 
 		local element = Roact.createElement(RobloxSwitchView, {
@@ -63,11 +63,15 @@ return function()
 		local function makeDescriptors(navProp)
 			return {
 				Foo = {
-					getComponent = function() return TestComponentFoo end,
+					getComponent = function()
+						return TestComponentFoo
+					end,
 					navigation = navProp,
 				},
 				Bar = {
-					getComponent = function() return TestComponentBar end,
+					getComponent = function()
+						return TestComponentBar
+					end,
 					navigation = navProp,
 				},
 			}
@@ -105,14 +109,17 @@ return function()
 			},
 		}
 
-		instance = Roact.update(instance, Roact.createElement(RobloxSwitchView, {
-			screenProps = {},
-			navigation = testNavigation2,
-			descriptors = makeDescriptors(testNavigation2),
-			navigationConfig = {
-				keepVisitedScreensMounted = false,
-			}
-		}))
+		instance = Roact.update(
+			instance,
+			Roact.createElement(RobloxSwitchView, {
+				screenProps = {},
+				navigation = testNavigation2,
+				descriptors = makeDescriptors(testNavigation2),
+				navigationConfig = {
+					keepVisitedScreensMounted = false,
+				},
+			})
+		)
 
 		expect(fooUnmounted).toEqual(true)
 		Roact.unmount(instance)
@@ -132,11 +139,15 @@ return function()
 		local function makeDescriptors(navProp)
 			return {
 				Foo = {
-					getComponent = function() return TestComponentFoo end,
+					getComponent = function()
+						return TestComponentFoo
+					end,
 					navigation = navProp,
 				},
 				Bar = {
-					getComponent = function() return TestComponentBar end,
+					getComponent = function()
+						return TestComponentBar
+					end,
 					navigation = navProp,
 				},
 			}
@@ -174,14 +185,17 @@ return function()
 			},
 		}
 
-		instance = Roact.update(instance, Roact.createElement(RobloxSwitchView, {
-			screenProps = {},
-			navigation = testNavigation2,
-			descriptors = makeDescriptors(testNavigation2),
-			navigationConfig = {
-				keepVisitedScreensMounted = true,
-			}
-		}))
+		instance = Roact.update(
+			instance,
+			Roact.createElement(RobloxSwitchView, {
+				screenProps = {},
+				navigation = testNavigation2,
+				descriptors = makeDescriptors(testNavigation2),
+				navigationConfig = {
+					keepVisitedScreensMounted = true,
+				},
+			})
+		)
 
 		expect(fooUnmounted).toEqual(false)
 
@@ -203,11 +217,15 @@ return function()
 		local function makeDescriptors(navProp)
 			return {
 				Foo = {
-					getComponent = function() return TestComponentFoo end,
+					getComponent = function()
+						return TestComponentFoo
+					end,
 					navigation = navProp,
 				},
 				Bar = {
-					getComponent = function() return TestComponentBar end,
+					getComponent = function()
+						return TestComponentBar
+					end,
 					navigation = navProp,
 				},
 			}
@@ -245,25 +263,31 @@ return function()
 		}
 
 		-- We must update tree to make sure active screens list gets updated first!
-		instance = Roact.update(instance, Roact.createElement(RobloxSwitchView, {
-			screenProps = {},
-			navigation = testNavigation2,
-			descriptors = makeDescriptors(testNavigation2),
-			navigationConfig = {
-				keepVisitedScreensMounted = true,
-			}
-		}))
+		instance = Roact.update(
+			instance,
+			Roact.createElement(RobloxSwitchView, {
+				screenProps = {},
+				navigation = testNavigation2,
+				descriptors = makeDescriptors(testNavigation2),
+				navigationConfig = {
+					keepVisitedScreensMounted = true,
+				},
+			})
+		)
 
 		expect(fooUnmounted).toEqual(false)
 
-		instance = Roact.update(instance, Roact.createElement(RobloxSwitchView, {
-			screenProps = {},
-			navigation = testNavigation2,
-			descriptors = makeDescriptors(testNavigation2),
-			navigationConfig = {
-				keepVisitedScreensMounted = false,
-			}
-		}))
+		instance = Roact.update(
+			instance,
+			Roact.createElement(RobloxSwitchView, {
+				screenProps = {},
+				navigation = testNavigation2,
+				descriptors = makeDescriptors(testNavigation2),
+				navigationConfig = {
+					keepVisitedScreensMounted = false,
+				},
+			})
+		)
 
 		expect(fooUnmounted).toEqual(true)
 

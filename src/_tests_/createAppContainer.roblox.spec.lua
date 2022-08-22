@@ -41,8 +41,10 @@ return function()
 
 		jestExpect(function()
 			Roact.mount(element)
-		end).toThrow("This navigator has both navigation and container props, " ..
-			"so it is unclear if it should own its own state")
+		end).toThrow(
+			"This navigator has both navigation and container props, "
+				.. "so it is unclear if it should own its own state"
+		)
 	end)
 
 	it("should throw when not passed a table for AppComponent", function()
@@ -50,8 +52,7 @@ return function()
 
 		jestExpect(function()
 			createAppContainer(TestAppComponent)
-		end).toThrow("AppComponent must be a navigator or a stateful Roact " ..
-			"component with a 'router' field")
+		end).toThrow("AppComponent must be a navigator or a stateful Roact " .. "component with a 'router' field")
 	end)
 
 	it("should throw when passed a stateful component without router field", function()
@@ -59,8 +60,7 @@ return function()
 
 		jestExpect(function()
 			createAppContainer(TestAppComponent)
-		end).toThrow("AppComponent must be a navigator or a stateful Roact " ..
-			"component with a 'router' field")
+		end).toThrow("AppComponent must be a navigator or a stateful Roact " .. "component with a 'router' field")
 	end)
 
 	it("should accept actions from externalDispatchConnector", function()
@@ -201,13 +201,13 @@ return function()
 			end
 			local function BarScreen(_props)
 				return Roact.createElement(UNIQUE_CLASS_NAME, {}, {
-					Bar = Roact.createElement(barElementClass)
+					Bar = Roact.createElement(barElementClass),
 				})
 			end
 
 			for url, expectedClass in pairs({
-				foo = {fooElementClass, barElementClass},
-				bar = {barElementClass, fooElementClass},
+				foo = { fooElementClass, barElementClass },
+				bar = { barElementClass, fooElementClass },
 			}) do
 				local testNavigator = createSwitchNavigator({
 					{ Foo = { screen = FooScreen, path = "foo" } },
@@ -244,7 +244,7 @@ return function()
 				return Roact.createElement(UNIQUE_CLASS_NAME, {}, {
 					[name] = Roact.createElement(barElementClass, {
 						Name = name,
-					})
+					}),
 				})
 			end
 
@@ -281,7 +281,7 @@ return function()
 			end
 			local function BarScreen(_props)
 				return Roact.createElement(UNIQUE_CLASS_NAME, {}, {
-					Bar = Roact.createElement(barElementClass)
+					Bar = Roact.createElement(barElementClass),
 				})
 			end
 

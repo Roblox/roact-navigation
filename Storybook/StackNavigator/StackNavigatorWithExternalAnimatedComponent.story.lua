@@ -39,8 +39,8 @@ return function(target)
 				[Roact.Event.Activated] = function()
 					-- Note that you can push() to force a new instance, instead!
 					navigation.navigate("Detail")
-				end
-			})
+				end,
+			}),
 		})
 	end
 
@@ -84,7 +84,7 @@ return function(target)
 				[Roact.Event.Activated] = function()
 					navigation.navigate("Master") -- jump all the way out!
 				end,
-			})
+			}),
 		})
 	end
 
@@ -122,11 +122,11 @@ return function(target)
 			local prevRouteName = prevNavigation.state.routes[prevNavigation.state.index].routeName
 
 			if indicatorFrameRef.current then
-				indicatorFrameRef.current.BackgroundColor3 = Color3.new(1-value, value, 0)
+				indicatorFrameRef.current.BackgroundColor3 = Color3.new(1 - value, value, 0)
 			end
 
 			print("Transition step from ", prevRouteName, " to ", nextRouteName, ": ", value)
-		end
+		end,
 	})
 
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)

@@ -90,7 +90,7 @@ Enter `login` to go back to the login screen.
 			}, {
 				MaxSize = Roact.createElement("UISizeConstraint", {
 					MaxSize = Vector2.new(400, math.huge),
-				})
+				}),
 			}),
 			UpdateUrl = Roact.createElement(Sheet, {
 				transparency = 0.7,

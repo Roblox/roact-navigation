@@ -17,10 +17,7 @@ setmetatable(SwitchActions, {
 
 -- Pop the top-most item off the route stack, if any.
 function SwitchActions.jumpTo(payload)
-	return Cryo.Dictionary.join(
-		{ type = JUMP_TO_TOKEN, preserveFocus = true },
-		payload or {}
-	)
+	return Cryo.Dictionary.join({ type = JUMP_TO_TOKEN, preserveFocus = true }, payload or {})
 end
 
 return SwitchActions

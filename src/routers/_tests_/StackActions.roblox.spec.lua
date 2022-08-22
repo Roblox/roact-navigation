@@ -9,7 +9,7 @@ return function()
 	it("throws when indexing an unknown field", function()
 		jestExpect(function()
 			return StackActions.foo
-		end).toThrow("\"foo\" is not a valid member of StackActions")
+		end).toThrow('"foo" is not a valid member of StackActions')
 	end)
 
 	describe("StackActions token tests", function()

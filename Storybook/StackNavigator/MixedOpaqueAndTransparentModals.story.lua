@@ -35,7 +35,7 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("OpaqueModalDialog")
-				end
+				end,
 			}),
 			showTransparentModalButton = Roact.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
@@ -48,7 +48,7 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("TransparentModalDialog")
-				end
+				end,
 			}),
 		})
 	end
@@ -147,7 +147,7 @@ return function(target)
 						navigation.goBack()
 					end,
 				}),
-			})
+			}),
 		})
 	end
 
@@ -159,7 +159,7 @@ return function(target)
 				navigationOptions = function(navProps)
 					local dialogCount = navProps.navigation.getParam("dialogCount", 0)
 					return {
-						cardColor3 = Color3.fromRGB(0, 0, 255 - 15*dialogCount),
+						cardColor3 = Color3.fromRGB(0, 0, 255 - 15 * dialogCount),
 					}
 				end,
 			},
@@ -169,7 +169,7 @@ return function(target)
 				screen = ModalDialog,
 				navigationOptions = {
 					overlayEnabled = true,
-				}
+				},
 			},
 		},
 	}, {

@@ -39,12 +39,12 @@ return function(routeConfigs, routeName)
 			local screen = routeConfig.getScreen()
 			invariant(
 				isValidScreenComponent(screen),
-				"The getScreen defined for route '%s' didn't return a valid " ..
-					"screen or navigator.\n\n" ..
-					"Please pass it like this:\n" ..
-					"%s = {\n    getScreen: function() return MyScreen end\n}",
-					routeName,
-					routeName
+				"The getScreen defined for route '%s' didn't return a valid "
+					.. "screen or navigator.\n\n"
+					.. "Please pass it like this:\n"
+					.. "%s = {\n    getScreen: function() return MyScreen end\n}",
+				routeName,
+				routeName
 			)
 			return screen
 		end

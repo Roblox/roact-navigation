@@ -36,10 +36,7 @@ local function isComponent(component)
 end
 
 return function(component)
-	assert(
-		isComponent(component),
-		"withNavigationFocus must be called with a Roact component (stateful or functional)"
-	)
+	assert(isComponent(component), "withNavigationFocus must be called with a Roact component (stateful or functional)")
 	local NavigationFocusComponent = Roact.Component:extend("NavigationFocusComponent")
 
 	function NavigationFocusComponent:init()
@@ -74,9 +71,12 @@ return function(component)
 	end
 
 	function NavigationFocusComponent:render()
-		return Roact.createElement(component, Cryo.Dictionary.join(self.props, {
-			isFocused = self.state.isFocused,
-		}))
+		return Roact.createElement(
+			component,
+			Cryo.Dictionary.join(self.props, {
+				isFocused = self.state.isFocused,
+			})
+		)
 	end
 
 	return withNavigation(NavigationFocusComponent, { forwardRef = false })

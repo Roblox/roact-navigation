@@ -8,7 +8,7 @@ local ScenesReducer = require(script.Parent.ScenesReducer)
 local invariant = require(root.utils.invariant)
 
 local DEFAULT_TRANSITION_SPEC = {
-	frequency = 4 -- Hz
+	frequency = 4, -- Hz
 }
 
 local function buildTransitionProps(props, state)
@@ -173,8 +173,7 @@ function Transitioner:_onAbsoluteSizeChanged(rbx)
 	local width = rbx.AbsoluteSize.X
 	local height = rbx.AbsoluteSize.Y
 
-	if width == self.state.layout.initWidth and
-		height == self.state.layout.initHeight then
+	if width == self.state.layout.initWidth and height == self.state.layout.initHeight then
 		return
 	end
 
@@ -196,11 +195,8 @@ function Transitioner:_onAbsoluteSizeChanged(rbx)
 end
 
 function Transitioner:_computeScenes(props, nextProps)
-	local nextScenes = ScenesReducer(
-		self.state.scenes,
-		nextProps.navigation.state,
-		props.navigation.state,
-		nextProps.descriptors)
+	local nextScenes =
+		ScenesReducer(self.state.scenes, nextProps.navigation.state, props.navigation.state, nextProps.descriptors)
 
 	if not nextProps.navigation.state.isTransitioning then
 		nextScenes = filterStale(nextScenes)
@@ -251,7 +247,6 @@ function Transitioner:_startTransition(props, nextProps)
 
 	self:setState(nextState, function()
 		if isTransitioning and indexHasChanged then
-
 			if nextProps.onTransitionStart then
 				nextProps.onTransitionStart(self._transitionProps, self._prevTransitionProps)
 			end
@@ -261,8 +256,8 @@ function Transitioner:_startTransition(props, nextProps)
 				-- get transition spec
 				local transitionUserSpec = {}
 				if nextProps.configureTransition then
-					transitionUserSpec = nextProps.configureTransition(
-						self._transitionProps, self._prevTransitionProps) or {}
+					transitionUserSpec = nextProps.configureTransition(self._transitionProps, self._prevTransitionProps)
+						or {}
 				end
 
 				local transitionSpec = Cryo.Dictionary.join(DEFAULT_TRANSITION_SPEC, transitionUserSpec)

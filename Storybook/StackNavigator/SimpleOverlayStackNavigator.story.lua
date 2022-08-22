@@ -39,8 +39,8 @@ return function(target, navigatorOptions)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("OverlayDialog")
-				end
-			})
+				end,
+			}),
 		})
 	end
 
@@ -113,7 +113,7 @@ return function(target, navigatorOptions)
 						navigation.goBack()
 					end,
 				}),
-			})
+			}),
 		})
 	end
 

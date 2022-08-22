@@ -68,7 +68,9 @@ return function()
 		{
 			bar = {
 				path = "b/:barThing",
-				screen = function() return Roact.createElement("Frame") end,
+				screen = function()
+					return Roact.createElement("Frame")
+				end,
 			},
 		},
 	})
@@ -131,8 +133,16 @@ return function()
 				return Roact.createElement("Frame")
 			end
 			local router = StackRouter({
-				{ foo = { getScreen = function() return FooScreen end } },
-				{ bar = { getScreen = function() return BarScreen end } },
+				{ foo = {
+					getScreen = function()
+						return FooScreen
+					end,
+				} },
+				{ bar = {
+					getScreen = function()
+						return BarScreen
+					end,
+				} },
 			})
 
 			jestExpect(router.getComponentForState({
@@ -196,9 +206,21 @@ return function()
 			end
 
 			local router = StackRouter({
-				{ foo = { getScreen = function() return FooScreen end } },
-				{ bar = { getScreen = function() return BarScreen end } },
-				{ baz = { getScreen = function() return BazScreen end } },
+				{ foo = {
+					getScreen = function()
+						return FooScreen
+					end,
+				} },
+				{ bar = {
+					getScreen = function()
+						return BarScreen
+					end,
+				} },
+				{ baz = {
+					getScreen = function()
+						return BazScreen
+					end,
+				} },
 			})
 
 			jestExpect(router.getComponentForRouteName("foo")).toBe(FooScreen)
@@ -223,12 +245,10 @@ return function()
 		end)
 
 		it("Parses paths with a query", function()
-			jestExpect(
-				TestStackRouter.getActionForPathAndParams("people/foo", {
-					code = "test",
-					foo = "bar",
-				})
-			).toEqual({
+			jestExpect(TestStackRouter.getActionForPathAndParams("people/foo", {
+				code = "test",
+				foo = "bar",
+			})).toEqual({
 				type = NavigationActions.Navigate,
 				routeName = "person",
 				params = {
@@ -240,12 +260,10 @@ return function()
 		end)
 
 		it("Parses paths with an empty query value", function()
-			jestExpect(
-				TestStackRouter.getActionForPathAndParams("people/foo", {
-					code = "",
-					foo = "bar",
-				})
-			).toEqual({
+			jestExpect(TestStackRouter.getActionForPathAndParams("people/foo", {
+				code = "",
+				foo = "bar",
+			})).toEqual({
 				type = NavigationActions.Navigate,
 				routeName = "person",
 				params = {
@@ -293,24 +311,27 @@ return function()
 			})
 		end)
 
-		it("Correctly parses a path to the router connected to another router "
-				.. "through a pure wildcard route into an action chain", function()
-			local uri = "b/123"
-			local action = TestStackRouter.getActionForPathAndParams(uri)
+		it(
+			"Correctly parses a path to the router connected to another router "
+				.. "through a pure wildcard route into an action chain",
+			function()
+				local uri = "b/123"
+				local action = TestStackRouter.getActionForPathAndParams(uri)
 
-			jestExpect(action).toEqual({
-				type = NavigationActions.Navigate,
-				routeName = "baz",
-				params = {},
-				action = {
+				jestExpect(action).toEqual({
 					type = NavigationActions.Navigate,
-					routeName = "bar",
-					params = {
-						barThing = "123",
+					routeName = "baz",
+					params = {},
+					action = {
+						type = NavigationActions.Navigate,
+						routeName = "bar",
+						params = {
+							barThing = "123",
+						},
 					},
-				},
-			})
-		end)
+				})
+			end
+		)
 
 		it("Correctly returns null action for non-existent path", function()
 			local uri = "asdf/1234"
@@ -358,12 +379,24 @@ return function()
 			end
 
 			Bar.router = StackRouter({
-				{ baz = { screen = function() return Roact.createElement("Frame") end } },
-				{ qux = { screen = function() return Roact.createElement("Frame") end } },
+				{ baz = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ qux = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 
 			local TestRouter = StackRouter({
-				{ foo = { screen = function() return Roact.createElement("Frame") end } },
+				{ foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 				{ bar = { screen = Bar } },
 			})
 			local initState = TestRouter.getStateForAction(NavigationActions.init())
@@ -375,10 +408,8 @@ return function()
 				routes = { { key = "id-0", routeName = "foo" } },
 			})
 
-			local pushedState = TestRouter.getStateForAction(
-				NavigationActions.navigate({ routeName = "qux" }),
-				initState
-			)
+			local pushedState =
+				TestRouter.getStateForAction(NavigationActions.navigate({ routeName = "qux" }), initState)
 
 			jestExpect(pushedState.index).toEqual(2)
 			jestExpect(pushedState.routes[2].index).toEqual(2)
@@ -392,20 +423,33 @@ return function()
 			end
 
 			ChildNavigator.router = StackRouter({
-				{ Baz = { screen = function() return Roact.createElement("Frame") end } },
-				{ Qux = { screen = function() return Roact.createElement("Frame") end } },
+				{ Baz = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ Qux = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 
 			local router = StackRouter({
-				{ Foo = { screen = function() return Roact.createElement("Frame") end } },
+				{ Foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 				{ Bar = { screen = ChildNavigator } },
-				{ Bad = { screen = function() return Roact.createElement("Frame") end } },
+				{ Bad = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local state = router.getStateForAction({ type = NavigationActions.Init })
-			local state2 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Bar" },
-				state
-			)
+			local state2 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Bar" }, state)
 			local state3 = router.getStateForAction({
 				type = StackActions.Push,
 				routeName = "Bad",
@@ -423,12 +467,24 @@ return function()
 			end
 
 			ChildNavigator.router = StackRouter({
-				{ Baz = { screen = function() return Roact.createElement("Frame") end } },
-				{ Qux = { screen = function() return Roact.createElement("Frame") end } },
+				{ Baz = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ Qux = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 
 			local router = StackRouter({
-				{ Foo = { screen = function() return Roact.createElement("Frame") end } },
+				{ Foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 				{ Bar = { screen = ChildNavigator } },
 			})
 			local state = router.getStateForAction({ type = NavigationActions.Init })
@@ -479,20 +535,29 @@ return function()
 			end
 
 			ChildNavigator.router = StackRouter({
-				{ Baz = { screen = function() return Roact.createElement("Frame") end } },
-				{ Qux = { screen = function() return Roact.createElement("Frame") end } },
+				{ Baz = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ Qux = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 
 			local router = StackRouter({
-				{ Foo = { screen = function() return Roact.createElement("Frame") end } },
+				{ Foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 				{ Bar = { screen = ChildNavigator } },
 			})
 
 			local state = router.getStateForAction({ type = NavigationActions.Init })
-			local state2 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Bar" },
-				state
-			)
+			local state2 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Bar" }, state)
 			local state3 = router.getStateForAction({ type = StackActions.PopToTop }, state2)
 
 			jestExpect(state3 and state3.index).toEqual(1)
@@ -506,20 +571,29 @@ return function()
 			end
 
 			ChildNavigator.router = StackRouter({
-				{ Baz = { screen = function() return Roact.createElement("Frame") end } },
-				{ Qux = { screen = function() return Roact.createElement("Frame") end } },
+				{ Baz = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ Qux = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 
 			local router = StackRouter({
-				{ Foo = { screen = function() return Roact.createElement("Frame") end } },
+				{ Foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 				{ Bar = { screen = ChildNavigator } },
 			})
 
 			local state = router.getStateForAction({ type = NavigationActions.Init })
-			local state2 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Bar" },
-				state
-			)
+			local state2 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Bar" }, state)
 			local state3 = router.getStateForAction({
 				type = StackActions.PopToTop,
 				key = state2.key,
@@ -530,8 +604,16 @@ return function()
 
 		it("pop action works as expected", function()
 			local TestRouter = StackRouter({
-				{ foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local state = {
 				index = 4,
@@ -549,26 +631,18 @@ return function()
 			jestExpect(poppedState.index).toBe(3)
 			jestExpect(poppedState.isTransitioning).toBe(true)
 
-			local poppedState2 = TestRouter.getStateForAction(
-				StackActions.pop({ n = 2, immediate = true }),
-				state
-			)
+			local poppedState2 = TestRouter.getStateForAction(StackActions.pop({ n = 2, immediate = true }), state)
 
 			jestExpect(#poppedState2.routes).toBe(2)
 			jestExpect(poppedState2.index).toBe(2)
 			jestExpect(poppedState2.isTransitioning).toBe(false)
 
-			local poppedState3 = TestRouter.getStateForAction(
-				StackActions.pop({ n = 5 }),
-				state
-			)
+			local poppedState3 = TestRouter.getStateForAction(StackActions.pop({ n = 5 }), state)
 			jestExpect(#poppedState3.routes).toBe(1)
 			jestExpect(poppedState3.index).toBe(1)
 			jestExpect(poppedState3.isTransitioning).toBe(true)
-			local poppedState4 = TestRouter.getStateForAction(
-				StackActions.pop({ key = "C", prune = false, immediate = true }),
-				state
-			)
+			local poppedState4 =
+				TestRouter.getStateForAction(StackActions.pop({ key = "C", prune = false, immediate = true }), state)
 
 			jestExpect(#poppedState4.routes).toBe(3)
 			jestExpect(poppedState4.index).toBe(3)
@@ -579,11 +653,14 @@ return function()
 				{ key = "D", routeName = "bar" },
 			})
 
-			local poppedState5 = TestRouter.getStateForAction(StackActions.pop({
-				n = 2,
-				key = "C",
-				prune = false,
-			}), state)
+			local poppedState5 = TestRouter.getStateForAction(
+				StackActions.pop({
+					n = 2,
+					key = "C",
+					prune = false,
+				}),
+				state
+			)
 
 			jestExpect(#poppedState5.routes).toBe(2)
 			jestExpect(poppedState5.index).toBe(2)
@@ -596,8 +673,16 @@ return function()
 
 		it("popToTop works as expected", function()
 			local TestRouter = StackRouter({
-				{ foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local state = {
 				index = 2,
@@ -618,10 +703,8 @@ return function()
 
 			jestExpect(poppedState).toEqual(poppedState2)
 
-			local poppedImmediatelyState = TestRouter.getStateForAction(
-				StackActions.popToTop({ immediate = true }),
-				state
-			)
+			local poppedImmediatelyState =
+				TestRouter.getStateForAction(StackActions.popToTop({ immediate = true }), state)
 
 			jestExpect(#poppedImmediatelyState.routes).toBe(1)
 			jestExpect(poppedImmediatelyState.index).toBe(1)
@@ -630,57 +713,64 @@ return function()
 
 		it("Navigate does not push duplicate routeName", function()
 			local TestRouter = StackRouter({
-				{ foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			}, {
 				initialRouteName = "foo",
 			})
 			local initState = TestRouter.getStateForAction(NavigationActions.init())
-			local barState = TestRouter.getStateForAction(
-				NavigationActions.navigate({ routeName = "bar" }),
-				initState
-			)
+			local barState = TestRouter.getStateForAction(NavigationActions.navigate({ routeName = "bar" }), initState)
 
 			jestExpect(barState.index).toEqual(2)
 			jestExpect(barState.routes[2].routeName).toEqual("bar")
 
-			local navigateOnBarState = TestRouter.getStateForAction(
-				NavigationActions.navigate({ routeName = "bar" }),
-				barState
-			)
+			local navigateOnBarState =
+				TestRouter.getStateForAction(NavigationActions.navigate({ routeName = "bar" }), barState)
 
 			jestExpect(navigateOnBarState).toEqual(nil)
 		end)
 
 		it("Navigate focuses given routeName if already active in stack", function()
 			local TestRouter = StackRouter({
-				{ foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 				{
 					baz = {
-						screen = function() return Roact.createElement("Frame") end,
+						screen = function()
+							return Roact.createElement("Frame")
+						end,
 					},
 				},
 			}, {
 				initialRouteName = "foo",
 			})
 			local initialState = TestRouter.getStateForAction(NavigationActions.init())
-			local fooBarState = TestRouter.getStateForAction(
-				NavigationActions.navigate({ routeName = "bar" }),
-				initialState
-			)
-			local fooBarBazState = TestRouter.getStateForAction(
-				NavigationActions.navigate({ routeName = "baz" }),
-				fooBarState
-			)
+			local fooBarState =
+				TestRouter.getStateForAction(NavigationActions.navigate({ routeName = "bar" }), initialState)
+			local fooBarBazState =
+				TestRouter.getStateForAction(NavigationActions.navigate({ routeName = "baz" }), fooBarState)
 
 			jestExpect(fooBarBazState.index).toEqual(3)
 			jestExpect(fooBarBazState.routes[3].routeName).toEqual("baz")
 
-			local fooState = TestRouter.getStateForAction(
-				NavigationActions.navigate({ routeName = "foo" }),
-				fooBarBazState
-			)
+			local fooState =
+				TestRouter.getStateForAction(NavigationActions.navigate({ routeName = "foo" }), fooBarBazState)
 
 			jestExpect(fooState.index).toEqual(1)
 			jestExpect(#fooState.routes).toEqual(1)
@@ -689,14 +779,20 @@ return function()
 
 		it("Navigate pushes duplicate routeName if unique key is provided", function()
 			local TestRouter = StackRouter({
-				{ foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local initState = TestRouter.getStateForAction(NavigationActions.init())
-			local pushedState = TestRouter.getStateForAction(
-				NavigationActions.navigate({ routeName = "bar" }),
-				initState
-			)
+			local pushedState =
+				TestRouter.getStateForAction(NavigationActions.navigate({ routeName = "bar" }), initState)
 
 			jestExpect(pushedState.index).toEqual(2)
 			jestExpect(pushedState.routes[2].routeName).toEqual("bar")
@@ -717,8 +813,16 @@ return function()
 			end
 
 			GrandChildNavigator.router = StackRouter({
-				{ Quux = { screen = function() return Roact.createElement("Frame") end } },
-				{ Corge = { screen = function() return Roact.createElement("Frame") end } },
+				{ Quux = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ Corge = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 
 			local ChildNavigator = Roact.Component:extend("ChildNavigator")
@@ -727,20 +831,29 @@ return function()
 			end
 
 			ChildNavigator.router = StackRouter({
-				{ Baz = { screen = function() return Roact.createElement("Frame") end } },
-				{ Woo = { screen = function() return Roact.createElement("Frame") end } },
+				{ Baz = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ Woo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 				{ Qux = { screen = GrandChildNavigator } },
 			})
 			local Parent = StackRouter({
-				{ Foo = { screen = function() return Roact.createElement("Frame") end } },
+				{ Foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 				{ Bar = { screen = ChildNavigator } },
 			})
 
 			local state = Parent.getStateForAction({ type = NavigationActions.Init })
-			local state2 = Parent.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Corge" },
-				state
-			)
+			local state2 = Parent.getStateForAction({ type = NavigationActions.Navigate, routeName = "Corge" }, state)
 
 			jestExpect(state2.isTransitioning).toEqual(true)
 			jestExpect(state2.index).toEqual(2)
@@ -751,38 +864,48 @@ return function()
 
 		it("Navigate to initial screen is possible", function()
 			local TestRouter = StackRouter({
-				{ foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			}, {
 				initialRouteKey = "foo",
 			})
 			local initState = TestRouter.getStateForAction(NavigationActions.init())
-			local pushedState = TestRouter.getStateForAction(
-				NavigationActions.navigate({ routeName = "foo", key = "foo" }),
-				initState
-			)
+			local pushedState =
+				TestRouter.getStateForAction(NavigationActions.navigate({ routeName = "foo", key = "foo" }), initState)
 
 			jestExpect(pushedState).toEqual(nil)
 		end)
 
 		it("Navigate with key and without it is idempotent", function()
 			local TestRouter = StackRouter({
-				{ foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local initState = TestRouter.getStateForAction(NavigationActions.init())
-			local pushedState = TestRouter.getStateForAction(
-				NavigationActions.navigate({ routeName = "bar", key = "a" }),
-				initState
-			)
+			local pushedState =
+				TestRouter.getStateForAction(NavigationActions.navigate({ routeName = "bar", key = "a" }), initState)
 
 			jestExpect(pushedState.index).toEqual(2)
 			jestExpect(pushedState.routes[2].routeName).toEqual("bar")
 
-			local pushedTwiceState = TestRouter.getStateForAction(
-				NavigationActions.navigate({ routeName = "bar", key = "a" }),
-				pushedState
-			)
+			local pushedTwiceState =
+				TestRouter.getStateForAction(NavigationActions.navigate({ routeName = "bar", key = "a" }), pushedState)
 
 			jestExpect(pushedTwiceState).toEqual(nil)
 		end)
@@ -795,8 +918,16 @@ return function()
 			end
 
 			FirstChildNavigator.router = StackRouter({
-				{ First1 = function() return Roact.createElement("Frame") end },
-				{ First2 = function() return Roact.createElement("Frame") end },
+				{
+					First1 = function()
+						return Roact.createElement("Frame")
+					end,
+				},
+				{
+					First2 = function()
+						return Roact.createElement("Frame")
+					end,
+				},
 			})
 
 			local SecondChildNavigator = Roact.Component:extend("SecondChildNavigator")
@@ -805,24 +936,30 @@ return function()
 			end
 
 			SecondChildNavigator.router = StackRouter({
-				{ Second1 = function() return Roact.createElement("Frame") end },
-				{ Second2 = function() return Roact.createElement("Frame") end },
+				{
+					Second1 = function()
+						return Roact.createElement("Frame")
+					end,
+				},
+				{
+					Second2 = function()
+						return Roact.createElement("Frame")
+					end,
+				},
 			})
 
 			local router = StackRouter({
-				{ Leaf = function() return Roact.createElement("Frame") end },
+				{
+					Leaf = function()
+						return Roact.createElement("Frame")
+					end,
+				},
 				{ First = FirstChildNavigator },
 				{ Second = SecondChildNavigator },
 			})
 			local state = router.getStateForAction({ type = NavigationActions.Init })
-			local first = router.getStateForAction(
-				NavigationActions.navigate({ routeName = "First2" }),
-				state
-			)
-			local second = router.getStateForAction(
-				NavigationActions.navigate({ routeName = "Second2" }),
-				first
-			)
+			local first = router.getStateForAction(NavigationActions.navigate({ routeName = "First2" }), state)
+			local second = router.getStateForAction(NavigationActions.navigate({ routeName = "Second2" }), first)
 			local firstAgain = router.getStateForAction(
 				NavigationActions.navigate({ routeName = "First2", params = { debug = true } }),
 				second
@@ -839,28 +976,39 @@ return function()
 
 		it("Navigate to current routeName returns null to indicate handled action", function()
 			local TestRouter = StackRouter({
-				{ foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local initState = TestRouter.getStateForAction(NavigationActions.init())
-			local navigatedState = TestRouter.getStateForAction(
-				NavigationActions.navigate({ routeName = "foo" }),
-				initState
-			)
+			local navigatedState =
+				TestRouter.getStateForAction(NavigationActions.navigate({ routeName = "foo" }), initState)
 
 			jestExpect(navigatedState).toBe(nil)
 		end)
 
 		it("Push behaves like navigate, except for key", function()
 			local TestRouter = StackRouter({
-				{ foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local initState = TestRouter.getStateForAction(NavigationActions.init())
-			local pushedState = TestRouter.getStateForAction(
-				StackActions.push({ routeName = "bar" }),
-				initState
-			)
+			local pushedState = TestRouter.getStateForAction(StackActions.push({ routeName = "bar" }), initState)
 
 			jestExpect(pushedState.index).toEqual(2)
 			jestExpect(pushedState.routes[2].routeName).toEqual("bar")
@@ -875,21 +1023,29 @@ return function()
 
 		it("Push adds new routes every time", function()
 			local TestRouter = StackRouter({
-				{ foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local initState = TestRouter.getStateForAction(NavigationActions.init())
-			local pushedState = TestRouter.getStateForAction(
-				StackActions.push({ routeName = "bar" }),
-				initState
-			)
+			local pushedState = TestRouter.getStateForAction(StackActions.push({ routeName = "bar" }), initState)
 
 			jestExpect(pushedState.index).toEqual(2)
 			jestExpect(pushedState.routes[2].routeName).toEqual("bar")
 
-			local secondPushedState = TestRouter.getStateForAction(StackActions.push({
-				routeName = "bar",
-			}), pushedState)
+			local secondPushedState = TestRouter.getStateForAction(
+				StackActions.push({
+					routeName = "bar",
+				}),
+				pushedState
+			)
 
 			jestExpect(secondPushedState.index).toEqual(3)
 			jestExpect(secondPushedState.routes[3].routeName).toEqual("bar")
@@ -897,18 +1053,22 @@ return function()
 
 		it("Navigate backwards with key removes leading routes", function()
 			local TestRouter = StackRouter({
-				{ foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local initState = TestRouter.getStateForAction(NavigationActions.init())
-			local pushedState = TestRouter.getStateForAction(
-				NavigationActions.navigate({ routeName = "bar", key = "a" }),
-				initState
-			)
-			local pushedTwiceState = TestRouter.getStateForAction(
-				NavigationActions.navigate({ routeName = "bar", key = "b`" }),
-				pushedState
-			)
+			local pushedState =
+				TestRouter.getStateForAction(NavigationActions.navigate({ routeName = "bar", key = "a" }), initState)
+			local pushedTwiceState =
+				TestRouter.getStateForAction(NavigationActions.navigate({ routeName = "bar", key = "b`" }), pushedState)
 			local pushedThriceState = TestRouter.getStateForAction(
 				NavigationActions.navigate({ routeName = "foo", key = "c`" }),
 				pushedTwiceState
@@ -916,10 +1076,13 @@ return function()
 
 			jestExpect(#pushedThriceState.routes).toEqual(4)
 
-			local navigatedBackToFirstRouteState = TestRouter.getStateForAction(NavigationActions.navigate({
-				routeName = "foo",
-				key = pushedThriceState.routes[1].key,
-			}), pushedThriceState)
+			local navigatedBackToFirstRouteState = TestRouter.getStateForAction(
+				NavigationActions.navigate({
+					routeName = "foo",
+					key = pushedThriceState.routes[1].key,
+				}),
+				pushedThriceState
+			)
 
 			jestExpect(navigatedBackToFirstRouteState.index).toEqual(1)
 			jestExpect(#navigatedBackToFirstRouteState.routes).toEqual(1)
@@ -959,10 +1122,7 @@ return function()
 			jestExpect(state2.routes[2].params).toEqual({ name = "Zoom" })
 			jestExpect(#state2.routes).toEqual(2)
 
-			local state3 = router.getStateForAction(
-				{ type = NavigationActions.Back, immediate = true },
-				state2
-			)
+			local state3 = router.getStateForAction({ type = NavigationActions.Back, immediate = true }, state2)
 
 			jestExpect(state3).toEqual({
 				index = 1,
@@ -976,17 +1136,26 @@ return function()
 
 		it("Replace action works", function()
 			local TestRouter = StackRouter({
-				{ foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
-			local initState = TestRouter.getStateForAction(
-				NavigationActions.navigate({ routeName = "foo" })
+			local initState = TestRouter.getStateForAction(NavigationActions.navigate({ routeName = "foo" }))
+			local replacedState = TestRouter.getStateForAction(
+				StackActions.replace({
+					routeName = "bar",
+					params = { meaning = 42 },
+					key = initState.routes[1].key,
+				}),
+				initState
 			)
-			local replacedState = TestRouter.getStateForAction(StackActions.replace({
-				routeName = "bar",
-				params = { meaning = 42 },
-				key = initState.routes[1].key,
-			}), initState)
 
 			jestExpect(replacedState.index).toEqual(1)
 			jestExpect(#replacedState.routes).toEqual(1)
@@ -994,11 +1163,14 @@ return function()
 			jestExpect(replacedState.routes[1].routeName).toEqual("bar")
 			jestExpect(replacedState.routes[1].params.meaning).toEqual(42)
 
-			local replacedState2 = TestRouter.getStateForAction(StackActions.replace({
-				routeName = "bar",
-				key = initState.routes[1].key,
-				newKey = "wow",
-			}), initState)
+			local replacedState2 = TestRouter.getStateForAction(
+				StackActions.replace({
+					routeName = "bar",
+					key = initState.routes[1].key,
+					newKey = "wow",
+				}),
+				initState
+			)
 
 			jestExpect(replacedState2.index).toEqual(1)
 			jestExpect(#replacedState2.routes).toEqual(1)
@@ -1013,9 +1185,21 @@ return function()
 			end
 
 			GrandChildNavigator.router = StackRouter({
-				{ Quux = { screen = function() return Roact.createElement("Frame") end } },
-				{ Corge = { screen = function() return Roact.createElement("Frame") end } },
-				{ Grault = { screen = function() return Roact.createElement("Frame") end } },
+				{ Quux = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ Corge = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ Grault = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 
 			local ChildNavigator = Roact.Component:extend("ChildNavigator")
@@ -1024,36 +1208,34 @@ return function()
 			end
 
 			ChildNavigator.router = StackRouter({
-				{ Baz = { screen = function() return Roact.createElement("Frame") end } },
-				{ Woo = { screen = function() return Roact.createElement("Frame") end } },
+				{ Baz = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ Woo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 				{ Qux = { screen = GrandChildNavigator } },
 			})
 
 			local router = StackRouter({
-				{ Foo = { screen = function() return Roact.createElement("Frame") end } },
+				{ Foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 				{ Bar = { screen = ChildNavigator } },
 			})
 			local state = router.getStateForAction({ type = NavigationActions.Init })
-			local state2 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Bar" },
-				state
-			)
-			local state3 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Qux" },
-				state2
-			)
-			local state4 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Corge" },
-				state3
-			)
-			local state5 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Grault" },
-				state4
-			)
-			local replacedState = router.getStateForAction(
-				StackActions.replace({ routeName = "Woo", params = { meaning = 42 } }),
-				state5
-			)
+			local state2 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Bar" }, state)
+			local state3 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Qux" }, state2)
+			local state4 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Corge" }, state3)
+			local state5 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Grault" }, state4)
+			local replacedState =
+				router.getStateForAction(StackActions.replace({ routeName = "Woo", params = { meaning = 42 } }), state5)
 			local originalCurrentScreen = state5.routes[2].routes[2].routes[3]
 			local replacedCurrentScreen = replacedState.routes[2].routes[2].routes[3]
 
@@ -1161,14 +1343,30 @@ return function()
 			end
 
 			Bar.router = StackRouter({
-				{ baz = { screen = function() return Roact.createElement("Frame") end } },
-				{ qux = { screen = function() return Roact.createElement("Frame") end } },
+				{ baz = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ qux = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 
 			local TestRouter = StackRouter({
-				{ foo = { screen = function() return Roact.createElement("Frame") end } },
+				{ foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 				{ bar = { screen = Bar } },
-				{ boo = { screen = function() return Roact.createElement("Frame") end } },
+				{ boo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local state = {
 				key = "top",
@@ -1204,7 +1402,11 @@ return function()
 			end
 
 			BarScreen.router = StackRouter({
-				{ Xyz = { screen = function() return nil end } },
+				{ Xyz = {
+					screen = function()
+						return nil
+					end,
+				} },
 			})
 
 			local router = StackRouter({
@@ -1234,10 +1436,7 @@ return function()
 			jestExpect(state2 and state2.routes[2].params).toEqual({ name = "Zoom" })
 			jestExpect(state2 and #state2.routes).toEqual(2)
 
-			local state3 = router.getStateForAction(
-				{ type = NavigationActions.Back, immediate = true },
-				state2
-			)
+			local state3 = router.getStateForAction({ type = NavigationActions.Back, immediate = true }, state2)
 
 			jestExpect(state3).toEqual({
 				index = 1,
@@ -1444,19 +1643,28 @@ return function()
 
 		it("Handles the SetParams action", function()
 			local router = StackRouter({
-				{ Foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ Bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ Foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ Bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			}, {
 				initialRouteName = "Bar",
 				initialRouteParams = { name = "Zoo" },
 			})
 			local state = router.getStateForAction({ type = NavigationActions.Init })
 			local key = state and state.routes[1].key
-			local state2 = key and router.getStateForAction({
-				type = NavigationActions.SetParams,
-				params = { name = "Qux" },
-				key = key,
-			}, state)
+			local state2 = key
+				and router.getStateForAction({
+					type = NavigationActions.SetParams,
+					params = { name = "Qux" },
+					key = key,
+				}, state)
 
 			jestExpect(state2 and state2.index).toEqual(1)
 			jestExpect(state2 and state2.routes[1].params).toEqual({ name = "Qux" })
@@ -1464,8 +1672,16 @@ return function()
 
 		it("Handles the SetParams action for inactive routes", function()
 			local router = StackRouter({
-				{ Foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ Bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ Foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ Bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			}, {
 				initialRouteName = "Bar",
 				initialRouteParams = { name = "Zoo" },
@@ -1503,13 +1719,25 @@ return function()
 			end
 
 			ChildNavigator.router = StackRouter({
-				{ Baz = { screen = function() return Roact.createElement("Frame") end } },
-				{ Qux = { screen = function() return Roact.createElement("Frame") end } },
+				{ Baz = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ Qux = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 
 			local router = StackRouter({
 				{ Foo = { screen = ChildNavigator } },
-				{ Bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ Bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local state = router.getStateForAction({ type = NavigationActions.Init })
 			local state2 = router.getStateForAction({
@@ -1530,8 +1758,16 @@ return function()
 
 		it("Handles the reset action", function()
 			local router = StackRouter({
-				{ Foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ Bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ Foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ Bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local state = router.getStateForAction({ type = NavigationActions.Init })
 			local state2 = router.getStateForAction({
@@ -1560,8 +1796,16 @@ return function()
 
 		it("Handles the reset action only with correct key set", function()
 			local router = StackRouter({
-				{ Foo = { screen = function() return Roact.createElement("Frame") end } },
-				{ Bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ Foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
+				{ Bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local state1 = router.getStateForAction({ type = NavigationActions.Init })
 			local resetAction = {
@@ -1586,10 +1830,7 @@ return function()
 
 			jestExpect(state2).toEqual(state1)
 
-			local state3 = router.getStateForAction(
-				Cryo.Dictionary.join(resetAction, { key = state2.key }),
-				state2
-			)
+			local state3 = router.getStateForAction(Cryo.Dictionary.join(resetAction, { key = state2.key }), state2)
 
 			jestExpect(state3 and state3.index).toEqual(2)
 			jestExpect(state3 and state3.routes[1].params).toEqual({ bar = "42" })
@@ -1599,7 +1840,11 @@ return function()
 
 		it("Handles the reset action with nested Router", function()
 			local ChildRouter = StackRouter({
-				{ baz = { screen = function() return Roact.createElement("Frame") end } },
+				{ baz = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local ChildNavigator = Roact.Component:extend("ChildNavigator")
 			function ChildNavigator:render()
@@ -1610,7 +1855,11 @@ return function()
 
 			local router = StackRouter({
 				{ Foo = { screen = ChildNavigator } },
-				{ Bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ Bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local state = router.getStateForAction({ type = NavigationActions.Init })
 			local state2 = router.getStateForAction({
@@ -1633,7 +1882,11 @@ return function()
 
 		it("Handles the reset action with a key", function()
 			local ChildRouter = StackRouter({
-				{ baz = { screen = function() return Roact.createElement("Frame") end } },
+				{ baz = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local ChildNavigator = Roact.Component:extend("ChildNavigator")
 			function ChildNavigator:render()
@@ -1644,7 +1897,11 @@ return function()
 
 			local router = StackRouter({
 				{ Foo = { screen = ChildNavigator } },
-				{ Bar = { screen = function() return Roact.createElement("Frame") end } },
+				{ Bar = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 			local state = router.getStateForAction({ type = NavigationActions.Init })
 			local state2 = router.getStateForAction({
@@ -1693,30 +1950,35 @@ return function()
 			end
 
 			ChildNavigator.router = StackRouter({
-				{ Baz = { screen = function() return Roact.createElement("Frame") end } },
+				{ Baz = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 
 			local router = StackRouter({
-				{ Foo = { screen = function() return Roact.createElement("Frame") end } },
+				{ Foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 				{ Bar = { screen = ChildNavigator } },
 			})
 			local state = router.getStateForAction({ type = NavigationActions.Init })
-			local state2 = router.getStateForAction(
-				{
-					type = NavigationActions.Navigate,
-					immediate = true,
-					routeName = "Bar",
-					params = { foo = "42" },
-				},
-				state
-			)
+			local state2 = router.getStateForAction({
+				type = NavigationActions.Navigate,
+				immediate = true,
+				routeName = "Bar",
+				params = { foo = "42" },
+			}, state)
 
 			jestExpect(state2 and state2.routes[2].params).toEqual({ foo = "42" })
 			jestExpect(state2 and state2.routes[2].routes).toEqual({
 				jestExpect.objectContaining({
 					routeName = "Baz",
 					params = { foo = "42" },
-				})
+				}),
 			})
 		end)
 
@@ -1727,25 +1989,27 @@ return function()
 			end
 
 			ChildNavigator.router = StackRouter({
-				{ Baz = { screen = function() return Roact.createElement("Frame") end } },
+				{ Baz = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
 
 			local router = StackRouter({
 				{ Bar = { screen = ChildNavigator } },
-				{ Foo = { screen = function() return Roact.createElement("Frame") end } },
+				{ Foo = {
+					screen = function()
+						return Roact.createElement("Frame")
+					end,
+				} },
 			})
-			local state = router.getStateForAction(
-				{
-					type = NavigationActions.Navigate,
-					immediate = true,
-					routeName = "Foo",
-				},
-				router.getStateForAction({ type = NavigationActions.Init })
-			)
-			local state2 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Baz" },
-				state
-			)
+			local state = router.getStateForAction({
+				type = NavigationActions.Navigate,
+				immediate = true,
+				routeName = "Foo",
+			}, router.getStateForAction({ type = NavigationActions.Init }))
+			local state2 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Baz" }, state)
 
 			jestExpect(state2.index).toEqual(1)
 			jestExpect(state2.isTransitioning).toEqual(true)
@@ -1881,10 +2145,7 @@ return function()
 			jestExpect(state and state.routes[1].routeName).toEqual("Foo")
 
 			local key = state and state.routes[1].key
-			local state2 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Baz" },
-				state
-			)
+			local state2 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Baz" }, state)
 
 			jestExpect(state2.index).toEqual(1)
 			jestExpect(state2.isTransitioning).toEqual(false)
@@ -1929,10 +2190,7 @@ return function()
 
 			jestExpect(state.routes[state.index].routeName).toEqual("Baz")
 
-			local state2 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Bar" },
-				state
-			)
+			local state2 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Bar" }, state)
 
 			jestExpect(state2.routes[state2.index].routeName).toEqual("Bar")
 
@@ -1952,10 +2210,7 @@ return function()
 			jestExpect(activeState4.routeName).toEqual("NestedStack")
 			jestExpect(activeState4.routes[activeState4.index].routeName).toEqual("Foo")
 
-			local state5 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Bar" },
-				state4
-			)
+			local state5 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Bar" }, state4)
 			local activeState5 = state5.routes[state5.index]
 
 			jestExpect(activeState5.routeName).toEqual("NestedStack")
@@ -1996,21 +2251,13 @@ return function()
 
 			jestExpect(state.routes[state.index].routeName).toEqual("OtherNestedStack")
 
-			local state2 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Bar" },
-				state
-			)
+			local state2 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Bar" }, state)
 
 			jestExpect(state2.routes[state2.index].routeName).toEqual("Bar")
 
-			local state3 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "NestedStack" },
-				state2
-			)
-			local state4 = router.getStateForAction(
-				{ type = NavigationActions.Navigate, routeName = "Bar" },
-				state3
-			)
+			local state3 =
+				router.getStateForAction({ type = NavigationActions.Navigate, routeName = "NestedStack" }, state2)
+			local state4 = router.getStateForAction({ type = NavigationActions.Navigate, routeName = "Bar" }, state3)
 			local activeState4 = state4.routes[state4.index]
 
 			jestExpect(activeState4.routeName).toEqual("NestedStack")

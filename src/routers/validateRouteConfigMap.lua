@@ -42,10 +42,9 @@ return function(routeConfigs)
 
 		local tableRouteConfig = type(routeConfig) == "table"
 		invariant(
-			isValidScreenComponent(screenComponent) or
-				(tableRouteConfig and type(routeConfig.getScreen) == "function"),
-			"The component for route '%s' must be a Roact component or table with 'getScreen'." ..
-				[[ For example:
+			isValidScreenComponent(screenComponent) or (tableRouteConfig and type(routeConfig.getScreen) == "function"),
+			"The component for route '%s' must be a Roact component or table with 'getScreen'."
+				.. [[ For example:
 
 local MyScreen = require(script.Parent.MyScreen)
 ...

@@ -41,16 +41,14 @@ return function()
 
 			it("setParams clears individual params using RoactNavigation.None", function()
 				local state0 = router.getStateForAction(
-					NavigationActions.setParams({ params = {foo = 42}, key = initRoute.key }),
+					NavigationActions.setParams({ params = { foo = 42 }, key = initRoute.key }),
 					initState
 				)
 
-				jestExpect(state0.routes[state0.index]).toEqual(
-					jestExpect.objectContaining({ params = { foo = 42 } })
-				)
+				jestExpect(state0.routes[state0.index]).toEqual(jestExpect.objectContaining({ params = { foo = 42 } }))
 
 				local state1 = router.getStateForAction(
-					NavigationActions.setParams({ params = {foo = RoactNavigation.None}, key = initRoute.key }),
+					NavigationActions.setParams({ params = { foo = RoactNavigation.None }, key = initRoute.key }),
 					state0
 				)
 
@@ -59,7 +57,7 @@ return function()
 
 			it("navigate clears individual params using RoactNavigation.None", function()
 				local state0 = router.getStateForAction(
-					NavigationActions.setParams({ params = {foo = 10, bar = 20}, key = initRoute.key }),
+					NavigationActions.setParams({ params = { foo = 10, bar = 20 }, key = initRoute.key }),
 					initState
 				)
 
@@ -68,24 +66,20 @@ return function()
 				)
 
 				local state1 = router.getStateForAction(
-					NavigationActions.navigate({ params = {bar = RoactNavigation.None}, routeName = "Foo" }),
+					NavigationActions.navigate({ params = { bar = RoactNavigation.None }, routeName = "Foo" }),
 					state0
 				)
 
-				jestExpect(state1.routes[state1.index]).toEqual(
-					jestExpect.objectContaining({ params = { foo = 10 } })
-				)
+				jestExpect(state1.routes[state1.index]).toEqual(jestExpect.objectContaining({ params = { foo = 10 } }))
 			end)
 
 			it("setParams removes entire params with RoactNavigation.None", function()
 				local state0 = router.getStateForAction(
-					NavigationActions.setParams({ params = {foo = 42}, key = initRoute.key }),
+					NavigationActions.setParams({ params = { foo = 42 }, key = initRoute.key }),
 					initState
 				)
 
-				jestExpect(state0.routes[state0.index]).toEqual(
-					jestExpect.objectContaining({ params = { foo = 42 } })
-				)
+				jestExpect(state0.routes[state0.index]).toEqual(jestExpect.objectContaining({ params = { foo = 42 } }))
 
 				local state1 = router.getStateForAction(
 					NavigationActions.setParams({ params = RoactNavigation.None, key = initRoute.key }),
@@ -97,7 +91,7 @@ return function()
 
 			it("navigate removes entire params with RoactNavigation.None", function()
 				local state0 = router.getStateForAction(
-					NavigationActions.setParams({ params = {foo = 10, bar = 20}, key = initRoute.key }),
+					NavigationActions.setParams({ params = { foo = 10, bar = 20 }, key = initRoute.key }),
 					initState
 				)
 
@@ -112,7 +106,6 @@ return function()
 
 				jestExpect(state1.routes[state1.index].params).toBeNil()
 			end)
-
 		end)
 	end
 
@@ -137,9 +130,7 @@ return function()
 				initState
 			)
 
-			jestExpect(state0.routes[state0.index]).toEqual(
-				jestExpect.objectContaining({ params = { foo = 42 } })
-			)
+			jestExpect(state0.routes[state0.index]).toEqual(jestExpect.objectContaining({ params = { foo = 42 } }))
 
 			local state1 = router.getStateForAction(
 				StackActions.push({
@@ -150,7 +141,6 @@ return function()
 			)
 
 			jestExpect(state1.routes[state1.index].params.foo).toBeNil()
-
 		end)
 
 		it("StackActions.push clears entire params with RoactNavigation.None", function()
@@ -162,9 +152,7 @@ return function()
 				initState
 			)
 
-			jestExpect(state0.routes[state0.index]).toEqual(
-				jestExpect.objectContaining({ params = { foo = 42 } })
-			)
+			jestExpect(state0.routes[state0.index]).toEqual(jestExpect.objectContaining({ params = { foo = 42 } }))
 
 			local state1 = router.getStateForAction(
 				StackActions.push({
@@ -177,5 +165,4 @@ return function()
 			jestExpect(state1.routes[state1.index].params).toBeNil()
 		end)
 	end)
-
 end

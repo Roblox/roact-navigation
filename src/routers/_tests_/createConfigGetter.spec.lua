@@ -12,8 +12,7 @@ return function()
 	it("should get config for screen", function()
 		local HomeScreen = Roact.Component:extend("HomeScreen")
 		HomeScreen.navigationOptions = function(props)
-			local username = props.navigation.state.params and
-				props.navigation.state.params.user or "anonymous"
+			local username = props.navigation.state.params and props.navigation.state.params.user or "anonymous"
 
 			return {
 				title = string.format("Welcome %s", username),
@@ -42,7 +41,7 @@ return function()
 
 			return {
 				title = "42",
-				gesturesEnabled = gesturesEnabled
+				gesturesEnabled = gesturesEnabled,
 			}
 		end
 
@@ -57,41 +56,33 @@ return function()
 				screen = NotificationScreen,
 				navigationOptions = {
 					title = "10 new notifications",
-				}
-			}
+				},
+			},
 		})
 
 		local routes = {
-			{ key = "A", routeName = "Home", },
-			{ key = "B", routeName = "Home", params = { user = "jane"} },
-			{ key = "C", routeName = "Settings", },
-			{ key = "D", routeName = "Notifications", },
+			{ key = "A", routeName = "Home" },
+			{ key = "B", routeName = "Home", params = { user = "jane" } },
+			{ key = "C", routeName = "Settings" },
+			{ key = "D", routeName = "Notifications" },
 			{ key = "E", routeName = "Notifications", params = { fullscreen = true } },
 		}
 
-		jestExpect(getScreenOptions({ state = routes[1] }, {}).title)
-			.toEqual("Welcome anonymous")
+		jestExpect(getScreenOptions({ state = routes[1] }, {}).title).toEqual("Welcome anonymous")
 
-		jestExpect(getScreenOptions({ state = routes[2] }, {}).title)
-			.toEqual("Welcome jane")
+		jestExpect(getScreenOptions({ state = routes[2] }, {}).title).toEqual("Welcome jane")
 
-		jestExpect(getScreenOptions({ state = routes[1] }, {}).gesturesEnabled)
-			.toEqual(true)
+		jestExpect(getScreenOptions({ state = routes[1] }, {}).gesturesEnabled).toEqual(true)
 
-		jestExpect(getScreenOptions({ state = routes[3] }, {}).title)
-			.toEqual("Settings!!!")
+		jestExpect(getScreenOptions({ state = routes[3] }, {}).title).toEqual("Settings!!!")
 
-		jestExpect(getScreenOptions({ state = routes[3] }, {}).gesturesEnabled)
-			.toEqual(false)
+		jestExpect(getScreenOptions({ state = routes[3] }, {}).gesturesEnabled).toEqual(false)
 
-		jestExpect(getScreenOptions({ state = routes[4] }, {}).title)
-			.toEqual("10 new notifications")
+		jestExpect(getScreenOptions({ state = routes[4] }, {}).title).toEqual("10 new notifications")
 
-		jestExpect(getScreenOptions({ state = routes[4] }, {}).gesturesEnabled)
-			.toEqual(true)
+		jestExpect(getScreenOptions({ state = routes[4] }, {}).gesturesEnabled).toEqual(true)
 
-		jestExpect(getScreenOptions({ state = routes[5] }, {}).gesturesEnabled)
-			.toEqual(false)
+		jestExpect(getScreenOptions({ state = routes[5] }, {}).gesturesEnabled).toEqual(false)
 	end)
 
 	it("should throw if the route does not exist", function()
@@ -106,7 +97,7 @@ return function()
 			Home = { screen = HomeScreen },
 		})
 
-		local routes = {{ key = "B", routeName = "Settings" }}
+		local routes = { { key = "B", routeName = "Settings" } }
 
 		jestExpect(function()
 			getScreenOptions({ state = routes[1] }, {})

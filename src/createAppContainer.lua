@@ -22,10 +22,10 @@ end
 local function validateProps(props)
 	if props.persistenceKey then
 		warn(
-			"You passed persistenceKey prop to a navigator. " ..
-				"The persistenceKey prop was replaced by a more flexible persistence mechanism, " ..
-				"please see the navigation state persistence docs for more information. " ..
-				"Passing the persistenceKey prop is a no-op."
+			"You passed persistenceKey prop to a navigator. "
+				.. "The persistenceKey prop was replaced by a more flexible persistence mechanism, "
+				.. "please see the navigation state persistence docs for more information. "
+				.. "Passing the persistenceKey prop is a no-op."
 		)
 	end
 	if isStateful(props) then
@@ -46,12 +46,10 @@ local function validateProps(props)
 
 	if #keys ~= 0 then
 		error(
-			"This navigator has both navigation and container props, so it is " ..
-				("unclear if it should own its own state. Remove props: %q "):format(
-					table.concat(keys, ", ")
-				) ..
-				"if the navigator should get its state from the navigation prop. If the " ..
-				"navigator should maintain its own state, do not pass a navigation prop."
+			"This navigator has both navigation and container props, so it is "
+				.. ("unclear if it should own its own state. Remove props: %q "):format(table.concat(keys, ", "))
+				.. "if the navigator should get its state from the navigation prop. If the "
+				.. "navigator should maintain its own state, do not pass a navigation prop."
 		)
 	end
 
@@ -59,8 +57,7 @@ local function validateProps(props)
 	local loadNavigationState = props.loadNavigationState
 	invariant(
 		(persistNavigationState == nil and loadNavigationState == nil)
-			or (typeof(persistNavigationState) == "function"
-					and typeof(loadNavigationState) == "function"),
+			or (typeof(persistNavigationState) == "function" and typeof(loadNavigationState) == "function"),
 		"both persistNavigationState and loadNavigationState must either be undefined, or be functions"
 	)
 end
@@ -116,8 +113,10 @@ end
 										})
 ]]
 local function createAppContainer(AppComponent, linkingProtocol)
-	invariant(type(AppComponent) == "table" and AppComponent.router ~= nil,
-		"AppComponent must be a navigator or a stateful Roact component with a 'router' field")
+	invariant(
+		type(AppComponent) == "table" and AppComponent.router ~= nil,
+		"AppComponent must be a navigator or a stateful Roact component with a 'router' field"
+	)
 
 	local containerName = string.format("NavigationContainer(%s)", tostring(AppComponent))
 	local NavigationContainer = Roact.Component:extend(containerName)
@@ -199,10 +198,7 @@ local function createAppContainer(AppComponent, linkingProtocol)
 
 	function NavigationContainer:_onNavigationStateChange(prevNav, nav, action)
 		local onNavigationStateChange = self.props.onNavigationStateChange
-		if onNavigationStateChange == nil
-			and self:_isStateful()
-			and _G.REACT_NAV_LOGGING
-		then
+		if onNavigationStateChange == nil and self:_isStateful() and _G.REACT_NAV_LOGGING then
 			-- Roblox deviation: `console.group` is always defined
 			console.group("Navigation Dispatch: ")
 			console.log("Action: ", action)
@@ -295,10 +291,7 @@ local function createAppContainer(AppComponent, linkingProtocol)
 			if urlAction then
 				-- Roblox deviation: environment based logging is not currently implemented
 				action = urlAction
-				startupState = AppComponent.router.getStateForAction(
-					urlAction,
-					startupState
-				)
+				startupState = AppComponent.router.getStateForAction(urlAction, startupState)
 			end
 		end
 
@@ -322,7 +315,7 @@ local function createAppContainer(AppComponent, linkingProtocol)
 		end
 
 		self:setState({
-			nav = startupState
+			nav = startupState,
 		}, dispatchAction)
 	end
 
@@ -496,9 +489,12 @@ local function createAppContainer(AppComponent, linkingProtocol)
 			value = navigation,
 		}, {
 			-- Provide navigation prop for top-level component so it doesn't have to connect.
-			AppComponent = Roact.createElement(AppComponent, Cryo.Dictionary.join(self.props, {
-				navigation = navigation,
-			}))
+			AppComponent = Roact.createElement(
+				AppComponent,
+				Cryo.Dictionary.join(self.props, {
+					navigation = navigation,
+				})
+			),
 		})
 	end
 

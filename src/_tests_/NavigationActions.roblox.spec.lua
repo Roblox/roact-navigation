@@ -7,7 +7,7 @@ return function()
 	it("throws when indexing an unknown field", function()
 		jestExpect(function()
 			return NavigationActions.foo
-		end).toThrow("\"foo\" is not a valid member of NavigationActions")
+		end).toThrow('"foo" is not a valid member of NavigationActions')
 	end)
 
 	describe("NavigationActions token tests", function()

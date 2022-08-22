@@ -34,26 +34,23 @@ return function()
 		end
 
 		StackA.router = StackRouter({
-			{A1 = PlainScreen},
-			{A2 = PlainScreen}
+			{ A1 = PlainScreen },
+			{ A2 = PlainScreen },
 		})
 		StackB.router = StackRouter({
-			{B1 = PlainScreen},
-			{B2 = PlainScreen}
+			{ B1 = PlainScreen },
+			{ B2 = PlainScreen },
 		})
 		StackC.router = StackRouter({
-			{C1 = PlainScreen},
-			{C2 = PlainScreen}
+			{ C1 = PlainScreen },
+			{ C2 = PlainScreen },
 		})
 
 		local router = SwitchRouter({
-			{A = {screen = StackA, path = ""}},
-			{B = {screen = StackB, path = "great/path"}},
-			{C = {screen = StackC, path = "pathC"}}
-		}, Cryo.Dictionary.join(
-			{initialRouteName = "A"},
-			config
-		))
+			{ A = { screen = StackA, path = "" } },
+			{ B = { screen = StackB, path = "great/path" } },
+			{ C = { screen = StackC, path = "pathC" } },
+		}, Cryo.Dictionary.join({ initialRouteName = "A" }, config))
 
 		return router
 	end
@@ -74,7 +71,7 @@ return function()
 		end)
 
 		it("does not reset the route on unfocus if resetOnBlur is false", function()
-			local helper = getRouterTestHelper(getExampleRouter({resetOnBlur = false}))
+			local helper = getRouterTestHelper(getExampleRouter({ resetOnBlur = false }))
 			local navigateTo = helper.navigateTo
 			local getState = helper.getState
 
@@ -155,35 +152,35 @@ return function()
 			local back = helper.back
 			local getState = helper.getState
 
-			jestExpect(getState().routeKeyHistory).toEqual({"A"})
+			jestExpect(getState().routeKeyHistory).toEqual({ "A" })
 
 			navigateTo("B")
 			jestExpect(getState().index).toEqual(2)
-			jestExpect(getState().routeKeyHistory).toEqual({"A", "B"})
+			jestExpect(getState().routeKeyHistory).toEqual({ "A", "B" })
 
 			navigateTo("A")
 			jestExpect(getState().index).toEqual(1)
-			jestExpect(getState().routeKeyHistory).toEqual({"B", "A"})
+			jestExpect(getState().routeKeyHistory).toEqual({ "B", "A" })
 
 			navigateTo("C")
 			jestExpect(getState().index).toEqual(3)
-			jestExpect(getState().routeKeyHistory).toEqual({"B", "A", "C"})
+			jestExpect(getState().routeKeyHistory).toEqual({ "B", "A", "C" })
 
 			navigateTo("A")
 			jestExpect(getState().index).toEqual(1)
-			jestExpect(getState().routeKeyHistory).toEqual({"B", "C", "A"})
+			jestExpect(getState().routeKeyHistory).toEqual({ "B", "C", "A" })
 
 			back()
 			jestExpect(getState().index).toEqual(3)
-			jestExpect(getState().routeKeyHistory).toEqual({"B", "C"})
+			jestExpect(getState().routeKeyHistory).toEqual({ "B", "C" })
 
 			back()
 			jestExpect(getState().index).toEqual(2)
-			jestExpect(getState().routeKeyHistory).toEqual({"B"})
+			jestExpect(getState().routeKeyHistory).toEqual({ "B" })
 
 			back()
 			jestExpect(getState().index).toEqual(2)
-			jestExpect(getState().routeKeyHistory).toEqual({"B"})
+			jestExpect(getState().routeKeyHistory).toEqual({ "B" })
 		end)
 
 		it("handles history backBehavior without popping routeKeyHistory when child handles action", function()
@@ -195,21 +192,21 @@ return function()
 			local getState = helper.getState
 			local getSubState = helper.getSubState
 
-			jestExpect(getState().routeKeyHistory).toEqual({"A"})
+			jestExpect(getState().routeKeyHistory).toEqual({ "A" })
 
 			navigateTo("B")
 			jestExpect(getState().index).toEqual(2)
-			jestExpect(getState().routeKeyHistory).toEqual({"A", "B"})
+			jestExpect(getState().routeKeyHistory).toEqual({ "A", "B" })
 
 			navigateTo("B2")
 			jestExpect(getState().index).toEqual(2)
-			jestExpect(getState().routeKeyHistory).toEqual({"A", "B"})
+			jestExpect(getState().routeKeyHistory).toEqual({ "A", "B" })
 			jestExpect(getSubState(2).routeName).toEqual("B2")
 
 			back()
 			jestExpect(getState().index).toEqual(2)
 			-- "B" should not be popped when the child handles the back action
-			jestExpect(getState().routeKeyHistory).toEqual({"A", "B"})
+			jestExpect(getState().routeKeyHistory).toEqual({ "A", "B" })
 			jestExpect(getSubState(2).routeName).toEqual("B1")
 		end)
 
@@ -366,20 +363,20 @@ return function()
 			end
 
 			local nestedRouter = SwitchRouter({
-				{Foo = Screen},
-				{Bar = Screen},
+				{ Foo = Screen },
+				{ Bar = Screen },
 			})
 			local otherNestedRouter = SwitchRouter({
-				{Foo = Screen},
+				{ Foo = Screen },
 			})
 
 			NestedSwitch.router = nestedRouter
 			OtherNestedSwitch.router = otherNestedRouter
 
 			local router = SwitchRouter({
-				{NestedSwitch = NestedSwitch},
-				{OtherNestedSwitch = OtherNestedSwitch},
-				{Bar = Screen}
+				{ NestedSwitch = NestedSwitch },
+				{ OtherNestedSwitch = OtherNestedSwitch },
+				{ Bar = Screen },
 			}, { initialRouteName = "OtherNestedSwitch" })
 
 			local helper = getRouterTestHelper(router)
@@ -413,19 +410,19 @@ return function()
 			end
 
 			MainStack.router = StackRouter({
-				{Home = Screen},
-				{Profile = Screen}
+				{ Home = Screen },
+				{ Profile = Screen },
 			})
 			LoginStack.router = StackRouter({
-				{Form = Screen},
-				{ForgotPassword = Screen}
+				{ Form = Screen },
+				{ ForgotPassword = Screen },
 			})
 
 			local router = SwitchRouter({
-				{Home = Screen},
-				{Login = LoginStack},
-				{Main = MainStack}
-			},{ initialRouteName = "Login" })
+				{ Home = Screen },
+				{ Login = LoginStack },
+				{ Main = MainStack },
+			}, { initialRouteName = "Login" })
 
 			local helper = getRouterTestHelper(router)
 			local navigateTo = helper.navigateTo
@@ -438,9 +435,12 @@ return function()
 		end)
 
 		it("does not error for a nested navigate action in an uninitialized history router", function()
-			local helper = getRouterTestHelper(getExampleRouter({
-				backBehavior = "history",
-			}), {skipInitializeState = true})
+			local helper = getRouterTestHelper(
+				getExampleRouter({
+					backBehavior = "history",
+				}),
+				{ skipInitializeState = true }
+			)
 			local navigateTo = helper.navigateTo
 			local getSubState = helper.getSubState
 

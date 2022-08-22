@@ -7,8 +7,7 @@ return function()
 
 	local TestComponent = Roact.Component:extend("TestFoo")
 
-	function TestComponent:render()
-	end
+	function TestComponent:render() end
 
 	it("should return true for valid element types", function()
 		-- Function Component is valid
@@ -18,7 +17,7 @@ return function()
 		expect(isValidScreenComponent({
 			render = function()
 				return TestComponent
-			end
+			end,
 		})).to.equal(true)
 		expect(isValidScreenComponent( -- we do not test if render function returns valid component
 			{ render = function() end }
@@ -33,7 +32,7 @@ return function()
 		expect(isValidScreenComponent({
 			notRender = function()
 				return "foo"
-			end
+			end,
 		})).to.equal(false)
 	end)
 end

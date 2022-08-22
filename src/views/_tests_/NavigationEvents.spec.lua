@@ -22,7 +22,7 @@ return function()
 		[Events.DidFocus] = "onDidFocus",
 		[Events.WillBlur] = "onWillBlur",
 		[Events.DidBlur] = "onDidBlur",
-	};
+	}
 
 	local function createEventListenersProp()
 		local onWillFocus, onWillFocusFn = createPropListener()
@@ -97,9 +97,7 @@ return function()
 				local navigation = helper.navigation
 				local NavigationListenersAPI = helper.NavigationListenersAPI
 
-				local tree = Roact.mount(
-					Roact.createElement(NavigationEvents, {navigation = navigation})
-				)
+				local tree = Roact.mount(Roact.createElement(NavigationEvents, { navigation = navigation }))
 
 				expect(#NavigationListenersAPI.get(Events.WillFocus)).toBe(1)
 				expect(#NavigationListenersAPI.get(Events.DidFocus)).toBe(1)
@@ -119,11 +117,9 @@ return function()
 			local navigation = helper.navigation
 			local NavigationListenersAPI = helper.NavigationListenersAPI
 
-			local tree = Roact.mount(
-				Roact.createElement(NavigationContext.Provider, {
-					value = navigation
-				}, Roact.createElement(NavigationEvents))
-			)
+			local tree = Roact.mount(Roact.createElement(NavigationContext.Provider, {
+				value = navigation,
+			}, Roact.createElement(NavigationEvents)))
 
 			expect(#NavigationListenersAPI.get(Events.WillFocus)).toBe(1)
 			expect(#NavigationListenersAPI.get(Events.DidFocus)).toBe(1)
@@ -145,10 +141,10 @@ return function()
 			local eventListenerProps, eventListenerPropsFn = createEventListenersProp()
 
 			Roact.mount(
-				Roact.createElement(NavigationEvents, Cryo.Dictionary.join(
-					{navigation = navigation},
-					eventListenerPropsFn
-				))
+				Roact.createElement(
+					NavigationEvents,
+					Cryo.Dictionary.join({ navigation = navigation }, eventListenerPropsFn)
+				)
 			)
 
 			local function checkPropListenerIsCalled(eventName, propName)
@@ -173,10 +169,10 @@ return function()
 
 			local eventListenerProps, eventListenerPropsFn = createEventListenersProp()
 			local tree = Roact.mount(
-				Roact.createElement(NavigationEvents, Cryo.Dictionary.join(
-					{navigation = navigation},
-					eventListenerPropsFn
-				))
+				Roact.createElement(
+					NavigationEvents,
+					Cryo.Dictionary.join({ navigation = navigation }, eventListenerPropsFn)
+				)
 			)
 
 			for eventName, propName in pairs(EVENT_TO_PROP_NAME) do
@@ -187,10 +183,10 @@ return function()
 
 			Roact.update(
 				tree,
-				Roact.createElement(NavigationEvents, Cryo.Dictionary.join(
-					{navigation = nextNavigation},
-					eventListenerProps
-				))
+				Roact.createElement(
+					NavigationEvents,
+					Cryo.Dictionary.join({ navigation = nextNavigation }, eventListenerProps)
+				)
 			)
 
 			for eventName, propName in pairs(EVENT_TO_PROP_NAME) do
@@ -209,34 +205,43 @@ return function()
 				local NavigationListenersAPI = helper.NavigationListenersAPI
 
 				local tree = Roact.mount(
-					Roact.createElement(NavigationEvents, Cryo.Dictionary.join(
-						{navigation = navigation},
-						select(2, createEventListenersProp())
-					))
+					Roact.createElement(
+						NavigationEvents,
+						Cryo.Dictionary.join({ navigation = navigation }, select(2, createEventListenersProp()))
+					)
 				)
 
-				Roact.update(tree, Roact.createElement(NavigationEvents, {
-					navigation = navigation,
-					onWillBlur = function()
-						error("should not be called")
-					end,
-					onDidFocus = function()
-						error("should not be called")
-					end,
-				}))
-				Roact.update(tree, Roact.createElement(NavigationEvents, Cryo.Dictionary.join(
-					{navigation = navigation},
-					select(2, createEventListenersProp())
-				)))
+				Roact.update(
+					tree,
+					Roact.createElement(NavigationEvents, {
+						navigation = navigation,
+						onWillBlur = function()
+							error("should not be called")
+						end,
+						onDidFocus = function()
+							error("should not be called")
+						end,
+					})
+				)
+				Roact.update(
+					tree,
+					Roact.createElement(
+						NavigationEvents,
+						Cryo.Dictionary.join({ navigation = navigation }, select(2, createEventListenersProp()))
+					)
+				)
 
 				local latestEventListenerProps, latestEventListenerPropsFn = createEventListenersProp()
 
-				Roact.update(tree, Roact.createElement(NavigationEvents, Cryo.Dictionary.join(
-					{navigation = navigation},
-					latestEventListenerPropsFn
-				)))
+				Roact.update(
+					tree,
+					Roact.createElement(
+						NavigationEvents,
+						Cryo.Dictionary.join({ navigation = navigation }, latestEventListenerPropsFn)
+					)
+				)
 
-				local function checkLatestPropListenerCalled(eventName,  propName)
+				local function checkLatestPropListenerCalled(eventName, propName)
 					expect(latestEventListenerProps[propName]).toHaveBeenCalledTimes(0)
 					NavigationListenersAPI.call(eventName)
 					expect(latestEventListenerProps[propName]).toHaveBeenCalledTimes(1)

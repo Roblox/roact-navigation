@@ -19,23 +19,23 @@ return function()
 	it("should throw if requested route is not present within table", function()
 		local function shouldThrow()
 			getScreenForRouteName({
-				notMyRoute = function() return "foo" end
+				notMyRoute = function()
+					return "foo"
+				end,
 			}, "myRoute")
 		end
 
-		jestExpect(shouldThrow).toThrow(
-			"There is no route defined for key myRoute.\nMust be one of: 'notMyRoute'"
-		)
+		jestExpect(shouldThrow).toThrow("There is no route defined for key myRoute.\nMust be one of: 'notMyRoute'")
 	end)
 
 	it("should return raw table if screen and getScreen are not props", function()
 		local screenComponent = {
 			render = function()
 				return nil
-			end
+			end,
 		}
 		local result = getScreenForRouteName({
-			myRoute = screenComponent
+			myRoute = screenComponent,
 		}, "myRoute")
 
 		jestExpect(result).toBe(screenComponent)
@@ -45,12 +45,12 @@ return function()
 		local screenComponent = {
 			render = function()
 				return nil
-			end
+			end,
 		}
 		local result = getScreenForRouteName({
 			myRoute = {
-				screen = screenComponent
-			}
+				screen = screenComponent,
+			},
 		}, "myRoute")
 
 		jestExpect(result).toBe(screenComponent)
@@ -60,26 +60,30 @@ return function()
 		local screenComponent = {
 			render = function()
 				return nil
-			end
+			end,
 		}
 		local result = getScreenForRouteName({
 			myRoute = {
-				getScreen = function() return screenComponent end
-			}
+				getScreen = function()
+					return screenComponent
+				end,
+			},
 		}, "myRoute")
 
 		jestExpect(result).toBe(screenComponent)
 	end)
 
 	it("should throw if getScreen does not return a valid Roact element", function()
-		local errorExpected = "The getScreen defined for route 'myRoute' didn't return a valid " ..
-			"screen or navigator.\n\n"
+		local errorExpected = "The getScreen defined for route 'myRoute' didn't return a valid "
+			.. "screen or navigator.\n\n"
 
 		jestExpect(function()
 			getScreenForRouteName({
 				myRoute = {
-					getScreen = function() return nil end
-				}
+					getScreen = function()
+						return nil
+					end,
+				},
 			}, "myRoute")
 		end).toThrow(errorExpected)
 	end)
@@ -89,9 +93,8 @@ return function()
 			getScreenForRouteName({
 				myRoute = {
 					screen = 5,
-				}
+				},
 			}, "myRoute")
 		end).toThrow("screen for key 'myRoute' must be a valid Roact component.")
 	end)
 end
-

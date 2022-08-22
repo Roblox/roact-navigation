@@ -7,8 +7,8 @@ local SceneView = require(script.Parent.Parent.SceneView)
 
 local function SwitchView(props)
 	local state = props.navigation.state
-    local activeKey = state.routes[state.index].key
-    local descriptor = props.descriptors[activeKey]
+	local activeKey = state.routes[state.index].key
+	local descriptor = props.descriptors[activeKey]
 	local ChildComponent = descriptor.getComponent()
 
 	return Roact.createElement(SceneView, {

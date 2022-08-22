@@ -8,7 +8,7 @@ return function()
 	local function makeTestBundle(testState)
 		testState = testState or {
 			routes = {
-				{ key = "a" }
+				{ key = "a" },
 			},
 			index = 1,
 		}
@@ -20,7 +20,7 @@ return function()
 			testRouter = {
 				getActionCreators = function()
 					return testActions
-				end
+				end,
 			},
 			testDispatch = function() end,
 			testActionSubscribers = {},

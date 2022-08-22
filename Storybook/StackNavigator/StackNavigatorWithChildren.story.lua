@@ -38,8 +38,8 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("Detail") -- goes to initial page for the subnavigator
-				end
-			})
+				end,
+			}),
 		})
 	end
 
@@ -65,8 +65,8 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("SubDetailB")
-				end
-			})
+				end,
+			}),
 		})
 	end
 
@@ -92,7 +92,7 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("Master")
-				end
+				end,
 			}),
 		})
 	end

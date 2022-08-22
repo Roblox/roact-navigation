@@ -46,7 +46,7 @@ return function(router, state, dispatch, actionSubscribers, getScreenProps, getC
 			return {
 				remove = function()
 					actionSubscribers[handler] = nil
-				end
+				end,
 			}
 		end
 	end

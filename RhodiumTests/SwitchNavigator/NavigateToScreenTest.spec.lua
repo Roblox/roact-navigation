@@ -31,14 +31,11 @@ return function()
 
 	describe("SwitchNavigator Tests", function()
 		it("should change pages on navigate operation", function()
-			local appContainer = Roact.createElement(
-				RoactNavigation.createAppContainer(
-					RoactNavigation.createRobloxSwitchNavigator({
-						{ PageOne = createButtonPage("PageOne", "PageTwo") },
-						{ PageTwo = createButtonPage("PageTwo", "PageOne") },
-					})
-				)
-			)
+			local appContainer =
+				Roact.createElement(RoactNavigation.createAppContainer(RoactNavigation.createRobloxSwitchNavigator({
+					{ PageOne = createButtonPage("PageOne", "PageTwo") },
+					{ PageTwo = createButtonPage("PageTwo", "PageOne") },
+				})))
 
 			local screen = createScreenGui(CoreGui)
 			local rootInstance = Roact.mount(appContainer, screen)
@@ -62,4 +59,3 @@ return function()
 		end)
 	end)
 end
-

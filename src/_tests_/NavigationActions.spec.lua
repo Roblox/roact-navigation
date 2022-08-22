@@ -31,13 +31,11 @@ return function()
 				type = NavigationActions.Navigate,
 				routeName = "test",
 			})
-			jestExpect(
-				NavigationActions.navigate({
-					routeName = "test",
-					params = params,
-					action = navigateAction,
-				})
-			).toEqual({
+			jestExpect(NavigationActions.navigate({
+				routeName = "test",
+				params = params,
+				action = navigateAction,
+			})).toEqual({
 				type = NavigationActions.Navigate,
 				routeName = "test",
 				params = params,
@@ -49,12 +47,10 @@ return function()
 		end)
 
 		it("exports setParams action and type", function()
-			jestExpect(
-				NavigationActions.setParams({
-					key = "test",
-					params = params,
-				})
-			).toEqual({
+			jestExpect(NavigationActions.setParams({
+				key = "test",
+				params = params,
+			})).toEqual({
 				type = NavigationActions.SetParams,
 				key = "test",
 				preserveFocus = true,

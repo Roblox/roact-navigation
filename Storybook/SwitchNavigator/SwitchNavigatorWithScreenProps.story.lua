@@ -14,7 +14,6 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 		showing a details subpage. Params are encoded into the navigation state.
 ]]
 return function(target)
-
 	local function MyPage(props)
 		local screenProps = props.screenProps
 		local navigation = props.navigation
@@ -24,18 +23,18 @@ return function(target)
 
 		return Roact.createElement("TextButton", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
-			BackgroundColor3 = Color3.new(1,1,1),
+			BackgroundColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.Gotham,
-			Position = UDim2.new(0.5,0,0.5,0),
-			Size = UDim2.new(0.5,0,0.25,0),
+			Position = UDim2.new(0.5, 0, 0.5, 0),
+			Size = UDim2.new(0.5, 0, 0.25, 0),
 			Text = text,
-			TextColor3 = Color3.new(0,0,0),
+			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 			[Roact.Event.Activated] = function()
 				navigation.navigate("MyPage", {
 					extraTitle = "It's updated!",
 				})
-			end
+			end,
 		})
 	end
 
@@ -52,7 +51,7 @@ return function(target)
 	local element = Roact.createElement(appContainer, {
 		screenProps = {
 			primaryTitle = "Primary",
-		}
+		},
 	})
 	local rootInstance = Roact.mount(element, target)
 

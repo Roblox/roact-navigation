@@ -37,8 +37,8 @@ return function(target)
 				[Roact.Event.Activated] = function()
 					-- Note that you can push() to force a new instance, instead!
 					navigation.navigate("Detail")
-				end
-			})
+				end,
+			}),
 		})
 	end
 
@@ -61,8 +61,8 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.goBack()
-				end
-			})
+				end,
+			}),
 		})
 	end
 

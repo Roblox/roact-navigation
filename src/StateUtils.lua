@@ -72,8 +72,10 @@ function StateUtils.push(state, route)
 	assert(type(state) == "table", "state must be a table")
 	assert(type(route) == "table", "route must be a table")
 
-	assert(StateUtils.indexOf(state, route.key) == nil,
-		("should not push route with duplicated key %s"):format(route.key))
+	assert(
+		StateUtils.indexOf(state, route.key) == nil,
+		("should not push route with duplicated key %s"):format(route.key)
+	)
 
 	local routes = Cryo.List.join(state.routes, { route })
 	return Cryo.Dictionary.join(state, {
@@ -161,7 +163,7 @@ function StateUtils.replaceAndPrune(state, key, route)
 	local replaced = StateUtils.replaceAtIndex(state, index, route)
 
 	return Cryo.Dictionary.join(replaced, {
-		routes = { unpack(replaced.routes, 1, index) }
+		routes = { unpack(replaced.routes, 1, index) },
 	})
 end
 
@@ -172,8 +174,7 @@ function StateUtils.replaceAt(state, key, route, preserveIndex)
 	assert(type(state) == "table", "state must be a table")
 	assert(type(key) == "string", "key must be a string")
 	assert(type(route) == "table", "route must be a table")
-	assert(preserveIndex == nil or type(preserveIndex) == "boolean",
-		"preserveIndex must be nil or a boolean")
+	assert(preserveIndex == nil or type(preserveIndex) == "boolean", "preserveIndex must be nil or a boolean")
 
 	local index = StateUtils.indexOf(state, key)
 	local nextIndex = preserveIndex and state.index or index
@@ -189,8 +190,7 @@ function StateUtils.replaceAtIndex(state, index, route)
 	assert(type(index) == "number", "index must be a number")
 	assert(type(route) == "table", "route must be a table")
 
-	assert(state.routes[index] ~= nil,
-		("invalid index %d for replacing route %s"):format(index, route.key))
+	assert(state.routes[index] ~= nil, ("invalid index %d for replacing route %s"):format(index, route.key))
 
 	if state.routes[index] == route and index == state.index then
 		return state

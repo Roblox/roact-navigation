@@ -8,9 +8,9 @@ return function()
 		local testNavigation = {
 			state = {
 				routes = {
-					{ key = "a" }
-				}
-			}
+					{ key = "a" },
+				},
+			},
 		}
 
 		local childNav = getChildNavigation(testNavigation, "invalid_child", function()
@@ -24,16 +24,15 @@ return function()
 		local testNavigation = {
 			state = {
 				routes = {
-					{ key = "a" }
+					{ key = "a" },
 				},
-
 			},
 		}
 
 		testNavigation._childrenNavigation = {
 			a = {
-				state  = testNavigation.state.routes[1]
-			}
+				state = testNavigation.state.routes[1],
+			},
 		}
 
 		local childNav = getChildNavigation(testNavigation, "a", function()
@@ -64,7 +63,7 @@ return function()
 			isFirstRouteInParent = function()
 				return true
 			end,
-			state  = {
+			state = {
 				routes = {
 					{ key = "a", routeName = "a" },
 					{ key = "b", routeName = "b" },
@@ -103,7 +102,7 @@ return function()
 			},
 			addListener = function()
 				return {
-					remove = function() end
+					remove = function() end,
 				}
 			end,
 			isFocused = function()

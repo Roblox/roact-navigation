@@ -26,7 +26,7 @@ return function()
 			}, {
 				initialRouteName = "MyRoute",
 			})
-		end).toThrow("Invalid initialRouteName 'MyRoute'. Should be one of \"Foo\", \"Bar\"")
+		end).toThrow('Invalid initialRouteName \'MyRoute\'. Should be one of "Foo", "Bar"')
 	end)
 
 	it("should expose childRouters as a member", function()
@@ -60,8 +60,8 @@ return function()
 					Foo = {
 						screen = {
 							render = function() end,
-						}
-					}
+						},
+					},
 				},
 			}, {
 				defaultNavigationOptions = {
@@ -72,7 +72,7 @@ return function()
 			local screenOptions = router.getScreenOptions({
 				state = {
 					routeName = "Foo",
-				}
+				},
 			})
 
 			jestExpect(screenOptions.title).toEqual("FooTitle")
@@ -86,7 +86,7 @@ return function()
 							render = function() end,
 						},
 						navigationOptions = { title = "RouteFooTitle" },
-					}
+					},
 				},
 			}, {
 				defaultNavigationOptions = {
@@ -97,7 +97,7 @@ return function()
 			local screenOptions = router.getScreenOptions({
 				state = {
 					routeName = "Foo",
-				}
+				},
 			})
 
 			jestExpect(screenOptions.title).toEqual("RouteFooTitle")
@@ -111,7 +111,7 @@ return function()
 							render = function() end,
 							navigationOptions = { title = "ComponentFooTitle" },
 						},
-					}
+					},
 				},
 			}, {
 				defaultNavigationOptions = {
@@ -122,7 +122,7 @@ return function()
 			local screenOptions = router.getScreenOptions({
 				state = {
 					routeName = "Foo",
-				}
+				},
 			})
 
 			jestExpect(screenOptions.title).toEqual("ComponentFooTitle")
@@ -180,9 +180,9 @@ return function()
 				{ Foo = { screen = function() end } },
 			})
 
-			local message = "There is no route defined for index '2'. " ..
-				"Check that you passed in a navigation state with a " ..
-				"valid tab/screen index."
+			local message = "There is no route defined for index '2'. "
+				.. "Check that you passed in a navigation state with a "
+				.. "valid tab/screen index."
 			jestExpect(function()
 				router.getComponentForState({
 					routes = {
@@ -205,7 +205,7 @@ return function()
 						screen = {
 							render = function() end,
 							router = childRouter,
-						}
+						},
 					},
 				},
 			})
@@ -217,7 +217,7 @@ return function()
 						routes = { -- Child router's routes
 							{ routeName = "Bar" },
 						},
-						index = 1
+						index = 1,
 					},
 				},
 				index = 1,
@@ -240,7 +240,7 @@ return function()
 
 	describe("getStateForAction tests", function()
 		it("should return initial state for init action", function()
-			local router =  SwitchRouter({
+			local router = SwitchRouter({
 				{ Foo = { screen = function() end } },
 				{ Bar = { screen = function() end } },
 			})
@@ -251,7 +251,7 @@ return function()
 		end)
 
 		it("should adjust initial state index to match initialRouteName's index", function()
-			local router =  SwitchRouter({
+			local router = SwitchRouter({
 				{ Foo = { screen = function() end } },
 				{ Bar = { screen = function() end } },
 			})
@@ -259,7 +259,7 @@ return function()
 			local state = router.getStateForAction(NavigationActions.init(), nil)
 			jestExpect(state.routes[state.index].routeName).toEqual("Foo")
 
-			local router2 =  SwitchRouter({
+			local router2 = SwitchRouter({
 				{ Foo = { screen = function() end } },
 				{ Bar = { screen = function() end } },
 			}, {
@@ -271,7 +271,7 @@ return function()
 		end)
 
 		it("should respect optional order property", function()
-			local router =  SwitchRouter({
+			local router = SwitchRouter({
 				{ Foo = { screen = function() end } },
 				{ Bar = { screen = function() end } },
 			})
@@ -381,10 +381,9 @@ return function()
 			local router = SwitchRouter({
 				{ Foo = { render = function() end } },
 				{ Bar = {
-						render = function() end,
-						router = childRouter,
-					},
-				},
+					render = function() end,
+					router = childRouter,
+				} },
 			})
 
 			local newState = router.getStateForAction(NavigationActions.navigate({
@@ -526,7 +525,7 @@ return function()
 		it("should merge init action params with initial route's own params and initialRouteParams", function()
 			local router = SwitchRouter({
 				{
-					Foo = { render = function() end, params = { a = 1 } }
+					Foo = { render = function() end, params = { a = 1 } },
 				},
 			}, {
 				initialRouteParams = { c = 3 },
@@ -592,4 +591,3 @@ return function()
 		end)
 	end)
 end
-

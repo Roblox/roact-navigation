@@ -27,8 +27,7 @@ local defaultActionCreators = function()
 end
 
 local function behavesLikePushAction(action)
-	return action.type == NavigationActions.Navigate or
-		action.type == StackActions.Push
+	return action.type == NavigationActions.Navigate or action.type == StackActions.Push
 end
 
 local function isResetToRootStack(action)
@@ -49,9 +48,7 @@ end
 return function(routeArray, config)
 	validateRouteConfigArray(routeArray)
 	config = config or {}
-	local routeConfigs = validateRouteConfigMap(
-		Cryo.List.foldLeft(routeArray, foldToRoutes, {})
-	)
+	local routeConfigs = validateRouteConfigMap(Cryo.List.foldLeft(routeArray, foldToRoutes, {}))
 
 	local routeNames = config.order or Cryo.List.map(routeArray, mapToRouteName)
 
@@ -62,8 +59,7 @@ return function(routeArray, config)
 		-- behaviour of routes. This means that routes with child routers must be
 		-- defined using a component directly or with an object with a screen prop.
 		local routeConfig = routeConfigs[routeName]
-		local screen = (type(routeConfig) == "table" and routeConfig.screen)
-			and routeConfig.screen or routeConfig
+		local screen = (type(routeConfig) == "table" and routeConfig.screen) and routeConfig.screen or routeConfig
 		if type(screen) == "table" and screen.router then
 			-- If it has a router it's a navigator.
 			childRouters[routeName] = screen.router
@@ -89,7 +85,10 @@ return function(routeArray, config)
 			availableRouteStr = availableRouteStr .. name .. ","
 		end
 
-		error(string.format("Invalid initialRouteName '%s'. Must be one of [%s]", initialRouteName, availableRouteStr), 2)
+		error(
+			string.format("Invalid initialRouteName '%s'. Must be one of [%s]", initialRouteName, availableRouteStr),
+			2
+		)
 	end
 
 	local function getInitialState(action)
@@ -103,8 +102,7 @@ return function(routeArray, config)
 
 			-- The router is 'CHILD_IS_SCREEN' for normal leaf routes
 			if childRouter ~= CHILD_IS_SCREEN then
-				local childAction = action.action
-					or NavigationActions.init({ params = action.params })
+				local childAction = action.action or NavigationActions.init({ params = action.params })
 				childState = childRouter.getStateForAction(childAction)
 			end
 
@@ -116,8 +114,8 @@ return function(routeArray, config)
 					Cryo.Dictionary.join({ params = action.params }, childState, {
 						key = action.key or KeyGenerator.generateKey(),
 						routeName = action.routeName,
-					})
-				}
+					}),
+				},
 			}
 		end
 
@@ -147,14 +145,14 @@ return function(routeArray, config)
 		route = Cryo.Dictionary.join(route, {
 			params = params,
 			routeName = initialRouteName,
-			key = action.key or initialRouteKey or KeyGenerator.generateKey()
+			key = action.key or initialRouteKey or KeyGenerator.generateKey(),
 		})
 
 		return {
 			key = STACK_ROUTER_ROOT_KEY,
 			isTransitioning = false,
 			index = 1,
-			routes = { route }
+			routes = { route },
 		}
 	end
 
@@ -198,9 +196,13 @@ return function(routeArray, config)
 	function StackRouter.getComponentForState(state)
 		local activeChildRoute = state.routes[state.index] or {}
 		local routeName = activeChildRoute.routeName
-		invariant(routeName, "There is no route defined for index '%d'. " ..
-			"Make sure that you passed in a navigation state with a " ..
-			"valid stack index.", state.index)
+		invariant(
+			routeName,
+			"There is no route defined for index '%d'. "
+				.. "Make sure that you passed in a navigation state with a "
+				.. "valid stack index.",
+			state.index
+		)
 
 		local childRouter = childRouters[routeName]
 		-- we need to check if initialChildRouter is not CHILD_IS_SCREEN because
@@ -336,8 +338,10 @@ return function(routeArray, config)
 		-- If a router equals `nil` it means that it is not a childRouter or a screen.
 		if behavesLikePushAction(action) and childRouters[action.routeName] ~= nil then
 			local childRouter = childRouters[action.routeName]
-			invariant(action.type ~= StackActions.Push or action.key == nil,
-				"StackRouter does not support key on the push action")
+			invariant(
+				action.type ~= StackActions.Push or action.key == nil,
+				"StackRouter does not support key on the push action"
+			)
 
 			-- Before pushing a new route we first try to find one in the existing route stack
 			-- More information on this: https://github.com/react-navigation/rfcs/blob/master/text/0004-less-pushy-navigate.md
@@ -365,7 +369,10 @@ return function(routeArray, config)
 				if action.params then
 					local route = state.routes[lastRouteIndex]
 					routes[lastRouteIndex] = Cryo.Dictionary.join(route, {
-						params = action.params == Cryo.None and Cryo.None or Cryo.Dictionary.join(route.params or {}, action.params)
+						params = action.params == Cryo.None and Cryo.None or Cryo.Dictionary.join(
+							route.params or {},
+							action.params
+						),
 					})
 				end
 
@@ -385,18 +392,23 @@ return function(routeArray, config)
 			local route
 			if childRouter ~= CHILD_IS_SCREEN then
 				-- Delegate to the child router with the given action, or init it
-				local childAction = action.action or NavigationActions.init({
-					params = getParamsForRouteAndAction(action.routeName, action)
-				})
+				local childAction = action.action
+					or NavigationActions.init({
+						params = getParamsForRouteAndAction(action.routeName, action),
+					})
 
-				route = Cryo.Dictionary.join({
-					-- does it make sense to wipe out the params here? or even to
-					-- add params at all? need more info about what this solves
-					params = getParamsForRouteAndAction(action.routeName, action),
-				}, childRouter.getStateForAction(childAction), {
-					routeName = action.routeName,
-					key = action.key or KeyGenerator.generateKey(),
-				})
+				route = Cryo.Dictionary.join(
+					{
+						-- does it make sense to wipe out the params here? or even to
+						-- add params at all? need more info about what this solves
+						params = getParamsForRouteAndAction(action.routeName, action),
+					},
+					childRouter.getStateForAction(childAction),
+					{
+						routeName = action.routeName,
+						key = action.key or KeyGenerator.generateKey(),
+					}
+				)
 			else
 				-- Create the route from scratch
 				route = {
@@ -467,7 +479,7 @@ return function(routeArray, config)
 				return Cryo.Dictionary.join(state, {
 					isTransitioning = action.immediate ~= true,
 					index = 1,
-					routes = { state.routes[1] }
+					routes = { state.routes[1] },
 				})
 			end
 
@@ -493,9 +505,10 @@ return function(routeArray, config)
 				-- we need to check if initialChildRouter is not CHILD_IS_SCREEN because
 				-- of the divergence with react-navigation.
 				if childRouter ~= nil and childRouter ~= CHILD_IS_SCREEN then
-					local childAction = action.action or NavigationActions.init({
-						params = getParamsForRouteAndAction(action.routeName, action)
-					})
+					local childAction = action.action
+						or NavigationActions.init({
+							params = getParamsForRouteAndAction(action.routeName, action),
+						})
 
 					childState = childRouter.getStateForAction(childAction)
 				end
@@ -503,22 +516,27 @@ return function(routeArray, config)
 				local routes = Cryo.List.replaceIndex(
 					state.routes,
 					routeIndex,
-					Cryo.Dictionary.join({
-						params = getParamsForRouteAndAction(action.routeName, action),
-					}, childState, {
-						routeName = action.routeName,
-						key = action.newKey or KeyGenerator.generateKey(),
-					})
+					Cryo.Dictionary.join(
+						{
+							params = getParamsForRouteAndAction(action.routeName, action),
+						},
+						childState,
+						{
+							routeName = action.routeName,
+							key = action.newKey or KeyGenerator.generateKey(),
+						}
+					)
 				)
 
 				return Cryo.Dictionary.join(state, { routes = routes })
 			end
 		end
 
-		if action.type == StackActions.CompleteTransition and
-			(action.key == nil or action.key == state.key) and
-			action.toChildKey == state.routes[state.index].key and
-			state.isTransitioning
+		if
+			action.type == StackActions.CompleteTransition
+			and (action.key == nil or action.key == state.key)
+			and action.toChildKey == state.routes[state.index].key
+			and state.isTransitioning
 		then
 			return Cryo.Dictionary.join(state, {
 				isTransitioning = false,
@@ -564,22 +582,24 @@ return function(routeArray, config)
 				-- we need to check if initialChildRouter is not CHILD_IS_SCREEN because
 				-- of the divergence with react-navigation.
 				if router ~= nil and router ~= CHILD_IS_SCREEN then
-					local childAction = newStackAction.action or NavigationActions.init({
-						params = getParamsForRouteAndAction(
-							newStackAction.routeName,
-							newStackAction
-						),
-					})
+					local childAction = newStackAction.action
+						or NavigationActions.init({
+							params = getParamsForRouteAndAction(newStackAction.routeName, newStackAction),
+						})
 
 					childState = router.getStateForAction(childAction)
 				end
 
-				return Cryo.Dictionary.join({
-					params = getParamsForRouteAndAction(newStackAction.routeName, newStackAction)
-				}, childState, {
-					routeName = newStackAction.routeName,
-					key = newStackAction.key or KeyGenerator.generateKey(),
-				})
+				return Cryo.Dictionary.join(
+					{
+						params = getParamsForRouteAndAction(newStackAction.routeName, newStackAction),
+					},
+					childState,
+					{
+						routeName = newStackAction.routeName,
+						key = newStackAction.key or KeyGenerator.generateKey(),
+					}
+				)
 			end)
 
 			return Cryo.Dictionary.join(state, {
@@ -653,9 +673,7 @@ return function(routeArray, config)
 			-- If a key is provided and in routes state then let's use that
 			-- knowledge to skip extra getStateForAction calls on other child
 			-- routers
-			if (childRoute.key ~= activeChildRoute.key) and
-				(keyIndex == 1 or childRoute.key == action.key)
-			then
+			if (childRoute.key ~= activeChildRoute.key) and (keyIndex == 1 or childRoute.key == action.key) then
 				local childRouter = childRouters[childRoute.routeName]
 				if childRouter ~= nil and childRouter ~= CHILD_IS_SCREEN then
 					local route = childRouter.getStateForAction(action, childRoute)
@@ -687,10 +705,7 @@ return function(routeArray, config)
 		return getActionForPathAndParams(path, params)
 	end
 
-	StackRouter.getScreenOptions = createConfigGetter(
-		routeConfigs,
-		config.defaultNavigationOptions
-	)
+	StackRouter.getScreenOptions = createConfigGetter(routeConfigs, config.defaultNavigationOptions)
 
 	return StackRouter
 end

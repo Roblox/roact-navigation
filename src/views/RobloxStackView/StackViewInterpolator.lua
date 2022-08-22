@@ -23,8 +23,8 @@
 
 	The props table may contain other changes, depending on the requirements of the animation.
 ]]
-local getSceneIndicesForInterpolationInputRange = require(
-	script.Parent.Parent.Parent.utils.getSceneIndicesForInterpolationInputRange)
+local getSceneIndicesForInterpolationInputRange =
+	require(script.Parent.Parent.Parent.utils.getSceneIndicesForInterpolationInputRange)
 local lerp = require(script.Parent.Parent.Parent.utils.lerp)
 
 -- Render initial style when layout hasn't been measured yet.
@@ -92,12 +92,8 @@ local function forHorizontal(props)
 		end
 
 		local oldPosition = cardInstance.Position
-		cardInstance.Position = UDim2.new(
-			oldPosition.X.Scale,
-			calculate(positionValue),
-			oldPosition.Y.Scale,
-			oldPosition.Y.Offset
-		)
+		cardInstance.Position =
+			UDim2.new(oldPosition.X.Scale, calculate(positionValue), oldPosition.Y.Scale, oldPosition.Y.Offset)
 	end
 
 	local initialPosition = UDim2.new(0, calculate(initialPositionValue), 0, 0)
@@ -150,12 +146,8 @@ local function forVertical(props)
 		end
 
 		local oldPosition = cardInstance.Position
-		cardInstance.Position = UDim2.new(
-			oldPosition.X.Scale,
-			oldPosition.X.Offset,
-			oldPosition.Y.Scale,
-			calculate(positionValue)
-		)
+		cardInstance.Position =
+			UDim2.new(oldPosition.X.Scale, oldPosition.X.Offset, oldPosition.Y.Scale, calculate(positionValue))
 	end
 
 	local initialPosition = UDim2.new(0, 0, 0, calculate(initialPositionValue))

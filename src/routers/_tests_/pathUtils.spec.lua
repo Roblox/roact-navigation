@@ -51,10 +51,7 @@ return function()
 	end)
 
 	it("urlToPathAndParams with custom delimeter RegExp", function()
-		local pathAndParam = urlToPathAndParams(
-			"https://example.com/foo/bar?asdf=1",
-			"https://example.com/"
-		)
+		local pathAndParam = urlToPathAndParams("https://example.com/foo/bar?asdf=1", "https://example.com/")
 		local path = pathAndParam.path
 		local params = pathAndParam.params
 
@@ -83,15 +80,18 @@ return function()
 		jestExpect(params).toEqual({ asdf = "1" })
 	end)
 
-	it("urlToPathAndParams with array of custom delimiters where none match, should resort to default delimiter", function()
-		local pathAndParam = urlToPathAndParams("foo://foo/bar?asdf=1", {
-			"baz",
-			"bazzlefraz",
-		})
-		local path = pathAndParam.path
-		local params = pathAndParam.params
+	it(
+		"urlToPathAndParams with array of custom delimiters where none match, should resort to default delimiter",
+		function()
+			local pathAndParam = urlToPathAndParams("foo://foo/bar?asdf=1", {
+				"baz",
+				"bazzlefraz",
+			})
+			local path = pathAndParam.path
+			local params = pathAndParam.params
 
-		jestExpect(path).toEqual("foo/bar")
-		jestExpect(params).toEqual({ asdf = "1" })
-	end)
+			jestExpect(path).toEqual("foo/bar")
+			jestExpect(params).toEqual({ asdf = "1" })
+		end
+	)
 end

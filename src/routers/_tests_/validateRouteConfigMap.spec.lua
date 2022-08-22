@@ -12,8 +12,8 @@ return function()
 		return nil
 	end
 
-	local INVALID_COMPONENT_MESSAGE = "The component for route 'myRoute' must be a Roact" ..
-		" component or table with 'getScreen'."
+	local INVALID_COMPONENT_MESSAGE = "The component for route 'myRoute' must be a Roact"
+		.. " component or table with 'getScreen'."
 
 	it("should throw if routeConfigs is not a table", function()
 		jestExpect(function()
@@ -40,8 +40,10 @@ return function()
 			validateRouteConfigMap({
 				myRoute = {
 					screen = "TheScreen",
-					getScreen = function() return TestComponent end,
-				}
+					getScreen = function()
+						return TestComponent
+					end,
+				},
 			})
 		end).toThrow("Route 'myRoute' should declare a screen or a getScreen, not both.")
 	end)
@@ -51,7 +53,7 @@ return function()
 			validateRouteConfigMap({
 				myRoute = {
 					screen = {},
-				}
+				},
 			})
 		end).toThrow(INVALID_COMPONENT_MESSAGE)
 	end)
@@ -60,8 +62,8 @@ return function()
 		jestExpect(function()
 			validateRouteConfigMap({
 				myRoute = {
-					getScreen = 5
-				}
+					getScreen = 5,
+				},
 			})
 		end).toThrow(INVALID_COMPONENT_MESSAGE)
 	end)
@@ -70,8 +72,8 @@ return function()
 		jestExpect(function()
 			validateRouteConfigMap({
 				myRoute = {
-					aFrame = "Frame"
-				}
+					aFrame = "Frame",
+				},
 			})
 		end).toThrow(INVALID_COMPONENT_MESSAGE)
 	end)
@@ -97,8 +99,10 @@ return function()
 	it("should pass for valid getScreen route configs", function()
 		validateRouteConfigMap({
 			getScreenRoute = {
-				getScreen = function() return TestComponent end,
-			}
+				getScreen = function()
+					return TestComponent
+				end,
+			},
 		})
 	end)
 end

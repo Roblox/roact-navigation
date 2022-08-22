@@ -39,7 +39,7 @@ return function()
 					{
 						routeName = "foo",
 						key = "foo-1",
-					}
+					},
 				},
 			}, "foo-1")
 
@@ -68,7 +68,7 @@ return function()
 					{
 						routeName = "foo",
 						key = "foo-1",
-					}
+					},
 				},
 			}, "key")
 
@@ -86,7 +86,7 @@ return function()
 					{
 						routeName = "foo2",
 						key = "foo-2",
-					}
+					},
 				},
 			}, "foo-2")
 
@@ -114,8 +114,8 @@ return function()
 					{
 						routeName = "foo",
 						key = "foo-1",
-					}
-				}
+					},
+				},
 			}, "key")
 
 			jestExpect(result).toEqual(false)
@@ -128,8 +128,8 @@ return function()
 					{
 						routeName = "foo",
 						key = "foo-1",
-					}
-				}
+					},
+				},
 			}, "foo-1")
 
 			jestExpect(result).toEqual(true)
@@ -157,8 +157,8 @@ return function()
 						{
 							routeName = "foo",
 							key = "foo-1",
-						}
-					}
+						},
+					},
 				}, {
 					routeName = "foo",
 					key = "foo-1",
@@ -208,8 +208,8 @@ return function()
 			local initialState = {
 				index = 2,
 				routes = {
-					{ routeName = "route", key = "route-1", },
-					{ routeName = "route", key = "route-2", },
+					{ routeName = "route", key = "route-1" },
+					{ routeName = "route", key = "route-2" },
 				},
 			}
 
@@ -237,7 +237,7 @@ return function()
 			jestExpect(function()
 				StateUtils.jumpToIndex({
 					index = 1,
-					routes = { { routeName = "first", key = "first-1" } }
+					routes = { { routeName = "first", key = "first-1" } },
 				}, 5)
 			end).toThrow()
 		end)
@@ -245,7 +245,7 @@ return function()
 		it("should return original state if index matches current", function()
 			local initialState = {
 				index = 1,
-				routes = { { routeName = "one", key = "1" } }
+				routes = { { routeName = "one", key = "1" } },
 			}
 
 			local newState = StateUtils.jumpToIndex(initialState, 1)
@@ -285,7 +285,7 @@ return function()
 				routes = {
 					{ routeName = "route", key = "key-1" },
 					{ routeName = "route", key = "key-2" },
-				}
+				},
 			}
 
 			local newState = StateUtils.jumpTo(initialState, "key-1")
@@ -298,7 +298,7 @@ return function()
 				routes = {
 					{ routeName = "route", key = "key-1" },
 					{ routeName = "route", key = "key-2" },
-				}
+				},
 			}
 
 			local newState = StateUtils.jumpTo(initialState, "key-2")
@@ -318,7 +318,7 @@ return function()
 				index = 1,
 				routes = {
 					{ routeName = "route", key = "key-1" },
-				}
+				},
 			}
 
 			local newState = StateUtils.back(initialState)
@@ -331,7 +331,7 @@ return function()
 				routes = {
 					{ routeName = "route", key = "key-1" },
 					{ routeName = "route", key = "key-2" },
-				}
+				},
 			}
 
 			local newState = StateUtils.back(initialState)
@@ -351,7 +351,7 @@ return function()
 				index = 1,
 				routes = {
 					{ routeName = "route", key = "key-1" },
-				}
+				},
 			}
 
 			local newState = StateUtils.forward(initialState)
@@ -364,7 +364,7 @@ return function()
 				routes = {
 					{ routeName = "route", key = "key-1" },
 					{ routeName = "route", key = "key-2" },
-				}
+				},
 			}
 
 			local newState = StateUtils.forward(initialState)
@@ -397,11 +397,12 @@ return function()
 				routes = {
 					{ routeName = "route", key = "key-1" },
 					{ routeName = "route", key = "key-2" },
-				}
+				},
 			}
 
 			local newState = StateUtils.replaceAndPrune(initialState, "key-1", {
-				routeName = "newRoute", key = "key-3"
+				routeName = "newRoute",
+				key = "key-3",
 			})
 
 			jestExpect(newState.index).toEqual(1)
@@ -442,11 +443,12 @@ return function()
 				routes = {
 					{ routeName = "route", key = "key-1" },
 					{ routeName = "route", key = "key-2" },
-				}
+				},
 			}
 
 			local newState = StateUtils.replaceAt(initialState, "key-1", {
-				routeName = "newRoute", key = "key-3"
+				routeName = "newRoute",
+				key = "key-3",
 			}, false)
 
 			jestExpect(newState.index).toEqual(1)
@@ -461,11 +463,12 @@ return function()
 				routes = {
 					{ routeName = "route", key = "key-1" },
 					{ routeName = "route", key = "key-2" },
-				}
+				},
 			}
 
 			local newState = StateUtils.replaceAt(initialState, "key-1", {
-				routeName = "newRoute", key = "key-3"
+				routeName = "newRoute",
+				key = "key-3",
 			}, true)
 
 			jestExpect(newState.index).toEqual(2)
@@ -498,7 +501,7 @@ return function()
 			jestExpect(function()
 				StateUtils.replaceAtIndex({
 					index = 0,
-					routes = {}
+					routes = {},
 				}, 5, { routeName = "name", key = "key" })
 			end).toThrow()
 		end)
@@ -518,7 +521,7 @@ return function()
 			local initialState = {
 				index = 1,
 				routes = {
-					{ routeName = "name", key = "key" }
+					{ routeName = "name", key = "key" },
 				},
 			}
 
@@ -540,7 +543,7 @@ return function()
 				routes = {
 					{ routeName = "name", key = "key-1" },
 					testRoute,
-				}
+				},
 			}
 
 			local newState = StateUtils.replaceAtIndex(initialState, 2, testRoute)

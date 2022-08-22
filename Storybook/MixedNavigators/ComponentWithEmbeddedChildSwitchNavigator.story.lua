@@ -36,7 +36,7 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("SubDetailB")
-				end
+				end,
 			}),
 			goToMasterButton = Roact.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
@@ -77,7 +77,7 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("SubDetailA")
-				end
+				end,
 			}),
 			goToMasterButton = Roact.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
@@ -95,7 +95,6 @@ return function(target)
 			}),
 		})
 	end
-
 
 	local InnerSwitchNavigator = RoactNavigation.createRobloxSwitchNavigator({
 		{ SubDetailA = SubPageA },
@@ -161,7 +160,7 @@ return function(target)
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
 			Font = Enum.Font.Gotham,
-			Text = "Master Page: "..value,
+			Text = "Master Page: " .. value,
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
@@ -176,7 +175,7 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("Master", { value = value + 1 })
-				end
+				end,
 			}),
 			detailButton = Roact.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
@@ -189,8 +188,8 @@ return function(target)
 				TextSize = 18,
 				[Roact.Event.Activated] = function()
 					navigation.navigate("Detail")
-				end
-			})
+				end,
+			}),
 		})
 	end
 

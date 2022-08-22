@@ -31,7 +31,7 @@ return function()
 		local rootElement = Roact.createElement(NavigationContext.Provider, {
 			value = testNavigation,
 		}, {
-			Child = Roact.createElement(FooWithNavigation)
+			Child = Roact.createElement(FooWithNavigation),
 		})
 
 		local tree = Roact.mount(rootElement)
@@ -55,7 +55,7 @@ return function()
 		local rootElement = Roact.createElement(NavigationContext.Provider, {
 			value = testNavigation,
 		}, {
-			Child = Roact.createElement(FooWithNavigation)
+			Child = Roact.createElement(FooWithNavigation),
 		})
 
 		local tree = Roact.mount(rootElement)
@@ -63,7 +63,7 @@ return function()
 		local rootElement2 = Roact.createElement(NavigationContext.Provider, {
 			value = testNavigation2,
 		}, {
-			Child = Roact.createElement(FooWithNavigation)
+			Child = Roact.createElement(FooWithNavigation),
 		})
 
 		Roact.update(tree, rootElement2)
@@ -82,9 +82,9 @@ return function()
 
 		local element = Roact.createElement(FooWithNavigation)
 
-		local errorMessage = "withNavigation and withNavigationFocus can only " ..
-			"be used on a view hierarchy of a navigator. The wrapped component is " ..
-			"unable to get access to navigation from props or context"
+		local errorMessage = "withNavigation and withNavigationFocus can only "
+			.. "be used on a view hierarchy of a navigator. The wrapped component is "
+			.. "unable to get access to navigation from props or context"
 
 		expect(function()
 			Roact.mount(element)

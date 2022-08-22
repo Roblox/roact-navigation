@@ -7,9 +7,8 @@ return function()
 	local XPath = Rhodium.XPath
 
 	local SimpleOverlay = require(Storybook.StackNavigator["SimpleOverlayStackNavigator.story"])
-	local OverlayThatDoesNotAbsorbInput = require(
-		Storybook.StackNavigator["OverlayStackNavigatorThatDoesNotAbsorbInput.story"]
-	)
+	local OverlayThatDoesNotAbsorbInput =
+		require(Storybook.StackNavigator["OverlayStackNavigatorThatDoesNotAbsorbInput.story"])
 
 	local TrackRobloxStackNavigatorRoute = require(script.Parent.Parent.TrackRobloxStackNavigatorRoute)
 	local createScreenGui = require(script.Parent.Parent.createScreenGui)

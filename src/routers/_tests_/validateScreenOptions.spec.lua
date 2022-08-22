@@ -26,4 +26,3 @@ return function()
 		end).toThrow()
 	end)
 end
-
