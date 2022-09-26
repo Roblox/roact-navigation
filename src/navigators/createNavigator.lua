@@ -20,6 +20,8 @@ return function(navigatorViewComponent, router, navigationConfig)
 
 		self.state = {
 			descriptors = {},
+			-- ROBLOX deviation: Cache transitioning descriptors
+			transitioningDescriptors = {},
 			screenProps = screenProps,
 			-- deviation: no theme support
 		}
@@ -27,6 +29,8 @@ return function(navigatorViewComponent, router, navigationConfig)
 
 	function Navigator.getDerivedStateFromProps(nextProps, prevState)
 		local prevDescriptors = prevState.descriptors
+		-- ROBLOX deviation: Cache transitioning descriptors
+		local prevTransitioningDescriptors = prevState.transitioningDescriptors
 		local navigation = nextProps.navigation
 		local screenProps = nextProps.screenProps
 
@@ -75,8 +79,25 @@ return function(navigatorViewComponent, router, navigationConfig)
 			return descriptors
 		end, {})
 
+		-- ROBLOX deviation START: Cache previous descriptors during transition to emit focus events for removed screens
+		local transitioningDescriptors = {}
+
+		if navigation.state.isTransitioning then
+			transitioningDescriptors = Cryo.Dictionary.join(
+				prevTransitioningDescriptors,
+				prevDescriptors,
+				Cryo.List.foldLeft(routes, function(filteredDescriptors, route)
+					filteredDescriptors[route.key] = Cryo.None
+					return filteredDescriptors
+				end, {})
+			)
+		end
+		-- ROBLOX deviation END
+
 		return {
 			descriptors = descriptors,
+			-- ROBLOX deviation: Cache transitioning descriptors
+			transitioningDescriptors = transitioningDescriptors,
 			screenProps = screenProps,
 			-- deviation: no theme support
 		}
@@ -88,6 +109,8 @@ return function(navigatorViewComponent, router, navigationConfig)
 		local navigation = self.props.navigation
 		local screenProps = self.state.screenProps
 		local descriptors = self.state.descriptors
+		-- ROBLOX deviation: Cache transitioning descriptors
+		local transitioningDescriptors = self.state.transitioningDescriptors
 
 		return Roact.createFragment({
 			Events = Roact.createElement(NavigationFocusEvents, {
@@ -95,7 +118,11 @@ return function(navigatorViewComponent, router, navigationConfig)
 				onEvent = function(target, type_, data)
 					if descriptors[target] then
 						descriptors[target].navigation.emit(type_, data)
+					-- ROBLOX deviation START: Emit focus events for screens removed during a transition
+					elseif transitioningDescriptors[target] then
+						transitioningDescriptors[target].navigation.emit(type_, data)
 					end
+					-- ROBLOX deviation END
 				end,
 			}),
 			View = Roact.createElement(

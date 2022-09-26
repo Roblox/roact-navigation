@@ -5,6 +5,8 @@ ___
 
 Work in progress, to be added to next release notes.
 
+* Emit willBlur event for removed screens during transitions ([#120](https://github.com/Roblox/roact-navigation/pull/120))
+
 ### v0.5.3
 
 * Fix JavaScript mistranslation in path parsing ([#116](https://github.com/Roblox/roact-navigation/pull/116))
