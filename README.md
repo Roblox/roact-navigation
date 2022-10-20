@@ -32,8 +32,8 @@ author = "Roblox"
 content_root = "src"
 
 [dependencies]
-# adding this line will make your project depend on version 0.5.3
-RoactNavigation = "roblox/roact-navigation@0.5.3"
+# adding this line will make your project depend on version 0.5.4
+RoactNavigation = "roblox/roact-navigation@0.5.4"
 # ... the rest of your dependencies ...
 
 [dev_dependencies]
@@ -51,7 +51,7 @@ rotrieve install
 
 ## Contributing
 
-Read the [contribute guide](CONTIBUTING.md) to get started.
+Read the [contribute guide](CONTRIBUTING.md) to get started.
 
 ## Documentation
 

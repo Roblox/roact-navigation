@@ -5,6 +5,9 @@ ___
 
 Work in progress, to be added to next release notes.
 
+### v0.5.4
+
+* Optimize based on Universal App launch profiling ([#121](https://github.com/Roblox/roact-navigation/pull/121))
 * Emit willBlur event for removed screens during transitions ([#120](https://github.com/Roblox/roact-navigation/pull/120))
 
 ### v0.5.3
