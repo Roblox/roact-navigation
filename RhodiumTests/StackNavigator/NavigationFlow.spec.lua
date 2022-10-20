@@ -6,7 +6,8 @@ return function()
 	local RhodiumTests = script.Parent.Parent
 	local Packages = RhodiumTests.Parent.Packages
 
-	local Cryo = require(Packages.Cryo)
+	local LuauPolyfill = require(Packages.LuauPolyfill)
+	local Array = LuauPolyfill.Array
 	local Roact = require(Packages.Roact)
 	local RoactNavigation = require(Packages.RoactNavigation)
 
@@ -112,7 +113,7 @@ return function()
 		-- Did events occur in the expected order? There is no guarantee of order between
 		-- willFocus/willBlur or didFocus/didBlur because of Lua table order semantics, but
 		-- the "did" events should always land after the "will" events are both done.
-		local willEvents = Cryo.List.removeRange(trackNavigationEvents:getNavigationEvents(), 3, 4)
+		local willEvents = Array.slice(trackNavigationEvents:getNavigationEvents(), 1, 3)
 		table.sort(willEvents, function(a, b)
 			return tostring(a.event) < tostring(b.event)
 		end)
@@ -121,7 +122,7 @@ return function()
 		local secondWillEvent = PageNavigationEvent.new(pageTwoName, willFocusEvent)
 		expect(willEvents[2]:equalTo(secondWillEvent)).to.equal(true)
 
-		local didEvents = Cryo.List.removeRange(trackNavigationEvents:getNavigationEvents(), 1, 2)
+		local didEvents = Array.slice(trackNavigationEvents:getNavigationEvents(), 3, 5)
 		table.sort(didEvents, function(a, b)
 			return tostring(a.event) < tostring(b.event)
 		end)

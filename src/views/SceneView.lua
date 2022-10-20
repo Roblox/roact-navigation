@@ -1,7 +1,10 @@
 -- upstream https://github.com/react-navigation/react-navigation/blob/62da341b672a83786b9c3a80c8a38f929964d7cc/packages/core/src/views/SceneView.js
+local views = script.Parent
+local root = views.Parent
+local Packages = root.Parent
 
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local NavigationContext = require(script.Parent.NavigationContext)
+local Roact = require(Packages.Roact)
+local NavigationContext = require(views.NavigationContext)
 
 local SceneView = Roact.PureComponent:extend("SceneView")
 

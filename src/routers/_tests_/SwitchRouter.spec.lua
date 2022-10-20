@@ -5,7 +5,8 @@ return function()
 	local RoactNavigationModule = routersModule.Parent
 	local Packages = RoactNavigationModule.Parent
 	local Roact = require(Packages.Roact)
-	local Cryo = require(Packages.Cryo)
+	local LuauPolyfill = require(Packages.LuauPolyfill)
+	local Object = LuauPolyfill.Object
 	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	local StackRouter = require(routersModule.StackRouter)
@@ -50,7 +51,7 @@ return function()
 			{ A = { screen = StackA, path = "" } },
 			{ B = { screen = StackB, path = "great/path" } },
 			{ C = { screen = StackC, path = "pathC" } },
-		}, Cryo.Dictionary.join({ initialRouteName = "A" }, config))
+		}, Object.assign({ initialRouteName = "A" }, config))
 
 		return router
 	end

@@ -1,5 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
-local lerp = require(script.Parent.Parent.Parent.utils.lerp)
+local RobloxStackView = script.Parent
+local root = RobloxStackView.Parent.Parent
+local Packages = root.Parent
+
+local Roact = require(Packages.Roact)
+local lerp = require(root.utils.lerp)
 
 local StackViewOverlayFrame = Roact.Component:extend("StackViewOverlayFrame")
 

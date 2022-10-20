@@ -4,16 +4,10 @@ return function()
 	local Packages = RoactNavigationModule.Parent
 	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
-	it("should throw if router is not a table", function()
-		jestExpect(function()
-			getChildRouter(5, "myRoute")
-		end).toThrow("router must be a table")
-	end)
-
 	it("should throw if routeName is not a string", function()
 		jestExpect(function()
 			getChildRouter({}, 5)
-		end).toThrow("routeName must be a string")
+		end).toThrow("router.getComponentForRouteName must be a function if no child routers are specified")
 	end)
 
 	it("should return child router if found", function()

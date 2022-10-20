@@ -1,7 +1,8 @@
 local Packages = script.Parent.Parent.Parent
 local Roact = require(Packages.Roact)
 local RoactNavigation = require(Packages.RoactNavigation)
-local Cryo = require(Packages.Cryo)
+local LuauPolyfill = require(Packages.LuauPolyfill)
+local Object = LuauPolyfill.Object
 
 --[[
 	This story demonstrates how to control whether or not stack navigator screens
@@ -105,7 +106,7 @@ return function(target, navigatorOptions)
 		})
 	end
 
-	local config = Cryo.Dictionary.join({
+	local config = Object.assign({
 		mode = RoactNavigation.StackPresentationStyle.Overlay, -- use Overlay mode instead of Modal!
 	}, navigatorOptions)
 	local rootNavigator = RoactNavigation.createRobloxStackNavigator({

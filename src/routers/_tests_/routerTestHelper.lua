@@ -2,7 +2,8 @@
 
 local Root = script.Parent.Parent.Parent
 local Packages = Root.Parent
-local Cryo = require(Packages.Cryo)
+local LuauPolyfill = require(Packages.LuauPolyfill)
+local Object = LuauPolyfill.Object
 local StackActions = require(Root.routers.StackActions)
 local SwitchActions = require(Root.routers.SwitchActions)
 local NavigationActions = require(Root.NavigationActions)
@@ -36,7 +37,7 @@ local function getRouterTestHelper(router, options)
 	local function navigateTo(routeName, otherActionAttributes)
 		otherActionAttributes = otherActionAttributes or {}
 
-		return applyAction(Cryo.Dictionary.join({
+		return applyAction(Object.assign({
 			type = NavigationActions.Navigate,
 			routeName = routeName,
 		}, otherActionAttributes))
@@ -45,7 +46,7 @@ local function getRouterTestHelper(router, options)
 	local function jumpTo(routeName, otherActionAttributes)
 		otherActionAttributes = otherActionAttributes or {}
 
-		return applyAction(Cryo.Dictionary.join({
+		return applyAction(Object.assign({
 			type = SwitchActions.JumpTo,
 			routeName = routeName,
 		}, otherActionAttributes))

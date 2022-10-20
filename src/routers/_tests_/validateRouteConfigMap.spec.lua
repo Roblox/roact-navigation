@@ -15,11 +15,7 @@ return function()
 	local INVALID_COMPONENT_MESSAGE = "The component for route 'myRoute' must be a Roact"
 		.. " component or table with 'getScreen'."
 
-	it("should throw if routeConfigs is not a table", function()
-		jestExpect(function()
-			validateRouteConfigMap(5)
-		end).toThrow("routeConfigs must be a table")
-	end)
+	-- ROBLOX TODO: this file isn't aligned to upstream, missing all tests in describe 'validateRouteConfigMap'
 
 	it("should throw if routeConfigs is empty", function()
 		jestExpect(function()

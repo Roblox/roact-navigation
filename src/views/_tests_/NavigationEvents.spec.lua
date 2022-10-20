@@ -3,7 +3,9 @@
 return function()
 	local root = script.Parent.Parent.Parent
 	local Packages = root.Parent
-	local Cryo = require(Packages.Cryo)
+	local LuauPolyfill = require(Packages.LuauPolyfill)
+	local Array = LuauPolyfill.Array
+	local Object = LuauPolyfill.Object
 	local Roact = require(Packages.Roact)
 	local JestGlobals = require(Packages.Dev.JestGlobals)
 	local expect = JestGlobals.expect
@@ -56,7 +58,7 @@ return function()
 					table.insert(listeners[eventName], handler)
 				end,
 				remove = function(eventName, handler)
-					listeners[eventName] = Cryo.List.filter(listeners[eventName], function(current)
+					listeners[eventName] = Array.filter(listeners[eventName], function(current)
 						return current ~= handler
 					end)
 				end,
@@ -141,10 +143,7 @@ return function()
 			local eventListenerProps, eventListenerPropsFn = createEventListenersProp()
 
 			Roact.mount(
-				Roact.createElement(
-					NavigationEvents,
-					Cryo.Dictionary.join({ navigation = navigation }, eventListenerPropsFn)
-				)
+				Roact.createElement(NavigationEvents, Object.assign({ navigation = navigation }, eventListenerPropsFn))
 			)
 
 			local function checkPropListenerIsCalled(eventName, propName)
@@ -169,10 +168,7 @@ return function()
 
 			local eventListenerProps, eventListenerPropsFn = createEventListenersProp()
 			local tree = Roact.mount(
-				Roact.createElement(
-					NavigationEvents,
-					Cryo.Dictionary.join({ navigation = navigation }, eventListenerPropsFn)
-				)
+				Roact.createElement(NavigationEvents, Object.assign({ navigation = navigation }, eventListenerPropsFn))
 			)
 
 			for eventName, propName in pairs(EVENT_TO_PROP_NAME) do
@@ -185,7 +181,7 @@ return function()
 				tree,
 				Roact.createElement(
 					NavigationEvents,
-					Cryo.Dictionary.join({ navigation = nextNavigation }, eventListenerProps)
+					Object.assign({ navigation = nextNavigation }, eventListenerProps)
 				)
 			)
 
@@ -207,7 +203,7 @@ return function()
 				local tree = Roact.mount(
 					Roact.createElement(
 						NavigationEvents,
-						Cryo.Dictionary.join({ navigation = navigation }, select(2, createEventListenersProp()))
+						Object.assign({ navigation = navigation }, select(2, createEventListenersProp()))
 					)
 				)
 
@@ -227,7 +223,7 @@ return function()
 					tree,
 					Roact.createElement(
 						NavigationEvents,
-						Cryo.Dictionary.join({ navigation = navigation }, select(2, createEventListenersProp()))
+						Object.assign({ navigation = navigation }, select(2, createEventListenersProp()))
 					)
 				)
 
@@ -237,7 +233,7 @@ return function()
 					tree,
 					Roact.createElement(
 						NavigationEvents,
-						Cryo.Dictionary.join({ navigation = navigation }, latestEventListenerPropsFn)
+						Object.assign({ navigation = navigation }, latestEventListenerPropsFn)
 					)
 				)
 

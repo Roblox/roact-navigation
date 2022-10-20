@@ -826,10 +826,10 @@ return function()
 			local function comparable(state)
 				local result = {}
 
-				if typeof(state.routeName) == "string" then
+				if type(state.routeName) == "string" then
 					result.routeName = state.routeName
 				end
-				if typeof(state.routes) == "table" then
+				if type(state.routes) == "table" then
 					result.routes = {}
 					for i = 1, #state.routes do
 						result.routes[i] = comparable(state.routes[i])

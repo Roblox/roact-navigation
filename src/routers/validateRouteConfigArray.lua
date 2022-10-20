@@ -20,7 +20,7 @@ local isValidScreenComponent = require(script.Parent.Parent.utils.isValidScreenC
 return function(routeConfigs)
 	invariant(type(routeConfigs) == "table", "routeConfigs must be an array table")
 
-	for index, route in pairs(routeConfigs) do
+	for index, route in routeConfigs do
 		invariant(
 			type(index) == "number",
 			("routeConfigs must be an array table (found non-number key %q of type %q)"):format(index, type(index))
@@ -31,7 +31,7 @@ return function(routeConfigs)
 			("only one route must be defined in each entry (found multiple at index %d)"):format(index)
 		)
 		local configIsTable = type(routeConfig) == "table" or false
-		local screenConfig = configIsTable and routeConfig or {} -- easy index .screen/.getScreen
+		local screenConfig = if configIsTable then routeConfig else {} -- easy index .screen/.getScreen
 		local screenComponent = configIsTable and routeConfig.screen or routeConfig
 		invariant(
 			isValidScreenComponent(screenComponent)

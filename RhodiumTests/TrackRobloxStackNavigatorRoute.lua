@@ -1,9 +1,9 @@
 local function compareParams(paramsA, paramsB)
 	local pairCount = 0
 
-	for key, value in pairs(paramsA) do
+	for key, value in paramsA do
 		if value ~= paramsB[key] then
-			if typeof(value) == "table" then
+			if type(value) == "table" then
 				if not compareParams(value, paramsB[key]) then
 					return false
 				end
@@ -15,7 +15,7 @@ local function compareParams(paramsA, paramsB)
 		pairCount = pairCount + 1
 	end
 
-	for _ in pairs(paramsB) do
+	for _ in paramsB do
 		if pairCount == 0 then
 			return false
 		end
@@ -44,7 +44,7 @@ function TrackRobloxStackNavigatorRoute.new(timeout, logRouteEvent)
 			local params = self.currentRoute.params
 
 			if params then
-				for key, value in pairs(params) do
+				for key, value in params do
 					print("    ", key, "=", value)
 				end
 			end
@@ -84,7 +84,7 @@ function TrackRobloxStackNavigatorRoute:_getTimeoutMessage(expectRouteName, expe
 
 	if expectedParams then
 		local view = {}
-		for key, value in pairs(expectedParams) do
+		for key, value in expectedParams do
 			table.insert(view, ("%s = %s"):format(key, tostring(value)))
 		end
 		if #view == 0 then

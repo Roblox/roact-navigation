@@ -4,11 +4,12 @@ return function()
 	local viewsModule = script.Parent.Parent
 	local RoactNavigationModule = viewsModule.Parent
 	local Packages = RoactNavigationModule.Parent
-	local Cryo = require(Packages.Cryo)
 	local Roact = require(Packages.Roact)
 	local JestGlobals = require(Packages.Dev.JestGlobals)
 	local expect = JestGlobals.expect
 	local jest = JestGlobals.jest
+	local LuauPolyfill = require(Packages.LuauPolyfill)
+	local Object = LuauPolyfill.Object
 
 	local NavigationFocusEvents = require(viewsModule.NavigationFocusEvents)
 	local getEventManager = require(RoactNavigationModule.getEventManager)
@@ -38,7 +39,7 @@ return function()
 		}
 
 		if mock then
-			return Cryo.Dictionary.join(default, mock)
+			return Object.assign(default, mock)
 		end
 
 		return default

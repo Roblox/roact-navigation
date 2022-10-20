@@ -6,16 +6,6 @@ return function()
 
 	local getScreenForRouteName = require(routersModule.getScreenForRouteName)
 
-	it("should throw for invalid arg types", function()
-		jestExpect(function()
-			getScreenForRouteName("", "myRoute")
-		end).toThrow("routeConfigs must be a table")
-
-		jestExpect(function()
-			getScreenForRouteName({}, 5)
-		end).toThrow("routeName must be a string")
-	end)
-
 	it("should throw if requested route is not present within table", function()
 		local function shouldThrow()
 			getScreenForRouteName({

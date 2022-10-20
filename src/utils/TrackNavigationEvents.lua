@@ -1,6 +1,8 @@
 local root = script.Parent.Parent
 local Packages = root.Parent
-local Cryo = require(Packages.Cryo)
+local LuauPolyfill = require(Packages.LuauPolyfill)
+local Array = LuauPolyfill.Array
+
 local Roact = require(Packages.Roact)
 local NavigationEvents = require(root.views.NavigationEvents)
 local Events = require(root.Events)
@@ -26,7 +28,7 @@ end
 
 function TrackNavigationEvents:printNavigationEvents()
 	print("Total Events: ", #self.navigationEvents)
-	for _, navigationEvent in ipairs(self.navigationEvents) do
+	for _, navigationEvent in self.navigationEvents do
 		print(navigationEvent)
 	end
 end
@@ -54,7 +56,7 @@ local propNameToEvent = {
 
 function TrackNavigationEvents:createNavigationAdapter(pageName)
 	local props = {}
-	for propName, event in pairs(propNameToEvent) do
+	for propName, event in propNameToEvent do
 		props[propName] = function()
 			PageNavigationEvent.new(pageName, event)
 			table.insert(self.navigationEvents, PageNavigationEvent.new(pageName, event))
@@ -65,7 +67,7 @@ function TrackNavigationEvents:createNavigationAdapter(pageName)
 end
 
 function TrackNavigationEvents:equalTo(pageNavigationEventList)
-	invariant(typeof(pageNavigationEventList) == "table", "should be a list")
+	invariant(type(pageNavigationEventList) == "table", "should be a list")
 	local numberOfEvents = #self.navigationEvents
 
 	if numberOfEvents ~= #pageNavigationEventList then
@@ -89,12 +91,10 @@ function TrackNavigationEvents:expect(pageNavigationEventList)
 		local expectedEvents = "{}"
 
 		if #self.navigationEvents > 0 then
-			selfEvents = ("{\n  %s,\n}"):format(table.concat(Cryo.List.map(self.navigationEvents, tostring), ",\n  "))
+			selfEvents = ("{\n  %s,\n}"):format(table.concat(Array.map(self.navigationEvents, tostring), ",\n  "))
 		end
 		if #pageNavigationEventList > 0 then
-			expectedEvents = ("{\n  %s,\n}"):format(
-				table.concat(Cryo.List.map(pageNavigationEventList, tostring), ",\n  ")
-			)
+			expectedEvents = ("{\n  %s,\n}"):format(table.concat(Array.map(pageNavigationEventList, tostring), ",\n  "))
 		end
 
 		error(("%s\nGot events: %s\n\nExpected events: %s"):format(message, selfEvents, expectedEvents))

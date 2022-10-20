@@ -3,7 +3,9 @@
 local root = script.Parent.Parent
 local Packages = root.Parent
 local Roact = require(Packages.Roact)
-local Cryo = require(Packages.Cryo)
+local LuauPolyfill = require(Packages.LuauPolyfill)
+local Object = LuauPolyfill.Object
+local Array = LuauPolyfill.Array
 local invariant = require(root.utils.invariant)
 local NavigationFocusEvents = require(root.views.NavigationFocusEvents)
 
@@ -50,7 +52,7 @@ return function(navigatorViewComponent, router, navigationConfig)
 				.. "See https://reactnavigation.org/docs/en/custom-navigators.html#navigator-navigation-prop"
 		)
 
-		local descriptors = Cryo.List.foldLeft(routes, function(descriptors, route)
+		local descriptors = Array.reduce(routes, function(descriptors, route)
 			if
 				prevDescriptors
 				and prevDescriptors[route.key]
@@ -83,11 +85,12 @@ return function(navigatorViewComponent, router, navigationConfig)
 		local transitioningDescriptors = {}
 
 		if navigation.state.isTransitioning then
-			transitioningDescriptors = Cryo.Dictionary.join(
+			transitioningDescriptors = Object.assign(
+				{},
 				prevTransitioningDescriptors,
 				prevDescriptors,
-				Cryo.List.foldLeft(routes, function(filteredDescriptors, route)
-					filteredDescriptors[route.key] = Cryo.None
+				Array.reduce(routes, function(filteredDescriptors, route)
+					filteredDescriptors[route.key] = Object.None
 					return filteredDescriptors
 				end, {})
 			)
@@ -127,7 +130,7 @@ return function(navigatorViewComponent, router, navigationConfig)
 			}),
 			View = Roact.createElement(
 				navigatorViewComponent,
-				Cryo.Dictionary.join(self.props, {
+				Object.assign(table.clone(self.props), {
 					screenProps = screenProps,
 					navigation = navigation,
 					navigationConfig = navigationConfig,

@@ -12,12 +12,6 @@ return function()
 		end).never.toThrow()
 	end)
 
-	it("should throw error if no routeName is provided", function()
-		jestExpect(function()
-			validateScreenOptions({ title = "bar" }, {})
-		end).toThrow("route.routeName must be a string")
-	end)
-
 	it("should throw error for options with function for title", function()
 		jestExpect(function()
 			validateScreenOptions({

@@ -4,7 +4,7 @@ local PageNavigationEvent = {}
 PageNavigationEvent.__index = PageNavigationEvent
 
 function PageNavigationEvent.new(pageName, event)
-	invariant(typeof(pageName) == "string", "pageName should be string")
+	invariant(type(pageName) == "string", "pageName should be string")
 	invariant(typeof(event) == "userdata", "event should be RoactNavigation.Event")
 	local self = {
 		event = event,

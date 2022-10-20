@@ -1,5 +1,6 @@
 local NavigationContext = require(script.views.NavigationContext)
-local Cryo = require(script.Parent.Cryo)
+local LuauPolyfill = require(script.Parent.LuauPolyfill)
+local Object = LuauPolyfill.Object
 
 return {
 	-- Navigation container construction
@@ -37,7 +38,7 @@ return {
 	NavigationEvents = require(script.views.NavigationEvents),
 
 	-- Util Types
-	None = Cryo.None,
+	None = Object.None,
 
 	-- Additional Types
 	StackPresentationStyle = require(script.views.RobloxStackView.StackPresentationStyle),

@@ -49,7 +49,7 @@ return function(target)
 
 		return Roact.createElement("Frame", {
 			Size = UDim2.new(1, 0, 1, 0),
-			BackgroundColor3 = isFocused and Color3.new(0, 1, 0) or Color3.new(1, 0, 0),
+			BackgroundColor3 = if isFocused then Color3.new(0, 1, 0) else Color3.new(1, 0, 0),
 		}, {
 			backButton = Roact.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0.5),

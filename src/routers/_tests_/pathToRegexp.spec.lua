@@ -5,7 +5,9 @@ return function()
 	local routers = script.Parent.Parent
 	local root = routers.Parent
 	local Packages = root.Parent
-	local Cryo = require(Packages.Cryo)
+	local LuauPolyfill = require(Packages.LuauPolyfill)
+	local Array = LuauPolyfill.Array
+	local Object = LuauPolyfill.Object
 	local jestExpect = require(Packages.Dev.JestGlobals).expect
 	local pathToRegexp = require(routers.pathToRegexp)
 
@@ -28,10 +30,10 @@ return function()
 	local util = {}
 
 	function util.inspect(object)
-		if typeof(object) == "string" then
+		if type(object) == "string" then
 			return ("%q"):format(object)
 		end
-		if typeof(object) == "table" then
+		if type(object) == "table" then
 			local entries = {}
 			for key, value in pairs(object) do
 				table.insert(entries, ("%s = %s"):format(util.inspect(key), util.inspect(value)))
@@ -2768,7 +2770,7 @@ return function()
 		end
 		-- Roblox deviation: Regex:exec(str) can return a sparse array when there
 		-- is no matches for an intermediate capture. We cannot copy the matches with
-		-- `Cryo.List.join`, because it will truncate at the first `nil` value encountered
+		-- `Array.concat`, because it will truncate at the first `nil` value encountered
 		local sparseArrayMatches = {}
 		for i = 1, match.n do
 			sparseArrayMatches[i] = match[i]
@@ -2889,7 +2891,7 @@ return function()
 					local re = pathToRegexp.pathToRegexp(path, keys, opts)
 
 					-- // Parsing and compiling is only supported with string input.
-					if typeof(path) == "string" then
+					if type(path) == "string" then
 						it("should parse", function()
 							jestExpect(pathToRegexp.parse(path, opts)).toEqual(tokens)
 						end)
@@ -2901,8 +2903,10 @@ return function()
 									params = nil
 								end
 
-								local toPath =
-									pathToRegexp.compile(path, Cryo.Dictionary.join(opts or {}, options or {}))
+								local toPath = pathToRegexp.compile(
+									path,
+									Object.assign(if opts then table.clone(opts) else {}, options or {})
+								)
 
 								if result ~= nil and result ~= null then
 									it("should compile using " .. util.inspect(params), function()
@@ -2919,8 +2923,8 @@ return function()
 						end)
 					else
 						it("should parse keys", function()
-							jestExpect(keys).toEqual(Cryo.List.filter(tokens, function(token)
-								return typeof(token) ~= "string"
+							jestExpect(keys).toEqual(Array.filter(tokens, function(token)
+								return type(token) ~= "string"
 							end))
 						end)
 					end
@@ -2947,7 +2951,7 @@ return function()
 								jestExpect(exec(re, pathname)).toEqual(matches)
 							end)
 
-							if typeof(path) == "string" and params ~= nil and params ~= undefined then
+							if type(path) == "string" and params ~= nil and params ~= undefined then
 								if params == null then
 									params = nil
 								end

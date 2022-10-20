@@ -1,6 +1,11 @@
-local Cryo = require(script.Parent.Parent.Parent.Cryo)
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local SceneView = require(script.Parent.SceneView)
+local views = script.Parent
+local root = views.Parent
+local Packages = root.Parent
+
+local LuauPolyfill = require(Packages.LuauPolyfill)
+local Object = LuauPolyfill.Object
+local Roact = require(Packages.Roact)
+local SceneView = require(views.SceneView)
 
 local defaultNavigationConfig = {
 	keepVisitedScreensMounted = false,
@@ -13,7 +18,7 @@ function RobloxSwitchView.getDerivedStateFromProps(nextProps, prevState)
 	local activeKey = navState.routes[navState.index].key
 	local descriptors = nextProps.descriptors
 
-	local navigationConfig = Cryo.Dictionary.join(defaultNavigationConfig, nextProps.navigationConfig or {})
+	local navigationConfig = Object.assign(table.clone(defaultNavigationConfig), nextProps.navigationConfig or {})
 	local keepVisitedScreensMounted = navigationConfig.keepVisitedScreensMounted
 
 	local visitedScreenKeys = {
@@ -22,9 +27,11 @@ function RobloxSwitchView.getDerivedStateFromProps(nextProps, prevState)
 
 	if keepVisitedScreensMounted then
 		-- prune visited screen keys if they are not included in incoming descriptors
-		for prevKey in pairs(prevState.visitedScreenKeys or {}) do
-			if descriptors[prevKey] ~= nil then
-				visitedScreenKeys[prevKey] = true
+		if prevState.visitedScreenKeys then
+			for prevKey in prevState.visitedScreenKeys do
+				if descriptors[prevKey] ~= nil then
+					visitedScreenKeys[prevKey] = true
+				end
 			end
 		end
 	end
@@ -46,7 +53,7 @@ function RobloxSwitchView:render()
 	local activeKey = navState.routes[navState.index].key
 
 	local screenElements = {}
-	for key, descriptor in pairs(descriptors) do
+	for key, descriptor in descriptors do
 		local isActiveKey = (key == activeKey)
 
 		if visitedScreenKeys[key] == true then

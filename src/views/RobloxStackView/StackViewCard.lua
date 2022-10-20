@@ -1,5 +1,10 @@
-local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
-local invariant = require(script.Parent.Parent.Parent.utils.invariant)
+local RobloxStackView = script.Parent
+local views = RobloxStackView.Parent
+local root = views.Parent
+local Packages = root.Parent
+
+local Roact = require(Packages.Roact)
+local invariant = require(root.utils.invariant)
 
 --[[
 	Render a scene as a card for use in a StackView. This component is
@@ -53,7 +58,7 @@ function StackViewCard:render()
 		Position = initialPosition,
 		Size = UDim2.new(1, 0, 1, 0),
 		BackgroundColor3 = cardColor3,
-		BackgroundTransparency = transparent and 1 or nil,
+		BackgroundTransparency = if transparent then 1 else nil,
 		BorderSizePixel = 0,
 		ClipsDescendants = false,
 		Visible = not forceHidden,

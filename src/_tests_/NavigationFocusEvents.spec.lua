@@ -15,7 +15,8 @@ return function()
 	local JestGlobals = require(Packages.Dev.JestGlobals)
 	local expect = JestGlobals.expect
 	local jest = JestGlobals.jest
-	local Cryo = require(Packages.Cryo)
+	local LuauPolyfill = require(Packages.LuauPolyfill)
+	local Array = LuauPolyfill.Array
 	local Roact = require(Packages.Roact)
 
 	-- deviation: utility function moved out of test scope because
@@ -28,7 +29,7 @@ return function()
 			local navigation = props.navigation
 			local descriptors = props.descriptors
 
-			local children = Cryo.List.foldLeft(navigation.state.routes, function(acc, route)
+			local children = Array.reduce(navigation.state.routes, function(acc, route)
 				local Comp = descriptors[route.key].getComponent()
 				acc[route.key] = Roact.createElement(Comp, {
 					key = route.key,

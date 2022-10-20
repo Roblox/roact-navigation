@@ -1,7 +1,8 @@
 local Packages = script.Parent.Parent.Parent
 local Roact = require(Packages.Roact)
 local RoactNavigation = require(Packages.RoactNavigation)
-local Cryo = require(Packages.Cryo)
+local LuauPolyfill = require(Packages.LuauPolyfill)
+local Object = LuauPolyfill.Object
 
 --[[
 	This story demonstrates how to build overlay dialogs using a StackNavigator.
@@ -121,7 +122,7 @@ return function(target, navigatorOptions)
 	-- with mode=StackPresentationStyle.Overlay. Your main app content goes inside
 	-- a Page or navigator at this level. Note that to hide the automatic top bar
 	-- for the root stack navigator, you have to set headerMode=StackHeaderMode.None.
-	local config = Cryo.Dictionary.join({
+	local config = Object.assign({
 		mode = RoactNavigation.StackPresentationStyle.Overlay, -- use Overlay mode instead of Modal!
 	}, navigatorOptions)
 	local rootNavigator = RoactNavigation.createRobloxStackNavigator({

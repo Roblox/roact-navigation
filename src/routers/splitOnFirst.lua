@@ -16,7 +16,7 @@ local function TypeError(message)
 end
 
 local function splitOnFirst(string, separator)
-	if not (typeof(string) == "string" and typeof(separator) == "string") then
+	if not (type(string) == "string" and type(separator) == "string") then
 		error(TypeError("Expected the arguments to be of type `string`"))
 	end
 

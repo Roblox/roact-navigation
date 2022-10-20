@@ -1,7 +1,8 @@
 local Packages = script.Parent.Parent.Parent
 local Roact = require(Packages.Roact)
 local RoactNavigation = require(Packages.RoactNavigation)
-local Cryo = require(Packages.Cryo)
+local LuauPolyfill = require(Packages.LuauPolyfill)
+local Object = LuauPolyfill.Object
 
 --[[
 	This story demonstrates how to build modal dialogs using a StackNavigator.
@@ -118,26 +119,24 @@ return function(target, navigatorConfig)
 	-- with mode=StackPresentationStyle.Modal. Your main app content goes inside
 	-- a Page or navigator at this level. Note that to hide the automatic top bar
 	-- for the root stack navigator, you have to set headerMode=StackHeaderMode.None.
-	local rootNavigator = RoactNavigation.createRobloxStackNavigator(
+	local _ref = {
+		mode = RoactNavigation.StackPresentationStyle.Modal,
+	}
+	local rootNavigator = RoactNavigation.createRobloxStackNavigator({
+		{ MainContent = MainContent },
 		{
-			{ MainContent = MainContent },
-			{
-				ModalDialog = {
-					screen = ModalDialog,
-					navigationOptions = {
-						-- Draw an overlay effect under this page.
-						-- You may use overlayColor3 to set a custom overlay color, and
-						-- overlayTransparency to set a custom darkening amount if you
-						-- need specific settings.
-						overlayEnabled = true,
-					},
+			ModalDialog = {
+				screen = ModalDialog,
+				navigationOptions = {
+					-- Draw an overlay effect under this page.
+					-- You may use overlayColor3 to set a custom overlay color, and
+					-- overlayTransparency to set a custom darkening amount if you
+					-- need specific settings.
+					overlayEnabled = true,
 				},
 			},
 		},
-		Cryo.Dictionary.join(navigatorConfig or {}, {
-			mode = RoactNavigation.StackPresentationStyle.Modal,
-		})
-	)
+	}, if navigatorConfig then Object.assign(table.clone(navigatorConfig), _ref) else _ref)
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
 	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
 

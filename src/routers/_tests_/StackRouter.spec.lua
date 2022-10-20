@@ -4,7 +4,8 @@ return function()
 	local routersModule = script.Parent.Parent
 	local RoactNavigationModule = routersModule.Parent
 	local Packages = RoactNavigationModule.Parent
-	local Cryo = require(Packages.Cryo)
+	local LuauPolyfill = require(Packages.LuauPolyfill)
+	local Object = LuauPolyfill.Object
 	local Roact = require(Packages.Roact)
 	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
@@ -1830,7 +1831,8 @@ return function()
 
 			jestExpect(state2).toEqual(state1)
 
-			local state3 = router.getStateForAction(Cryo.Dictionary.join(resetAction, { key = state2.key }), state2)
+			local state3 =
+				router.getStateForAction(Object.assign(table.clone(resetAction), { key = state2.key }), state2)
 
 			jestExpect(state3 and state3.index).toEqual(2)
 			jestExpect(state3 and state3.routes[1].params).toEqual({ bar = "42" })

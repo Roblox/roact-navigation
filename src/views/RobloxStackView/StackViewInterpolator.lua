@@ -23,9 +23,11 @@
 
 	The props table may contain other changes, depending on the requirements of the animation.
 ]]
-local getSceneIndicesForInterpolationInputRange =
-	require(script.Parent.Parent.Parent.utils.getSceneIndicesForInterpolationInputRange)
-local lerp = require(script.Parent.Parent.Parent.utils.lerp)
+local RobloxStackView = script.Parent
+local root = RobloxStackView.Parent.Parent
+
+local getSceneIndicesForInterpolationInputRange = require(root.utils.getSceneIndicesForInterpolationInputRange)
+local lerp = require(root.utils.lerp)
 
 -- Render initial style when layout hasn't been measured yet.
 local function forInitial(props)
@@ -33,7 +35,7 @@ local function forInitial(props)
 	local scene = props.scene
 
 	local forceHidden = initialPositionValue ~= scene.index
-	local translate = forceHidden and 1000000 or 0
+	local translate = if forceHidden then 1000000 else 0
 
 	return {
 		forceHidden = forceHidden,

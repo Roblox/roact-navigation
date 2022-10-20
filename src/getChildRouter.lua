@@ -2,9 +2,6 @@
 local invariant = require(script.Parent.utils.invariant)
 
 return function(router, routeName)
-	invariant(type(router) == "table", "router must be a table")
-	invariant(type(routeName) == "string", "routeName must be a string")
-
 	if router.childRouters and router.childRouters[routeName] then
 		return router.childRouters[routeName]
 	end

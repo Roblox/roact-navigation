@@ -76,7 +76,7 @@ function NavigationEvents:subscribeAll()
 
 	self.subscriptions = {}
 
-	for symbol in pairs(EventNameToPropName) do
+	for symbol in EventNameToPropName do
 		self.subscriptions[symbol] = navigation.addListener(symbol, function(...)
 			-- Retrieve callback from props each time, in case props change.
 			local callback = self:getPropListener(symbol)
@@ -88,7 +88,7 @@ function NavigationEvents:subscribeAll()
 end
 
 function NavigationEvents:removeAll()
-	for symbol in pairs(EventNameToPropName) do
+	for symbol in EventNameToPropName do
 		local sub = self.subscriptions[symbol]
 		if sub then
 			sub.remove()

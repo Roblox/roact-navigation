@@ -4,7 +4,9 @@ return function()
 	local routersModule = script.Parent.Parent
 	local RoactNavigationModule = routersModule.Parent
 	local Packages = RoactNavigationModule.Parent
-	local Cryo = require(Packages.Cryo)
+	local LuauPolyfill = require(Packages.LuauPolyfill)
+	local Array = LuauPolyfill.Array
+	local Object = LuauPolyfill.Object
 	local Roact = require(Packages.Roact)
 	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
@@ -525,15 +527,15 @@ return function()
 		local function comparable(state)
 			local result = {}
 
-			if typeof(state.routeName) == "string" then
-				result = Cryo.Dictionary.join(result, {
+			if type(state.routeName) == "string" then
+				result = Object.assign(result, {
 					routeName = state.routeName,
 				})
 			end
 
-			if typeof(state.routes) == "table" then
-				result = Cryo.Dictionary.join(result, {
-					routes = Cryo.List.map(state.routes, comparable),
+			if type(state.routes) == "table" then
+				result = Object.assign(result, {
+					routes = Array.map(state.routes, comparable),
 				})
 			end
 

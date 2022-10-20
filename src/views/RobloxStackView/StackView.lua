@@ -1,12 +1,15 @@
-local root = script.Parent.Parent.Parent
+local RobloxStackView = script.Parent
+local root = RobloxStackView.Parent.Parent
 local Packages = root.Parent
-local Cryo = require(Packages.Cryo)
+
+local LuauPolyfill = require(Packages.LuauPolyfill)
+local Object = LuauPolyfill.Object
 local Roact = require(Packages.Roact)
 local StackActions = require(root.routers.StackActions)
-local StackViewLayout = require(script.Parent.StackViewLayout)
-local Transitioner = require(script.Parent.Transitioner)
-local StackViewTransitionConfigs = require(script.Parent.StackViewTransitionConfigs)
-local StackPresentationStyle = require(script.Parent.StackPresentationStyle)
+local StackViewLayout = require(RobloxStackView.StackViewLayout)
+local Transitioner = require(RobloxStackView.Transitioner)
+local StackViewTransitionConfigs = require(RobloxStackView.StackViewTransitionConfigs)
+local StackPresentationStyle = require(RobloxStackView.StackPresentationStyle)
 
 local defaultNavigationConfig = {
 	mode = StackPresentationStyle.Default,
@@ -66,12 +69,12 @@ end
 
 function StackView:_render(transition, lastTransition)
 	local screenProps = self.props.screenProps
-	local navigationConfig = Cryo.Dictionary.join(defaultNavigationConfig, self.props.navigationConfig)
+	local navigationConfig = Object.assign(table.clone(defaultNavigationConfig), self.props.navigationConfig)
 	local descriptors = self.props.descriptors
 
 	return Roact.createElement(
 		StackViewLayout,
-		Cryo.Dictionary.join(navigationConfig, {
+		Object.assign(navigationConfig, {
 			screenProps = screenProps,
 			descriptors = descriptors,
 			transitionProps = transition,

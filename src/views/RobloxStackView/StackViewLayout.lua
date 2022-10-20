@@ -1,10 +1,16 @@
-local Cryo = require(script.Parent.Parent.Parent.Parent.Cryo)
-local Roact = require(script.Parent.Parent.Parent.Parent.Roact)
-local StackPresentationStyle = require(script.Parent.StackPresentationStyle)
-local StackViewTransitionConfigs = require(script.Parent.StackViewTransitionConfigs)
-local StackViewOverlayFrame = require(script.Parent.StackViewOverlayFrame)
-local StackViewCard = require(script.Parent.StackViewCard)
-local SceneView = require(script.Parent.Parent.SceneView)
+local RobloxStackView = script.Parent
+local views = RobloxStackView.Parent
+local root = views.Parent
+local Packages = root.Parent
+
+local LuauPolyfill = require(Packages.LuauPolyfill)
+local Object = LuauPolyfill.Object
+local Roact = require(Packages.Roact)
+local StackPresentationStyle = require(RobloxStackView.StackPresentationStyle)
+local StackViewTransitionConfigs = require(RobloxStackView.StackViewTransitionConfigs)
+local StackViewOverlayFrame = require(RobloxStackView.StackViewOverlayFrame)
+local StackViewCard = require(RobloxStackView.StackViewCard)
+local SceneView = require(views.SceneView)
 
 local defaultScreenOptions = {
 	absorbInput = true,
@@ -31,6 +37,7 @@ end
 local StackViewLayout = Roact.Component:extend("StackViewLayout")
 
 function StackViewLayout:init()
+	self:setState({})
 	local startingIndex = self.props.transitionProps.navigation.state.index
 
 	self._isMounted = false
@@ -67,7 +74,7 @@ function StackViewLayout:_renderCard(scene, navigationOptions)
 	local cardInterpolationProps = {}
 	local screenInterpolator = transitionConfig.screenInterpolator
 	if screenInterpolator then
-		cardInterpolationProps = screenInterpolator(Cryo.Dictionary.join(transitionProps, {
+		cardInterpolationProps = screenInterpolator(Object.assign(table.clone(transitionProps), {
 			initialPositionValue = initialPositionValue,
 			scene = scene,
 		}))
@@ -76,7 +83,7 @@ function StackViewLayout:_renderCard(scene, navigationOptions)
 	-- Merge down the various prop packages to be applied to StackViewCard.
 	return Roact.createElement(
 		StackViewCard,
-		Cryo.Dictionary.join(transitionProps, cardInterpolationProps, {
+		Object.assign(table.clone(transitionProps), cardInterpolationProps, {
 			key = "card_" .. tostring(scene.key),
 			scene = scene,
 			renderScene = self._renderScene,
@@ -105,14 +112,16 @@ function StackViewLayout:render()
 	local scenes = transitionProps.scenes
 
 	local renderedScenes = {}
-	for _, scene in ipairs(scenes) do
+	for _, scene in scenes do
 		-- The card is obscured if:
 		-- 	It's not the active card (e.g. we're transitioning TO it).
 		-- 	It's hidden underneath an opaque card that is NOT currently transitioning.
 		--	It's completely off-screen.
 		local cardObscured = scene.index < topMostOpaqueSceneIndex and not scene.isActive
 
-		local screenOptions = Cryo.Dictionary.join(defaultScreenOptions, scene.descriptor.options or {})
+		local screenOptions = if scene.descriptor.options
+			then Object.assign(table.clone(defaultScreenOptions), scene.descriptor.options)
+			else table.clone(defaultScreenOptions)
 		local overlayEnabled = screenOptions.overlayEnabled
 		local absorbInput = screenOptions.absorbInput
 		local renderOverlay = screenOptions.renderOverlay
@@ -205,7 +214,9 @@ function StackViewLayout.getDerivedStateFromProps(nextProps, _lastState)
 	if isOverlayMode then
 		for idx = topMostIndex, 1, -1 do
 			local scene = scenes[idx]
-			local navigationOptions = Cryo.Dictionary.join(defaultScreenOptions, scene.descriptor.options or {})
+			local navigationOptions = if scene.descriptor.options
+				then Object.assign(table.clone(defaultScreenOptions), scene.descriptor.options)
+				else table.clone(defaultScreenOptions)
 
 			-- Card covers other pages if it's not an overlay and it's not the top-most index while transitioning.
 			if not navigationOptions.overlayEnabled and not (isTransitioning and idx == topMostIndex) then

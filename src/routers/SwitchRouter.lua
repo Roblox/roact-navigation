@@ -1,8 +1,10 @@
 -- upstream https://github.com/react-navigation/react-navigation/blob/62da341b672a83786b9c3a80c8a38f929964d7cc/packages/core/src/routers/SwitchRouter.js
 local Root = script.Parent.Parent
 local Packages = Root.Parent
+local LuauPolyfill = require(Packages.LuauPolyfill)
+local Array = LuauPolyfill.Array
+local Object = LuauPolyfill.Object
 
-local Cryo = require(Packages.Cryo)
 local NavigationActions = require(Root.NavigationActions)
 local BackBehavior = require(Root.BackBehavior)
 local getScreenForRouteName = require(script.Parent.getScreenForRouteName)
@@ -33,14 +35,14 @@ end
 return function(routeArray, config)
 	validateRouteConfigArray(routeArray)
 	config = config or {}
-	local routeConfigs = validateRouteConfigMap(Cryo.List.foldLeft(routeArray, foldToRoutes, {}))
+	local routeConfigs = validateRouteConfigMap(Array.reduce(routeArray, foldToRoutes, {}))
 
 	-- Order is how we map the active index into the list of possible routes.
 	-- Lua does not guarantee any sense of order of table keys in dictionaries, so
 	-- we have to deviate from react-navigation SwitchRouter API. Instead of using a
 	-- map for the routeConfigs, we wrap each key-value pair into its own table so that
 	-- routeConfigs becomes an array (i.e. { { Foo = Screen }, { Bar = Screen } }).
-	local order = config.order or Cryo.List.map(routeArray, mapToRouteName)
+	local order = config.order or Array.map(routeArray, mapToRouteName)
 
 	local getCustomActionCreators = config.getCustomActionCreators or defaultActionCreators
 
@@ -53,10 +55,10 @@ return function(routeArray, config)
 		resetOnBlur = config.resetOnBlur
 	end
 
-	local initialRouteIndex = Cryo.List.find(order, initialRouteName)
-	if initialRouteIndex == nil then
+	local initialRouteIndex = Array.indexOf(order, initialRouteName)
+	if initialRouteIndex < 1 then
 		local availableRouteNames = table.concat(
-			Cryo.List.map(order, function(routeName)
+			Array.map(order, function(routeName)
 				return ('"%s"'):format(routeName)
 			end),
 			", "
@@ -66,18 +68,21 @@ return function(routeArray, config)
 	end
 
 	local childRouters = {}
-	for _, routeName in ipairs(order) do
-		childRouters[routeName] = false
+	for _, routeName in order do
 		local screen = getScreenForRouteName(routeConfigs, routeName)
 		if type(screen) == "table" and screen.router then
 			childRouters[routeName] = screen.router
+		else
+			childRouters[routeName] = false
 		end
 	end
 
 	local function getParamsForRoute(routeName, params)
 		local routeConfig = routeConfigs[routeName]
 		if type(routeConfig) == "table" and routeConfig.params then
-			return Cryo.Dictionary.join(routeConfig.params, params or {})
+			return if params
+				then Object.assign(table.clone(routeConfig.params), params)
+				else table.clone(routeConfig.params)
 		else
 			return params
 		end
@@ -88,7 +93,7 @@ return function(routeArray, config)
 	local getActionForPathAndParams = pathParser.getActionForPathAndParams
 
 	local function resetChildRoute(routeName)
-		local initialParams = routeName == initialRouteName and initialRouteParams or nil
+		local initialParams = if routeName == initialRouteName then initialRouteParams else nil
 		-- note(brentvatne): merging initialRouteParams *on top* of default params
 		-- on the route seems incorrect but it's consistent with existing behavior
 		-- in stackrouter
@@ -96,7 +101,7 @@ return function(routeArray, config)
 		local childRouter = childRouters[routeName]
 		if childRouter then
 			local childAction = NavigationActions.init()
-			return Cryo.Dictionary.join(childRouter.getStateForAction(childAction), {
+			return Object.assign(table.clone(childRouter.getStateForAction(childAction)), {
 				key = routeName,
 				routeName = routeName,
 				params = params,
@@ -115,32 +120,33 @@ return function(routeArray, config)
 
 		if prevState and possibleNextState and prevState.index ~= possibleNextState.index and resetOnBlur then
 			local prevRouteName = prevState.routes[prevState.index].routeName
-			local nextRoutes = Cryo.List.join(possibleNextState.routes)
+			local nextRoutes = table.clone(possibleNextState.routes)
 			nextRoutes[prevState.index] = resetChildRoute(prevRouteName)
-			nextState = Cryo.Dictionary.join(possibleNextState, { routes = nextRoutes })
+			nextState = Object.assign(table.clone(possibleNextState), { routes = nextRoutes })
 		end
 
 		if backBehavior ~= BackBehavior.History or (prevState and nextState and nextState.index == prevState.index) then
 			return nextState
 		end
 
-		local nextRouteKeyHistory = prevState and prevState.routeKeyHistory or {}
+		local nextRouteKeyHistory = if prevState then prevState.routeKeyHistory else {}
 
 		if action.type == NavigationActions.Navigate then
 			local keyToAdd = nextState.routes[nextState.index].key
-			nextRouteKeyHistory = Cryo.List.filter(nextRouteKeyHistory, function(k)
+			nextRouteKeyHistory = Array.filter(nextRouteKeyHistory, function(k)
 				return k ~= keyToAdd
 			end)
 			table.insert(nextRouteKeyHistory, keyToAdd)
 		elseif action.type == NavigationActions.Back then
-			nextRouteKeyHistory = Cryo.List.removeIndex(nextRouteKeyHistory, #nextRouteKeyHistory)
+			nextRouteKeyHistory = table.clone(nextRouteKeyHistory)
+			table.remove(nextRouteKeyHistory, #nextRouteKeyHistory)
 		end
 
-		return Cryo.Dictionary.join(nextState, { routeKeyHistory = nextRouteKeyHistory })
+		return Object.assign(table.clone(nextState), { routeKeyHistory = nextRouteKeyHistory })
 	end
 
 	local function getInitialState()
-		local routes = Cryo.List.map(order, resetChildRoute)
+		local routes = Array.map(order, resetChildRoute)
 		local initialState = {
 			routes = routes,
 			index = initialRouteIndex,
@@ -163,7 +169,7 @@ return function(routeArray, config)
 	}
 
 	function SwitchRouter.getStateForAction(action, inputState)
-		local prevState = inputState and Cryo.Dictionary.join(inputState) or nil
+		local prevState = if inputState then table.clone(inputState) else nil
 		local state = inputState or getInitialState()
 		local activeChildIndex = state.index
 
@@ -172,10 +178,12 @@ return function(routeArray, config)
 			-- Need to understand if we really want to do this.
 			local params = action.params
 			if params then
-				state.routes = Cryo.List.map(state.routes, function(route)
+				state.routes = Array.map(state.routes, function(route)
 					local initialParams = route.routeName == initialRouteName and initialRouteParams or {}
-					return Cryo.Dictionary.join(route, {
-						params = Cryo.Dictionary.join(route.params or {}, params, initialParams),
+					return Object.assign(table.clone(route), {
+						params = if route.params
+							then Object.assign(table.clone(route.params), params, initialParams)
+							else Object.assign(table.clone(params), initialParams),
 					})
 				end)
 			end
@@ -183,11 +191,11 @@ return function(routeArray, config)
 
 		if action.type == SwitchActions.JumpTo and (action.key == nil or action.key == state.key) then
 			local params = action.params
-			local index = Cryo.List.findWhere(state.routes, function(route)
+			local index = Array.findIndex(state.routes, function(route)
 				return route.routeName == action.routeName
 			end)
 
-			if index == nil then
+			if index < 1 then
 				error(
 					("There is no route named '%s' in the navigator with the key '%s'.\n"):format(
 						action.routeName,
@@ -195,7 +203,7 @@ return function(routeArray, config)
 					)
 						.. "Must be one of: "
 						.. table.concat(
-							Cryo.List.map(state.routes, function(route)
+							Array.map(state.routes, function(route)
 								return route.routeName
 							end),
 							","
@@ -207,8 +215,8 @@ return function(routeArray, config)
 			if params then
 				return state.routes.map(function(route, i)
 					if i == index then
-						return Cryo.Dictionary.join(route, {
-							params = Cryo.Dictionary.join(route.params, params),
+						return Object.assign(table.clone(route), {
+							params = Object.assign(table.clone(route.params), params),
 						})
 					end
 
@@ -219,7 +227,7 @@ return function(routeArray, config)
 			return getNextState(
 				action,
 				prevState,
-				Cryo.Dictionary.join(state, {
+				Object.assign(table.clone(state), {
 					routes = routes,
 					index = index,
 				})
@@ -236,9 +244,9 @@ return function(routeArray, config)
 				return nil
 			end
 			if activeChildState and activeChildState ~= activeChildLastState then
-				local routes = Cryo.List.join(state.routes)
+				local routes = table.clone(state.routes)
 				routes[state.index] = activeChildState
-				return getNextState(action, prevState, Cryo.Dictionary.join(state, { routes = routes }))
+				return getNextState(action, prevState, Object.assign(table.clone(state), { routes = routes }))
 			end
 		end
 
@@ -255,7 +263,7 @@ return function(routeArray, config)
 			-- if there is more than one item in the history
 			elseif isBackEligible and backBehavior == BackBehavior.History and #state.routeKeyHistory > 1 then
 				local routeKey = state.routeKeyHistory[#state.routeKeyHistory - 1]
-				activeChildIndex = Cryo.List.find(order, routeKey)
+				activeChildIndex = Array.indexOf(order, routeKey)
 			end
 		end
 
@@ -263,7 +271,7 @@ return function(routeArray, config)
 
 		if action.type == NavigationActions.Navigate then
 			didNavigate = nil
-				~= Cryo.List.findWhere(order, function(childId, i)
+				~= Array.find(order, function(childId, i)
 					if childId == action.routeName then
 						activeChildIndex = i
 						return true
@@ -284,18 +292,19 @@ return function(routeArray, config)
 				end
 
 				if action.params then
-					newChildState = Cryo.Dictionary.join(newChildState, {
-						params = action.params == Cryo.None and Cryo.None or Cryo.Dictionary.join(
-							newChildState.params or {},
-							action.params
-						),
+					newChildState = Object.assign(table.clone(newChildState), {
+						params = if action.params == Object.None
+							then Object.None
+							else if newChildState.params
+								then Object.assign(table.clone(newChildState.params), action.params)
+								else table.clone(action.params),
 					})
 				end
 
 				if newChildState ~= childState then
-					local routes = Cryo.List.join(state.routes)
+					local routes = table.clone(state.routes)
 					routes[activeChildIndex] = newChildState
-					local nextState = Cryo.Dictionary.join(state, {
+					local nextState = Object.assign(table.clone(state), {
 						routes = routes,
 						index = activeChildIndex,
 					})
@@ -308,31 +317,35 @@ return function(routeArray, config)
 
 		if action.type == NavigationActions.SetParams then
 			local key = action.key
-			local lastRouteIndex = Cryo.List.findWhere(state.routes, function(route)
+			local lastRouteIndex = Array.findIndex(state.routes, function(route)
 				return route.key == key
 			end)
 
-			if lastRouteIndex ~= nil then
+			if lastRouteIndex > 0 then
 				local lastRoute = state.routes[lastRouteIndex]
 				-- ROBLOX deviation: accept RoactNavigation.None for params to allow resetting all params
-				local params = Cryo.None
-				if action.params ~= Cryo.None then
-					params = Cryo.Dictionary.join(lastRoute.params or {}, action.params or {})
+				local params = Object.None
+				if action.params ~= Object.None then
+					params = if lastRoute.params and action.params
+						then Object.assign(table.clone(lastRoute.params), action.params)
+						elseif lastRoute.params then table.clone(lastRoute.params)
+						elseif action.params then table.clone(action.params)
+						else {}
 				end
-				local routes = Cryo.List.join(state.routes)
+				local routes = table.clone(state.routes)
 
-				routes[lastRouteIndex] = Cryo.Dictionary.join(lastRoute, { params = params })
+				routes[lastRouteIndex] = Object.assign(table.clone(lastRoute), { params = params })
 
-				return getNextState(action, prevState, Cryo.Dictionary.join(state, { routes = routes }))
+				return getNextState(action, prevState, Object.assign(table.clone(state), { routes = routes }))
 			end
 		end
 
 		if activeChildIndex ~= state.index then
-			return getNextState(action, prevState, Cryo.Dictionary.join(state, { index = activeChildIndex }))
+			return getNextState(action, prevState, Object.assign(table.clone(state), { index = activeChildIndex }))
 		elseif didNavigate and not inputState then
 			return state
 		elseif didNavigate then
-			return Cryo.List.join(state)
+			return table.clone(state)
 		end
 
 		local isActionBackOrPop = action.type == NavigationActions.Back
@@ -347,7 +360,7 @@ return function(routeArray, config)
 		if sendActionToInactiveChildren then
 			local index = state.index
 			local routes = state.routes
-			Cryo.List.findWhere(order, function(childId, i)
+			Array.find(order, function(childId, i)
 				local childRouter = childRouters[childId]
 				if i == index then
 					return false
@@ -364,7 +377,7 @@ return function(routeArray, config)
 				end
 
 				if childState ~= routes[i] then
-					routes = Cryo.List.join(routes)
+					routes = table.clone(routes)
 					routes[i] = childState
 					index = i
 					return true
@@ -383,7 +396,7 @@ return function(routeArray, config)
 				return getNextState(
 					action,
 					prevState,
-					Cryo.Dictionary.join(state, {
+					Object.assign(table.clone(state), {
 						index = index,
 						routes = routes,
 					})

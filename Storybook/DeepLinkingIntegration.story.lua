@@ -33,10 +33,10 @@ return function(target, linkingProtocolMock)
 
 	local function Label(props)
 		local onClick = props.onClick
-		return Roact.createElement(onClick and "TextButton" or "TextLabel", {
+		return Roact.createElement(if onClick then "TextButton" else "TextLabel", {
 			AutomaticSize = Enum.AutomaticSize.XY,
 			BackgroundColor3 = BLACK,
-			BackgroundTransparency = onClick and 0.3 or 1,
+			BackgroundTransparency = if onClick then 0.3 else 1,
 			BorderSizePixel = 0,
 			LineHeight = 1.5,
 			Font = Enum.Font.RobotoMono,
@@ -176,7 +176,7 @@ Enter `login` to go back to the login screen.
 			title = userName .. " Profile",
 		}, {
 			UserName = Roact.createElement(Label, {
-				text = userName and "Current user: " .. userName or "No user logged in",
+				text = if userName then ("Current user: " .. userName) else "No user logged in",
 			}),
 		})
 	end

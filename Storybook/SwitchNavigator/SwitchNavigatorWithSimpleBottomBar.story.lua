@@ -33,7 +33,7 @@ return function(target)
 			Text = title,
 			TextSize = 18,
 			TextColor3 = Color3.new(0, 0, 0),
-			BackgroundColor3 = selected and Color3.new(0, 1, 0) or Color3.new(1, 1, 1),
+			BackgroundColor3 = if selected then Color3.new(0, 1, 0) else Color3.new(1, 1, 1),
 			[Roact.Event.Activated] = onActivated,
 		})
 	end
@@ -55,7 +55,7 @@ return function(target)
 		local navigation = self.props.navigation
 
 		local buttons = {}
-		for idx, pageName in ipairs(tabOrder) do
+		for idx, pageName in tabOrder do
 			table.insert(
 				buttons,
 				Roact.createElement(BarButtonItem, {

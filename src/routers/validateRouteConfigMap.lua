@@ -34,10 +34,9 @@ end
 	}
 ]]
 return function(routeConfigs)
-	invariant(type(routeConfigs) == "table", "routeConfigs must be a table")
 	invariant(next(routeConfigs) ~= nil, "Please specify at least one route when configuring a navigator.")
 
-	for routeName, routeConfig in pairs(routeConfigs) do
+	for routeName, routeConfig in routeConfigs do
 		local screenComponent = getScreenComponent(routeConfig)
 
 		local tableRouteConfig = type(routeConfig) == "table"

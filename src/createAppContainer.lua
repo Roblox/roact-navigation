@@ -3,14 +3,16 @@
 local RoactNavigationModule = script.Parent
 local Packages = RoactNavigationModule.Parent
 local Roact = require(Packages.Roact)
-local Cryo = require(Packages.Cryo)
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local console = LuauPolyfill.console
+local Object = LuauPolyfill.Object
 local NavigationActions = require(RoactNavigationModule.NavigationActions)
 local Events = require(RoactNavigationModule.Events)
 local NavigationContext = require(RoactNavigationModule.views.NavigationContext)
 local getNavigation = require(RoactNavigationModule.getNavigation)
-local invariant = require(RoactNavigationModule.utils.invariant)
+-- ROBLOX deviation START: tie invariant to assert, which avoids the function call overhead
+local invariant = assert
+-- ROBLOX deviation END
 local pathUtils = require(RoactNavigationModule.routers.pathUtils)
 
 local urlToPathAndParams = pathUtils.urlToPathAndParams
@@ -32,22 +34,22 @@ local function validateProps(props)
 		return
 	end
 
-	local containerProps = Cryo.Dictionary.join(props, {
-		navigation = Cryo.None,
-		screenProps = Cryo.None,
-		persistNavigationState = Cryo.None,
-		loadNavigationState = Cryo.None,
+	local containerProps = Object.assign(table.clone(props), {
+		navigation = Object.None,
+		screenProps = Object.None,
+		persistNavigationState = Object.None,
+		loadNavigationState = Object.None,
 		-- Roblox deviation: no support for theme
 		-- Roblox deviation: add key for external dispatch feature
-		externalDispatchConnector = Cryo.None,
+		externalDispatchConnector = Object.None,
 	})
 
-	local keys = Cryo.Dictionary.keys(containerProps)
-
-	if #keys ~= 0 then
+	if next(containerProps) ~= nil then
 		error(
 			"This navigator has both navigation and container props, so it is "
-				.. ("unclear if it should own its own state. Remove props: %q "):format(table.concat(keys, ", "))
+				.. ("unclear if it should own its own state. Remove props: %q "):format(
+					table.concat(Object.keys(containerProps), ", ")
+				)
 				.. "if the navigator should get its state from the navigation prop. If the "
 				.. "navigator should maintain its own state, do not pass a navigation prop."
 		)
@@ -57,7 +59,7 @@ local function validateProps(props)
 	local loadNavigationState = props.loadNavigationState
 	invariant(
 		(persistNavigationState == nil and loadNavigationState == nil)
-			or (typeof(persistNavigationState) == "function" and typeof(loadNavigationState) == "function"),
+			or (type(persistNavigationState) == "function" and type(loadNavigationState) == "function"),
 		"both persistNavigationState and loadNavigationState must either be undefined, or be functions"
 	)
 end
@@ -297,7 +299,8 @@ local function createAppContainer(AppComponent, linkingProtocol)
 
 		local function dispatchAction()
 			-- Roblox deviation: _actionEventSubscribers maps callback to true, e.g. a Set container
-			for subscriber in pairs(self._actionEventSubscribers) do
+			for subscriber in self._actionEventSubscribers do
+				-- ROBLOX performance? do we need to keep recreating the table in every loop iteration?
 				subscriber({
 					type = Events.Action,
 					action = action,
@@ -308,6 +311,7 @@ local function createAppContainer(AppComponent, linkingProtocol)
 		end
 
 		if startupState == self.state.nav then
+			-- ROBLOX TODO? pretty sure setState now takes the second param!
 			-- Roblox TODO: Roact does not have a second argument to `setState` like React
 			-- does, so instead we spawn the callback so that it does not run synchronously
 			spawn(dispatchAction)
@@ -325,13 +329,18 @@ local function createAppContainer(AppComponent, linkingProtocol)
 		local loadNavigationState = props.loadNavigationState
 		local url = nil
 		local loadedNavState = nil
-		pcall(function()
-			-- Roblox comment: this function is not implemented yet by the linking protocol
-			url = linkingProtocol:getLastLuaURL()
-		end)
-		pcall(function()
-			loadedNavState = loadNavigationState and loadNavigationState()
-		end)
+
+		if linkingProtocol then
+			pcall(function()
+				-- ROBLOX note: this function is not implemented yet by the linking protocol
+				url = linkingProtocol:getLastLuaURL()
+			end)
+		end
+		if loadNavigationState then
+			pcall(function()
+				loadedNavState = loadNavigationState()
+			end)
+		end
 
 		return {
 			parsedUrl = url and urlToPathAndParams(url, uriPrefix),
@@ -339,14 +348,12 @@ local function createAppContainer(AppComponent, linkingProtocol)
 		}
 	end
 
-	-- Roblox deviation: no componentDidCatch lifecycle method in Roact
-
+	-- Roblox TODO: use componentDidCatch lifecycle method in Roact 17
+	-- ROBLOX performance: remove anon function closure creation
 	function NavigationContainer:_persistNavigationState(nav)
 		local persistNavigationState = self.props.persistNavigationState
 		if persistNavigationState then
-			local success, errorMessage = pcall(function()
-				persistNavigationState(nav)
-			end)
+			local success, errorMessage = pcall(persistNavigationState, nav)
 
 			if not success then
 				warn(
@@ -402,8 +409,9 @@ local function createAppContainer(AppComponent, linkingProtocol)
 		end
 
 		local function dispatchActionEvents()
+			-- ROBLOX performance? do we need to recreate this  table every iteration through the loop?
 			-- Roblox comment: _actionEventSubscribers is a Map<function, true>, e.g. a Set container
-			for subscriber in pairs(self._actionEventSubscribers) do
+			for subscriber in self._actionEventSubscribers do
 				subscriber({
 					type = Events.Action,
 					action = action,
@@ -444,11 +452,11 @@ local function createAppContainer(AppComponent, linkingProtocol)
 			return self.props.screenProps
 		end
 
-		local screenProps = self.props.screenProps or {}
-
-		if screenProps[propKey] == nil then
+		local screenProps = self.props.screenProps
+		if screenProps == nil or screenProps[propKey] == nil then
 			return defaultValue
 		end
+
 		return screenProps[propKey]
 	end
 
@@ -491,7 +499,7 @@ local function createAppContainer(AppComponent, linkingProtocol)
 			-- Provide navigation prop for top-level component so it doesn't have to connect.
 			AppComponent = Roact.createElement(
 				AppComponent,
-				Cryo.Dictionary.join(self.props, {
+				Object.assign(table.clone(self.props), {
 					navigation = navigation,
 				})
 			),

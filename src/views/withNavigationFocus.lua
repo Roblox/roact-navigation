@@ -23,15 +23,17 @@
 	Note that if you ONLY need the 'navigation' context object, it is recommended
 	that you use withNavigation() for performance reasons.
 ]]
-local root = script.Parent.Parent
+local views = script.Parent
+local root = views.Parent
 local Packages = root.Parent
+local LuauPolyfill = require(Packages.LuauPolyfill)
+local Object = LuauPolyfill.Object
 local Roact = require(Packages.Roact)
-local Cryo = require(Packages.Cryo)
 local Events = require(root.Events)
-local withNavigation = require(script.Parent.withNavigation)
+local withNavigation = require(views.withNavigation)
 
 local function isComponent(component)
-	local valueType = typeof(component)
+	local valueType = type(component)
 	return valueType == "function" or valueType == "table"
 end
 
@@ -65,7 +67,7 @@ return function(component)
 	end
 
 	function NavigationFocusComponent:willUnmount()
-		for _, subscription in ipairs(self.subscriptions) do
+		for _, subscription in self.subscriptions do
 			subscription.remove()
 		end
 	end
@@ -73,7 +75,7 @@ return function(component)
 	function NavigationFocusComponent:render()
 		return Roact.createElement(
 			component,
-			Cryo.Dictionary.join(self.props, {
+			Object.assign(table.clone(self.props), {
 				isFocused = self.state.isFocused,
 			})
 		)

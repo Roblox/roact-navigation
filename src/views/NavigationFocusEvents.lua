@@ -2,7 +2,9 @@
 
 local root = script.Parent.Parent
 local Packages = root.Parent
-local Cryo = require(Packages.Cryo)
+local LuauPolyfill = require(Packages.LuauPolyfill)
+local Array = LuauPolyfill.Array
+
 local Roact = require(Packages.Roact)
 local Events = require(root.Events)
 
@@ -119,10 +121,12 @@ function NavigationEventManager:_handleWillFocus(args)
 
 	local nextLastState = nil
 	if lastState and lastState.routes then
-		local nextLastStateIndex = Cryo.List.findWhere(lastState and lastState.routes or {}, function(r)
-			return r.key == route.key
-		end)
-		if nextLastStateIndex then
+		local nextLastStateIndex = if lastState
+			then Array.findIndex(lastState.routes, function(r)
+				return r.key == route.key
+			end)
+			else {}
+		if nextLastStateIndex > 0 then
 			nextLastState = lastState.routes[nextLastStateIndex]
 		end
 	end
@@ -147,10 +151,12 @@ function NavigationEventManager:_handleWillBlur(args)
 
 	local nextLastState = nil
 	if lastState and lastState.routes then
-		local nextLastStateIndex = Cryo.List.findWhere(lastState and lastState.routes or {}, function(r)
-			return r.key == route.key
-		end)
-		if nextLastStateIndex then
+		local nextLastStateIndex = if lastState
+			then Array.findIndex(lastState.routes, function(r)
+				return r.key == route.key
+			end)
+			else {}
+		if nextLastStateIndex > 0 then
 			nextLastState = lastState.routes[nextLastStateIndex]
 		end
 	end
@@ -173,7 +179,7 @@ function NavigationEventManager:_handleDidFocus(args)
 	local navigation = self.props.navigation
 
 	if self._lastWillFocusKey then
-		local routeIndex = Cryo.List.findWhere(navigation.state.routes, function(r)
+		local routeIndex = Array.findIndex(navigation.state.routes, function(r)
 			return r.key == self._lastWillFocusKey
 		end)
 
@@ -182,10 +188,12 @@ function NavigationEventManager:_handleDidFocus(args)
 
 			local nextLastState = nil
 			if lastState and lastState.routes then
-				local nextLastStateIndex = Cryo.List.findWhere(lastState and lastState.routes or {}, function(r)
-					return r.key == route.key
-				end)
-				if nextLastStateIndex then
+				local nextLastStateIndex = if lastState
+					then Array.findIndex(lastState.routes, function(r)
+						return r.key == route.key
+					end)
+					else {}
+				if nextLastStateIndex > 0 then
 					nextLastState = lastState.routes[nextLastStateIndex]
 				end
 			end
@@ -210,18 +218,20 @@ function NavigationEventManager:_handleDidBlur(args)
 	local navigation = self.props.navigation
 
 	if self._lastWillBlurKey then
-		local routeIndex = Cryo.List.findWhere(navigation.state.routes, function(r)
+		local routeIndex = Array.findIndex(navigation.state.routes, function(r)
 			return r.key == self._lastWillBlurKey
 		end)
 
-		if routeIndex then
+		if routeIndex > 0 then
 			local route = navigation.state.routes[routeIndex]
 
 			local nextLastState = nil
 			if lastState and lastState.routes then
-				local nextLastStateIndex = Cryo.List.findWhere(lastState and lastState.routes or {}, function(r)
-					return r.key == route.key
-				end)
+				local nextLastStateIndex = if lastState
+					then Array.findIndex(lastState.routes, function(r)
+						return r.key == route.key
+					end)
+					else {}
 				if nextLastStateIndex then
 					nextLastState = lastState.routes[nextLastStateIndex]
 				end
@@ -264,7 +274,7 @@ function NavigationEventManager:_emitWillFocus(target, payload)
 	onEvent(target, Events.WillFocus, payload)
 
 	if
-		typeof(navigation.state.isTransitioning) ~= "boolean"
+		type(navigation.state.isTransitioning) ~= "boolean"
 		or (navigation.state.isTransitioning ~= true and not navigation._dangerouslyGetParent()) -- TODO: what should we do with dangerouslyGetParent
 	then
 		self:_emitDidFocus(target, payload)
@@ -289,7 +299,7 @@ function NavigationEventManager:_emitWillBlur(target, payload)
 	onEvent(target, Events.WillBlur, payload)
 
 	if
-		typeof(navigation.state.isTransitioning) ~= "boolean"
+		type(navigation.state.isTransitioning) ~= "boolean"
 		or (navigation.state.isTransitioning ~= true and not navigation._dangerouslyGetParent())
 	then
 		self:_emitDidBlur(target, payload)

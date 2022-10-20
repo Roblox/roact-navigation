@@ -1,12 +1,15 @@
 -- upstream https://github.com/react-navigation/react-navigation/blob/20e2625f351f90fadadbf98890270e43e744225b/packages/core/src/views/withNavigation.js
-local Packages = script.Parent.Parent.Parent
-local Cryo = require(Packages.Cryo)
+local views = script.Parent
+local root = views.Parent
+local Packages = root.Parent
+local LuauPolyfill = require(Packages.LuauPolyfill)
+local Object = LuauPolyfill.Object
 local Roact = require(Packages.Roact)
-local NavigationContext = require(script.Parent.NavigationContext)
-local invariant = require(script.Parent.Parent.utils.invariant)
+local NavigationContext = require(views.NavigationContext)
+local invariant = require(root.utils.invariant)
 
 local function isComponent(component)
-	local valueType = typeof(component)
+	local valueType = type(component)
 	return valueType == "function" or valueType == "table"
 end
 
@@ -48,9 +51,9 @@ return function(component, config)
 				)
 				return Roact.createElement(
 					component,
-					Cryo.Dictionary.join(props, {
+					Object.assign(table.clone(props), {
 						navigation = navigation,
-						[Roact.Ref] = config.forwardRef and props[Roact.Ref] or Cryo.None,
+						[Roact.Ref] = if config.forwardRef then props[Roact.Ref] else Object.None,
 					})
 				)
 			end,
