@@ -3,7 +3,8 @@ local Packages = root.Parent
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local Array = LuauPolyfill.Array
 
-local Roact = require(Packages.Roact)
+local React = require(Packages.React)
+local ReactRoblox = require(Packages.Dev.ReactRoblox)
 local NavigationEvents = require(root.views.NavigationEvents)
 local Events = require(root.Events)
 local invariant = require(script.Parent.invariant)
@@ -35,11 +36,10 @@ end
 
 function TrackNavigationEvents:waitForNumberEventsMaxWaitTime(numberOfEvents, maxWaitTimeInSeconds)
 	local secondsWaitedFor = 0
-	local waitDurationPerIteration = 0.33
 	while #self.navigationEvents < numberOfEvents and secondsWaitedFor <= maxWaitTimeInSeconds do
-		wait(waitDurationPerIteration)
-		-- print("waiting for number of events to reach:", numberOfEvents, "waited for:", secondsWaitedFor)
-		secondsWaitedFor = secondsWaitedFor + waitDurationPerIteration
+		ReactRoblox.act(function()
+			secondsWaitedFor += task.wait()
+		end)
 	end
 end
 
@@ -63,7 +63,7 @@ function TrackNavigationEvents:createNavigationAdapter(pageName)
 		end
 	end
 
-	return Roact.createElement(NavigationEvents, props)
+	return React.createElement(NavigationEvents, props)
 end
 
 function TrackNavigationEvents:equalTo(pageNavigationEventList)
