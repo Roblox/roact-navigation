@@ -4,7 +4,7 @@ return function()
 	local routersModule = script.Parent.Parent
 	local RoactNavigationModule = routersModule.Parent
 	local Packages = RoactNavigationModule.Parent
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
 	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	local BackBehavior = require(RoactNavigationModule.BackBehavior)
@@ -13,7 +13,7 @@ return function()
 
 	local BareLeafRouteConfig = {
 		screen = function()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end,
 	}
 
@@ -22,10 +22,10 @@ return function()
 	describe("TabRouter", function()
 		it("Handles basic tab logic", function()
 			local function ScreenA()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function ScreenB()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = TabRouter({
 				{ Foo = { screen = ScreenA } },
@@ -70,10 +70,10 @@ return function()
 
 		it("Handles getScreen", function()
 			local function ScreenA()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function ScreenB()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = TabRouter({
 				{ Foo = {
@@ -166,14 +166,14 @@ return function()
 				{
 					Foo = {
 						screen = function()
-							return Roact.createElement("Frame")
+							return React.createElement("Frame")
 						end,
 					},
 				},
 				{
 					Bar = {
 						screen = function()
-							return Roact.createElement("Frame")
+							return React.createElement("Frame")
 						end,
 					},
 				},
@@ -194,14 +194,14 @@ return function()
 				{
 					Foo = {
 						screen = function()
-							return Roact.createElement("Frame")
+							return React.createElement("Frame")
 						end,
 					},
 				},
 				{
 					Bar = {
 						screen = function()
-							return Roact.createElement("Frame")
+							return React.createElement("Frame")
 						end,
 					},
 				},
@@ -264,10 +264,10 @@ return function()
 		end)
 
 		it("Handles nested tabs and nested actions", function()
-			local ChildTabNavigator = Roact.Component:extend("ChildTabNavigator")
+			local ChildTabNavigator = React.Component:extend("ChildTabNavigator")
 
 			function ChildTabNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ChildTabNavigator.router = TabRouter({
@@ -320,10 +320,10 @@ return function()
 		end)
 
 		it("Handles passing params to nested tabs", function()
-			local ChildTabNavigator = Roact.Component:extend("ChildTabNavigator")
+			local ChildTabNavigator = React.Component:extend("ChildTabNavigator")
 
 			function ChildTabNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ChildTabNavigator.router = TabRouter({
@@ -373,10 +373,10 @@ return function()
 		end)
 
 		it("Handles initial deep linking into nested tabs", function()
-			local ChildTabNavigator = Roact.Component:extend("ChildTabNavigator")
+			local ChildTabNavigator = React.Component:extend("ChildTabNavigator")
 
 			function ChildTabNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ChildTabNavigator.router = TabRouter({
@@ -434,9 +434,9 @@ return function()
 		end)
 
 		it("Handles linking across of deeply nested tabs", function()
-			local ChildNavigator0 = Roact.Component:extend("ChildNavigator0")
+			local ChildNavigator0 = React.Component:extend("ChildNavigator0")
 			function ChildNavigator0:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ChildNavigator0.router = TabRouter({
@@ -444,9 +444,9 @@ return function()
 				{ Baz = BareLeafRouteConfig },
 			})
 
-			local ChildNavigator1 = Roact.Component:extend("ChildNavigator1")
+			local ChildNavigator1 = React.Component:extend("ChildNavigator1")
 			function ChildNavigator1:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ChildNavigator1.router = TabRouter({
@@ -454,9 +454,9 @@ return function()
 				{ Zap = BareLeafRouteConfig },
 			})
 
-			local MidNavigator = Roact.Component:extend("MidNavigator")
+			local MidNavigator = React.Component:extend("MidNavigator")
 			function MidNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			MidNavigator.router = TabRouter({
@@ -585,10 +585,10 @@ return function()
 
 		it("Handles path configuration", function()
 			local function ScreenA()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function ScreenB()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = TabRouter({
 				{ Foo = { path = "f", screen = ScreenA } },
@@ -640,10 +640,10 @@ return function()
 
 		it("Handles default configuration", function()
 			local function ScreenA()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function ScreenB()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = TabRouter({
 				{ Foo = { path = "", screen = ScreenA } },
@@ -659,12 +659,12 @@ return function()
 		end)
 
 		it("Gets deep path", function()
-			local ScreenA = Roact.Component:extend("ScreenA")
+			local ScreenA = React.Component:extend("ScreenA")
 			function ScreenA:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function ScreenB()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ScreenA.router = TabRouter({
@@ -698,10 +698,10 @@ return function()
 
 		it("Can navigate to other tab (no router) with params", function()
 			local function ScreenA()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function ScreenB()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = TabRouter({
 				{ a = { screen = ScreenA } },
@@ -735,17 +735,17 @@ return function()
 
 		it("Back actions are not propagated to inactive children", function()
 			local function ScreenA()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function ScreenB()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function ScreenC()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
-			local InnerNavigator = Roact.Component:extend("InnerNavigator")
+			local InnerNavigator = React.Component:extend("InnerNavigator")
 			function InnerNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			InnerNavigator.router = TabRouter({
@@ -769,10 +769,10 @@ return function()
 
 		it("Back behavior initialRoute works", function()
 			local function ScreenA()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function ScreenB()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = TabRouter({
 				{ a = { screen = ScreenA } },
@@ -787,15 +787,15 @@ return function()
 
 		it("Inner actions are only unpacked if the current tab matches", function()
 			local PlainScreen = function()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
-			local ScreenA = Roact.Component:extend("ScreenA")
+			local ScreenA = React.Component:extend("ScreenA")
 			function ScreenA:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
-			local ScreenB = Roact.Component:extend("ScreenB")
+			local ScreenB = React.Component:extend("ScreenB")
 			function ScreenB:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ScreenB.router = TabRouter({

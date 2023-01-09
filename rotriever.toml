@@ -7,7 +7,6 @@ files = ["*", "!**/_tests_/**", "!.robloxrc"]
 
 [dependencies]
 React = "github.com/roblox/roact-alignment@17.0.1-rc.14"
-Roact = { target = "github.com/roblox/roact-alignment", version = "17.0.1-rc.14", package = "RoactCompat"}
 Otter = "github.com/roblox/otter@0.1.1"
 LuauPolyfill = "github.com/roblox/luau-polyfill@0.4.2"
 RegExp = "github.com/roblox/luau-regexp@0.2.0"

@@ -7,7 +7,7 @@ return function()
 	local LuauPolyfill = require(Packages.LuauPolyfill)
 	local Array = LuauPolyfill.Array
 	local Object = LuauPolyfill.Object
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
 	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	local StackRouter = require(routersModule.StackRouter)
@@ -38,22 +38,22 @@ return function()
 			it(
 				("title is configurable using navigationOptions and getScreenOptions - %s"):format(routerName),
 				function()
-					local FooView = Roact.Component:extend("FooView")
+					local FooView = React.Component:extend("FooView")
 					function FooView:render()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end
 
-					local BarView = Roact.Component:extend("BarView")
+					local BarView = React.Component:extend("BarView")
 					function BarView:render()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end
 					BarView.navigationOptions = {
 						title = "BarTitle",
 					}
 
-					local BazView = Roact.Component:extend("BazView")
+					local BazView = React.Component:extend("BazView")
 					function BazView:render()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end
 					BazView.navigationOptions = function(options)
 						local navigation = options.navigation
@@ -97,10 +97,10 @@ return function()
 			)
 
 			it(("set params works in %s"):format(routerName), function()
-				local FooView = Roact.Component:extend("FooView")
+				local FooView = React.Component:extend("FooView")
 
 				function FooView:render()
-					return Roact.createElement("Frame")
+					return React.createElement("Frame")
 				end
 
 				local router = Router({
@@ -122,7 +122,7 @@ return function()
 
 			it("merges existing params when set params on existing state", function()
 				local function Screen()
-					return Roact.createElement("Frame")
+					return React.createElement("Frame")
 				end
 				local router = Router({
 					{ Foo = { screen = Screen, params = { a = 1 } } },
@@ -146,7 +146,7 @@ return function()
 
 			it("merges params when setting params during init", function()
 				local function Screen()
-					return Roact.createElement("Frame")
+					return React.createElement("Frame")
 				end
 				local router = Router({
 					{ Foo = { screen = Screen, params = { a = 1 } } },
@@ -161,11 +161,11 @@ return function()
 
 	it("Nested navigate behavior test", function()
 		local function Leaf()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
-		local First = Roact.Component:extend("First")
+		local First = React.Component:extend("First")
 		function First:render()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 
 		First.router = StackRouter({
@@ -173,9 +173,9 @@ return function()
 			{ First2 = Leaf },
 		})
 
-		local Second = Roact.Component:extend("Second")
+		local Second = React.Component:extend("Second")
 		function Second:render()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 
 		Second.router = StackRouter({
@@ -183,9 +183,9 @@ return function()
 			{ Second2 = Leaf },
 		})
 
-		local Main = Roact.Component:extend("Main")
+		local Main = React.Component:extend("Main")
 		function Main:render()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 
 		Main.router = StackRouter({
@@ -237,12 +237,12 @@ return function()
 
 	it("Handles no-op actions with tabs within stack router", function()
 		local function BarView()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
-		local FooTabNavigator = Roact.Component:extend("FooTabNavigator")
+		local FooTabNavigator = React.Component:extend("FooTabNavigator")
 
 		function FooTabNavigator:render()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 
 		FooTabNavigator.router = TabRouter({
@@ -271,12 +271,12 @@ return function()
 
 	it("Handles deep action", function()
 		local function BarView()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 
-		local FooTabNavigator = Roact.Component:extend("FooTabNavigator")
+		local FooTabNavigator = React.Component:extend("FooTabNavigator")
 		function FooTabNavigator:render()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 
 		FooTabNavigator.router = TabRouter({
@@ -312,20 +312,20 @@ return function()
 	end)
 
 	it("Handles the navigate action with params", function()
-		local FooTabNavigator = Roact.Component:extend("FooTabNavigator")
+		local FooTabNavigator = React.Component:extend("FooTabNavigator")
 		function FooTabNavigator:render()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 
 		FooTabNavigator.router = TabRouter({
 			{ Baz = {
 				screen = function()
-					return Roact.createElement("Frame")
+					return React.createElement("Frame")
 				end,
 			} },
 			{ Boo = {
 				screen = function()
-					return Roact.createElement("Frame")
+					return React.createElement("Frame")
 				end,
 			} },
 		})
@@ -333,7 +333,7 @@ return function()
 		local TestRouter = StackRouter({
 			{ Foo = {
 				screen = function()
-					return Roact.createElement("Frame")
+					return React.createElement("Frame")
 				end,
 			} },
 			{ Bar = { screen = FooTabNavigator } },
@@ -362,15 +362,15 @@ return function()
 	end)
 
 	it("Handles the setParams action", function()
-		local FooTabNavigator = Roact.Component:extend("FooTabNavigator")
+		local FooTabNavigator = React.Component:extend("FooTabNavigator")
 		function FooTabNavigator:render()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 
 		FooTabNavigator.router = TabRouter({
 			{ Baz = {
 				screen = function()
-					return Roact.createElement("Frame")
+					return React.createElement("Frame")
 				end,
 			} },
 		})
@@ -379,7 +379,7 @@ return function()
 			{ Foo = { screen = FooTabNavigator } },
 			{ Bar = {
 				screen = function()
-					return Roact.createElement("Frame")
+					return React.createElement("Frame")
 				end,
 			} },
 		})
@@ -402,11 +402,11 @@ return function()
 
 	it("Supports lazily-evaluated getScreen", function()
 		local function BarView()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
-		local FooTabNavigator = Roact.Component:extend("FooTabNavigator")
+		local FooTabNavigator = React.Component:extend("FooTabNavigator")
 		function FooTabNavigator:render()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 
 		FooTabNavigator.router = TabRouter({
@@ -442,12 +442,12 @@ return function()
 	end)
 
 	it("Does not switch tab index when TabRouter child handles COMPLETE_NAVIGATION or SET_PARAMS", function()
-		local FooStackNavigator = Roact.Component:extend("FooStackNavigator")
+		local FooStackNavigator = React.Component:extend("FooStackNavigator")
 		function FooStackNavigator:render()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 		local function BarView()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 
 		FooStackNavigator.router = StackRouter({
@@ -486,15 +486,15 @@ return function()
 
 	it("Inner actions are only unpacked if the current tab matches", function()
 		local function PlainScreen()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
-		local ScreenA = Roact.Component:extend("ScreenA")
+		local ScreenA = React.Component:extend("ScreenA")
 		function ScreenA:render()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
-		local ScreenB = Roact.Component:extend("ScreenB")
+		local ScreenB = React.Component:extend("ScreenB")
 		function ScreenB:render()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 
 		ScreenB.router = StackRouter({

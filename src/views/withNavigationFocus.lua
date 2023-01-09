@@ -5,7 +5,7 @@ local root = views.Parent
 local Packages = root.Parent
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local Object = LuauPolyfill.Object
-local Roact = require(Packages.Roact)
+local React = require(Packages.React)
 local Events = require(root.Events)
 local withNavigation = require(views.withNavigation)
 
@@ -16,7 +16,7 @@ end
 
 return function(component)
 	assert(isComponent(component), "withNavigationFocus must be called with a Roact component (stateful or functional)")
-	local NavigationFocusComponent = Roact.Component:extend("NavigationFocusComponent")
+	local NavigationFocusComponent = React.Component:extend("NavigationFocusComponent")
 
 	function NavigationFocusComponent:init()
 		self.state = {
@@ -50,7 +50,7 @@ return function(component)
 	end
 
 	function NavigationFocusComponent:render()
-		return Roact.createElement(
+		return React.createElement(
 			component,
 			Object.assign(table.clone(self.props), {
 				isFocused = self.state.isFocused,

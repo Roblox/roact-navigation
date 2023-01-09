@@ -6,7 +6,7 @@ return function()
 	local Packages = RoactNavigationModule.Parent
 	local LuauPolyfill = require(Packages.LuauPolyfill)
 	local Object = LuauPolyfill.Object
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
 	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	local RoactNavigation = require(RoactNavigationModule)
@@ -20,10 +20,10 @@ return function()
 	end)
 
 	local function ListScreen()
-		return Roact.createElement("Frame")
+		return React.createElement("Frame")
 	end
 
-	local ProfileNavigator = Roact.Component:extend("ProfileNavigator")
+	local ProfileNavigator = React.Component:extend("ProfileNavigator")
 	ProfileNavigator.router = StackRouter({
 		{
 			list = {
@@ -34,10 +34,10 @@ return function()
 	})
 
 	function ProfileNavigator:render()
-		return Roact.createElement("Frame")
+		return React.createElement("Frame")
 	end
 
-	local MainNavigator = Roact.Component:extend("MainNavigator")
+	local MainNavigator = React.Component:extend("MainNavigator")
 	MainNavigator.router = StackRouter({
 		{
 			profile = {
@@ -48,40 +48,40 @@ return function()
 	})
 
 	function MainNavigator:render()
-		return Roact.createElement("Frame")
+		return React.createElement("Frame")
 	end
 
 	local function LoginScreen()
-		return Roact.createElement("Frame")
+		return React.createElement("Frame")
 	end
 
-	local AuthNavigator = Roact.Component:extend("AuthNavigator")
+	local AuthNavigator = React.Component:extend("AuthNavigator")
 	AuthNavigator.router = StackRouter({
 		{ login = { screen = LoginScreen } },
 	})
 
 	function AuthNavigator:render()
-		return Roact.createElement("Frame")
+		return React.createElement("Frame")
 	end
 
-	local FooNavigator = Roact.Component:extend("FooNavigator")
+	local FooNavigator = React.Component:extend("FooNavigator")
 	FooNavigator.router = StackRouter({
 		{
 			bar = {
 				path = "b/:barThing",
 				screen = function()
-					return Roact.createElement("Frame")
+					return React.createElement("Frame")
 				end,
 			},
 		},
 	})
 
 	function FooNavigator:render()
-		return Roact.createElement("Frame")
+		return React.createElement("Frame")
 	end
 
 	local PersonScreen = function()
-		return Roact.createElement("Frame")
+		return React.createElement("Frame")
 	end
 
 	local TestStackRouter = StackRouter({
@@ -97,10 +97,10 @@ return function()
 	describe("StackRouter", function()
 		it("Gets the active screen for a given state", function()
 			local function FooScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function BarScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = StackRouter({
 				{ foo = { screen = FooScreen } },
@@ -128,10 +128,10 @@ return function()
 
 		it("Handles getScreen in getComponentForState", function()
 			local function FooScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function BarScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = StackRouter({
 				{ foo = {
@@ -167,17 +167,17 @@ return function()
 
 		it("Gets the screen for given route", function()
 			local function FooScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
-			local BarScreen = Roact.Component:extend("BarScreen")
+			local BarScreen = React.Component:extend("BarScreen")
 			function BarScreen:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
-			local BazScreen = Roact.Component:extend("BazScreen")
+			local BazScreen = React.Component:extend("BazScreen")
 			function BazScreen:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			local router = StackRouter({
@@ -193,17 +193,17 @@ return function()
 
 		it("Handles getScreen in getComponent", function()
 			local function FooScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
-			local BarScreen = Roact.Component:extend("BarScreen")
+			local BarScreen = React.Component:extend("BarScreen")
 			function BarScreen:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
-			local BazScreen = Roact.Component:extend("BazScreen")
+			local BazScreen = React.Component:extend("BazScreen")
 			function BazScreen:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			local router = StackRouter({
@@ -374,20 +374,20 @@ return function()
 		end)
 
 		it("Pushes other navigators when navigating to an unopened route name", function()
-			local Bar = Roact.Component:extend("Bar")
+			local Bar = React.Component:extend("Bar")
 			function Bar:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			Bar.router = StackRouter({
 				{ baz = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ qux = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -395,7 +395,7 @@ return function()
 			local TestRouter = StackRouter({
 				{ foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ bar = { screen = Bar } },
@@ -418,20 +418,20 @@ return function()
 		end)
 
 		it("push bubbles up", function()
-			local ChildNavigator = Roact.Component:extend("ChildNavigator")
+			local ChildNavigator = React.Component:extend("ChildNavigator")
 			function ChildNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ChildNavigator.router = StackRouter({
 				{ Baz = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Qux = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -439,13 +439,13 @@ return function()
 			local router = StackRouter({
 				{ Foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Bar = { screen = ChildNavigator } },
 				{ Bad = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -461,21 +461,21 @@ return function()
 		end)
 
 		it("pop bubbles up", function()
-			local ChildNavigator = Roact.Component:extend("ChildNavigator")
+			local ChildNavigator = React.Component:extend("ChildNavigator")
 
 			function ChildNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ChildNavigator.router = StackRouter({
 				{ Baz = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Qux = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -483,7 +483,7 @@ return function()
 			local router = StackRouter({
 				{ Foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Bar = { screen = ChildNavigator } },
@@ -529,21 +529,21 @@ return function()
 		end)
 
 		it("popToTop bubbles up", function()
-			local ChildNavigator = Roact.Component:extend("ChildNavigator")
+			local ChildNavigator = React.Component:extend("ChildNavigator")
 
 			function ChildNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ChildNavigator.router = StackRouter({
 				{ Baz = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Qux = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -551,7 +551,7 @@ return function()
 			local router = StackRouter({
 				{ Foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Bar = { screen = ChildNavigator } },
@@ -565,21 +565,21 @@ return function()
 		end)
 
 		it("popToTop targets StackRouter by key if specified", function()
-			local ChildNavigator = Roact.Component:extend("ChildNavigator")
+			local ChildNavigator = React.Component:extend("ChildNavigator")
 
 			function ChildNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ChildNavigator.router = StackRouter({
 				{ Baz = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Qux = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -587,7 +587,7 @@ return function()
 			local router = StackRouter({
 				{ Foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Bar = { screen = ChildNavigator } },
@@ -607,12 +607,12 @@ return function()
 			local TestRouter = StackRouter({
 				{ foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -676,12 +676,12 @@ return function()
 			local TestRouter = StackRouter({
 				{ foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -716,12 +716,12 @@ return function()
 			local TestRouter = StackRouter({
 				{ foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			}, {
@@ -743,18 +743,18 @@ return function()
 			local TestRouter = StackRouter({
 				{ foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{
 					baz = {
 						screen = function()
-							return Roact.createElement("Frame")
+							return React.createElement("Frame")
 						end,
 					},
 				},
@@ -782,12 +782,12 @@ return function()
 			local TestRouter = StackRouter({
 				{ foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -808,38 +808,38 @@ return function()
 		end)
 
 		it("Navigate from top propagates to any arbitary depth of stacks", function()
-			local GrandChildNavigator = Roact.Component:extend("GrandChildNavigator")
+			local GrandChildNavigator = React.Component:extend("GrandChildNavigator")
 			function GrandChildNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			GrandChildNavigator.router = StackRouter({
 				{ Quux = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Corge = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
 
-			local ChildNavigator = Roact.Component:extend("ChildNavigator")
+			local ChildNavigator = React.Component:extend("ChildNavigator")
 			function ChildNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ChildNavigator.router = StackRouter({
 				{ Baz = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Woo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Qux = { screen = GrandChildNavigator } },
@@ -847,7 +847,7 @@ return function()
 			local Parent = StackRouter({
 				{ Foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Bar = { screen = ChildNavigator } },
@@ -867,12 +867,12 @@ return function()
 			local TestRouter = StackRouter({
 				{ foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			}, {
@@ -889,12 +889,12 @@ return function()
 			local TestRouter = StackRouter({
 				{ foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -913,38 +913,38 @@ return function()
 
 		-- https://github.com/react-navigation/react-navigation/issues/4063
 		it("Navigate on inactive stackrouter is idempotent", function()
-			local FirstChildNavigator = Roact.Component:extend("FirstChildNavigator")
+			local FirstChildNavigator = React.Component:extend("FirstChildNavigator")
 			function FirstChildNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			FirstChildNavigator.router = StackRouter({
 				{
 					First1 = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				},
 				{
 					First2 = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				},
 			})
 
-			local SecondChildNavigator = Roact.Component:extend("SecondChildNavigator")
+			local SecondChildNavigator = React.Component:extend("SecondChildNavigator")
 			function SecondChildNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			SecondChildNavigator.router = StackRouter({
 				{
 					Second1 = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				},
 				{
 					Second2 = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				},
 			})
@@ -952,7 +952,7 @@ return function()
 			local router = StackRouter({
 				{
 					Leaf = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				},
 				{ First = FirstChildNavigator },
@@ -979,12 +979,12 @@ return function()
 			local TestRouter = StackRouter({
 				{ foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -999,12 +999,12 @@ return function()
 			local TestRouter = StackRouter({
 				{ foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -1026,12 +1026,12 @@ return function()
 			local TestRouter = StackRouter({
 				{ foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -1056,12 +1056,12 @@ return function()
 			local TestRouter = StackRouter({
 				{ foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -1091,10 +1091,10 @@ return function()
 
 		it("Handle basic stack logic for plain components", function()
 			local function FooScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function BarScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = StackRouter({
 				{ Foo = { screen = FooScreen } },
@@ -1139,12 +1139,12 @@ return function()
 			local TestRouter = StackRouter({
 				{ foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -1180,43 +1180,43 @@ return function()
 		end)
 
 		it("Replace action returns most recent route if no key is provided", function()
-			local GrandChildNavigator = Roact.Component:extend("GrandChildNavigator")
+			local GrandChildNavigator = React.Component:extend("GrandChildNavigator")
 			function GrandChildNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			GrandChildNavigator.router = StackRouter({
 				{ Quux = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Corge = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Grault = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
 
-			local ChildNavigator = Roact.Component:extend("ChildNavigator")
+			local ChildNavigator = React.Component:extend("ChildNavigator")
 			function ChildNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ChildNavigator.router = StackRouter({
 				{ Baz = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Woo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Qux = { screen = GrandChildNavigator } },
@@ -1225,7 +1225,7 @@ return function()
 			local router = StackRouter({
 				{ Foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Bar = { screen = ChildNavigator } },
@@ -1250,10 +1250,10 @@ return function()
 
 		it("Handles push transition logic with completion action", function()
 			local function FooScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function BarScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = StackRouter({
 				{ Foo = { screen = FooScreen } },
@@ -1280,7 +1280,7 @@ return function()
 
 		it("Completion action does not work with incorrect key", function()
 			local function FooScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = StackRouter({
 				{ Foo = { screen = FooScreen } },
@@ -1306,7 +1306,7 @@ return function()
 
 		it("Completion action does not work with incorrect toChildKey", function()
 			local function FooScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = StackRouter({
 				{ Foo = { screen = FooScreen } },
@@ -1338,20 +1338,20 @@ return function()
 		end)
 
 		it("Back action parent is prioritized over inactive child routers", function()
-			local Bar = Roact.Component:extend("Bar")
+			local Bar = React.Component:extend("Bar")
 			function Bar:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			Bar.router = StackRouter({
 				{ baz = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ qux = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -1359,13 +1359,13 @@ return function()
 			local TestRouter = StackRouter({
 				{ foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ bar = { screen = Bar } },
 				{ boo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -1395,11 +1395,11 @@ return function()
 
 		it("Handle basic stack logic for components with router", function()
 			local function FooScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
-			local BarScreen = Roact.Component:extend("BarScreen")
+			local BarScreen = React.Component:extend("BarScreen")
 			function BarScreen:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			BarScreen.router = StackRouter({
@@ -1450,12 +1450,12 @@ return function()
 		end)
 
 		it("Gets deep path (stack behavior)", function()
-			local ScreenA = Roact.Component:extend("ScreenA")
+			local ScreenA = React.Component:extend("ScreenA")
 			function ScreenA:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function ScreenB()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ScreenA.router = StackRouter({
@@ -1498,10 +1498,10 @@ return function()
 
 		it("Handle goBack identified by key", function()
 			local function FooScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function BarScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = StackRouter({
 				{ Foo = { screen = FooScreen } },
@@ -1538,10 +1538,10 @@ return function()
 
 		it("Handle initial route navigation", function()
 			local function FooScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function BarScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = StackRouter({
 				{ Foo = { screen = FooScreen } },
@@ -1563,7 +1563,7 @@ return function()
 
 		it("Initial route params appear in nav state", function()
 			local function FooScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = StackRouter({
 				{ Foo = { screen = FooScreen } },
@@ -1589,7 +1589,7 @@ return function()
 
 		it("params in route config are merged with initialRouteParams", function()
 			local function FooScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = StackRouter({
 				{
@@ -1620,10 +1620,10 @@ return function()
 
 		it("Action params appear in nav state", function()
 			local function FooScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local function BarScreen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local router = StackRouter({
 				{ Foo = { screen = FooScreen } },
@@ -1646,12 +1646,12 @@ return function()
 			local router = StackRouter({
 				{ Foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			}, {
@@ -1675,12 +1675,12 @@ return function()
 			local router = StackRouter({
 				{ Foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			}, {
@@ -1714,20 +1714,20 @@ return function()
 		end)
 
 		it("Handles the setParams action with nested routers", function()
-			local ChildNavigator = Roact.Component:extend("ChildNavigator")
+			local ChildNavigator = React.Component:extend("ChildNavigator")
 			function ChildNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ChildNavigator.router = StackRouter({
 				{ Baz = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Qux = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -1736,7 +1736,7 @@ return function()
 				{ Foo = { screen = ChildNavigator } },
 				{ Bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -1761,12 +1761,12 @@ return function()
 			local router = StackRouter({
 				{ Foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -1799,12 +1799,12 @@ return function()
 			local router = StackRouter({
 				{ Foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -1844,13 +1844,13 @@ return function()
 			local ChildRouter = StackRouter({
 				{ baz = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
-			local ChildNavigator = Roact.Component:extend("ChildNavigator")
+			local ChildNavigator = React.Component:extend("ChildNavigator")
 			function ChildNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ChildNavigator.router = ChildRouter
@@ -1859,7 +1859,7 @@ return function()
 				{ Foo = { screen = ChildNavigator } },
 				{ Bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -1886,13 +1886,13 @@ return function()
 			local ChildRouter = StackRouter({
 				{ baz = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
-			local ChildNavigator = Roact.Component:extend("ChildNavigator")
+			local ChildNavigator = React.Component:extend("ChildNavigator")
 			function ChildNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ChildNavigator.router = ChildRouter
@@ -1901,7 +1901,7 @@ return function()
 				{ Foo = { screen = ChildNavigator } },
 				{ Bar = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -1946,15 +1946,15 @@ return function()
 		end)
 
 		it("Handles the navigate action with params and nested StackRouter", function()
-			local ChildNavigator = Roact.Component:extend("ChildNavigator")
+			local ChildNavigator = React.Component:extend("ChildNavigator")
 			function ChildNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ChildNavigator.router = StackRouter({
 				{ Baz = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -1962,7 +1962,7 @@ return function()
 			local router = StackRouter({
 				{ Foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 				{ Bar = { screen = ChildNavigator } },
@@ -1985,15 +1985,15 @@ return function()
 		end)
 
 		it("Navigate action to previous nested StackRouter causes isTransitioning start", function()
-			local ChildNavigator = Roact.Component:extend("ChildNavigator")
+			local ChildNavigator = React.Component:extend("ChildNavigator")
 			function ChildNavigator:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			ChildNavigator.router = StackRouter({
 				{ Baz = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -2002,7 +2002,7 @@ return function()
 				{ Bar = { screen = ChildNavigator } },
 				{ Foo = {
 					screen = function()
-						return Roact.createElement("Frame")
+						return React.createElement("Frame")
 					end,
 				} },
 			})
@@ -2125,11 +2125,11 @@ return function()
 
 		it("Handles deep navigate completion action", function()
 			local LeafScreen = function()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
-			local FooScreen = Roact.Component:extend("FooScreen")
+			local FooScreen = React.Component:extend("FooScreen")
 			function FooScreen:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			FooScreen.router = StackRouter({
@@ -2168,11 +2168,11 @@ return function()
 
 		it("order of handling navigate action is correct for nested stackrouters", function()
 			local Screen = function()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
-			local NestedStack = Roact.Component:extend("NestedStack")
+			local NestedStack = React.Component:extend("NestedStack")
 			function NestedStack:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local nestedRouter = StackRouter({
 				{ Foo = Screen },
@@ -2221,15 +2221,15 @@ return function()
 
 		it("order of handling navigate action is correct for nested stackrouters 2", function()
 			local function Screen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
-			local NestedStack = Roact.Component:extend("NestedStack")
+			local NestedStack = React.Component:extend("NestedStack")
 			function NestedStack:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
-			local OtherNestedStack = Roact.Component:extend("OtherNestedStack")
+			local OtherNestedStack = React.Component:extend("OtherNestedStack")
 			function OtherNestedStack:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 			local nestedRouter = StackRouter({
 				{ Foo = Screen },

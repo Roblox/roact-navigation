@@ -4,14 +4,14 @@ local Packages = root.Parent
 
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local Object = LuauPolyfill.Object
-local Roact = require(Packages.Roact)
+local React = require(Packages.React)
 local SceneView = require(views.SceneView)
 
 local defaultNavigationConfig = {
 	keepVisitedScreensMounted = false,
 }
 
-local RobloxSwitchView = Roact.Component:extend("RobloxSwitchView")
+local RobloxSwitchView = React.Component:extend("RobloxSwitchView")
 
 function RobloxSwitchView.getDerivedStateFromProps(nextProps, prevState)
 	local navState = nextProps.navigation.state
@@ -57,14 +57,14 @@ function RobloxSwitchView:render()
 		local isActiveKey = (key == activeKey)
 
 		if visitedScreenKeys[key] == true then
-			screenElements["card_" .. key] = Roact.createElement("Frame", {
+			screenElements["card_" .. key] = React.createElement("Frame", {
 				Size = UDim2.new(1, 0, 1, 0),
 				BackgroundTransparency = 1,
 				ClipsDescendants = false,
 				BorderSizePixel = 0,
 				Visible = isActiveKey,
 			}, {
-				Content = Roact.createElement(SceneView, {
+				Content = React.createElement(SceneView, {
 					component = descriptor.getComponent(),
 					navigation = descriptor.navigation,
 					screenProps = screenProps,
@@ -73,7 +73,7 @@ function RobloxSwitchView:render()
 		end
 	end
 
-	return Roact.createElement("Folder", nil, screenElements)
+	return React.createElement("Folder", nil, screenElements)
 end
 
 return RobloxSwitchView

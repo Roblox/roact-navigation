@@ -2,7 +2,7 @@
 
 local root = script.Parent.Parent.Parent
 local Packages = root.Parent
-local Roact = require(Packages.Roact)
+local React = require(Packages.React)
 local SceneView = require(script.Parent.Parent.SceneView)
 
 local function SwitchView(props)
@@ -11,7 +11,7 @@ local function SwitchView(props)
 	local descriptor = props.descriptors[activeKey]
 	local ChildComponent = descriptor.getComponent()
 
-	return Roact.createElement(SceneView, {
+	return React.createElement(SceneView, {
 		component = ChildComponent,
 		navigation = descriptor.navigation,
 		screenProps = props.screenProps,

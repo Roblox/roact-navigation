@@ -2,7 +2,7 @@
 
 local RoactNavigationModule = script.Parent
 local Packages = RoactNavigationModule.Parent
-local Roact = require(Packages.Roact)
+local React = require(Packages.React)
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local console = LuauPolyfill.console
 local Object = LuauPolyfill.Object
@@ -110,7 +110,7 @@ end
 										end
 
 										...
-										Roact.createElement(MyRNAppContainer, {
+										React.createElement(MyRNAppContainer, {
 											externalDispatchConnector = connector,
 										})
 ]]
@@ -121,7 +121,7 @@ local function createAppContainer(AppComponent, linkingProtocol)
 	)
 
 	local containerName = string.format("NavigationContainer(%s)", tostring(AppComponent))
-	local NavigationContainer = Roact.Component:extend(containerName)
+	local NavigationContainer = React.Component:extend(containerName)
 
 	NavigationContainer.router = AppComponent.router
 
@@ -493,11 +493,11 @@ local function createAppContainer(AppComponent, linkingProtocol)
 
 		invariant(navigation ~= nil, "failed to get navigation")
 
-		return Roact.createElement(NavigationContext.Provider, {
+		return React.createElement(NavigationContext.Provider, {
 			value = navigation,
 		}, {
 			-- Provide navigation prop for top-level component so it doesn't have to connect.
-			AppComponent = Roact.createElement(
+			AppComponent = React.createElement(
 				AppComponent,
 				Object.assign(table.clone(self.props), {
 					navigation = navigation,

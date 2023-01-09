@@ -1,7 +1,8 @@
 return function()
 	local RoactNavigationModule = script.Parent.Parent
 	local Packages = RoactNavigationModule.Parent
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
+	local ReactRoblox = require(Packages.Dev.ReactRoblox)
 	local jestExpect = require(Packages.Dev.JestGlobals).expect
 	local NavigationActions = require(RoactNavigationModule.NavigationActions)
 	local createAppContainerExports = require(RoactNavigationModule.createAppContainer)
@@ -23,24 +24,32 @@ return function()
 		})
 
 		local TestApp = createAppContainer(TestNavigator)
-		local element = Roact.createElement(TestApp)
-		local instance = Roact.mount(element)
+		local element = React.createElement(TestApp)
 
-		Roact.unmount(instance)
+		local root = ReactRoblox.createRoot(Instance.new("Folder"))
+		ReactRoblox.act(function()
+			root:render(element)
+		end)
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
 	end)
 
 	it("should throw when navigator has both navigation and container props", function()
-		local TestAppComponent = Roact.Component:extend("TestAppComponent")
+		local TestAppComponent = React.Component:extend("TestAppComponent")
 		TestAppComponent.router = {}
 		function TestAppComponent:render() end
 
-		local element = Roact.createElement(createAppContainer(TestAppComponent), {
+		local element = React.createElement(createAppContainer(TestAppComponent), {
 			navigation = {},
 			somePropThatShouldNotBeHere = true,
 		})
 
+		local root = ReactRoblox.createRoot(Instance.new("Folder"))
 		jestExpect(function()
-			Roact.mount(element)
+			ReactRoblox.act(function()
+				root:render(element)
+			end)
 		end).toThrow(
 			"This navigator has both navigation and container props, "
 				.. "so it is unclear if it should own its own state"
@@ -52,15 +61,15 @@ return function()
 
 		jestExpect(function()
 			createAppContainer(TestAppComponent)
-		end).toThrow("AppComponent must be a navigator or a stateful Roact " .. "component with a 'router' field")
+		end).toThrow("AppComponent must be a navigator or a stateful Roact component with a 'router' field")
 	end)
 
 	it("should throw when passed a stateful component without router field", function()
-		local TestAppComponent = Roact.Component:extend("TestAppComponent")
+		local TestAppComponent = React.Component:extend("TestAppComponent")
 
 		jestExpect(function()
 			createAppContainer(TestAppComponent)
-		end).toThrow("AppComponent must be a navigator or a stateful Roact " .. "component with a 'router' field")
+		end).toThrow("AppComponent must be a navigator or a stateful Roact component with a 'router' field")
 	end)
 
 	it("should accept actions from externalDispatchConnector", function()
@@ -76,11 +85,14 @@ return function()
 			end
 		end
 
-		local element = Roact.createElement(createAppContainer(TestNavigator), {
+		local element = React.createElement(createAppContainer(TestNavigator), {
 			externalDispatchConnector = externalDispatchConnector,
 		})
 
-		local instance = Roact.mount(element)
+		local root = ReactRoblox.createRoot(Instance.new("Folder"))
+		ReactRoblox.act(function()
+			root:render(element)
+		end)
 		jestExpect(registeredCallback).toEqual(jestExpect.any("function"))
 
 		-- Make sure it processes action
@@ -94,7 +106,9 @@ return function()
 		}))
 		jestExpect(failResult).toEqual(false)
 
-		Roact.unmount(instance)
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
 		jestExpect(registeredCallback).toEqual(nil)
 	end)
 
@@ -121,17 +135,22 @@ return function()
 		})
 
 		local TestApp = createAppContainer(TestNavigator)
-		local element = Roact.createElement(TestApp, {
+		local element = React.createElement(TestApp, {
 			screenProps = testScreenProps,
 		})
-		local instance = Roact.mount(element)
+		local root = ReactRoblox.createRoot(Instance.new("Folder"))
+		ReactRoblox.act(function()
+			root:render(element)
+		end)
 
 		jestExpect(passedScreenProps).toEqual(testScreenProps)
 		jestExpect(extractedValue1).toEqual("MyValue1")
 		jestExpect(extractedMissingValue1).toEqual(5)
 		jestExpect(extractedMissingValue2).toEqual(nil)
 
-		Roact.unmount(instance)
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
 	end)
 
 	describe("with deep linking", function()
@@ -180,13 +199,18 @@ return function()
 			local protocolMock = getLinkingProtocolMock("foo")
 			local app = createAppContainer(testNavigator, protocolMock)
 
-			local element = Roact.createElement(app)
-			local tree = Roact.mount(element)
+			local element = React.createElement(app)
+			local root = ReactRoblox.createRoot(Instance.new("Folder"))
+			ReactRoblox.act(function()
+				root:render(element)
+			end)
 
 			jestExpect(protocolMock.callback).never.toEqual(nil)
 			jestExpect(protocolMock.sticky).toEqual(false)
 
-			Roact.unmount(tree)
+			ReactRoblox.act(function()
+				root:unmount()
+			end)
 
 			jestExpect(protocolMock.callback).toEqual(nil)
 		end)
@@ -195,13 +219,13 @@ return function()
 			local fooElementClass = "TextLabel"
 			local barElementClass = "Frame"
 			local function FooScreen(_props)
-				return Roact.createElement(UNIQUE_CLASS_NAME, {}, {
-					Foo = Roact.createElement(fooElementClass),
+				return React.createElement(UNIQUE_CLASS_NAME, {}, {
+					Foo = React.createElement(fooElementClass),
 				})
 			end
 			local function BarScreen(_props)
-				return Roact.createElement(UNIQUE_CLASS_NAME, {}, {
-					Bar = Roact.createElement(barElementClass),
+				return React.createElement(UNIQUE_CLASS_NAME, {}, {
+					Bar = React.createElement(barElementClass),
 				})
 			end
 
@@ -217,16 +241,21 @@ return function()
 				local protocolMock = getLinkingProtocolMock(url)
 				local app = createAppContainer(testNavigator, protocolMock)
 
-				local element = Roact.createElement(app)
+				local element = React.createElement(app)
 				local parent = Instance.new("Folder")
-				local tree = Roact.mount(element, parent)
+				local root = ReactRoblox.createRoot(parent)
+				ReactRoblox.act(function()
+					root:render(element)
+				end)
 
 				local screen = findFirstDescendantOfClass(parent, UNIQUE_CLASS_NAME)
 				jestExpect(screen).toBeDefined()
 				jestExpect(screen:FindFirstChildOfClass(expectedClass[1])).toBeDefined()
 				jestExpect(screen:FindFirstChildOfClass(expectedClass[2])).toBeUndefined()
 
-				Roact.unmount(tree)
+				ReactRoblox.act(function()
+					root:unmount()
+				end)
 			end
 		end)
 
@@ -234,15 +263,15 @@ return function()
 			local fooElementClass = "TextLabel"
 			local barElementClass = "Frame"
 			local function FooScreen(_props)
-				return Roact.createElement(UNIQUE_CLASS_NAME, {}, {
-					Foo = Roact.createElement(fooElementClass),
+				return React.createElement(UNIQUE_CLASS_NAME, {}, {
+					Foo = React.createElement(fooElementClass),
 				})
 			end
 			local function BarScreen(props)
 				local navigation = props.navigation
 				local name = navigation.getParam("name")
-				return Roact.createElement(UNIQUE_CLASS_NAME, {}, {
-					[name] = Roact.createElement(barElementClass, {
+				return React.createElement(UNIQUE_CLASS_NAME, {}, {
+					[name] = React.createElement(barElementClass, {
 						Name = name,
 					}),
 				})
@@ -257,9 +286,12 @@ return function()
 			local protocolMock = getLinkingProtocolMock("bar/" .. expectName)
 			local app = createAppContainer(testNavigator, protocolMock)
 
-			local element = Roact.createElement(app)
+			local element = React.createElement(app)
 			local parent = Instance.new("Folder")
-			local tree = Roact.mount(element, parent)
+			local root = ReactRoblox.createRoot(parent)
+			ReactRoblox.act(function()
+				root:render(element)
+			end)
 
 			local screen = findFirstDescendantOfClass(parent, UNIQUE_CLASS_NAME)
 			jestExpect(screen).toBeDefined()
@@ -268,20 +300,22 @@ return function()
 			jestExpect(barInstance.Name).toEqual(expectName)
 			jestExpect(screen:FindFirstChildOfClass(fooElementClass)).toBeUndefined()
 
-			Roact.unmount(tree)
+			ReactRoblox.act(function()
+				root:unmount()
+			end)
 		end)
 
 		it("updates the navigation state when the URL updates", function()
 			local fooElementClass = "TextLabel"
 			local barElementClass = "Frame"
 			local function FooScreen(_props)
-				return Roact.createElement(UNIQUE_CLASS_NAME, {}, {
-					Foo = Roact.createElement(fooElementClass),
+				return React.createElement(UNIQUE_CLASS_NAME, {}, {
+					Foo = React.createElement(fooElementClass),
 				})
 			end
 			local function BarScreen(_props)
-				return Roact.createElement(UNIQUE_CLASS_NAME, {}, {
-					Bar = Roact.createElement(barElementClass),
+				return React.createElement(UNIQUE_CLASS_NAME, {}, {
+					Bar = React.createElement(barElementClass),
 				})
 			end
 
@@ -293,23 +327,30 @@ return function()
 			local protocolMock = getLinkingProtocolMock("foo")
 			local app = createAppContainer(testNavigator, protocolMock)
 
-			local element = Roact.createElement(app)
+			local element = React.createElement(app)
 			local parent = Instance.new("Folder")
-			local tree = Roact.mount(element, parent)
+			local root = ReactRoblox.createRoot(parent)
+			ReactRoblox.act(function()
+				root:render(element)
+			end)
 
 			local screen = findFirstDescendantOfClass(parent, UNIQUE_CLASS_NAME)
 			jestExpect(screen).toBeDefined()
 			jestExpect(screen:FindFirstChildOfClass(fooElementClass)).toBeDefined()
 			jestExpect(screen:FindFirstChildOfClass(barElementClass)).toBeUndefined()
 
-			protocolMock.callback("bar")
+			ReactRoblox.act(function()
+				protocolMock.callback("bar")
+			end)
 
 			screen = findFirstDescendantOfClass(parent, UNIQUE_CLASS_NAME)
 			jestExpect(screen).toBeDefined()
 			jestExpect(screen:FindFirstChildOfClass(barElementClass)).toBeDefined()
 			jestExpect(screen:FindFirstChildOfClass(fooElementClass)).toBeUndefined()
 
-			Roact.unmount(tree)
+			ReactRoblox.act(function()
+				root:unmount()
+			end)
 		end)
 	end)
 end

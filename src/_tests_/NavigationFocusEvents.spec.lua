@@ -17,7 +17,8 @@ return function()
 	local jest = JestGlobals.jest
 	local LuauPolyfill = require(Packages.LuauPolyfill)
 	local Array = LuauPolyfill.Array
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
+	local ReactRoblox = require(Packages.Dev.ReactRoblox)
 
 	-- deviation: utility function moved out of test scope because
 	-- it is shared across both tests
@@ -31,21 +32,21 @@ return function()
 
 			local children = Array.reduce(navigation.state.routes, function(acc, route)
 				local Comp = descriptors[route.key].getComponent()
-				acc[route.key] = Roact.createElement(Comp, {
+				acc[route.key] = React.createElement(Comp, {
 					key = route.key,
 					navigation = descriptors[route.key].navigation,
 				})
 				return acc
 			end, {})
 
-			return Roact.createFragment(children)
+			return React.createElement(React.Fragment, {}, children)
 		end, router, config)
 	end
 
 	-- deviation: utility function moved out of test scope because
 	-- it is shared across both tests
 	local function createComponent(focusCallback, blurCallback)
-		local TestComponent = Roact.Component:extend("TestComponent")
+		local TestComponent = React.Component:extend("TestComponent")
 
 		function TestComponent:didMount()
 			local navigation = self.props.navigation
@@ -91,7 +92,7 @@ return function()
 		}))
 
 		local dispatch
-		local element = Roact.createElement(Navigator, {
+		local element = React.createElement(Navigator, {
 			externalDispatchConnector = function(currentDispatch)
 				dispatch = currentDispatch
 				return function()
@@ -100,7 +101,11 @@ return function()
 			end,
 		})
 
-		Roact.mount(element)
+		local parent = Instance.new("Folder")
+		local root = ReactRoblox.createRoot(parent)
+		ReactRoblox.act(function()
+			root:render(element)
+		end)
 
 		waitUntil(function()
 			return #firstFocusCallback.mock.calls > 0
@@ -165,7 +170,7 @@ return function()
 		}))
 
 		local dispatch
-		local element = Roact.createElement(Navigator, {
+		local element = React.createElement(Navigator, {
 			externalDispatchConnector = function(currentDispatch)
 				dispatch = currentDispatch
 				return function()
@@ -174,7 +179,11 @@ return function()
 			end,
 		})
 
-		Roact.mount(element)
+		local parent = Instance.new("Folder")
+		local root = ReactRoblox.createRoot(parent)
+		ReactRoblox.act(function()
+			root:render(element)
+		end)
 
 		waitUntil(function()
 			return #firstFocusCallback.mock.calls > 0

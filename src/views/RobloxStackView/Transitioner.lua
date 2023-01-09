@@ -5,7 +5,7 @@ local LuauPolyfill = require(Packages.LuauPolyfill)
 local Array = LuauPolyfill.Array
 local Object = LuauPolyfill.Object
 
-local Roact = require(Packages.Roact)
+local React = require(Packages.React)
 local Otter = require(Packages.Otter)
 local ScenesReducer = require(script.Parent.ScenesReducer)
 local invariant = require(root.utils.invariant)
@@ -55,13 +55,13 @@ local function filterStale(scenes)
 	end
 end
 
-local Transitioner = Roact.Component:extend("Transitioner")
+local Transitioner = React.Component:extend("Transitioner")
 
 function Transitioner:init()
 	local navigationState = self.props.navigation.state
 	local descriptors = self.props.descriptors
 
-	self._ref = Roact.createRef()
+	self._ref = React.createRef()
 
 	self.state = {
 		-- Layout is passed to StackViewLayout in order to allow it to
@@ -145,13 +145,13 @@ function Transitioner:didUpdate(prevProps)
 end
 
 function Transitioner:render()
-	return Roact.createElement("Frame", {
+	return React.createElement("Frame", {
 		Size = UDim2.new(1, 0, 1, 0),
 		BackgroundTransparency = 1,
 		BorderSizePixel = 0,
 		ClipsDescendants = false,
-		[Roact.Change.AbsoluteSize] = self._doOnAbsoluteSizeChanged,
-		[Roact.Ref] = self._ref,
+		[React.Change.AbsoluteSize] = self._doOnAbsoluteSizeChanged,
+		ref = self._ref,
 	}, {
 		["TransitionerScenes"] = self.props.render(
 			self._transitionProps,

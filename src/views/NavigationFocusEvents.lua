@@ -5,10 +5,10 @@ local Packages = root.Parent
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local Array = LuauPolyfill.Array
 
-local Roact = require(Packages.Roact)
+local React = require(Packages.React)
 local Events = require(root.Events)
 
-local NavigationEventManager = Roact.Component:extend("NavigationEventManager")
+local NavigationEventManager = React.Component:extend("NavigationEventManager")
 
 function NavigationEventManager:didMount()
 	local navigation = self.props.navigation

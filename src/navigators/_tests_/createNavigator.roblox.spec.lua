@@ -3,7 +3,8 @@ return function()
 	local RoactNavigationModule = navigatorsModule.Parent
 	local Packages = RoactNavigationModule.Parent
 	local jestExpect = require(Packages.Dev.JestGlobals).expect
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
+	local ReactRoblox = require(Packages.Dev.ReactRoblox)
 
 	local createNavigator = require(navigatorsModule.createNavigator)
 
@@ -13,9 +14,19 @@ return function()
 		end,
 	}
 
+	local root = nil
+	beforeEach(function()
+		local parent = Instance.new("Folder")
+		root = ReactRoblox.createRoot(parent)
+	end)
+
+	afterEach(function()
+		root = nil
+	end)
+
 	it("should return a Roact component that exposes navigator fields", function()
 		local testComponentMounted = nil
-		local TestViewComponent = Roact.Component:extend("TestViewComponent")
+		local TestViewComponent = React.Component:extend("TestViewComponent")
 		function TestViewComponent:render() end
 		function TestViewComponent:didMount()
 			testComponentMounted = true
@@ -47,13 +58,16 @@ return function()
 			addListener = function() end,
 		}
 
-		-- Try to mount it
-		local instance = Roact.mount(Roact.createElement(navigator, {
-			navigation = testNavigation,
-		}))
+		ReactRoblox.act(function()
+			root:render(React.createElement(navigator, {
+				navigation = testNavigation,
+			}))
+		end)
 
 		jestExpect(testComponentMounted).toEqual(true)
-		Roact.unmount(instance)
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
 		jestExpect(testComponentMounted).toEqual(false)
 	end)
 
@@ -65,8 +79,10 @@ return function()
 		})
 
 		jestExpect(function()
-			Roact.mount(Roact.createElement(navigator))
-		end).toThrow()
+			ReactRoblox.act(function()
+				root:render(React.createElement(navigator))
+			end)
+		end).toThrow("The navigation prop is missing for this navigator")
 	end)
 
 	it("should throw when trying to mount without routes", function()
@@ -86,9 +102,11 @@ return function()
 		}
 
 		jestExpect(function()
-			Roact.mount(Roact.createElement(navigator, {
-				navigation = testNavigation,
-			}))
-		end).toThrow()
+			ReactRoblox.act(function()
+				root:render(React.createElement(navigator, {
+					navigation = testNavigation,
+				}))
+			end)
+		end).toThrow('No "routes" found in navigation state')
 	end)
 end

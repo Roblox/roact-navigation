@@ -4,7 +4,8 @@ return function()
 	local viewsModule = script.Parent.Parent
 	local RoactNavigationModule = viewsModule.Parent
 	local Packages = RoactNavigationModule.Parent
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
+	local ReactRoblox = require(Packages.Dev.ReactRoblox)
 	local JestGlobals = require(Packages.Dev.JestGlobals)
 	local expect = JestGlobals.expect
 	local jest = JestGlobals.jest
@@ -49,10 +50,13 @@ return function()
 		local navigation = getNavigationMock()
 		local onEvent, onEventFn = jest.fn()
 
-		Roact.mount(Roact.createElement(NavigationFocusEvents, {
-			navigation = navigation,
-			onEvent = onEventFn,
-		}))
+		local root = ReactRoblox.createRoot(Instance.new("Folder"))
+		ReactRoblox.act(function()
+			root:render(React.createElement(NavigationFocusEvents, {
+				navigation = navigation,
+				onEvent = onEventFn,
+			}))
+		end)
 
 		navigation.emit(Events.Refocus)
 
@@ -70,10 +74,13 @@ return function()
 			})
 			local onEvent, onEventFn = jest.fn()
 
-			Roact.mount(Roact.createElement(NavigationFocusEvents, {
-				navigation = navigation,
-				onEvent = onEventFn,
-			}))
+			local root = ReactRoblox.createRoot(Instance.new("Folder"))
+			ReactRoblox.act(function()
+				root:render(React.createElement(NavigationFocusEvents, {
+					navigation = navigation,
+					onEvent = onEventFn,
+				}))
+			end)
 
 			navigation.emit(Events.Action, {
 				state = navigation.state,
@@ -101,10 +108,13 @@ return function()
 			})
 			local onEvent, onEventFn = jest.fn()
 
-			Roact.mount(Roact.createElement(NavigationFocusEvents, {
-				navigation = navigation,
-				onEvent = onEventFn,
-			}))
+			local root = ReactRoblox.createRoot(Instance.new("Folder"))
+			ReactRoblox.act(function()
+				root:render(React.createElement(NavigationFocusEvents, {
+					navigation = navigation,
+					onEvent = onEventFn,
+				}))
+			end)
 
 			local lastState = {
 				routes = {
@@ -150,10 +160,13 @@ return function()
 			local navigation = getNavigationMock({ state = state })
 			local onEvent, onEventFn = jest.fn()
 
-			Roact.mount(Roact.createElement(NavigationFocusEvents, {
-				navigation = navigation,
-				onEvent = onEventFn,
-			}))
+			local root = ReactRoblox.createRoot(Instance.new("Folder"))
+			ReactRoblox.act(function()
+				root:render(React.createElement(NavigationFocusEvents, {
+					navigation = navigation,
+					onEvent = onEventFn,
+				}))
+			end)
 
 			local lastState = {
 				routes = {
@@ -223,10 +236,13 @@ return function()
 			})
 			local onEvent, onEventFn = jest.fn()
 
-			Roact.mount(Roact.createElement(NavigationFocusEvents, {
-				navigation = navigation,
-				onEvent = onEventFn,
-			}))
+			local root = ReactRoblox.createRoot(Instance.new("Folder"))
+			ReactRoblox.act(function()
+				root:render(React.createElement(NavigationFocusEvents, {
+					navigation = navigation,
+					onEvent = onEventFn,
+				}))
+			end)
 
 			navigation.emit(Events.Action, {
 				state = intermediateState,
@@ -288,10 +304,13 @@ return function()
 			})
 			local onEvent, onEventFn = jest.fn()
 
-			Roact.mount(Roact.createElement(NavigationFocusEvents, {
-				navigation = navigation,
-				onEvent = onEventFn,
-			}))
+			local root = ReactRoblox.createRoot(Instance.new("Folder"))
+			ReactRoblox.act(function()
+				root:render(React.createElement(NavigationFocusEvents, {
+					navigation = navigation,
+					onEvent = onEventFn,
+				}))
+			end)
 
 			local lastState = { key = "Third", routeName = "Third" }
 			local action = NavigationActions.navigate({ routeName = "First" })

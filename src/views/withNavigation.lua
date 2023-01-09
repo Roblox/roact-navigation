@@ -4,7 +4,7 @@ local root = views.Parent
 local Packages = root.Parent
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local Object = LuauPolyfill.Object
-local Roact = require(Packages.Roact)
+local React = require(Packages.React)
 local NavigationContext = require(views.NavigationContext)
 local invariant = require(root.utils.invariant)
 
@@ -17,12 +17,12 @@ end
 	withNavigation() is a convenience function that you can use in your component's
 	render function to access the navigation context object. For example:
 
-	local MyComponent = Roact.Component:extend("MyComponent")
+	local MyComponent = React.Component:extend("MyComponent")
 
 	function MyComponent:render()
 		local navigation = self.props.navigation
-		return Roact.createElement("TextButton", {
-			[Roact.Activated] = function()
+		return React.createElement("TextButton", {
+			[React.Event.Activated] = function()
 				navigation.navigate("DetailPage")
 			end
 		})
@@ -30,17 +30,15 @@ end
 
 	return withNavigation(MyComponent)
 ]]
-return function(component, config)
-	assert(isComponent(component), "withNavigation must be called with a Roact component (stateful or functional)")
-	config = config or {}
+type Config = { forwardRef: boolean? }
 
-	if config.forwardRef == nil then
-		config.forwardRef = true
-	end
+return function(component, config: Config?)
+	assert(isComponent(component), "withNavigation must be called with a Roact component (stateful or functional)")
+	local configValue = Object.assign({ forwardRef = true }, config)
 
 	return function(props)
 		local navigationProp = props.navigation
-		return Roact.createElement(NavigationContext.Consumer, {
+		return React.createElement(NavigationContext.Consumer, {
 			render = function(navigationContext)
 				local navigation = navigationProp or navigationContext
 				invariant(
@@ -49,11 +47,11 @@ return function(component, config)
 						.. "be used on a view hierarchy of a navigator. The wrapped component is "
 						.. "unable to get access to navigation from props or context."
 				)
-				return Roact.createElement(
+				return React.createElement(
 					component,
 					Object.assign(table.clone(props), {
 						navigation = navigation,
-						[Roact.Ref] = if config.forwardRef then props[Roact.Ref] else Object.None,
+						ref = if configValue.forwardRef then props.onRef else Object.None,
 					})
 				)
 			end,

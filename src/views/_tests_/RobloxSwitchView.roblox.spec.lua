@@ -1,10 +1,28 @@
 return function()
 	local Packages = script.Parent.Parent.Parent.Parent
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
+	local ReactRoblox = require(Packages.Dev.ReactRoblox)
 	local JestGlobals = require(Packages.Dev.JestGlobals)
 	local RobloxSwitchView = require(script.Parent.Parent.RobloxSwitchView)
 
 	local expect = JestGlobals.expect
+
+	local function makeDescriptors(navProp, fooComponent, componentBar)
+		return {
+			Foo = {
+				getComponent = function()
+					return fooComponent
+				end,
+				navigation = navProp,
+			},
+			Bar = {
+				getComponent = function()
+					return componentBar
+				end,
+				navigation = navProp,
+			},
+		}
+	end
 
 	it("should mount and pass required props and context", function()
 		local testScreenProps = {}
@@ -20,7 +38,7 @@ return function()
 		local testComponentNavigationFromProp = nil
 		local testComponentScreenProps = nil
 
-		local TestComponent = Roact.Component:extend("TestComponent")
+		local TestComponent = React.Component:extend("TestComponent")
 		function TestComponent:render()
 			testComponentNavigationFromProp = self.props.navigation
 			testComponentScreenProps = self.props.screenProps
@@ -36,14 +54,20 @@ return function()
 			},
 		}
 
-		local element = Roact.createElement(RobloxSwitchView, {
+		local element = React.createElement(RobloxSwitchView, {
 			screenProps = testScreenProps,
 			navigation = testNavigation,
 			descriptors = testDescriptors,
 		})
 
-		local instance = Roact.mount(element)
-		Roact.unmount(instance)
+		local root = ReactRoblox.createRoot(Instance.new("Folder"))
+		ReactRoblox.act(function()
+			root:render(element)
+		end)
+
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
 
 		expect(testComponentNavigationFromProp).toBe(testNavigation)
 		expect(testComponentScreenProps).toBe(testScreenProps)
@@ -51,31 +75,14 @@ return function()
 
 	it("should unmount inactive pages when keepVisitedScreensMounted is false", function()
 		local fooUnmounted = false
-		local TestComponentFoo = Roact.Component:extend("TestComponentFoo")
+		local TestComponentFoo = React.Component:extend("TestComponentFoo")
 		function TestComponentFoo:render() end
 		function TestComponentFoo:willUnmount()
 			fooUnmounted = true
 		end
 
-		local TestComponentBar = Roact.Component:extend("TestComponentBar")
+		local TestComponentBar = React.Component:extend("TestComponentBar")
 		function TestComponentBar:render() end
-
-		local function makeDescriptors(navProp)
-			return {
-				Foo = {
-					getComponent = function()
-						return TestComponentFoo
-					end,
-					navigation = navProp,
-				},
-				Bar = {
-					getComponent = function()
-						return TestComponentBar
-					end,
-					navigation = navProp,
-				},
-			}
-		end
 
 		local testNavigation1 = {
 			state = {
@@ -87,16 +94,20 @@ return function()
 			},
 		}
 
-		local element = Roact.createElement(RobloxSwitchView, {
+		local element = React.createElement(RobloxSwitchView, {
 			screenProps = {},
 			navigation = testNavigation1,
-			descriptors = makeDescriptors(testNavigation1),
+			descriptors = makeDescriptors(testNavigation1, TestComponentFoo, TestComponentBar),
 			navigationConfig = {
 				keepVisitedScreensMounted = false,
 			},
 		})
 
-		local instance = Roact.mount(element)
+		local root = ReactRoblox.createRoot(Instance.new("Folder"))
+		ReactRoblox.act(function()
+			root:render(element)
+		end)
+
 		expect(fooUnmounted).toEqual(false)
 
 		local testNavigation2 = {
@@ -109,49 +120,33 @@ return function()
 			},
 		}
 
-		instance = Roact.update(
-			instance,
-			Roact.createElement(RobloxSwitchView, {
+		ReactRoblox.act(function()
+			root:render(React.createElement(RobloxSwitchView, {
 				screenProps = {},
 				navigation = testNavigation2,
-				descriptors = makeDescriptors(testNavigation2),
+				descriptors = makeDescriptors(testNavigation2, TestComponentFoo, TestComponentBar),
 				navigationConfig = {
 					keepVisitedScreensMounted = false,
 				},
-			})
-		)
+			}))
+		end)
 
 		expect(fooUnmounted).toEqual(true)
-		Roact.unmount(instance)
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
 	end)
 
 	it("should not unmount inactive pages when keepVisitedScreensMounted is true", function()
 		local fooUnmounted = false
-		local TestComponentFoo = Roact.Component:extend("TestComponentFoo")
+		local TestComponentFoo = React.Component:extend("TestComponentFoo")
 		function TestComponentFoo:render() end
 		function TestComponentFoo:willUnmount()
 			fooUnmounted = true
 		end
 
-		local TestComponentBar = Roact.Component:extend("TestComponentBar")
+		local TestComponentBar = React.Component:extend("TestComponentBar")
 		function TestComponentBar:render() end
-
-		local function makeDescriptors(navProp)
-			return {
-				Foo = {
-					getComponent = function()
-						return TestComponentFoo
-					end,
-					navigation = navProp,
-				},
-				Bar = {
-					getComponent = function()
-						return TestComponentBar
-					end,
-					navigation = navProp,
-				},
-			}
-		end
 
 		local testNavigation1 = {
 			state = {
@@ -163,16 +158,19 @@ return function()
 			},
 		}
 
-		local element = Roact.createElement(RobloxSwitchView, {
+		local element = React.createElement(RobloxSwitchView, {
 			screenProps = {},
 			navigation = testNavigation1,
-			descriptors = makeDescriptors(testNavigation1),
+			descriptors = makeDescriptors(testNavigation1, TestComponentFoo, TestComponentBar),
 			navigationConfig = {
 				keepVisitedScreensMounted = true,
 			},
 		})
 
-		local instance = Roact.mount(element)
+		local root = ReactRoblox.createRoot(Instance.new("Folder"))
+		ReactRoblox.act(function()
+			root:render(element)
+		end)
 		expect(fooUnmounted).toEqual(false)
 
 		local testNavigation2 = {
@@ -185,51 +183,33 @@ return function()
 			},
 		}
 
-		instance = Roact.update(
-			instance,
-			Roact.createElement(RobloxSwitchView, {
-				screenProps = {},
-				navigation = testNavigation2,
-				descriptors = makeDescriptors(testNavigation2),
-				navigationConfig = {
-					keepVisitedScreensMounted = true,
-				},
-			})
-		)
+		root:render(React.createElement(RobloxSwitchView, {
+			screenProps = {},
+			navigation = testNavigation2,
+			descriptors = makeDescriptors(testNavigation2, TestComponentFoo, TestComponentBar),
+			navigationConfig = {
+				keepVisitedScreensMounted = true,
+			},
+		}))
 
 		expect(fooUnmounted).toEqual(false)
 
-		Roact.unmount(instance)
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
 		expect(fooUnmounted).toEqual(true)
 	end)
 
 	it("should unmount inactive pages when keepVisitedScreensMounted switches from true to false", function()
 		local fooUnmounted = false
-		local TestComponentFoo = Roact.Component:extend("TestComponentFoo")
+		local TestComponentFoo = React.Component:extend("TestComponentFoo")
 		function TestComponentFoo:render() end
 		function TestComponentFoo:willUnmount()
 			fooUnmounted = true
 		end
 
-		local TestComponentBar = Roact.Component:extend("TestComponentBar")
+		local TestComponentBar = React.Component:extend("TestComponentBar")
 		function TestComponentBar:render() end
-
-		local function makeDescriptors(navProp)
-			return {
-				Foo = {
-					getComponent = function()
-						return TestComponentFoo
-					end,
-					navigation = navProp,
-				},
-				Bar = {
-					getComponent = function()
-						return TestComponentBar
-					end,
-					navigation = navProp,
-				},
-			}
-		end
 
 		local testNavigation1 = {
 			state = {
@@ -241,16 +221,19 @@ return function()
 			},
 		}
 
-		local element = Roact.createElement(RobloxSwitchView, {
+		local element = React.createElement(RobloxSwitchView, {
 			screenProps = {},
 			navigation = testNavigation1,
-			descriptors = makeDescriptors(testNavigation1),
+			descriptors = makeDescriptors(testNavigation1, TestComponentFoo, TestComponentBar),
 			navigationConfig = {
 				keepVisitedScreensMounted = true,
 			},
 		})
 
-		local instance = Roact.mount(element)
+		local root = ReactRoblox.createRoot(Instance.new("Folder"))
+		ReactRoblox.act(function()
+			root:render(element)
+		end)
 
 		local testNavigation2 = {
 			state = {
@@ -263,34 +246,34 @@ return function()
 		}
 
 		-- We must update tree to make sure active screens list gets updated first!
-		instance = Roact.update(
-			instance,
-			Roact.createElement(RobloxSwitchView, {
+		ReactRoblox.act(function()
+			root:render(React.createElement(RobloxSwitchView, {
 				screenProps = {},
 				navigation = testNavigation2,
-				descriptors = makeDescriptors(testNavigation2),
+				descriptors = makeDescriptors(testNavigation2, TestComponentFoo, TestComponentBar),
 				navigationConfig = {
 					keepVisitedScreensMounted = true,
 				},
-			})
-		)
+			}))
+		end)
 
 		expect(fooUnmounted).toEqual(false)
 
-		instance = Roact.update(
-			instance,
-			Roact.createElement(RobloxSwitchView, {
+		ReactRoblox.act(function()
+			root:render(React.createElement(RobloxSwitchView, {
 				screenProps = {},
 				navigation = testNavigation2,
-				descriptors = makeDescriptors(testNavigation2),
+				descriptors = makeDescriptors(testNavigation2, TestComponentFoo, TestComponentBar),
 				navigationConfig = {
 					keepVisitedScreensMounted = false,
 				},
-			})
-		)
+			}))
+		end)
 
 		expect(fooUnmounted).toEqual(true)
 
-		Roact.unmount(instance)
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
 	end)
 end

@@ -4,13 +4,13 @@ return function()
 	local routersModule = script.Parent.Parent
 	local RoactNavigationModule = routersModule.Parent
 	local Packages = RoactNavigationModule.Parent
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
 	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	local createConfigGetter = require(routersModule.createConfigGetter)
 
 	it("should get config for screen", function()
-		local HomeScreen = Roact.Component:extend("HomeScreen")
+		local HomeScreen = React.Component:extend("HomeScreen")
 		HomeScreen.navigationOptions = function(props)
 			local username = props.navigation.state.params and props.navigation.state.params.user or "anonymous"
 
@@ -23,7 +23,7 @@ return function()
 			return nil
 		end
 
-		local SettingsScreen = Roact.Component:extend("SettingsScreen")
+		local SettingsScreen = React.Component:extend("SettingsScreen")
 		SettingsScreen.navigationOptions = {
 			title = "Settings!!!",
 			gesturesEnabled = false,
@@ -32,7 +32,7 @@ return function()
 			return nil
 		end
 
-		local NotificationScreen = Roact.Component:extend("NotificationScreen")
+		local NotificationScreen = React.Component:extend("NotificationScreen")
 		NotificationScreen.navigationOptions = function(props)
 			local gesturesEnabled = true
 			if props.navigation.state.params then
@@ -86,7 +86,7 @@ return function()
 	end)
 
 	it("should throw if the route does not exist", function()
-		local HomeScreen = Roact.Component:extend("HomeScreen")
+		local HomeScreen = React.Component:extend("HomeScreen")
 
 		HomeScreen.navigationOptions = {
 			title = "Home screen",

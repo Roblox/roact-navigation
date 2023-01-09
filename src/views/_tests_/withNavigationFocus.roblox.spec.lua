@@ -3,7 +3,8 @@ return function()
 	local RoactNavigationModule = viewsModule.Parent
 	local Packages = RoactNavigationModule.Parent
 
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
+	local ReactRoblox = require(Packages.Dev.ReactRoblox)
 	local JestGlobals = require(Packages.Dev.JestGlobals)
 
 	local expect = JestGlobals.expect
@@ -33,16 +34,22 @@ return function()
 			end,
 		}
 
-		local rootElement = Roact.createElement(NavigationContext.Provider, {
+		local rootElement = React.createElement(NavigationContext.Provider, {
 			value = navigationProp,
 		}, {
-			child = Roact.createElement(FooWithNavigationFocus),
+			child = React.createElement(FooWithNavigationFocus),
 		})
 
-		local tree = Roact.mount(rootElement)
+		local root = ReactRoblox.createRoot(Instance.new("Folder"))
+		ReactRoblox.act(function()
+			root:render(rootElement)
+		end)
+
 		expect(testFocused).toEqual(true)
 
-		Roact.unmount(tree)
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
 	end)
 
 	it("should pass focused=false when initially unfocused", function()
@@ -66,16 +73,22 @@ return function()
 			end,
 		}
 
-		local rootElement = Roact.createElement(NavigationContext.Provider, {
+		local rootElement = React.createElement(NavigationContext.Provider, {
 			value = navigationProp,
 		}, {
-			child = Roact.createElement(FooWithNavigationFocus),
+			child = React.createElement(FooWithNavigationFocus),
 		})
 
-		local tree = Roact.mount(rootElement)
+		local root = ReactRoblox.createRoot(Instance.new("Folder"))
+		ReactRoblox.act(function()
+			root:render(rootElement)
+		end)
+
 		expect(testFocused).toEqual(false)
 
-		Roact.unmount(tree)
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
 	end)
 
 	it("should re-render and set focused status for events", function()
@@ -84,7 +97,7 @@ return function()
 
 		local function Foo(props)
 			testFocused = props.isFocused
-			return Roact.createElement("TextButton")
+			return React.createElement("TextButton")
 		end
 
 		local FooWithNavigationFocus = withNavigationFocus(Foo)
@@ -103,24 +116,35 @@ return function()
 			end,
 		}
 
-		local rootElement = Roact.createElement(NavigationContext.Provider, {
+		local rootElement = React.createElement(NavigationContext.Provider, {
 			value = navigationProp,
 		}, {
-			child = Roact.createElement(FooWithNavigationFocus),
+			child = React.createElement(FooWithNavigationFocus),
 		})
 
-		local tree = Roact.mount(rootElement)
+		local root = ReactRoblox.createRoot(Instance.new("Folder"))
+		ReactRoblox.act(function()
+			root:render(rootElement)
+		end)
+
 		expect(testFocused).toEqual(false)
 		expect(testListeners[Events.WillFocus]).toEqual(expect.any("function"))
 		expect(testListeners[Events.WillBlur]).toEqual(expect.any("function"))
 
-		testListeners[Events.WillFocus]()
+		ReactRoblox.act(function()
+			testListeners[Events.WillFocus]()
+		end)
 		expect(testFocused).toEqual(true)
 
-		testListeners[Events.WillBlur]()
+		ReactRoblox.act(function()
+			testListeners[Events.WillBlur]()
+		end)
 		expect(testFocused).toEqual(false)
 
-		Roact.unmount(tree)
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
+
 		expect(testListeners[Events.WillFocus]).toEqual(nil)
 		expect(testListeners[Events.WillBlur]).toEqual(nil)
 	end)
@@ -142,8 +166,11 @@ return function()
 			.. "be used on a view hierarchy of a navigator. The wrapped component is "
 			.. "unable to get access to navigation from props or context"
 
+		local root = ReactRoblox.createRoot(Instance.new("Folder"))
 		expect(function()
-			Roact.mount(Roact.createElement(FooWithNavigationFocus))
+			ReactRoblox.act(function()
+				root:render(React.createElement(FooWithNavigationFocus))
+			end)
 		end).toThrow(errorMessage)
 	end)
 end

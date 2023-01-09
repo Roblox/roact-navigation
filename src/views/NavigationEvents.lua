@@ -1,7 +1,7 @@
 -- upstream https://github.com/react-navigation/react-navigation/blob/6390aacd07fd647d925dfec842a766c8aad5272f/packages/core/src/views/NavigationEvents.js
 local root = script.Parent.Parent
 local Packages = root.Parent
-local Roact = require(Packages.Roact)
+local React = require(Packages.React)
 local withNavigation = require(script.Parent.withNavigation)
 local Events = require(root.Events)
 
@@ -24,7 +24,7 @@ local Events = require(root.Events)
 
 	function MyComponent:render()
 		-- Note that you must capture the self reference lexically, if you need it.
-		return Roact.createElement(RoactNavigation.NavigationEvents, {
+		return React.createElement(RoactNavigation.NavigationEvents, {
 			onWillFocus = self.willFocus,
 			onDidFocus = self.didFocus,
 			onWillBlur = self.willBlur,
@@ -46,7 +46,7 @@ local EventNameToPropName = {
 	[Events.DidBlur] = "onDidBlur",
 }
 
-local NavigationEvents = Roact.Component:extend("NavigationEvents")
+local NavigationEvents = React.Component:extend("NavigationEvents")
 
 function NavigationEvents:didMount()
 	-- We register all navigation listeners on mount to ensure listener stability across re-render

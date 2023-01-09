@@ -2,10 +2,10 @@ return function()
 	local utilsModule = script.Parent.Parent
 	local Packages = utilsModule.Parent.Parent
 
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
 	local isValidScreenComponent = require(utilsModule.isValidScreenComponent)
 
-	local TestComponent = Roact.Component:extend("TestFoo")
+	local TestComponent = React.Component:extend("TestFoo")
 
 	function TestComponent:render() end
 
@@ -26,7 +26,7 @@ return function()
 
 	it("should return false for invalid element types", function()
 		expect(isValidScreenComponent("foo")).to.equal(false)
-		expect(isValidScreenComponent(Roact.createElement("Frame"))).to.equal(false)
+		expect(isValidScreenComponent(React.createElement("Frame"))).to.equal(false)
 		expect(isValidScreenComponent(5)).to.equal(false)
 		expect(isValidScreenComponent({ render = "bad" })).to.equal(false)
 		expect(isValidScreenComponent({

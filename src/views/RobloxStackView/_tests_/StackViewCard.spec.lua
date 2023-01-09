@@ -5,7 +5,10 @@ return function()
 	local Packages = RoactNavigationModule.Parent
 
 	local Otter = require(Packages.Otter)
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
+	local ReactRoblox = require(Packages.Dev.ReactRoblox)
+	local JestGlobals = require(Packages.Dev.JestGlobals)
+	local expect = JestGlobals.expect
 	local StackViewCard = require(RobloxStackViewModule.StackViewCard)
 
 	it("should mount its renderProp and pass it scene", function()
@@ -16,10 +19,10 @@ return function()
 		}
 
 		local renderedScene = nil
-		local element = Roact.createElement(StackViewCard, {
+		local element = React.createElement(StackViewCard, {
 			renderScene = function(theScene)
 				renderedScene = theScene
-				return Roact.createElement(function()
+				return React.createElement(function()
 					didRender = true -- verifies component is attached to tree
 				end)
 			end,
@@ -32,10 +35,16 @@ return function()
 			},
 		})
 
-		local instance = Roact.mount(element)
-		Roact.unmount(instance)
+		local parent = Instance.new("Folder")
+		local root = ReactRoblox.createRoot(parent)
+		ReactRoblox.act(function()
+			root:render(element)
+		end)
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
 
-		expect(renderedScene).to.equal(testScene)
-		expect(didRender).to.equal(true)
+		expect(renderedScene).toBe(testScene)
+		expect(didRender).toBe(true)
 	end)
 end

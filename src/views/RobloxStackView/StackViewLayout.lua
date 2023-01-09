@@ -5,7 +5,7 @@ local Packages = root.Parent
 
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local Object = LuauPolyfill.Object
-local Roact = require(Packages.Roact)
+local React = require(Packages.React)
 local StackPresentationStyle = require(RobloxStackView.StackPresentationStyle)
 local StackViewTransitionConfigs = require(RobloxStackView.StackViewTransitionConfigs)
 local StackViewOverlayFrame = require(RobloxStackView.StackViewOverlayFrame)
@@ -20,7 +20,7 @@ local defaultScreenOptions = {
 	-- cardColor3 default is provided by StackViewCard
 	renderOverlay = function(navigationOptions, initialTransitionValue, transitionChangedSignal)
 		-- NOTE: renderOverlay will not be called if sceneOptions.overlayEnabled evaluates false
-		return Roact.createElement(StackViewOverlayFrame, {
+		return React.createElement(StackViewOverlayFrame, {
 			navigationOptions = navigationOptions,
 			initialTransitionValue = initialTransitionValue,
 			transitionChangedSignal = transitionChangedSignal,
@@ -34,7 +34,7 @@ local function calculateTransitionValue(index, position)
 	return math.max(math.min(1 + position - index, 1), 0)
 end
 
-local StackViewLayout = Roact.Component:extend("StackViewLayout")
+local StackViewLayout = React.Component:extend("StackViewLayout")
 
 function StackViewLayout:init()
 	self:setState({})
@@ -81,7 +81,7 @@ function StackViewLayout:_renderCard(scene, navigationOptions)
 	end
 
 	-- Merge down the various prop packages to be applied to StackViewCard.
-	return Roact.createElement(
+	return React.createElement(
 		StackViewCard,
 		Object.assign(table.clone(transitionProps), cardInterpolationProps, {
 			key = "card_" .. tostring(scene.key),
@@ -99,7 +99,7 @@ function StackViewLayout:_renderInnerScene(scene)
 	local sceneComponent = scene.descriptor.getComponent()
 	local screenProps = self.props.screenProps
 
-	return Roact.createElement(SceneView, {
+	return React.createElement(SceneView, {
 		screenProps = screenProps,
 		navigation = navigation,
 		component = sceneComponent,
@@ -128,7 +128,7 @@ function StackViewLayout:render()
 
 		local stationaryContent = nil
 		if overlayEnabled then
-			stationaryContent = Roact.createElement("Frame", {
+			stationaryContent = React.createElement("Frame", {
 				Size = UDim2.new(1, 0, 1, 0),
 				BackgroundTransparency = 1,
 				ClipsDescendants = true,
@@ -151,7 +151,7 @@ function StackViewLayout:render()
 		-- mouse clicks
 		local absorbInputElement = nil
 		if not cardObscured and absorbInput then
-			absorbInputElement = Roact.createElement("TextButton", {
+			absorbInputElement = React.createElement("TextButton", {
 				Active = true,
 				AutoButtonColor = false,
 				BackgroundTransparency = 1,
@@ -162,10 +162,10 @@ function StackViewLayout:render()
 			})
 		end
 
-		local renderedScene = Roact.createFragment({
+		local renderedScene = React.createElement(React.Fragment, {}, {
 			AbsorbInput = absorbInputElement,
 			-- use scene index for key, it makes testing with Rhodium easier
-			[tostring(scene.index)] = Roact.createElement("Frame", {
+			[tostring(scene.index)] = React.createElement("Frame", {
 				Size = UDim2.new(1, 0, 1, 0),
 				BackgroundTransparency = 1,
 				BorderSizePixel = 0,
@@ -174,7 +174,7 @@ function StackViewLayout:render()
 				Visible = not cardObscured,
 			}, {
 				StationaryContent = stationaryContent,
-				DynamicContent = Roact.createElement("Frame", {
+				DynamicContent = React.createElement("Frame", {
 					Size = UDim2.new(1, 0, 1, 0),
 					BackgroundTransparency = 1,
 					ClipsDescendants = false,
@@ -191,7 +191,7 @@ function StackViewLayout:render()
 		renderedScenes[tostring(scene.key)] = renderedScene
 	end
 
-	return Roact.createElement("Frame", {
+	return React.createElement("Frame", {
 		Size = UDim2.new(1, 0, 1, 0),
 		BackgroundTransparency = 1,
 		ClipsDescendants = false,

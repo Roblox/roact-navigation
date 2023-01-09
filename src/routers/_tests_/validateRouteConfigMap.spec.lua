@@ -2,12 +2,12 @@ return function()
 	local routersModule = script.Parent.Parent
 	local RoactNavigationModule = routersModule.Parent
 	local Packages = RoactNavigationModule.Parent
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
 	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	local validateRouteConfigMap = require(routersModule.validateRouteConfigMap)
 
-	local TestComponent = Roact.Component:extend("TestComponent")
+	local TestComponent = React.Component:extend("TestComponent")
 	function TestComponent:render()
 		return nil
 	end

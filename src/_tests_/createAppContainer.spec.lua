@@ -4,7 +4,8 @@ return function()
 	local RoactNavigationModule = script.Parent.Parent
 	local Packages = RoactNavigationModule.Parent
 
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
+	local ReactRoblox = require(Packages.Dev.ReactRoblox)
 	local JestGlobals = require(Packages.Dev.JestGlobals)
 	local jest = JestGlobals.jest
 	local expect = JestGlobals.expect
@@ -31,22 +32,22 @@ return function()
 		end)
 
 		local function FooScreen()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 		local function BarScreen()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 		local function BazScreen()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 		local function CarScreen()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 		local function DogScreen()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 		local function ElkScreen()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 		local Stack = createStackNavigator({
 			{ foo = { screen = FooScreen } },
@@ -83,7 +84,10 @@ return function()
 					navigationContainer = self
 				end)
 
-				Roact.mount(Roact.createElement(NavigationContainer))
+				local root = ReactRoblox.createRoot(Instance.new("Folder"))
+				ReactRoblox.act(function()
+					root:render(React.createElement(NavigationContainer))
+				end)
 
 				expect(navigationContainer.state.nav).toMatchObject({ index = 1 })
 				expect(navigationContainer.state.nav.routes).toEqual(expect.any("table"))
@@ -101,7 +105,10 @@ return function()
 					navigationContainer = value
 				end)
 
-				Roact.mount(Roact.createElement(NavigationContainer))
+				local root = ReactRoblox.createRoot(Instance.new("Folder"))
+				ReactRoblox.act(function()
+					root:render(React.createElement(NavigationContainer))
+				end)
 
 				jest.runOnlyPendingTimers()
 
@@ -114,7 +121,10 @@ return function()
 					navigationContainer = value
 				end)
 
-				Roact.mount(Roact.createElement(NavigationContainer))
+				local root = ReactRoblox.createRoot(Instance.new("Folder"))
+				ReactRoblox.act(function()
+					root:render(React.createElement(NavigationContainer))
+				end)
 
 				jest.runOnlyPendingTimers()
 				expect(navigationContainer:dispatch(NavigationActions.back())).toEqual(false)
@@ -126,12 +136,17 @@ return function()
 					navigationContainer = value
 				end)
 
-				Roact.mount(Roact.createElement(NavigationContainer))
+				local root = ReactRoblox.createRoot(Instance.new("Folder"))
+				ReactRoblox.act(function()
+					root:render(React.createElement(NavigationContainer))
+				end)
 
 				expect(navigationContainer:dispatch(NavigationActions.navigate({ routeName = "bar" }))).toEqual(true)
 
 				-- Fake the passing of a tick
-				jest.runOnlyPendingTimers()
+				ReactRoblox.act(function()
+					jest.runOnlyPendingTimers()
+				end)
 
 				expect(navigationContainer.state.nav).toMatchObject({
 					index = 2,
@@ -144,7 +159,10 @@ return function()
 				local NavigationContainer = createTestableNavigationContainer(function(value)
 					navigationContainer = value
 				end)
-				Roact.mount(Roact.createElement(NavigationContainer))
+				local root = ReactRoblox.createRoot(Instance.new("Folder"))
+				ReactRoblox.act(function()
+					root:render(React.createElement(NavigationContainer))
+				end)
 
 				-- First dispatch
 				expect(navigationContainer:dispatch(NavigationActions.navigate({ routeName = "bar" }))).toEqual(true)
@@ -156,7 +174,9 @@ return function()
 				expect(navigationContainer:dispatch(NavigationActions.navigate({ routeName = "baz" }))).toEqual(true)
 
 				-- Fake the passing of a tick
-				jest.runOnlyPendingTimers()
+				ReactRoblox.act(function()
+					jest.runOnlyPendingTimers()
+				end)
 
 				expect(navigationContainer.state.nav).toMatchObject({
 					index = 3,
@@ -173,7 +193,10 @@ return function()
 				local NavigationContainer = createTestableNavigationContainer(function(value)
 					navigationContainer = value
 				end)
-				Roact.mount(Roact.createElement(NavigationContainer))
+				local root = ReactRoblox.createRoot(Instance.new("Folder"))
+				ReactRoblox.act(function()
+					root:render(React.createElement(NavigationContainer))
+				end)
 
 				-- First dispatch
 				expect(navigationContainer:dispatch(NavigationActions.navigate({ routeName = "bar" }))).toEqual(true)
@@ -194,7 +217,9 @@ return function()
 				expect(navigationContainer:dispatch(NavigationActions.navigate({ routeName = "elk" }))).toEqual(true)
 
 				-- Fake the passing of a tick
-				jest.runOnlyPendingTimers()
+				ReactRoblox.act(function()
+					jest.runOnlyPendingTimers()
+				end)
 
 				expect(navigationContainer.state.nav).toMatchObject({
 					index = 6,
@@ -235,21 +260,24 @@ return function()
 				-- deviation: we simulate flushPromise by wrapping loadNavigationState
 				local loadNavigationDone = false
 
-				Roact.mount(Roact.createElement(NavigationContainer, {
-					persistNavigationState = function(...)
-						return persistNavigationState(...)
-					end,
-					loadNavigationState = function(...)
-						local success, resultOrError = pcall(function(...)
-							return loadNavigationState(...)
-						end, ...)
-						loadNavigationDone = true
-						if not success then
-							error(resultOrError)
-						end
-						return resultOrError
-					end,
-				}))
+				local root = ReactRoblox.createRoot(Instance.new("Folder"))
+				ReactRoblox.act(function()
+					root:render(React.createElement(NavigationContainer, {
+						persistNavigationState = function(...)
+							return persistNavigationState(...)
+						end,
+						loadNavigationState = function(...)
+							local success, resultOrError = pcall(function(...)
+								return loadNavigationState(...)
+							end, ...)
+							loadNavigationDone = true
+							if not success then
+								error(resultOrError)
+							end
+							return resultOrError
+						end,
+					}))
+				end)
 
 				-- wait for loadNavigationState() to resolve
 				-- deviation: we wait until loadNavigationState is done
@@ -280,7 +308,9 @@ return function()
 					jest.runOnlyPendingTimers()
 					navigationContainer:dispatch(NavigationActions.navigate({ routeName = "foo" }))
 
-					jest.runOnlyPendingTimers()
+					ReactRoblox.act(function()
+						jest.runOnlyPendingTimers()
+					end)
 
 					expect(persistNavigationState).toHaveBeenCalledWith({
 						index = 1,
@@ -374,10 +404,14 @@ return function()
 			it("throws when persistNavigationState and loadNavigationState do not pass validation", function()
 				local NavigationContainer = createAppContainer(Stack)
 
+				local root = ReactRoblox.createRoot(Instance.new("Folder"))
+
 				expect(function()
-					Roact.mount(Roact.createElement(NavigationContainer, {
-						persistNavigationState = function() end,
-					}))
+					ReactRoblox.act(function()
+						root:render(React.createElement(NavigationContainer, {
+							persistNavigationState = function() end,
+						}))
+					end)
 				end).toThrow(
 					"both persistNavigationState and loadNavigationState must either be undefined, or be functions"
 				)

@@ -3,7 +3,8 @@ return function()
 	local RoactNavigationModule = navigatorsModule.Parent
 	local Packages = RoactNavigationModule.Parent
 	local JestGlobals = require(Packages.Dev.JestGlobals)
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
+	local ReactRoblox = require(Packages.Dev.ReactRoblox)
 
 	local expect = JestGlobals.expect
 	local jest = JestGlobals.jest
@@ -43,18 +44,25 @@ return function()
 			}
 		end
 
-		expect(function()
-			local instance = Roact.mount(Roact.createElement(navigator, {
-				navigation = testNavigation,
-			}))
+		local parent = Instance.new("Folder")
+		local root = ReactRoblox.createRoot(parent)
 
-			Roact.unmount(instance)
+		expect(function()
+			ReactRoblox.act(function()
+				root:render(React.createElement(navigator, {
+					navigation = testNavigation,
+				}))
+			end)
 		end).never.toThrow()
+
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
 	end)
 
 	describe("Focus events", function()
 		local function createComponent(focusCallback, blurCallback)
-			local TestComponent = Roact.Component:extend("TestComponent")
+			local TestComponent = React.Component:extend("TestComponent")
 
 			function TestComponent:didMount()
 				local navigation = self.props.navigation
@@ -84,7 +92,7 @@ return function()
 			secondBlurCallback
 		)
 			local dispatch
-			local element = Roact.createElement(navigator, {
+			local element = React.createElement(navigator, {
 				externalDispatchConnector = function(currentDispatch)
 					dispatch = currentDispatch
 					return function()
@@ -93,7 +101,12 @@ return function()
 				end,
 			})
 
-			local handle = Roact.mount(element)
+			local parent = Instance.new("Folder")
+			local root = ReactRoblox.createRoot(parent)
+
+			ReactRoblox.act(function()
+				root:render(element)
+			end)
 
 			waitUntil(function()
 				return #firstFocusCallback.mock.calls > 0
@@ -134,7 +147,9 @@ return function()
 				expect(secondBlurCallback).toHaveBeenCalledTimes(0)
 			end
 
-			Roact.unmount(handle)
+			ReactRoblox.act(function()
+				root:unmount()
+			end)
 		end
 
 		it("should emit willBlur event when removing a route from the nav state", function()

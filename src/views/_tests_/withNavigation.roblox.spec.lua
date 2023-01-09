@@ -3,7 +3,8 @@ return function()
 	local RoactNavigationModule = viewsModule.Parent
 	local Packages = RoactNavigationModule.Parent
 
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
+	local ReactRoblox = require(Packages.Dev.ReactRoblox)
 	local JestGlobals = require(Packages.Dev.JestGlobals)
 
 	local expect = JestGlobals.expect
@@ -28,14 +29,20 @@ return function()
 
 		local FooWithNavigation = withNavigation(Foo)
 
-		local rootElement = Roact.createElement(NavigationContext.Provider, {
+		local rootElement = React.createElement(NavigationContext.Provider, {
 			value = testNavigation,
 		}, {
-			Child = Roact.createElement(FooWithNavigation),
+			Child = React.createElement(FooWithNavigation),
 		})
 
-		local tree = Roact.mount(rootElement)
-		Roact.unmount(tree)
+		local root = ReactRoblox.createRoot(Instance.new("Folder"))
+		ReactRoblox.act(function()
+			root:render(rootElement)
+		end)
+
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
 
 		expect(extractedNavigation).toBe(testNavigation)
 	end)
@@ -52,23 +59,30 @@ return function()
 
 		local FooWithNavigation = withNavigation(Foo)
 
-		local rootElement = Roact.createElement(NavigationContext.Provider, {
+		local rootElement = React.createElement(NavigationContext.Provider, {
 			value = testNavigation,
 		}, {
-			Child = Roact.createElement(FooWithNavigation),
+			Child = React.createElement(FooWithNavigation),
 		})
 
-		local tree = Roact.mount(rootElement)
+		local root = ReactRoblox.createRoot(Instance.new("Folder"))
+		ReactRoblox.act(function()
+			root:render(rootElement)
+		end)
 
-		local rootElement2 = Roact.createElement(NavigationContext.Provider, {
+		local rootElement2 = React.createElement(NavigationContext.Provider, {
 			value = testNavigation2,
 		}, {
-			Child = Roact.createElement(FooWithNavigation),
+			Child = React.createElement(FooWithNavigation),
 		})
 
-		Roact.update(tree, rootElement2)
+		ReactRoblox.act(function()
+			root:render(rootElement2)
+		end)
 
-		Roact.unmount(tree)
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
 
 		expect(extractedNavigation).toBe(testNavigation2)
 	end)
@@ -80,14 +94,17 @@ return function()
 
 		local FooWithNavigation = withNavigation(Foo)
 
-		local element = Roact.createElement(FooWithNavigation)
+		local element = React.createElement(FooWithNavigation)
 
 		local errorMessage = "withNavigation and withNavigationFocus can only "
 			.. "be used on a view hierarchy of a navigator. The wrapped component is "
 			.. "unable to get access to navigation from props or context"
 
+		local root = ReactRoblox.createRoot(Instance.new("Folder"))
 		expect(function()
-			Roact.mount(element)
+			ReactRoblox.act(function()
+				root:render(element)
+			end)
 		end).toThrow(errorMessage)
 	end)
 end

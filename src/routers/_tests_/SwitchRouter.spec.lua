@@ -4,7 +4,7 @@ return function()
 	local routersModule = script.Parent.Parent
 	local RoactNavigationModule = routersModule.Parent
 	local Packages = RoactNavigationModule.Parent
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
 	local LuauPolyfill = require(Packages.LuauPolyfill)
 	local Object = LuauPolyfill.Object
 	local jestExpect = require(Packages.Dev.JestGlobals).expect
@@ -19,19 +19,19 @@ return function()
 		config = config or {}
 
 		local function PlainScreen()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
-		local StackA = Roact.Component:extend("StackA")
+		local StackA = React.Component:extend("StackA")
 		function StackA:render()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
-		local StackB = Roact.Component:extend("StackB")
+		local StackB = React.Component:extend("StackB")
 		function StackB:render()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
-		local StackC = Roact.Component:extend("StackC")
+		local StackC = React.Component:extend("StackC")
 		function StackC:render()
-			return Roact.createElement("Frame")
+			return React.createElement("Frame")
 		end
 
 		StackA.router = StackRouter({
@@ -352,15 +352,15 @@ return function()
 			-- if we are focused on Other and navigate to Bar, what should happen?
 
 			local function Screen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
-			local NestedSwitch = Roact.Component:extend("NestedSwitch")
+			local NestedSwitch = React.Component:extend("NestedSwitch")
 			function NestedSwitch:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
-			local OtherNestedSwitch = Roact.Component:extend("OtherNestedSwitch")
+			local OtherNestedSwitch = React.Component:extend("OtherNestedSwitch")
 			function OtherNestedSwitch:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			local nestedRouter = SwitchRouter({
@@ -399,15 +399,15 @@ return function()
 		-- https://github.com/react-navigation/react-navigation.github.io/issues/117#issuecomment-385597628
 		it("order of handling navigate action is correct for nested stackrouters", function()
 			local function Screen()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
-			local MainStack = Roact.Component:extend("MainStack")
+			local MainStack = React.Component:extend("MainStack")
 			function MainStack:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
-			local LoginStack = Roact.Component:extend("LoginStack")
+			local LoginStack = React.Component:extend("LoginStack")
 			function LoginStack:render()
-				return Roact.createElement("Frame")
+				return React.createElement("Frame")
 			end
 
 			MainStack.router = StackRouter({

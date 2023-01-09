@@ -2,7 +2,7 @@
 
 local root = script.Parent.Parent
 local Packages = root.Parent
-local Roact = require(Packages.Roact)
+local React = require(Packages.React)
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local Object = LuauPolyfill.Object
 local Array = LuauPolyfill.Array
@@ -10,7 +10,7 @@ local invariant = require(root.utils.invariant)
 local NavigationFocusEvents = require(root.views.NavigationFocusEvents)
 
 return function(navigatorViewComponent, router, navigationConfig)
-	local Navigator = Roact.Component:extend("Navigator")
+	local Navigator = React.Component:extend("Navigator")
 
 	-- These statics need to be accessible to routers
 	Navigator.router = router
@@ -115,8 +115,8 @@ return function(navigatorViewComponent, router, navigationConfig)
 		-- ROBLOX deviation: Cache transitioning descriptors
 		local transitioningDescriptors = self.state.transitioningDescriptors
 
-		return Roact.createFragment({
-			Events = Roact.createElement(NavigationFocusEvents, {
+		return React.createElement(React.Fragment, {}, {
+			Events = React.createElement(NavigationFocusEvents, {
 				navigation = navigation,
 				onEvent = function(target, type_, data)
 					if descriptors[target] then
@@ -128,7 +128,7 @@ return function(navigatorViewComponent, router, navigationConfig)
 					-- ROBLOX deviation END
 				end,
 			}),
-			View = Roact.createElement(
+			View = React.createElement(
 				navigatorViewComponent,
 				Object.assign(table.clone(self.props), {
 					screenProps = screenProps,

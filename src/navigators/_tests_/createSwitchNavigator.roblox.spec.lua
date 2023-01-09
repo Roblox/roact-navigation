@@ -2,8 +2,9 @@ return function()
 	local navigatorsModule = script.Parent.Parent
 	local RoactNavigationModule = navigatorsModule.Parent
 	local Packages = RoactNavigationModule.Parent
-	local jestExpect = require(Packages.Dev.JestGlobals).expect
-	local Roact = require(Packages.Roact)
+	local expect = require(Packages.Dev.JestGlobals).expect
+	local React = require(Packages.React)
+	local ReactRoblox = require(Packages.Dev.ReactRoblox)
 
 	local createSwitchNavigator = require(navigatorsModule.createSwitchNavigator)
 	local getChildNavigation = require(RoactNavigationModule.getChildNavigation)
@@ -35,12 +36,19 @@ return function()
 			}
 		end
 
-		jestExpect(function()
-			local instance = Roact.mount(Roact.createElement(navigator, {
-				navigation = testNavigation,
-			}))
+		local parent = Instance.new("Folder")
+		local root = ReactRoblox.createRoot(parent)
 
-			Roact.unmount(instance)
+		expect(function()
+			ReactRoblox.act(function()
+				root:render(React.createElement(navigator, {
+					navigation = testNavigation,
+				}))
+			end)
 		end).never.toThrow()
+
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
 	end)
 end

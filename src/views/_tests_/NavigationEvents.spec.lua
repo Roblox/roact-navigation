@@ -6,7 +6,8 @@ return function()
 	local LuauPolyfill = require(Packages.LuauPolyfill)
 	local Array = LuauPolyfill.Array
 	local Object = LuauPolyfill.Object
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
+	local ReactRoblox = require(Packages.Dev.ReactRoblox)
 	local JestGlobals = require(Packages.Dev.JestGlobals)
 	local expect = JestGlobals.expect
 	local jest = JestGlobals.jest
@@ -99,14 +100,19 @@ return function()
 				local navigation = helper.navigation
 				local NavigationListenersAPI = helper.NavigationListenersAPI
 
-				local tree = Roact.mount(Roact.createElement(NavigationEvents, { navigation = navigation }))
+				local root = ReactRoblox.createRoot(Instance.new("Folder"))
+				ReactRoblox.act(function()
+					root:render(React.createElement(NavigationEvents, { navigation = navigation }))
+				end)
 
 				expect(#NavigationListenersAPI.get(Events.WillFocus)).toBe(1)
 				expect(#NavigationListenersAPI.get(Events.DidFocus)).toBe(1)
 				expect(#NavigationListenersAPI.get(Events.WillBlur)).toBe(1)
 				expect(#NavigationListenersAPI.get(Events.DidBlur)).toBe(1)
 
-				Roact.unmount(tree)
+				ReactRoblox.act(function()
+					root:unmount()
+				end)
 				expect(#NavigationListenersAPI.get(Events.WillFocus)).toBe(0)
 				expect(#NavigationListenersAPI.get(Events.DidFocus)).toBe(0)
 				expect(#NavigationListenersAPI.get(Events.WillBlur)).toBe(0)
@@ -119,16 +125,21 @@ return function()
 			local navigation = helper.navigation
 			local NavigationListenersAPI = helper.NavigationListenersAPI
 
-			local tree = Roact.mount(Roact.createElement(NavigationContext.Provider, {
-				value = navigation,
-			}, Roact.createElement(NavigationEvents)))
+			local root = ReactRoblox.createRoot(Instance.new("Folder"))
+			ReactRoblox.act(function()
+				root:render(React.createElement(NavigationContext.Provider, {
+					value = navigation,
+				}, React.createElement(NavigationEvents)))
+			end)
 
 			expect(#NavigationListenersAPI.get(Events.WillFocus)).toBe(1)
 			expect(#NavigationListenersAPI.get(Events.DidFocus)).toBe(1)
 			expect(#NavigationListenersAPI.get(Events.WillBlur)).toBe(1)
 			expect(#NavigationListenersAPI.get(Events.DidBlur)).toBe(1)
 
-			Roact.unmount(tree)
+			ReactRoblox.act(function()
+				root:unmount()
+			end)
 			expect(#NavigationListenersAPI.get(Events.WillFocus)).toBe(0)
 			expect(#NavigationListenersAPI.get(Events.DidFocus)).toBe(0)
 			expect(#NavigationListenersAPI.get(Events.WillBlur)).toBe(0)
@@ -142,9 +153,15 @@ return function()
 
 			local eventListenerProps, eventListenerPropsFn = createEventListenersProp()
 
-			Roact.mount(
-				Roact.createElement(NavigationEvents, Object.assign({ navigation = navigation }, eventListenerPropsFn))
-			)
+			local root = ReactRoblox.createRoot(Instance.new("Folder"))
+			ReactRoblox.act(function()
+				root:render(
+					React.createElement(
+						NavigationEvents,
+						Object.assign({ navigation = navigation }, eventListenerPropsFn)
+					)
+				)
+			end)
 
 			local function checkPropListenerIsCalled(eventName, propName)
 				expect(eventListenerProps[propName]).toHaveBeenCalledTimes(0)
@@ -167,28 +184,42 @@ return function()
 			local nextNavigationListenersAPI = nextHelper.NavigationListenersAPI
 
 			local eventListenerProps, eventListenerPropsFn = createEventListenersProp()
-			local tree = Roact.mount(
-				Roact.createElement(NavigationEvents, Object.assign({ navigation = navigation }, eventListenerPropsFn))
-			)
+
+			local root = ReactRoblox.createRoot(Instance.new("Folder"))
+			ReactRoblox.act(function()
+				root:render(
+					React.createElement(
+						NavigationEvents,
+						Object.assign({ navigation = navigation }, eventListenerPropsFn)
+					)
+				)
+			end)
 
 			for eventName, propName in pairs(EVENT_TO_PROP_NAME) do
 				expect(eventListenerProps[propName]).toHaveBeenCalledTimes(0)
-				NavigationListenersAPI.call(eventName)
+				ReactRoblox.act(function()
+					NavigationListenersAPI.call(eventName)
+				end)
 				expect(eventListenerProps[propName]).toHaveBeenCalledTimes(1)
 			end
 
-			Roact.update(
-				tree,
-				Roact.createElement(
-					NavigationEvents,
-					Object.assign({ navigation = nextNavigation }, eventListenerProps)
+			ReactRoblox.act(function()
+				root:render(
+					React.createElement(
+						NavigationEvents,
+						Object.assign({ navigation = nextNavigation }, eventListenerProps)
+					)
 				)
-			)
+			end)
 
 			for eventName, propName in pairs(EVENT_TO_PROP_NAME) do
-				NavigationListenersAPI.call(eventName)
+				ReactRoblox.act(function()
+					NavigationListenersAPI.call(eventName)
+				end)
 				expect(eventListenerProps[propName]).toHaveBeenCalledTimes(1)
-				nextNavigationListenersAPI.call(eventName)
+				ReactRoblox.act(function()
+					nextNavigationListenersAPI.call(eventName)
+				end)
 				expect(eventListenerProps[propName]).toHaveBeenCalledTimes(2)
 			end
 		end)
@@ -200,16 +231,18 @@ return function()
 				local navigation = helper.navigation
 				local NavigationListenersAPI = helper.NavigationListenersAPI
 
-				local tree = Roact.mount(
-					Roact.createElement(
-						NavigationEvents,
-						Object.assign({ navigation = navigation }, select(2, createEventListenersProp()))
+				local root = ReactRoblox.createRoot(Instance.new("Folder"))
+				ReactRoblox.act(function()
+					root:render(
+						React.createElement(
+							NavigationEvents,
+							Object.assign({ navigation = navigation }, select(2, createEventListenersProp()))
+						)
 					)
-				)
+				end)
 
-				Roact.update(
-					tree,
-					Roact.createElement(NavigationEvents, {
+				ReactRoblox.act(function()
+					root:render(React.createElement(NavigationEvents, {
 						navigation = navigation,
 						onWillBlur = function()
 							error("should not be called")
@@ -217,25 +250,27 @@ return function()
 						onDidFocus = function()
 							error("should not be called")
 						end,
-					})
-				)
-				Roact.update(
-					tree,
-					Roact.createElement(
-						NavigationEvents,
-						Object.assign({ navigation = navigation }, select(2, createEventListenersProp()))
+					}))
+				end)
+				ReactRoblox.act(function()
+					root:render(
+						React.createElement(
+							NavigationEvents,
+							Object.assign({ navigation = navigation }, select(2, createEventListenersProp()))
+						)
 					)
-				)
+				end)
 
 				local latestEventListenerProps, latestEventListenerPropsFn = createEventListenersProp()
 
-				Roact.update(
-					tree,
-					Roact.createElement(
-						NavigationEvents,
-						Object.assign({ navigation = navigation }, latestEventListenerPropsFn)
+				ReactRoblox.act(function()
+					root:render(
+						React.createElement(
+							NavigationEvents,
+							Object.assign({ navigation = navigation }, latestEventListenerPropsFn)
+						)
 					)
-				)
+				end)
 
 				local function checkLatestPropListenerCalled(eventName, propName)
 					expect(latestEventListenerProps[propName]).toHaveBeenCalledTimes(0)

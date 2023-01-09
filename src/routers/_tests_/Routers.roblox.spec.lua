@@ -3,7 +3,7 @@ return function()
 	local RoactNavigationModule = routersModule.Parent
 	local RoactNavigation = require(RoactNavigationModule)
 	local Packages = RoactNavigationModule.Parent
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
 	local jestExpect = require(Packages.Dev.JestGlobals).expect
 
 	local StackRouter = require(routersModule.StackRouter)
@@ -19,9 +19,9 @@ return function()
 		SwitchRouter = SwitchRouter,
 	}
 
-	local FooView = Roact.Component:extend("FooView")
+	local FooView = React.Component:extend("FooView")
 	function FooView:render()
-		return Roact.createElement("Frame")
+		return React.createElement("Frame")
 	end
 
 	local router, initState, initRoute = nil, nil, nil

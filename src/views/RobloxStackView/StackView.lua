@@ -4,7 +4,7 @@ local Packages = root.Parent
 
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local Object = LuauPolyfill.Object
-local Roact = require(Packages.Roact)
+local React = require(Packages.React)
 local StackActions = require(root.routers.StackActions)
 local StackViewLayout = require(RobloxStackView.StackViewLayout)
 local Transitioner = require(RobloxStackView.Transitioner)
@@ -15,7 +15,7 @@ local defaultNavigationConfig = {
 	mode = StackPresentationStyle.Default,
 }
 
-local StackView = Roact.Component:extend("StackView")
+local StackView = React.Component:extend("StackView")
 
 function StackView:init()
 	self._doRender = function(...)
@@ -46,7 +46,7 @@ function StackView:render()
 
 	-- Transitioner handles setting up the animation motors and making that data
 	-- available to the lower layer.
-	return Roact.createElement(Transitioner, {
+	return React.createElement(Transitioner, {
 		render = self._doRender,
 		configureTransition = self._doConfigureTransition,
 		screenProps = screenProps,
@@ -72,7 +72,7 @@ function StackView:_render(transition, lastTransition)
 	local navigationConfig = Object.assign(table.clone(defaultNavigationConfig), self.props.navigationConfig)
 	local descriptors = self.props.descriptors
 
-	return Roact.createElement(
+	return React.createElement(
 		StackViewLayout,
 		Object.assign(navigationConfig, {
 			screenProps = screenProps,
