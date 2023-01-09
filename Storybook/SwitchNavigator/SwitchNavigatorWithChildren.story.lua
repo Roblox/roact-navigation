@@ -1,5 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
+local RoactNavigation = require(Packages.RoactNavigation)
 
 --[[
 	This story demonstrates how to build a basic SwitchRouter-based UI, including
@@ -18,7 +22,7 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 	for FirstPage can be customized dynamically. Said data defaults to initialRouteParams.
 ]]
 return function(target)
-	local FirstPage = Roact.Component:extend("FirstPage")
+	local FirstPage = React.Component:extend("FirstPage")
 
 	function FirstPage:render()
 		local navigation = self.props.navigation
@@ -31,7 +35,7 @@ return function(target)
 			text = text .. " (" .. extraTitle .. ")"
 		end
 
-		return Roact.createElement("TextButton", {
+		return React.createElement("TextButton", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.Gotham,
@@ -40,7 +44,7 @@ return function(target)
 			Text = text,
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
-			[Roact.Event.Activated] = function()
+			[React.Event.Activated] = function()
 				navigation.navigate("Page2")
 			end,
 		})
@@ -48,7 +52,7 @@ return function(target)
 
 	-- We can declare components functionally too!
 	local function SecondPage(props)
-		return Roact.createElement("TextButton", {
+		return React.createElement("TextButton", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.Gotham,
@@ -57,13 +61,13 @@ return function(target)
 			Text = "Hello, Roact-Navigation page 2!",
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
-			[Roact.Event.Activated] = function()
+			[React.Event.Activated] = function()
 				props.navigation.navigate("Page3")
 			end,
 		})
 	end
 
-	local ThirdPage = Roact.Component:extend("ThirdPage")
+	local ThirdPage = React.Component:extend("ThirdPage")
 
 	function ThirdPage:render()
 		local navigation = self.props.navigation
@@ -74,7 +78,7 @@ return function(target)
 			text = text .. " (" .. extraTitle .. ")"
 		end
 
-		return Roact.createElement("TextButton", {
+		return React.createElement("TextButton", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.Gotham,
@@ -83,7 +87,7 @@ return function(target)
 			Text = text,
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
-			[Roact.Event.Activated] = function()
+			[React.Event.Activated] = function()
 				navigation.navigate("Page3B")
 			end,
 		})
@@ -92,7 +96,7 @@ return function(target)
 	local function FourthPage(props)
 		local navigation = props.navigation
 
-		return Roact.createElement("TextButton", {
+		return React.createElement("TextButton", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.Gotham,
@@ -101,7 +105,7 @@ return function(target)
 			Text = "Hello, Roact-Navigation page 3B!",
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
-			[Roact.Event.Activated] = function()
+			[React.Event.Activated] = function()
 				navigation.navigate("Page1", {
 					extraTitle = "take 2", -- set param for the new Page1
 				})
@@ -137,9 +141,5 @@ return function(target)
 
 	-- The app container can be mounted at root level, or you can stick it inside
 	-- any other Roact component if you need extra structure.
-	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
-
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, React.createElement(appContainer, { detached = true }))
 end

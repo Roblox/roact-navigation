@@ -1,5 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
+local RoactNavigation = require(Packages.RoactNavigation)
 
 --[[
 	This story demonstrates how to build a modal dialog that has its own
@@ -16,7 +20,7 @@ return function(target)
 	local function MainContent(props)
 		local navigation = props.navigation
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -25,7 +29,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			showModalButton = Roact.createElement("TextButton", {
+			showModalButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -34,7 +38,7 @@ return function(target)
 				Text = "Show the Modal",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("ModalDialog")
 				end,
 			}),
@@ -44,7 +48,7 @@ return function(target)
 	local function PageOne(props)
 		local navigation = props.navigation
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -53,7 +57,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			showModalButton = Roact.createElement("TextButton", {
+			showModalButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -62,7 +66,7 @@ return function(target)
 				Text = "Go to Modal Page 2",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("PageTwo")
 				end,
 			}),
@@ -72,7 +76,7 @@ return function(target)
 	local function PageTwo(props)
 		local navigation = props.navigation
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -81,7 +85,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			dismissButton = Roact.createElement("TextButton", {
+			dismissButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -90,7 +94,7 @@ return function(target)
 				Text = "Dismiss Modal Dialog",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					-- Dismiss pops this entire inner stack by directing a Back action to
 					-- the parent navigator.
 					navigation.dismiss()
@@ -114,9 +118,6 @@ return function(target)
 		mode = RoactNavigation.StackPresentationStyle.Modal,
 	})
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
-	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
 
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, React.createElement(appContainer, { detached = true }))
 end

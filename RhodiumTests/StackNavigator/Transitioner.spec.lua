@@ -1,13 +1,13 @@
 return function()
 	local CoreGui = game:GetService("CoreGui")
-	local RunService = game:GetService("RunService")
 
 	local RhodiumTests = script.Parent.Parent
 	local Packages = RhodiumTests.Parent.Packages
 
 	local createScreenGui = require(RhodiumTests.createScreenGui)
 
-	local Roact = require(Packages.Roact)
+	local React = require(Packages.React)
+	local ReactRoblox = require(Packages.Dev.ReactRoblox)
 
 	local Transitioner = require(Packages.RoactNavigation.views.RobloxStackView.Transitioner)
 
@@ -15,7 +15,7 @@ return function()
 		local noop = function() end
 
 		local transitionerComponent
-		local element = Roact.createElement(Transitioner, {
+		local element = React.createElement(Transitioner, {
 			render = function(_, _, selfForTesting)
 				transitionerComponent = selfForTesting
 			end,
@@ -44,13 +44,23 @@ return function()
 		parentFrame.Parent = screen
 
 		parentFrame.Size = UDim2.fromOffset(100, 100)
-		local roactTree = Roact.mount(element, parentFrame)
+
+		local root = ReactRoblox.createRoot(parentFrame)
+		ReactRoblox.act(function()
+			root:render(element)
+		end)
+
 		expect(#parentFrame:GetChildren()).to.equal(1)
 		local transitionerInstance = parentFrame:GetChildren()[1]
 
 		parentFrame.Size = UDim2.fromOffset(200, 200)
-		RunService.Heartbeat:Wait()
-		Roact.unmount(roactTree)
+		ReactRoblox.act(function()
+			task.wait()
+		end)
+
+		ReactRoblox.act(function()
+			root:unmount()
+		end)
 
 		expect(transitionerComponent).to.be.ok()
 		expect(transitionerComponent._doOnAbsoluteSizeChanged).to.be.ok()

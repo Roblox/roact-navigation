@@ -1,5 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
+local RoactNavigation = require(Packages.RoactNavigation)
 
 --[[
 	This story demonstrates how to manually reset a StackNavigator to a specific
@@ -7,12 +11,12 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 	where we want to drill down to a specific subpage.
 ]]
 return function(target)
-	local MasterPage = Roact.Component:extend("MasterPage")
+	local MasterPage = React.Component:extend("MasterPage")
 
 	function MasterPage:render()
 		local navigation = self.props.navigation
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -21,7 +25,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			resetToDetail2Button = Roact.createElement("TextButton", {
+			resetToDetail2Button = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -30,7 +34,7 @@ return function(target)
 				Text = "Reset to Detail (2)",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.reset({
 						RoactNavigation.Actions.navigate({
 							routeName = "Master",
@@ -61,7 +65,7 @@ return function(target)
 		local navigation = props.navigation
 		local pushCount = navigation.getParam("pushCount", 0)
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.Gotham,
@@ -71,7 +75,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			resetToDetail2Button = Roact.createElement("TextButton", {
+			resetToDetail2Button = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -80,7 +84,7 @@ return function(target)
 				Text = "Reset to Detail (2)",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.reset({
 						RoactNavigation.Actions.navigate({
 							routeName = "Master",
@@ -103,7 +107,7 @@ return function(target)
 					})
 				end,
 			}),
-			goNextDetailButton = Roact.createElement("TextButton", {
+			goNextDetailButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -112,11 +116,11 @@ return function(target)
 				Text = "Push next detail",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.push("Detail", { pushCount = pushCount + 1 })
 				end,
 			}),
-			goBackButton = Roact.createElement("TextButton", {
+			goBackButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -125,7 +129,7 @@ return function(target)
 				Text = "Go back",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.goBack()
 				end,
 			}),
@@ -138,9 +142,6 @@ return function(target)
 	})
 
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
-	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
 
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, React.createElement(appContainer, { detached = true }))
 end

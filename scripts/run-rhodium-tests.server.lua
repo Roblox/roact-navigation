@@ -24,9 +24,6 @@ local function runRhodiumTests()
 
 	JestGlobals.TestEZ.TestBootstrap:run({Tests}, JestGlobals.TestEZ.Reporters.TextReporter, {
 		noXpcallByDefault = true,
-		extraEnvironment = {
-			Rhodium = Rhodium,
-		}
 	})
 end
 

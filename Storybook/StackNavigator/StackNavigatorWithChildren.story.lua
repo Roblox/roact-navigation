@@ -1,5 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
+local RoactNavigation = require(Packages.RoactNavigation)
 
 --[[
 	This story demonstrates how to build a basic StackNavigator-based UI. It creates
@@ -13,12 +17,12 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 				DetailPageB
 ]]
 return function(target)
-	local MasterPage = Roact.Component:extend("MasterPage")
+	local MasterPage = React.Component:extend("MasterPage")
 
 	function MasterPage:render()
 		local navigation = self.props.navigation
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -27,7 +31,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			detailButton = Roact.createElement("TextButton", {
+			detailButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -36,7 +40,7 @@ return function(target)
 				Text = "Go to Detail",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("Detail") -- goes to initial page for the subnavigator
 				end,
 			}),
@@ -46,7 +50,7 @@ return function(target)
 	local function SubDetailPageA(props)
 		local navigation = props.navigation
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.Gotham,
@@ -54,7 +58,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			subDetailButton = Roact.createElement("TextButton", {
+			subDetailButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -63,7 +67,7 @@ return function(target)
 				Text = "Go to subdetail B",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("SubDetailB")
 				end,
 			}),
@@ -73,7 +77,7 @@ return function(target)
 	local function SubDetailPageB(props)
 		local navigation = props.navigation
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.Gotham,
@@ -81,7 +85,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			backToMasterButton = Roact.createElement("TextButton", {
+			backToMasterButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -90,7 +94,7 @@ return function(target)
 				Text = "Go back to Master",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("Master")
 				end,
 			}),
@@ -108,9 +112,6 @@ return function(target)
 	})
 
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
-	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
 
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, React.createElement(appContainer, { detached = true }))
 end

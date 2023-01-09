@@ -4,6 +4,8 @@ return function()
 	local RhodiumTests = script.Parent.Parent
 	local Packages = RhodiumTests.Parent.Packages
 	local Storybook = Packages.RoactNavigationStorybook
+
+	local Rhodium = require(Packages.Dev.Rhodium)
 	local Element = Rhodium.Element
 	local XPath = Rhodium.XPath
 
@@ -29,6 +31,7 @@ return function()
 
 	afterEach(function()
 		deleteScreenGui()
+		screen:Destroy()
 	end)
 
 	it("dismisses a dialog", function()

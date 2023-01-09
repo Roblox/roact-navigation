@@ -1,17 +1,21 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
+local RoactNavigation = require(Packages.RoactNavigation)
 
 --[[
 	This story demonstrates how to create a SwitchNavigator that will keep its
 	pages mounted after they have been visited once.
 ]]
 return function(target)
-	local MyFirstPage = Roact.Component:extend("MyFirstPage")
+	local MyFirstPage = React.Component:extend("MyFirstPage")
 
 	function MyFirstPage:render()
 		local navigation = self.props.navigation
 
-		return Roact.createElement("TextButton", {
+		return React.createElement("TextButton", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.Gotham,
@@ -20,7 +24,7 @@ return function(target)
 			Text = navigation.state.key,
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
-			[Roact.Event.Activated] = function()
+			[React.Event.Activated] = function()
 				navigation.navigate("MySecondPage")
 			end,
 		})
@@ -34,11 +38,11 @@ return function(target)
 		print("First page unmounted!")
 	end
 
-	local MySecondPage = Roact.Component:extend("MySecondPage")
+	local MySecondPage = React.Component:extend("MySecondPage")
 	function MySecondPage:render()
 		local navigation = self.props.navigation
 
-		return Roact.createElement("TextButton", {
+		return React.createElement("TextButton", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.Gotham,
@@ -47,7 +51,7 @@ return function(target)
 			Text = navigation.state.key,
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
-			[Roact.Event.Activated] = function()
+			[React.Event.Activated] = function()
 				navigation.navigate("MyFirstPage")
 			end,
 		})
@@ -69,10 +73,7 @@ return function(target)
 	})
 
 	local appContainer = RoactNavigation.createAppContainer(navigator)
-	local element = Roact.createElement(appContainer)
-	local rootInstance = Roact.mount(element, target)
+	local element = React.createElement(appContainer, { detached = true })
 
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, element)
 end

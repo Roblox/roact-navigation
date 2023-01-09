@@ -1,5 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
+local RoactNavigation = require(Packages.RoactNavigation)
 
 --[[
 	This story demonstrates how to build a basic StackNavigator-based UI. It creates
@@ -11,12 +15,12 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 			DetailPage
 ]]
 return function(target)
-	local MasterPage = Roact.Component:extend("MasterPage")
+	local MasterPage = React.Component:extend("MasterPage")
 
 	function MasterPage:render()
 		local navigation = self.props.navigation
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -25,7 +29,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			detailButton = Roact.createElement("TextButton", {
+			detailButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -34,7 +38,7 @@ return function(target)
 				Text = "Go to Detail",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					-- Note that you can push() to force a new instance, instead!
 					navigation.navigate("Detail")
 				end,
@@ -47,7 +51,7 @@ return function(target)
 		local navigation = props.navigation
 		local pushCount = navigation.getParam("pushCount", 0)
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.Gotham,
@@ -57,7 +61,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			goNextDetailButton = Roact.createElement("TextButton", {
+			goNextDetailButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -66,7 +70,7 @@ return function(target)
 				Text = "Push next detail",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate({
 						routeName = "Detail",
 						key = ("Detail-%d"):format(pushCount + 1),
@@ -74,7 +78,7 @@ return function(target)
 					})
 				end,
 			}),
-			goBackButton = Roact.createElement("TextButton", {
+			goBackButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -83,7 +87,7 @@ return function(target)
 				Text = "Go back to Master",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("Master") -- jump all the way out!
 				end,
 			}),
@@ -106,9 +110,6 @@ return function(target)
 
 	-- The app container can be mounted at root level, or you can stick it inside
 	-- any other Roact component if you need extra structure.
-	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
 
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, React.createElement(appContainer, { detached = true }))
 end

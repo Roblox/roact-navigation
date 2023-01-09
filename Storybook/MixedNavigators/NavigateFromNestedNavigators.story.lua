@@ -1,5 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
+local RoactNavigation = require(Packages.RoactNavigation)
 
 --[[
 	AppContainer
@@ -17,7 +21,7 @@ return function(target)
 	local BUTTON_HEIGHT = 30
 
 	local function Button(props)
-		return Roact.createElement("TextButton", {
+		return React.createElement("TextButton", {
 			AnchorPoint = Vector2.new(0.5, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.Gotham,
@@ -26,12 +30,12 @@ return function(target)
 			Text = props.Text,
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
-			[Roact.Event.Activated] = props.Click,
+			[React.Event.Activated] = props.Click,
 		})
 	end
 
 	local function Label(props)
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -39,30 +43,30 @@ return function(target)
 			Text = props.Text,
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
-		}, props[Roact.Children])
+		}, props[React.Children])
 	end
 
 	local function Initial(props)
 		local navigation = props.navigation
 
-		return Roact.createElement(Label, {
+		return React.createElement(Label, {
 			Text = "Main App Initial Page",
 		}, {
-			showMainPageB = Roact.createElement(Button, {
+			showMainPageB = React.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, 0),
 				Text = "Go to pages",
 				Click = function()
 					navigation.navigate("Pages")
 				end,
 			}),
-			showPageOne = Roact.createElement(Button, {
+			showPageOne = React.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, BUTTON_HEIGHT),
 				Text = "Open on Page One",
 				Click = function()
 					navigation.navigate("PageOne")
 				end,
 			}),
-			showPageTwo = Roact.createElement(Button, {
+			showPageTwo = React.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, 2 * BUTTON_HEIGHT),
 				Text = "Open on Page Two",
 				Click = function()
@@ -75,24 +79,24 @@ return function(target)
 	local function PageA(props)
 		local navigation = props.navigation
 
-		return Roact.createElement(Label, {
+		return React.createElement(Label, {
 			Text = "Main App Page A",
 		}, {
-			showMainPageB = Roact.createElement(Button, {
+			showMainPageB = React.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, 0),
 				Text = "Go to page B",
 				Click = function()
 					navigation.navigate("PageB")
 				end,
 			}),
-			showPageOne = Roact.createElement(Button, {
+			showPageOne = React.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, BUTTON_HEIGHT),
 				Text = "Open on Page One",
 				Click = function()
 					navigation.navigate("PageOne")
 				end,
 			}),
-			showPageTwo = Roact.createElement(Button, {
+			showPageTwo = React.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, 2 * BUTTON_HEIGHT),
 				Text = "Open on Page Two",
 				Click = function()
@@ -105,24 +109,24 @@ return function(target)
 	local function PageB(props)
 		local navigation = props.navigation
 
-		return Roact.createElement(Label, {
+		return React.createElement(Label, {
 			Text = "Main App Page B",
 		}, {
-			goToInitial = Roact.createElement(Button, {
+			goToInitial = React.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, 0),
 				Text = "Go to Initial Page",
 				Click = function()
 					navigation.navigate("Initial")
 				end,
 			}),
-			showPageOne = Roact.createElement(Button, {
+			showPageOne = React.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, BUTTON_HEIGHT),
 				Text = "Open on Page One",
 				Click = function()
 					navigation.navigate("PageOne")
 				end,
 			}),
-			showPageTwo = Roact.createElement(Button, {
+			showPageTwo = React.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, 2 * BUTTON_HEIGHT),
 				Text = "Open on Page Two",
 				Click = function()
@@ -135,10 +139,10 @@ return function(target)
 	local function PageOne(props)
 		local navigation = props.navigation
 
-		return Roact.createElement(Label, {
+		return React.createElement(Label, {
 			Text = "Page 1",
 		}, {
-			showModalButton = Roact.createElement(Button, {
+			showModalButton = React.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, 0),
 				Text = "Go to Page 2",
 				Click = function()
@@ -151,10 +155,10 @@ return function(target)
 	local function PageTwo(props)
 		local navigation = props.navigation
 
-		return Roact.createElement(Label, {
+		return React.createElement(Label, {
 			Text = "Page 2",
 		}, {
-			dismissButton = Roact.createElement(Button, {
+			dismissButton = React.createElement(Button, {
 				Position = UDim2.new(0.5, 0, 0.6, 0),
 				Text = "Dismiss Modal Dialog",
 				Click = function()
@@ -186,9 +190,6 @@ return function(target)
 		{ ModalDialog = ModalNavigator },
 	})
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
-	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
 
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, React.createElement(appContainer, { detached = true }))
 end

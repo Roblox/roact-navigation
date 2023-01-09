@@ -5,16 +5,12 @@ local Packages = root.Packages
 local Tests = root.Tests
 
 local JestGlobals = require(Packages.Dev.JestGlobals)
-local Rhodium = require(Packages.Dev.Rhodium)
 
 local result = JestGlobals.TestEZ.TestBootstrap:run(
 	{ Tests },
 	JestGlobals.TestEZ.Reporters.TextReporterQuiet,
 	{
 		noXpcallByDefault = true,
-		extraEnvironment = {
-			Rhodium = Rhodium,
-		}
 	}
 )
 

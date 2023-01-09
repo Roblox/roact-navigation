@@ -1,5 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
+local RoactNavigation = require(Packages.RoactNavigation)
 
 --[[
 	This story demonstrates how to build more compelex App UI with multiple types
@@ -17,7 +21,7 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 return function(target)
 	local function MasterPage(props)
 		local navigation = props.navigation
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -26,7 +30,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			detailButton = Roact.createElement("TextButton", {
+			detailButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -35,11 +39,11 @@ return function(target)
 				Text = "Go to Detail",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("Detail")
 				end,
 			}),
-			subButton = Roact.createElement("TextButton", {
+			subButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -48,7 +52,7 @@ return function(target)
 				Text = "Go to SubPage A",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("SubA")
 				end,
 			}),
@@ -57,7 +61,7 @@ return function(target)
 
 	local function PageOne(props)
 		local navigation = props.navigation
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -66,7 +70,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			detailButton = Roact.createElement("TextButton", {
+			detailButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -75,7 +79,7 @@ return function(target)
 				Text = "Go to Page Two",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("Two")
 				end,
 			}),
@@ -84,7 +88,7 @@ return function(target)
 
 	local function SubPageA(props)
 		local navigation = props.navigation
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -93,7 +97,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			detailButton = Roact.createElement("TextButton", {
+			detailButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -102,11 +106,11 @@ return function(target)
 				Text = "Go to SubPage B",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("SubB")
 				end,
 			}),
-			switchButton = Roact.createElement("TextButton", {
+			switchButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -115,7 +119,7 @@ return function(target)
 				Text = "Go to Page One",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("One")
 				end,
 			}),
@@ -124,7 +128,7 @@ return function(target)
 
 	local function SubPageB(props)
 		local navigation = props.navigation
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -133,7 +137,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			pushNextDetail = Roact.createElement("TextButton", {
+			pushNextDetail = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -142,11 +146,11 @@ return function(target)
 				Text = "Push another SubB",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.push("SubB")
 				end,
 			}),
-			popToTopButton = Roact.createElement("TextButton", {
+			popToTopButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -155,7 +159,7 @@ return function(target)
 				Text = "Pop to top",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					-- PopToTop only goes to root of immediate stack navigator. A second
 					-- attempt (or embedded action) would send us to root of the parent
 					navigation.popToTop()
@@ -186,9 +190,6 @@ return function(target)
 	})
 
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
-	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
 
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, React.createElement(appContainer, { detached = true }))
 end

@@ -1,5 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
+local RoactNavigation = require(Packages.RoactNavigation)
 
 --[[
 	This story demonstrates how to build a component where more than one navigator
@@ -22,12 +26,12 @@ return function(target)
 		local stackOneNavigator = RoactNavigation.createRobloxStackNavigator({
 			{
 				OneA = function(aProps)
-					return Roact.createElement("TextLabel", {
+					return React.createElement("TextLabel", {
 						Size = UDim2.new(1, 0, 1, 0),
 						BackgroundColor3 = Color3.new(1, 0, 0),
 						Text = "Page OneA",
 					}, {
-						detailButton = Roact.createElement("TextButton", {
+						detailButton = React.createElement("TextButton", {
 							AnchorPoint = Vector2.new(0.5, 0.5),
 							Position = UDim2.new(0.5, 0, 0.5, 30),
 							Size = UDim2.new(0.5, 0, 0, 30),
@@ -35,7 +39,7 @@ return function(target)
 							TextColor3 = Color3.new(0, 0, 0),
 							TextSize = 18,
 							Text = "Go to Detail B",
-							[Roact.Event.Activated] = function()
+							[React.Event.Activated] = function()
 								aProps.navigation.navigate("OneB")
 							end,
 						}),
@@ -44,12 +48,12 @@ return function(target)
 			},
 			{
 				OneB = function(bProps)
-					return Roact.createElement("TextLabel", {
+					return React.createElement("TextLabel", {
 						Size = UDim2.new(1, 0, 1, 0),
 						BackgroundColor3 = Color3.new(0, 1, 0),
 						Text = "Page OneB",
 					}, {
-						backButton = Roact.createElement("TextButton", {
+						backButton = React.createElement("TextButton", {
 							AnchorPoint = Vector2.new(0.5, 0.5),
 							BackgroundColor3 = Color3.new(1, 1, 1),
 							Size = UDim2.new(0, 160, 0, 30),
@@ -57,7 +61,7 @@ return function(target)
 							Text = "Go Back",
 							TextColor3 = Color3.new(0, 0, 0),
 							TextSize = 18,
-							[Roact.Event.Activated] = function()
+							[React.Event.Activated] = function()
 								bProps.navigation.goBack()
 							end,
 						}),
@@ -69,12 +73,12 @@ return function(target)
 		local stackTwoNavigator = RoactNavigation.createRobloxStackNavigator({
 			{
 				TwoA = function(aProps)
-					return Roact.createElement("TextLabel", {
+					return React.createElement("TextLabel", {
 						Size = UDim2.new(1, 0, 1, 0),
 						BackgroundColor3 = Color3.new(0, 0, 1),
 						Text = "Page TwoA",
 					}, {
-						detailButton = Roact.createElement("TextButton", {
+						detailButton = React.createElement("TextButton", {
 							AnchorPoint = Vector2.new(0.5, 0.5),
 							Position = UDim2.new(0.5, 0, 0.5, 30),
 							Size = UDim2.new(0.5, 0, 0, 30),
@@ -82,7 +86,7 @@ return function(target)
 							TextColor3 = Color3.new(0, 0, 0),
 							TextSize = 18,
 							Text = "Go to Detail B",
-							[Roact.Event.Activated] = function()
+							[React.Event.Activated] = function()
 								aProps.navigation.navigate("TwoB")
 							end,
 						}),
@@ -91,12 +95,12 @@ return function(target)
 			},
 			{
 				TwoB = function(bProps)
-					return Roact.createElement("TextLabel", {
+					return React.createElement("TextLabel", {
 						Size = UDim2.new(1, 0, 1, 0),
 						BackgroundColor3 = Color3.new(1, 1, 0),
 						Text = "Page TwoB",
 					}, {
-						backButton = Roact.createElement("TextButton", {
+						backButton = React.createElement("TextButton", {
 							AnchorPoint = Vector2.new(0.5, 0.5),
 							BackgroundColor3 = Color3.new(1, 1, 1),
 							Size = UDim2.new(0, 160, 0, 30),
@@ -104,7 +108,7 @@ return function(target)
 							Text = "Go Back",
 							TextColor3 = Color3.new(0, 0, 0),
 							TextSize = 18,
-							[Roact.Event.Activated] = function()
+							[React.Event.Activated] = function()
 								bProps.navigation.goBack()
 							end,
 						}),
@@ -113,33 +117,30 @@ return function(target)
 			},
 		})
 
-		return Roact.createElement("Frame", {
+		return React.createElement("Frame", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(0.75, 0.75, 0.75),
 		}, {
-			StackOneFrame = Roact.createElement("Frame", {
+			StackOneFrame = React.createElement("Frame", {
 				Size = UDim2.new(1, 0, 0.5, 0),
 				Position = UDim2.new(0, 0, 0, 0),
 				BackgroundTransparency = 1,
 				BorderSizePixel = 0,
 			}, {
-				AppContainer = Roact.createElement(RoactNavigation.createAppContainer(stackOneNavigator)),
+				AppContainer = React.createElement(RoactNavigation.createAppContainer(stackOneNavigator)),
 			}),
-			StackTwoFrame = Roact.createElement("Frame", {
+			StackTwoFrame = React.createElement("Frame", {
 				Size = UDim2.new(1, 0, 0.5, 0),
 				Position = UDim2.new(0, 0, 0.5, 0),
 				BackgroundTransparency = 1,
 				BorderSizePixel = 0,
 			}, {
-				AppContainer = Roact.createElement(RoactNavigation.createAppContainer(stackTwoNavigator)),
+				AppContainer = React.createElement(RoactNavigation.createAppContainer(stackTwoNavigator)),
 			}),
 		})
 	end
 
-	local rootElement = Roact.createElement(RootComponent)
-	local rootInstance = Roact.mount(rootElement, target)
+	local rootElement = React.createElement(RootComponent)
 
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, rootElement)
 end

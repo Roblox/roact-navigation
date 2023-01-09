@@ -1,3 +1,8 @@
+local RhodiumTests = script.Parent
+local Packages = RhodiumTests.Parent.Packages
+
+local ReactRoblox = require(Packages.Dev.ReactRoblox)
+
 local function compareParams(paramsA, paramsB)
 	local pairCount = 0
 
@@ -63,7 +68,9 @@ function TrackRobloxStackNavigatorRoute:waitForRoute(routeName, params)
 		if waitedTime > self.timeout then
 			error(self:_getTimeoutMessage(routeName, params))
 		end
-		waitedTime = waitedTime + wait(0.1)
+		ReactRoblox.act(function()
+			waitedTime = waitedTime + task.wait()
+		end)
 	end
 end
 

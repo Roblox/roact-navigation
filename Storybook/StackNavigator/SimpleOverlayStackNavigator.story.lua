@@ -1,5 +1,8 @@
-local Packages = script.Parent.Parent.Parent
-local Roact = require(Packages.Roact)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
 local RoactNavigation = require(Packages.RoactNavigation)
 local LuauPolyfill = require(Packages.LuauPolyfill)
 local Object = LuauPolyfill.Object
@@ -20,7 +23,7 @@ return function(target, navigatorOptions)
 	local function MainContent(props)
 		local navigation = props.navigation
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 0),
 			BorderSizePixel = 0,
@@ -29,7 +32,7 @@ return function(target, navigatorOptions)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			showOverlayButton = Roact.createElement("TextButton", {
+			showOverlayButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -38,7 +41,7 @@ return function(target, navigatorOptions)
 				Text = "Show the Overlay",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("OverlayDialog")
 				end,
 			}),
@@ -49,13 +52,13 @@ return function(target, navigatorOptions)
 		local navigation = props.navigation
 		local dialogCount = navigation.getParam("dialogCount", 0)
 
-		return Roact.createElement("Frame", {
+		return React.createElement("Frame", {
 			Size = UDim2.new(0.5, 0, 0.5, 0),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.new(0.5, 0, 0.5, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 		}, {
-			dialog = Roact.createElement("TextLabel", {
+			dialog = React.createElement("TextLabel", {
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Position = UDim2.new(0.5, 0, 0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
@@ -66,7 +69,7 @@ return function(target, navigatorOptions)
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
 			}, {
-				pushAnotherOverlayButton = Roact.createElement("TextButton", {
+				pushAnotherOverlayButton = React.createElement("TextButton", {
 					AnchorPoint = Vector2.new(0.5, 0),
 					BackgroundColor3 = Color3.new(1, 1, 1),
 					Font = Enum.Font.Gotham,
@@ -75,7 +78,7 @@ return function(target, navigatorOptions)
 					Text = "Push Another",
 					TextColor3 = Color3.new(0, 0, 0),
 					TextSize = 18,
-					[Roact.Event.Activated] = function()
+					[React.Event.Activated] = function()
 						navigation.navigate({
 							routeName = "OverlayDialog",
 							-- using a unique key will avoid pushing the same dialog
@@ -85,7 +88,7 @@ return function(target, navigatorOptions)
 						})
 					end,
 				}),
-				popToTopOverlayButton = Roact.createElement("TextButton", {
+				popToTopOverlayButton = React.createElement("TextButton", {
 					AnchorPoint = Vector2.new(0.5, 0),
 					BackgroundColor3 = Color3.new(1, 1, 1),
 					Font = Enum.Font.Gotham,
@@ -94,11 +97,11 @@ return function(target, navigatorOptions)
 					Text = "Pop to Top",
 					TextColor3 = Color3.new(0, 0, 0),
 					TextSize = 18,
-					[Roact.Event.Activated] = function()
+					[React.Event.Activated] = function()
 						navigation.popToTop()
 					end,
 				}),
-				dismissOverlayButton = Roact.createElement("TextButton", {
+				dismissOverlayButton = React.createElement("TextButton", {
 					AnchorPoint = Vector2.new(0.5, 0),
 					BackgroundColor3 = Color3.new(1, 1, 1),
 					Font = Enum.Font.Gotham,
@@ -107,7 +110,7 @@ return function(target, navigatorOptions)
 					Text = "Dismiss",
 					TextColor3 = Color3.new(0, 0, 0),
 					TextSize = 18,
-					[Roact.Event.Activated] = function()
+					[React.Event.Activated] = function()
 						-- We use goBack to dismiss an entry in the current stack. You only use
 						-- navigation.dismiss() if you want to dismiss from INSIDE another navigator, e.g.
 						-- if your overlay is actually its own stack navigator.
@@ -141,9 +144,6 @@ return function(target, navigatorOptions)
 		},
 	}, config)
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
-	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
 
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, React.createElement(appContainer, { detached = true }))
 end

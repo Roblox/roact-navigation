@@ -1,5 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
+local RoactNavigation = require(Packages.RoactNavigation)
 
 --[[
 	This story demonstrates how to build a navigator where one of the pages
@@ -16,7 +20,7 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 return function(target)
 	local function SubPageA(props)
 		local navigation = props.navigation
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -25,7 +29,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			detailButton = Roact.createElement("TextButton", {
+			detailButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -34,11 +38,11 @@ return function(target)
 				Text = "Switch to Sub Page B",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("SubDetailB")
 				end,
 			}),
-			goToMasterButton = Roact.createElement("TextButton", {
+			goToMasterButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -47,7 +51,7 @@ return function(target)
 				Text = "Go to Master",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					-- Since we're in an embedded switch navigator, goBack() won't take us up the chain!
 					navigation.navigate("Master")
 				end,
@@ -57,7 +61,7 @@ return function(target)
 
 	local function SubPageB(props)
 		local navigation = props.navigation
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -66,7 +70,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			detailButton = Roact.createElement("TextButton", {
+			detailButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -75,11 +79,11 @@ return function(target)
 				Text = "Switch to Sub Page A",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("SubDetailA")
 				end,
 			}),
-			goToMasterButton = Roact.createElement("TextButton", {
+			goToMasterButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -88,7 +92,7 @@ return function(target)
 				Text = "Go to Master",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					-- Since we're in an embedded switch navigator, goBack() won't take us up the chain!
 					navigation.navigate("Master")
 				end,
@@ -101,7 +105,7 @@ return function(target)
 		{ SubDetailB = SubPageB },
 	})
 
-	local DetailPage = Roact.Component:extend("DetailPage")
+	local DetailPage = React.Component:extend("DetailPage")
 
 	-- When creating a navigator that draws within a sub-area of another screen,
 	-- you must manually pass the router up so the navigation system can be
@@ -109,21 +113,21 @@ return function(target)
 	DetailPage.router = InnerSwitchNavigator.router
 
 	function DetailPage:render()
-		return Roact.createElement("Frame", {
+		return React.createElement("Frame", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(0, 0, 0),
 		}, {
-			wrapperFrame = Roact.createElement("Frame", {
+			wrapperFrame = React.createElement("Frame", {
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Position = UDim2.new(0.5, 0, 0.5, 0),
 				Size = UDim2.new(0.75, 0, 0.75, 0),
 				BackgroundColor3 = Color3.fromRGB(100, 100, 100),
 			}, {
-				innerNavigator = Roact.createElement(InnerSwitchNavigator, {
+				innerNavigator = React.createElement(InnerSwitchNavigator, {
 					navigation = self.props.navigation,
 				}),
 			}),
-			backButton = Roact.createElement("TextButton", {
+			backButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -132,11 +136,11 @@ return function(target)
 				Text = "Back",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					self.props.navigation.goBack()
 				end,
 			}),
-			goToMasterButton = Roact.createElement("TextButton", {
+			goToMasterButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(1, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -145,7 +149,7 @@ return function(target)
 				Text = "Go to Master",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					self.props.navigation.navigate("Master")
 				end,
 			}),
@@ -155,7 +159,7 @@ return function(target)
 	local function MasterPage(props)
 		local navigation = props.navigation
 		local value = navigation.getParam("value", 0)
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -164,7 +168,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			masterButton = Roact.createElement("TextButton", {
+			masterButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -173,11 +177,11 @@ return function(target)
 				Text = "Go to Master",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("Master", { value = value + 1 })
 				end,
 			}),
-			detailButton = Roact.createElement("TextButton", {
+			detailButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -186,7 +190,7 @@ return function(target)
 				Text = "Go to Detail",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("Detail")
 				end,
 			}),
@@ -199,9 +203,6 @@ return function(target)
 	})
 
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
-	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
 
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, React.createElement(appContainer, { detached = true }))
 end

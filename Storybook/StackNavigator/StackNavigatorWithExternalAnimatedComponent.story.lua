@@ -1,5 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
+local RoactNavigation = require(Packages.RoactNavigation)
 
 --[[
 	This story demonstrates how to build a StackNavigator-based UI with a top-level
@@ -13,12 +17,12 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 					DetailPage
 ]]
 return function(target)
-	local MasterPage = Roact.Component:extend("MasterPage")
+	local MasterPage = React.Component:extend("MasterPage")
 
 	function MasterPage:render()
 		local navigation = self.props.navigation
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -27,7 +31,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			detailButton = Roact.createElement("TextButton", {
+			detailButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -36,7 +40,7 @@ return function(target)
 				Text = "Go to Detail",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					-- Note that you can push() to force a new instance, instead!
 					navigation.navigate("Detail")
 				end,
@@ -49,7 +53,7 @@ return function(target)
 		local navigation = props.navigation
 		local pushCount = navigation.getParam("pushCount", 0)
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.Gotham,
@@ -59,7 +63,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			goNextDetailButton = Roact.createElement("TextButton", {
+			goNextDetailButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -68,11 +72,11 @@ return function(target)
 				Text = "Push next detail",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.push("Detail", { pushCount = pushCount + 1 })
 				end,
 			}),
-			goBackButton = Roact.createElement("TextButton", {
+			goBackButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -81,14 +85,14 @@ return function(target)
 				Text = "Go back to Master",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("Master") -- jump all the way out!
 				end,
 			}),
 		})
 	end
 
-	local indicatorFrameRef = Roact.createRef()
+	local indicatorFrameRef = React.createRef()
 
 	-- This is the top-level navigator. Note that child navigators are just Roact
 	-- Components attached like any other route.
@@ -131,26 +135,23 @@ return function(target)
 
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
 
-	local rootFrame = Roact.createElement("Frame", {
+	local rootFrame = React.createElement("Frame", {
 		Size = UDim2.new(1, 0, 1, 0),
 		BackgroundColor3 = Color3.new(1, 1, 1),
 	}, {
-		IndicatorFrame = Roact.createElement("Frame", {
+		IndicatorFrame = React.createElement("Frame", {
 			Size = UDim2.new(1, 0, 0, 50),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			ZIndex = 2,
-			[Roact.Ref] = indicatorFrameRef,
+			ref = indicatorFrameRef,
 		}),
-		AppContainer = Roact.createElement(appContainer, {
+		AppContainer = React.createElement(appContainer, {
+			detached = true,
 			Position = UDim2.new(1, 0, 0, 50),
 			Size = UDim2.new(1, 0, 1, -50),
 			ZIndex = 1,
 		}),
 	})
 
-	local rootInstance = Roact.mount(rootFrame, target)
-
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, rootFrame)
 end

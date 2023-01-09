@@ -1,7 +1,9 @@
 return function(target, linkingProtocolMock)
 	local Storybook = script.Parent
 	local Packages = Storybook.Parent
-	local Roact = require(Packages.Roact)
+
+	local setupReactStory = require(Storybook.setupReactStory)
+	local React = require(Packages.React)
 	local RoactNavigation = require(Packages.RoactNavigation)
 
 	local WHITE = Color3.fromRGB(255, 255, 255)
@@ -14,7 +16,7 @@ return function(target, linkingProtocolMock)
 	end
 
 	local function VerticalList(_props)
-		return Roact.createElement("UIListLayout", {
+		return React.createElement("UIListLayout", {
 			SortOrder = Enum.SortOrder.LayoutOrder,
 			HorizontalAlignment = Enum.HorizontalAlignment.Center,
 			VerticalAlignment = Enum.VerticalAlignment.Center,
@@ -23,7 +25,7 @@ return function(target, linkingProtocolMock)
 	end
 
 	local function Padding(props)
-		return Roact.createElement("UIPadding", {
+		return React.createElement("UIPadding", {
 			PaddingBottom = UDim.new(0, props.amount),
 			PaddingLeft = UDim.new(0, props.amount),
 			PaddingRight = UDim.new(0, props.amount),
@@ -33,7 +35,7 @@ return function(target, linkingProtocolMock)
 
 	local function Label(props)
 		local onClick = props.onClick
-		return Roact.createElement(if onClick then "TextButton" else "TextLabel", {
+		return React.createElement(if onClick then "TextButton" else "TextLabel", {
 			AutomaticSize = Enum.AutomaticSize.XY,
 			BackgroundColor3 = BLACK,
 			BackgroundTransparency = if onClick then 0.3 else 1,
@@ -47,17 +49,17 @@ return function(target, linkingProtocolMock)
 			LayoutOrder = props.order,
 			Size = UDim2.fromOffset(0, 0),
 			TextXAlignment = props.align,
-			[Roact.Event.Activated] = onClick,
+			[React.Event.Activated] = onClick,
 		}, {
-			Padding = Roact.createElement(Padding, {
+			Padding = React.createElement(Padding, {
 				amount = 8,
 			}),
-			Children = props[Roact.Children] and Roact.createFragment(props[Roact.Children]),
+			Children = props.children and React.createElement(React.Fragment, {}, props.children),
 		})
 	end
 
 	local function Sheet(props)
-		return Roact.createElement("Frame", {
+		return React.createElement("Frame", {
 			AutomaticSize = Enum.AutomaticSize.XY,
 			BorderSizePixel = 0,
 			BackgroundColor3 = props.color or BLACK,
@@ -65,19 +67,19 @@ return function(target, linkingProtocolMock)
 			BackgroundTransparency = props.transparency or 0.4,
 			LayoutOrder = props.order,
 		}, {
-			Layout = Roact.createElement(VerticalList),
-			Padding = Roact.createElement(Padding, {
+			Layout = React.createElement(VerticalList),
+			Padding = React.createElement(Padding, {
 				amount = 8,
 			}),
-			Children = props[Roact.Children] and Roact.createFragment(props[Roact.Children]),
+			Children = props[React.Children] and React.createElement(React.Fragment, {}, props.children),
 		})
 	end
 
 	local function NavigationPanel(props)
-		return Roact.createElement(Sheet, {
+		return React.createElement(Sheet, {
 			order = props.order,
 		}, {
-			Description = Roact.createElement(Label, {
+			Description = React.createElement(Label, {
 				text = [[
 Enter `profile/cranberry` to see cranberry's profile.
 * The profile name is a URL parameter, so you can visit any profile you want.
@@ -88,19 +90,19 @@ Enter `login` to go back to the login screen.
 				align = Enum.TextXAlignment.Left,
 				order = 1,
 			}, {
-				MaxSize = Roact.createElement("UISizeConstraint", {
+				MaxSize = React.createElement("UISizeConstraint", {
 					MaxSize = Vector2.new(400, math.huge),
 				}),
 			}),
-			UpdateUrl = Roact.createElement(Sheet, {
+			UpdateUrl = React.createElement(Sheet, {
 				transparency = 0.7,
 				order = 2,
 			}, {
-				EnterUrl = Roact.createElement(Label, {
+				EnterUrl = React.createElement(Label, {
 					text = "Submit new URL event",
 					order = 1,
 				}),
-				UrlBox = Roact.createElement("TextBox", {
+				UrlBox = React.createElement("TextBox", {
 					Text = "",
 					BorderSizePixel = 0,
 					PlaceholderText = "<enter url>",
@@ -108,7 +110,7 @@ Enter `login` to go back to the login screen.
 					TextColor3 = BLACK,
 					PlaceholderColor3 = BLACK,
 					LayoutOrder = 2,
-					[Roact.Event.FocusLost] = function(textBox, enterPressed)
+					[React.Event.FocusLost] = function(textBox, enterPressed)
 						if not enterPressed then
 							return
 						end
@@ -122,47 +124,47 @@ Enter `login` to go back to the login screen.
 
 	local function Page(props)
 		local navigation = props.navigation
-		return Roact.createElement("Frame", {
+		return React.createElement("Frame", {
 			BorderSizePixel = 0,
 			Size = UDim2.fromScale(1, 1),
 		}, {
-			Layout = Roact.createElement(VerticalList),
-			PageLabel = Roact.createElement(Label, {
+			Layout = React.createElement(VerticalList),
+			PageLabel = React.createElement(Label, {
 				text = props.title,
 				color = BLACK,
 				size = 18,
 				order = 1,
 			}),
-			NavigatePanel = Roact.createElement(NavigationPanel, {
+			NavigatePanel = React.createElement(NavigationPanel, {
 				order = 2,
 			}),
-			BackButton = navigation and Roact.createElement(Label, {
+			BackButton = navigation and React.createElement(Label, {
 				text = "Go back",
 				order = 3,
 				onClick = function()
 					navigation.goBack()
 				end,
 			}),
-			Content = props[Roact.Children] and Roact.createElement("Frame", {
+			Content = props.children and React.createElement("Frame", {
 				AutomaticSize = Enum.AutomaticSize.XY,
 				BorderSizePixel = 0,
 				BackgroundColor3 = BLACK,
 				Size = UDim2.fromOffset(0, 0),
 				BackgroundTransparency = 0.4,
 				LayoutOrder = 4,
-			}, props[Roact.Children]),
+			}, props.children),
 		})
 	end
 
 	local function LoginScreen(_props)
-		return Roact.createElement(Page, {
+		return React.createElement(Page, {
 			title = "Login screen",
 		})
 	end
 
 	local function NoProfileScreen(props)
 		local navigation = props.navigation
-		return Roact.createElement(Page, {
+		return React.createElement(Page, {
 			navigation = navigation,
 			title = "No user is specified",
 		})
@@ -171,11 +173,11 @@ Enter `login` to go back to the login screen.
 	local function ProfileScreen(props)
 		local navigation = props.navigation
 		local userName = navigation.getParam("name")
-		return Roact.createElement(Page, {
+		return React.createElement(Page, {
 			navigation = navigation,
 			title = userName .. " Profile",
 		}, {
-			UserName = Roact.createElement(Label, {
+			UserName = React.createElement(Label, {
 				text = if userName then ("Current user: " .. userName) else "No user logged in",
 			}),
 		})
@@ -184,11 +186,11 @@ Enter `login` to go back to the login screen.
 	local function SettingsScreen(props)
 		local navigation = props.navigation
 		local userName = navigation.getParam("name")
-		return Roact.createElement(Page, {
+		return React.createElement(Page, {
 			navigation = navigation,
 			title = userName .. "'s settings",
 		}, {
-			UserName = Roact.createElement(Label, {
+			UserName = React.createElement(Label, {
 				text = ":)",
 			}),
 		})
@@ -199,11 +201,11 @@ Enter `login` to go back to the login screen.
 		local userName = navigation.getParam("name", "no one")
 		local friendName = navigation.getParam("friend", "no one")
 
-		return Roact.createElement(Page, {
+		return React.createElement(Page, {
 			navigation = navigation,
 			title = "Friend page",
 		}, {
-			UserName = Roact.createElement(Label, {
+			UserName = React.createElement(Label, {
 				text = ("%s is friend with %s"):format(userName, friendName),
 			}),
 		})
@@ -227,9 +229,5 @@ Enter `login` to go back to the login screen.
 		linkingProtocolMock
 	)
 
-	local tree = Roact.mount(Roact.createElement(appContainer), target)
-
-	return function()
-		Roact.unmount(tree)
-	end
+	return setupReactStory(target, React.createElement(appContainer, { detached = true }))
 end

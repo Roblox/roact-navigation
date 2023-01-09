@@ -1,5 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
+local RoactNavigation = require(Packages.RoactNavigation)
 
 --[[
 	This story demonstrates how to build a StackNavigator-based UI with a
@@ -10,7 +14,7 @@ return function(target)
 	local function MasterPage(props)
 		local navigation = props.navigation
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			BorderSizePixel = 0,
@@ -19,7 +23,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			detailButton = Roact.createElement("TextButton", {
+			detailButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -28,7 +32,7 @@ return function(target)
 				Text = "Go to Detail",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("Detail")
 				end,
 			}),
@@ -39,7 +43,7 @@ return function(target)
 		local navigation = props.navigation
 		local pushCount = navigation.getParam("pushCount", 0)
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.Gotham,
@@ -49,7 +53,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			goNextDetailButton = Roact.createElement("TextButton", {
+			goNextDetailButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -58,7 +62,7 @@ return function(target)
 				Text = "Push next detail",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate({
 						routeName = "Detail",
 						key = tostring(pushCount),
@@ -91,7 +95,7 @@ return function(target)
 		},
 	})
 
-	local SimpleTopBarStackNavigator = Roact.Component:extend("SimpleTopBarStackNavigator")
+	local SimpleTopBarStackNavigator = React.Component:extend("SimpleTopBarStackNavigator")
 	SimpleTopBarStackNavigator.router = InnerNavigator.router
 
 	function SimpleTopBarStackNavigator:render()
@@ -100,8 +104,8 @@ return function(target)
 		local activeKey = navigation.state.routes[navigation.state.index].key
 		local backButtonEnabled = navigation.state.index > 1
 
-		return Roact.createElement("Folder", nil, {
-			TopBar = Roact.createElement("TextLabel", {
+		return React.createElement("Folder", nil, {
+			TopBar = React.createElement("TextLabel", {
 				Text = options.title or "Unknown",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
@@ -109,23 +113,23 @@ return function(target)
 				BackgroundColor3 = Color3.new(0.9, 0.9, 0.9),
 				ZIndex = 1,
 			}, {
-				BackButton = Roact.createElement("TextButton", {
+				BackButton = React.createElement("TextButton", {
 					Visible = backButtonEnabled,
 					Active = backButtonEnabled,
 					Size = UDim2.new(0, 64, 0, 64),
 					Position = UDim2.new(0, 8, 0, 8),
 					Text = "<--",
-					[Roact.Event.Activated] = function()
+					[React.Event.Activated] = function()
 						navigation.goBack(activeKey)
 					end,
 				}),
 			}),
-			NavigatorFrame = Roact.createElement("Frame", {
+			NavigatorFrame = React.createElement("Frame", {
 				Position = UDim2.new(0, 0, 0, 80),
 				Size = UDim2.new(1, 0, 1, -80),
 				ZIndex = 0,
 			}, {
-				InnerNavigator = Roact.createElement(InnerNavigator, {
+				InnerNavigator = React.createElement(InnerNavigator, {
 					navigation = navigation,
 				}),
 			}),
@@ -133,9 +137,6 @@ return function(target)
 	end
 
 	local appContainer = RoactNavigation.createAppContainer(SimpleTopBarStackNavigator)
-	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
 
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, React.createElement(appContainer, { detached = true }))
 end

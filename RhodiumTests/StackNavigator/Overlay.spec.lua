@@ -3,6 +3,8 @@ return function()
 
 	local Packages = script.Parent.Parent.Parent.Packages
 	local Storybook = Packages.RoactNavigationStorybook
+
+	local Rhodium = require(Packages.Dev.Rhodium)
 	local Element = Rhodium.Element
 	local XPath = Rhodium.XPath
 
@@ -12,6 +14,18 @@ return function()
 
 	local TrackRobloxStackNavigatorRoute = require(script.Parent.Parent.TrackRobloxStackNavigatorRoute)
 	local createScreenGui = require(script.Parent.Parent.createScreenGui)
+
+	local screen = nil
+	local trackNavigator = nil
+	beforeEach(function()
+		screen = createScreenGui(CoreGui)
+		trackNavigator = TrackRobloxStackNavigatorRoute.new()
+	end)
+
+	afterEach(function()
+		screen:Destroy()
+		screen = nil
+	end)
 
 	describe("simple overlay stack navigator", function()
 		local function getAndVerifyOverlay(scenePath)
@@ -35,13 +49,18 @@ return function()
 			}
 		end
 
-		it("should navigate through pages", function()
-			local screen = createScreenGui(CoreGui)
-			local trackNavigator = TrackRobloxStackNavigatorRoute.new()
-			local delete = SimpleOverlay(screen, {
+		local cleanUpStory = nil
+		beforeEach(function()
+			cleanUpStory = SimpleOverlay(screen, {
 				onTransitionEnd = trackNavigator.onTransitionEnd,
 			})
+		end)
 
+		afterEach(function()
+			cleanUpStory()
+		end)
+
+		it("should navigate through pages", function()
 			local rootPath = XPath.new("game.CoreGui"):cat(XPath.new(screen.Name))
 			local scenesPath = rootPath:cat(XPath.new("View.TransitionerScenes"))
 			local showOverlayButtonPath = XPath.new("1.DynamicContent.*.Scene.showOverlayButton")
@@ -111,9 +130,6 @@ return function()
 				local thirdOverlayElement = Element.new(thirdOverlayPath)
 				expect(thirdOverlayElement:getRbxInstance()).never.to.be.ok()
 			end
-
-			delete()
-			screen:Destroy()
 		end)
 	end)
 
@@ -133,13 +149,18 @@ return function()
 			}
 		end
 
-		it("should not throw when going back without any dialogs", function()
-			local screen = createScreenGui(CoreGui)
-			local trackNavigator = TrackRobloxStackNavigatorRoute.new()
-			local delete = OverlayThatDoesNotAbsorbInput(screen, {
+		local cleanUpStory = nil
+		beforeEach(function()
+			cleanUpStory = OverlayThatDoesNotAbsorbInput(screen, {
 				onTransitionEnd = trackNavigator.onTransitionEnd,
 			})
+		end)
 
+		afterEach(function()
+			cleanUpStory()
+		end)
+
+		it("should not throw when going back without any dialogs", function()
 			local rootPath = XPath.new("game.CoreGui"):cat(XPath.new(screen.Name))
 			local scenesPath = rootPath:cat(XPath.new("View.TransitionerScenes"))
 
@@ -154,18 +175,9 @@ return function()
 
 			expect(showOverlayButton:getRbxInstance()).to.be.ok()
 			expect(goToMain:getRbxInstance()).to.be.ok()
-
-			delete()
-			screen:Destroy()
 		end)
 
 		it("should navigate through pages", function()
-			local screen = createScreenGui(CoreGui)
-			local trackNavigator = TrackRobloxStackNavigatorRoute.new()
-			local delete = OverlayThatDoesNotAbsorbInput(screen, {
-				onTransitionEnd = trackNavigator.onTransitionEnd,
-			})
-
 			local rootPath = XPath.new("game.CoreGui"):cat(XPath.new(screen.Name))
 			local scenesPath = rootPath:cat(XPath.new("View.TransitionerScenes"))
 
@@ -199,9 +211,6 @@ return function()
 			expect(firstOverlayElement:getRbxInstance()).never.to.be.ok()
 			local secondOverlayElement = Element.new(secondOverlayPath)
 			expect(secondOverlayElement:getRbxInstance()).never.to.be.ok()
-
-			delete()
-			screen:Destroy()
 		end)
 	end)
 end

@@ -1,5 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
+local RoactNavigation = require(Packages.RoactNavigation)
 
 --[[
 	This story demonstrates how to build a screen component that listens
@@ -7,7 +11,7 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 	basic master-detail stack navigator to exercise the events.
 ]]
 return function(target)
-	local MasterPage = Roact.Component:extend("MasterPage")
+	local MasterPage = React.Component:extend("MasterPage")
 
 	function MasterPage:init()
 		self._onWillFocus = function()
@@ -55,7 +59,7 @@ return function(target)
 		local navigation = self.props.navigation
 		local bgColor = self.state.bgColor
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = bgColor,
 			BorderSizePixel = 0,
@@ -64,13 +68,13 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			eventsAdapter = Roact.createElement(RoactNavigation.NavigationEvents, {
+			eventsAdapter = React.createElement(RoactNavigation.NavigationEvents, {
 				onWillFocus = self._onWillFocus,
 				onDidFocus = self._onDidFocus,
 				onWillBlur = self._onWillBlur,
 				onDidBlur = self._onDidBlur,
 			}),
-			detailButton = Roact.createElement("TextButton", {
+			detailButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -79,7 +83,7 @@ return function(target)
 				Text = "Go to Detail",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					-- Note that you can push() to force a new instance, instead!
 					navigation.navigate("Detail")
 				end,
@@ -87,7 +91,7 @@ return function(target)
 		})
 	end
 
-	local DetailPage = Roact.Component:extend("DetailPage")
+	local DetailPage = React.Component:extend("DetailPage")
 
 	function DetailPage:init()
 		self._onWillFocus = function()
@@ -135,17 +139,17 @@ return function(target)
 		local bgColor = self.state.bgColor
 		local navigation = self.props.navigation
 
-		return Roact.createElement("Frame", {
+		return React.createElement("Frame", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = bgColor,
 		}, {
-			eventsAdapter = Roact.createElement(RoactNavigation.NavigationEvents, {
+			eventsAdapter = React.createElement(RoactNavigation.NavigationEvents, {
 				onWillFocus = self._onWillFocus,
 				onDidFocus = self._onDidFocus,
 				onWillBlur = self._onWillBlur,
 				onDidBlur = self._onDidBlur,
 			}),
-			backButton = Roact.createElement("TextButton", {
+			backButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Size = UDim2.new(0, 160, 0, 30),
@@ -153,7 +157,7 @@ return function(target)
 				Text = "Go Back",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.goBack()
 				end,
 			}),
@@ -168,9 +172,6 @@ return function(target)
 	})
 
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
-	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
 
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, React.createElement(appContainer, { detached = true }))
 end

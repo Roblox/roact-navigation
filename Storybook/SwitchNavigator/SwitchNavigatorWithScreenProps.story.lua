@@ -1,5 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
+local RoactNavigation = require(Packages.RoactNavigation)
 
 --[[
 	This story demonstrates how to declare properties that will be passed to
@@ -21,7 +25,7 @@ return function(target)
 		local extraTitle = navigation.getParam("extraTitle", "None")
 		local text = string.format("%s: %s", primaryTitle, extraTitle)
 
-		return Roact.createElement("TextButton", {
+		return React.createElement("TextButton", {
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 			Font = Enum.Font.Gotham,
@@ -30,7 +34,7 @@ return function(target)
 			Text = text,
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
-			[Roact.Event.Activated] = function()
+			[React.Event.Activated] = function()
 				navigation.navigate("MyPage", {
 					extraTitle = "It's updated!",
 				})
@@ -48,14 +52,12 @@ return function(target)
 
 	local appContainer = RoactNavigation.createAppContainer(navigator)
 
-	local element = Roact.createElement(appContainer, {
+	local element = React.createElement(appContainer, {
+		detached = true,
 		screenProps = {
 			primaryTitle = "Primary",
 		},
 	})
-	local rootInstance = Roact.mount(element, target)
 
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, element)
 end

@@ -1,5 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
+local RoactNavigation = require(Packages.RoactNavigation)
 
 --[[
 	This story demonstrates how to build a SwitchNavigator-based UI with a
@@ -9,7 +13,7 @@ local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
 return function(target)
 	local function generatePageComponent(pageName)
 		return function(_props)
-			return Roact.createElement("TextLabel", {
+			return React.createElement("TextLabel", {
 				Size = UDim2.new(1, 0, 1, 0),
 				TextSize = 18,
 				TextColor3 = Color3.new(0, 0, 0),
@@ -27,14 +31,14 @@ return function(target)
 		local title = props.title
 
 		local width = 1 / totalCount
-		return Roact.createElement("TextButton", {
+		return React.createElement("TextButton", {
 			Size = UDim2.new(width, 0, 1, 0),
 			Position = UDim2.new(width * (index - 1), 0, 0, 0),
 			Text = title,
 			TextSize = 18,
 			TextColor3 = Color3.new(0, 0, 0),
 			BackgroundColor3 = if selected then Color3.new(0, 1, 0) else Color3.new(1, 1, 1),
-			[Roact.Event.Activated] = onActivated,
+			[React.Event.Activated] = onActivated,
 		})
 	end
 
@@ -48,7 +52,7 @@ return function(target)
 		order = tabOrder,
 	})
 
-	local SimpleBottomBarSwitchNavigator = Roact.Component:extend("SimpleBottomBarSwitchNavigator")
+	local SimpleBottomBarSwitchNavigator = React.Component:extend("SimpleBottomBarSwitchNavigator")
 	SimpleBottomBarSwitchNavigator.router = InnerNavigator.router
 
 	function SimpleBottomBarSwitchNavigator:render()
@@ -58,7 +62,7 @@ return function(target)
 		for idx, pageName in tabOrder do
 			table.insert(
 				buttons,
-				Roact.createElement(BarButtonItem, {
+				React.createElement(BarButtonItem, {
 					title = pageName,
 					totalCount = #tabOrder,
 					index = idx,
@@ -70,16 +74,16 @@ return function(target)
 			)
 		end
 
-		return Roact.createElement("Folder", nil, {
-			NavigatorFrame = Roact.createElement("Frame", {
+		return React.createElement("Folder", nil, {
+			NavigatorFrame = React.createElement("Frame", {
 				Size = UDim2.new(1, 0, 1, -80),
 				ZIndex = 0,
 			}, {
-				InnerNavigator = Roact.createElement(InnerNavigator, {
+				InnerNavigator = React.createElement(InnerNavigator, {
 					navigation = navigation,
 				}),
 			}),
-			BottomBar = Roact.createElement("Frame", {
+			BottomBar = React.createElement("Frame", {
 				Size = UDim2.new(1, 0, 0, 80),
 				Position = UDim2.new(0, 0, 1, -80),
 				BackgroundColor3 = Color3.new(0.9, 0.9, 0.9),
@@ -89,10 +93,7 @@ return function(target)
 	end
 
 	local appContainer = RoactNavigation.createAppContainer(SimpleBottomBarSwitchNavigator)
-	local element = Roact.createElement(appContainer)
-	local rootInstance = Roact.mount(element, target)
+	local element = React.createElement(appContainer, { detached = true })
 
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, element)
 end

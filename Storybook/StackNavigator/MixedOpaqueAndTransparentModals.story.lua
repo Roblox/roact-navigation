@@ -1,5 +1,9 @@
-local Roact = require(script.Parent.Parent.Parent.Roact)
-local RoactNavigation = require(script.Parent.Parent.Parent.RoactNavigation)
+local Storybook = script.Parent.Parent
+local Packages = Storybook.Parent
+
+local setupReactStory = require(Storybook.setupReactStory)
+local React = require(Packages.React)
+local RoactNavigation = require(Packages.RoactNavigation)
 
 --[[
 	This story demonstrates the combination of transparent (overlayEnabled)
@@ -15,7 +19,7 @@ return function(target)
 	local function MainContent(props)
 		local navigation = props.navigation
 
-		return Roact.createElement("TextLabel", {
+		return React.createElement("TextLabel", {
 			Size = UDim2.new(1, 0, 1, 0),
 			BackgroundColor3 = Color3.new(1, 1, 0),
 			BorderSizePixel = 0,
@@ -24,7 +28,7 @@ return function(target)
 			TextColor3 = Color3.new(0, 0, 0),
 			TextSize = 18,
 		}, {
-			showOpaqueModalButton = Roact.createElement("TextButton", {
+			showOpaqueModalButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -33,11 +37,11 @@ return function(target)
 				Text = "Show Opaque Modal",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("OpaqueModalDialog")
 				end,
 			}),
-			showTransparentModalButton = Roact.createElement("TextButton", {
+			showTransparentModalButton = React.createElement("TextButton", {
 				AnchorPoint = Vector2.new(0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
 				Font = Enum.Font.Gotham,
@@ -46,7 +50,7 @@ return function(target)
 				Text = "Show Transparent Modal",
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
-				[Roact.Event.Activated] = function()
+				[React.Event.Activated] = function()
 					navigation.navigate("TransparentModalDialog")
 				end,
 			}),
@@ -61,13 +65,13 @@ return function(target)
 
 		-- Note that we are NOT making the screen component itself opaque.
 		-- The opaque background comes from cardColor3 in navigationOptions!
-		return Roact.createElement("Frame", {
+		return React.createElement("Frame", {
 			Size = UDim2.new(0.5, 0, 0.5, 0),
 			AnchorPoint = Vector2.new(0.5, 0.5),
 			Position = UDim2.new(0.5, 0, 0.5, 0),
 			BackgroundColor3 = Color3.new(1, 1, 1),
 		}, {
-			dialog = Roact.createElement("TextLabel", {
+			dialog = React.createElement("TextLabel", {
 				AnchorPoint = Vector2.new(0.5, 0.5),
 				Position = UDim2.new(0.5, 0, 0.5, 0),
 				BackgroundColor3 = Color3.new(1, 1, 1),
@@ -78,7 +82,7 @@ return function(target)
 				TextColor3 = Color3.new(0, 0, 0),
 				TextSize = 18,
 			}, {
-				pushOpaqueModalButton = Roact.createElement("TextButton", {
+				pushOpaqueModalButton = React.createElement("TextButton", {
 					AnchorPoint = Vector2.new(0.5, 0),
 					BackgroundColor3 = Color3.new(1, 1, 1),
 					Font = Enum.Font.Gotham,
@@ -87,7 +91,7 @@ return function(target)
 					Text = "Push Opaque Modal",
 					TextColor3 = Color3.new(0, 0, 0),
 					TextSize = 18,
-					[Roact.Event.Activated] = function()
+					[React.Event.Activated] = function()
 						navigation.navigate({
 							routeName = "OpaqueModalDialog",
 							-- having the same key as the transparent dialog will
@@ -98,7 +102,7 @@ return function(target)
 						})
 					end,
 				}),
-				pushTransparentModalButton = Roact.createElement("TextButton", {
+				pushTransparentModalButton = React.createElement("TextButton", {
 					AnchorPoint = Vector2.new(0.5, 0),
 					BackgroundColor3 = Color3.new(1, 1, 1),
 					Font = Enum.Font.Gotham,
@@ -107,7 +111,7 @@ return function(target)
 					Text = "Push Transparent Modal",
 					TextColor3 = Color3.new(0, 0, 0),
 					TextSize = 18,
-					[Roact.Event.Activated] = function()
+					[React.Event.Activated] = function()
 						navigation.navigate({
 							routeName = "TransparentModalDialog",
 							-- having the same key as the opaque dialog will
@@ -118,7 +122,7 @@ return function(target)
 						})
 					end,
 				}),
-				popToTopModalButton = Roact.createElement("TextButton", {
+				popToTopModalButton = React.createElement("TextButton", {
 					AnchorPoint = Vector2.new(0.5, 0),
 					BackgroundColor3 = Color3.new(1, 1, 1),
 					Font = Enum.Font.Gotham,
@@ -127,11 +131,11 @@ return function(target)
 					Text = "Pop to Top",
 					TextColor3 = Color3.new(0, 0, 0),
 					TextSize = 18,
-					[Roact.Event.Activated] = function()
+					[React.Event.Activated] = function()
 						navigation.popToTop()
 					end,
 				}),
-				dismissModalButton = Roact.createElement("TextButton", {
+				dismissModalButton = React.createElement("TextButton", {
 					AnchorPoint = Vector2.new(0.5, 0),
 					BackgroundColor3 = Color3.new(1, 1, 1),
 					Font = Enum.Font.Gotham,
@@ -140,7 +144,7 @@ return function(target)
 					Text = "Dismiss",
 					TextColor3 = Color3.new(0, 0, 0),
 					TextSize = 18,
-					[Roact.Event.Activated] = function()
+					[React.Event.Activated] = function()
 						-- We use goBack to dismiss an entry in the current stack. You only use
 						-- navigation.dismiss() if you want to dismiss from INSIDE another navigator, e.g.
 						-- if your modal is actually its own stack navigator.
@@ -176,9 +180,6 @@ return function(target)
 		mode = RoactNavigation.StackPresentationStyle.Modal,
 	})
 	local appContainer = RoactNavigation.createAppContainer(rootNavigator)
-	local rootInstance = Roact.mount(Roact.createElement(appContainer), target)
 
-	return function()
-		Roact.unmount(rootInstance)
-	end
+	return setupReactStory(target, React.createElement(appContainer, { detached = true }))
 end
