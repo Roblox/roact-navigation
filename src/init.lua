@@ -42,6 +42,7 @@ return {
 
 	-- Additional Types
 	StackPresentationStyle = require(script.views.RobloxStackView.StackPresentationStyle),
+	StackViewTransitionConfigs = require(script.views.RobloxStackView.StackViewTransitionConfigs),
 
 	-- Screen Views
 	SceneView = require(script.views.SceneView),
