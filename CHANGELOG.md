@@ -5,6 +5,10 @@ ___
 
 Work in progress, to be added to next release notes.
 
+### v0.5.5
+
+* Expose StackViewTransitionConfigs for custom navigator use ([#133](https://github.com/Roblox/roact-navigation/pull/133))
+
 ### v0.5.4
 
 * Optimize based on Universal App launch profiling ([#121](https://github.com/Roblox/roact-navigation/pull/121))
