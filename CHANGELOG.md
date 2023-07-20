@@ -5,6 +5,10 @@ ___
 
 Work in progress, to be added to next release notes.
 
+### v0.5.6
+
+* Add absorbInputSelectable as a screenOption for Stack navigators. This allows us to enable/disable gamepad selection for Stack cards. ([#135](https://github.com/Roblox/roact-navigation/pull/135))
+
 ### v0.5.5
 
 * Expose StackViewTransitionConfigs for custom navigator use ([#133](https://github.com/Roblox/roact-navigation/pull/133))
