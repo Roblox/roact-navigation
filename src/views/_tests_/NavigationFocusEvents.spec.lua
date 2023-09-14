@@ -344,6 +344,63 @@ return function()
 				type = Events.Action,
 			})
 
+			-- Since _lastDidFocusKey == target, event won't go thru
+			expect(onEvent).never.toHaveBeenCalled()
+		end)
+
+		it("does not emit didFocus if lastWillFocusKey not exsiting in the routes", function()
+			local navigation = getNavigationMock({
+				state = {
+					routes = {
+						{ key = "FirstLanding", routeName = "FirstLanding" },
+						{ key = "Second", routeName = "Second" },
+					},
+					index = 1,
+					key = "First",
+					routeName = "First",
+				},
+			})
+			local onEvent, onEventFn = jest.fn()
+
+			local root = ReactRoblox.createRoot(Instance.new("Folder"))
+			ReactRoblox.act(function()
+				root:render(React.createElement(NavigationFocusEvents, {
+					navigation = navigation,
+					onEvent = onEventFn,
+				}))
+			end)
+
+			local lastState = { key = "Random", routeName = "Random" }
+			local action = NavigationActions.navigate({ routeName = "First" })
+
+			navigation.emit(Events.WillFocus, {
+				lastState = lastState,
+				action = action,
+				context = "First:NAVIGATE_Root",
+				type = Events.Action,
+			})
+
+			expect(#onEvent.mock.calls).toEqual(2)
+			onEvent:mockClear()
+
+			navigation.state = {
+				routes = {
+					{ key = "WrongWay", routeName = "WrongWay" },
+					{ key = "Second", routeName = "Second" },
+				},
+				index = 1,
+				key = "First",
+				routeName = "First",
+			}
+
+			navigation.emit(Events.DidFocus, {
+				lastState = lastState,
+				action = action,
+				context = "First:NAVIGATE_Root",
+				type = Events.Action,
+			})
+
+			-- Since _lastWillFocusKey == "FirstLanding" which is not existing in the routes, event won't go thru
 			expect(onEvent).never.toHaveBeenCalled()
 		end)
 	end)
