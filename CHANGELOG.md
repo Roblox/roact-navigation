@@ -5,6 +5,10 @@ ___
 
 Work in progress, to be added to next release notes.
 
+### v0.5.7
+
+* Fix index nil error in NavigationFocusEvents. ([#138](https://github.com/Roblox/roact-navigation/pull/138))
+
 ### v0.5.6
 
 * Add absorbInputSelectable as a screenOption for Stack navigators. This allows us to enable/disable gamepad selection for Stack cards. ([#135](https://github.com/Roblox/roact-navigation/pull/135))
