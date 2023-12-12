@@ -1,7 +1,7 @@
 site_name: Roact Navigation Documentation
-site_url: https://roblox.github.io/roact-navigation/
-repo_name: Roblox/roact-navigation
-repo_url: https://github.com/Roblox/roact-navigation
+site_url: https://roblox.github.io/roact-navigation-internal/
+repo_name: Roblox/roact-navigation-internal
+repo_url: https://github.com/Roblox/roact-navigation-internal
 
 theme:
   name: material

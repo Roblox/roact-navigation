@@ -1,10 +1,10 @@
 <h1 align="center">Roact Navigation</h1>
 <div align="center">
 
-![CI](https://github.com/Roblox/roact-navigation/.github/workflows/ci.yml/badge.svg)
+![CI](https://github.com/Roblox/roact-navigation-internal/.github/workflows/ci.yml/badge.svg)
 
-<a href="https://coveralls.io/github/Roblox/roact-navigation?branch=master">
-<img src="https://coveralls.io/repos/github/Roblox/roact-navigation/badge.svg?branch=master" alt="Coveralls Coverage" />
+<a href="https://coveralls.io/github/Roblox/roact-navigation-internal?branch=master">
+<img src="https://coveralls.io/repos/github/Roblox/roact-navigation-internal/badge.svg?branch=master" alt="Coveralls Coverage" />
 </a>
 
 <a href="https://reactnavigation.org/docs/4.x/getting-started">
@@ -33,14 +33,14 @@ content_root = "src"
 
 [dependencies]
 # adding this line will make your project depend on version 0.5.7
-RoactNavigation = "roblox/roact-navigation@0.5.7"
+RoactNavigation = "Roblox/roact-navigation-internal@0.5.7"
 # ... the rest of your dependencies ...
 
 [dev_dependencies]
 # ...
 ```
 
-To view a list of available version, visit the [releases](https://github.com/Roblox/roact-navigation/releases) page.
+To view a list of available version, visit the [releases](https://github.com/Roblox/roact-navigation-internal/releases) page.
 
 ### Get the source
 Now that Roact Navigation is added to your rotriever dependencies, simply run the following command to download the package:

@@ -7,78 +7,78 @@ Work in progress, to be added to next release notes.
 
 ### v0.5.7
 
-* Fix index nil error in NavigationFocusEvents. ([#138](https://github.com/Roblox/roact-navigation/pull/138))
+* Fix index nil error in NavigationFocusEvents. ([#138](https://github.com/Roblox/roact-navigation-internal/pull/138))
 
 ### v0.5.6
 
-* Add absorbInputSelectable as a screenOption for Stack navigators. This allows us to enable/disable gamepad selection for Stack cards. ([#135](https://github.com/Roblox/roact-navigation/pull/135))
+* Add absorbInputSelectable as a screenOption for Stack navigators. This allows us to enable/disable gamepad selection for Stack cards. ([#135](https://github.com/Roblox/roact-navigation-internal/pull/135))
 
 ### v0.5.5
 
-* Expose StackViewTransitionConfigs for custom navigator use ([#133](https://github.com/Roblox/roact-navigation/pull/133))
+* Expose StackViewTransitionConfigs for custom navigator use ([#133](https://github.com/Roblox/roact-navigation-internal/pull/133))
 
 ### v0.5.4
 
-* Optimize based on Universal App launch profiling ([#121](https://github.com/Roblox/roact-navigation/pull/121))
-* Emit willBlur event for removed screens during transitions ([#120](https://github.com/Roblox/roact-navigation/pull/120))
+* Optimize based on Universal App launch profiling ([#121](https://github.com/Roblox/roact-navigation-internal/pull/121))
+* Emit willBlur event for removed screens during transitions ([#120](https://github.com/Roblox/roact-navigation-internal/pull/120))
 
 ### v0.5.3
 
-* Fix JavaScript mistranslation in path parsing ([#116](https://github.com/Roblox/roact-navigation/pull/116))
+* Fix JavaScript mistranslation in path parsing ([#116](https://github.com/Roblox/roact-navigation-internal/pull/116))
 
-* Add useNavigation hook ([#115](https://github.com/Roblox/roact-navigation/pull/115))
+* Add useNavigation hook ([#115](https://github.com/Roblox/roact-navigation-internal/pull/115))
 
-* Use unique key for stack screens rather than index ([#114](https://github.com/Roblox/roact-navigation/pull/114))
+* Use unique key for stack screens rather than index ([#114](https://github.com/Roblox/roact-navigation-internal/pull/114))
 
 ### v0.5.2
 
-* Fixed race condition in StackView Transitioner ([#111](https://github.com/Roblox/roact-navigation/pull/111))
-* Upgrade to Roact 17 ([#112](https://github.com/Roblox/roact-navigation/pull/112))
+* Fixed race condition in StackView Transitioner ([#111](https://github.com/Roblox/roact-navigation-internal/pull/111))
+* Upgrade to Roact 17 ([#112](https://github.com/Roblox/roact-navigation-internal/pull/112))
 
 ### v0.5.1
-* Updated the rotriever.toml to exclude the .robloxrc file from the package ([#109](https://github.com/Roblox/roact-navigation/pull/109))
-* Added back jest FakeTimer logic to align with upstream ([#108](https://github.com/Roblox/roact-navigation/pull/108))
+* Updated the rotriever.toml to exclude the .robloxrc file from the package ([#109](https://github.com/Roblox/roact-navigation-internal/pull/109))
+* Added back jest FakeTimer logic to align with upstream ([#108](https://github.com/Roblox/roact-navigation-internal/pull/108))
 
 ___
 ### v0.5.0
 
-* Added compatibility for Roact 17 setState callbacks in createAppContainer dispatch and didMount. ([#104](https://github.com/Roblox/roact-navigation/pull/104))
-* Fix bug with StackView Transitioner where active screen content could remain hidden and prevent setState from being called while unmounting. ([#101](https://github.com/Roblox/roact-navigation/pull/101))
-* Allow for non-overlay screens to still use a transparent background and transparent background on non-overlay screens, change ClipsDescendants to false for navigator views and fix "Listener disconnected twice" error ([#97](https://github.com/Roblox/roact-navigation/pull/97))
-* Add `RoactNavigation.None` to allow removal of params ([#90](https://github.com/Roblox/roact-navigation/pull/90))
-* Add second optional parameter to `createAppContainer` to provide a LinkingProtocol object. This will be used when connecting the universal app to use deep-linking ([#83](https://github.com/Roblox/roact-navigation/pull/83))
-* Export `createSwitchNavigator`. ([#82](https://github.com/Roblox/roact-navigation/pull/82))
-* Implement `getActionForPathAndParams` and `getPathAndParamsForState` on routers to eventually support deep linking. ([#75](https://github.com/Roblox/roact-navigation/pull/75))
-* Align `createAppContainer` with React Navigation. ([#67](https://github.com/Roblox/roact-navigation/pull/67))
-* Prevent ref forwarding when the `withNavigation` config field `forwardRef` is false ([#73](https://github.com/Roblox/roact-navigation/pull/73))
+* Added compatibility for Roact 17 setState callbacks in createAppContainer dispatch and didMount. ([#104](https://github.com/Roblox/roact-navigation-internal/pull/104))
+* Fix bug with StackView Transitioner where active screen content could remain hidden and prevent setState from being called while unmounting. ([#101](https://github.com/Roblox/roact-navigation-internal/pull/101))
+* Allow for non-overlay screens to still use a transparent background and transparent background on non-overlay screens, change ClipsDescendants to false for navigator views and fix "Listener disconnected twice" error ([#97](https://github.com/Roblox/roact-navigation-internal/pull/97))
+* Add `RoactNavigation.None` to allow removal of params ([#90](https://github.com/Roblox/roact-navigation-internal/pull/90))
+* Add second optional parameter to `createAppContainer` to provide a LinkingProtocol object. This will be used when connecting the universal app to use deep-linking ([#83](https://github.com/Roblox/roact-navigation-internal/pull/83))
+* Export `createSwitchNavigator`. ([#82](https://github.com/Roblox/roact-navigation-internal/pull/82))
+* Implement `getActionForPathAndParams` and `getPathAndParamsForState` on routers to eventually support deep linking. ([#75](https://github.com/Roblox/roact-navigation-internal/pull/75))
+* Align `createAppContainer` with React Navigation. ([#67](https://github.com/Roblox/roact-navigation-internal/pull/67))
+* Prevent ref forwarding when the `withNavigation` config field `forwardRef` is false ([#73](https://github.com/Roblox/roact-navigation-internal/pull/73))
 
 ___
 ### v0.4.1
 
-* Refactor navigation events handling to align with React Navigation. ([#65](https://github.com/Roblox/roact-navigation/pull/65)). This should resolve issues with ordering and timing of blur and focus events.
+* Refactor navigation events handling to align with React Navigation. ([#65](https://github.com/Roblox/roact-navigation-internal/pull/65)). This should resolve issues with ordering and timing of blur and focus events.
 
 ___
 ### v0.4.0
 
-* Add `SwitchView` and `createSwitchNavigator` from React Navigation. ([#58](https://github.com/Roblox/roact-navigation/pull/58))
-* Rename `StackView` to `RobloxStackView` and `createStackNavigator` to `createRobloxStackView` to make the deviation from upstream clear. ([#60](https://github.com/Roblox/roact-navigation/pull/60))
-* Rename `SwitchView` to `RobloxSwitchView` and `createSwitchNavigator` to `createRobloxSwitchNavigator` to reflect the differences with React Navigation `SwitchView` and `RobloxSwitchView`. ([#54](https://github.com/Roblox/roact-navigation/pull/54))
-* Stop supporting the routers API from 0.2.x (with the single parameter with the `routes` field). ([#49](https://github.com/Roblox/roact-navigation/pull/49))
-* Move `Navigations.CompleteTransition` into `StackActions` to align with React Navigation. ([#45](https://github.com/Roblox/roact-navigation/pull/45))
-* Rename `RoactNavigation.EventsAdapter` to `RoactNavigation.NavigationEvents` to align with React Navigation. The props from that component have also been aligned with upstream. See React Navigation [documentation](https://reactnavigation.org/docs/4.x/navigation-events/) ([#40](https://github.com/Roblox/roact-navigation/pull/40))
-* Align `withNavigation` and `withNavigationFocus` with React Navigation. Now, those function are higher-order components (HOC). See React Navigation [documentation](https://reactnavigation.org/docs/4.x/with-navigation/) for a concrete example. ([#44](https://github.com/Roblox/roact-navigation/pull/44))
-* Remove `RoactNavigation.connect`. The context provider now receives its value through the `value` prop (instead of `navigation`) ([#43](https://github.com/Roblox/roact-navigation/pull/43))
+* Add `SwitchView` and `createSwitchNavigator` from React Navigation. ([#58](https://github.com/Roblox/roact-navigation-internal/pull/58))
+* Rename `StackView` to `RobloxStackView` and `createStackNavigator` to `createRobloxStackView` to make the deviation from upstream clear. ([#60](https://github.com/Roblox/roact-navigation-internal/pull/60))
+* Rename `SwitchView` to `RobloxSwitchView` and `createSwitchNavigator` to `createRobloxSwitchNavigator` to reflect the differences with React Navigation `SwitchView` and `RobloxSwitchView`. ([#54](https://github.com/Roblox/roact-navigation-internal/pull/54))
+* Stop supporting the routers API from 0.2.x (with the single parameter with the `routes` field). ([#49](https://github.com/Roblox/roact-navigation-internal/pull/49))
+* Move `Navigations.CompleteTransition` into `StackActions` to align with React Navigation. ([#45](https://github.com/Roblox/roact-navigation-internal/pull/45))
+* Rename `RoactNavigation.EventsAdapter` to `RoactNavigation.NavigationEvents` to align with React Navigation. The props from that component have also been aligned with upstream. See React Navigation [documentation](https://reactnavigation.org/docs/4.x/navigation-events/) ([#40](https://github.com/Roblox/roact-navigation-internal/pull/40))
+* Align `withNavigation` and `withNavigationFocus` with React Navigation. Now, those function are higher-order components (HOC). See React Navigation [documentation](https://reactnavigation.org/docs/4.x/with-navigation/) for a concrete example. ([#44](https://github.com/Roblox/roact-navigation-internal/pull/44))
+* Remove `RoactNavigation.connect`. The context provider now receives its value through the `value` prop (instead of `navigation`) ([#43](https://github.com/Roblox/roact-navigation-internal/pull/43))
 
 ___
 ### v0.3.0
 
 This version has started to align with React Navigation a lot more. A part of React navigation test suite has been ported and multiple files have been refactored to align with their corresponding JavaScript version.
 
-* Align SwitchRouter with React navigation ([#33](https://github.com/Roblox/roact-navigation/pull/33))
-* Rename event subscriber `disconnect` method to `remove` to match react-navigation ([#37](https://github.com/Roblox/roact-navigation/pull/37))
-* Remove unused RoactNavigation.None ([#32](https://github.com/Roblox/roact-navigation/pull/32))
-* StackRouter behavior now matches React-Navigation's StackRouter. StackActions.reset now requires the `index` field ([#28](https://github.com/Roblox/roact-navigation/pull/28))
-* Refactor TabRouter, SwitchRouter, StackRouter, createStackNavigator and createSwitchNagivator API. Previous API is deprecated but still supported. ([#27](https://github.com/Roblox/roact-navigation/pull/27))
+* Align SwitchRouter with React navigation ([#33](https://github.com/Roblox/roact-navigation-internal/pull/33))
+* Rename event subscriber `disconnect` method to `remove` to match react-navigation ([#37](https://github.com/Roblox/roact-navigation-internal/pull/37))
+* Remove unused RoactNavigation.None ([#32](https://github.com/Roblox/roact-navigation-internal/pull/32))
+* StackRouter behavior now matches React-Navigation's StackRouter. StackActions.reset now requires the `index` field ([#28](https://github.com/Roblox/roact-navigation-internal/pull/28))
+* Refactor TabRouter, SwitchRouter, StackRouter, createStackNavigator and createSwitchNagivator API. Previous API is deprecated but still supported. ([#27](https://github.com/Roblox/roact-navigation-internal/pull/27))
 
 ___
 ### v0.2.8
