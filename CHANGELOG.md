@@ -5,6 +5,10 @@ ___
 
 Work in progress, to be added to next release notes.
 
+### v0.5.8
+
+* Fixed stale navigation state bug for deep component trees ([#144](https://github.com/Roblox/roact-navigation-internal/pull/144))
+
 ### v0.5.7
 
 * Fix index nil error in NavigationFocusEvents. ([#138](https://github.com/Roblox/roact-navigation-internal/pull/138))
