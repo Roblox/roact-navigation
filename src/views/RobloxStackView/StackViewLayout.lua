@@ -214,25 +214,19 @@ function StackViewLayout.getDerivedStateFromProps(nextProps, _lastState)
 
 	-- Find the last opaque scene in a modal stack so that we can optimize rendering.
 	local topMostOpaqueSceneIndex = 0
-	if isOverlayMode then
-		for idx = topMostIndex, 1, -1 do
-			local scene = scenes[idx]
-			local navigationOptions = if scene.descriptor.options
-				then Object.assign(table.clone(defaultScreenOptions), scene.descriptor.options)
-				else table.clone(defaultScreenOptions)
 
-			-- Card covers other pages if it's not an overlay and it's not the top-most index while transitioning.
-			if not navigationOptions.overlayEnabled and not (isTransitioning and idx == topMostIndex) then
-				topMostOpaqueSceneIndex = idx
-				break
-			end
-		end
-	else
-		for idx = topMostIndex, 1, -1 do
-			if not (isTransitioning and idx == topMostIndex) then
-				topMostOpaqueSceneIndex = idx
-				break
-			end
+	for idx = topMostIndex, 1, -1 do
+		local scene = scenes[idx]
+		local navigationOptions = if scene.descriptor.options
+			then Object.assign(table.clone(defaultScreenOptions), scene.descriptor.options)
+			else table.clone(defaultScreenOptions)
+
+		-- Card covers other pages if it's not transparent (note that overlays are implicitly transparent)
+		-- and if it's not the top-most page while transitioning.
+		local cardIsTransparent = navigationOptions.transparent or (isOverlayMode and navigationOptions.overlayEnabled)
+		if not cardIsTransparent and not (isTransitioning and idx == topMostIndex) then
+			topMostOpaqueSceneIndex = idx
+			break
 		end
 	end
 
