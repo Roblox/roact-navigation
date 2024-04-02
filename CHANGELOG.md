@@ -5,6 +5,10 @@ ___
 
 Work in progress, to be added to next release notes.
 
+### v0.5.10
+
+* Added "non-transparent, see-through card" support to RobloxStackView ([#148](https://github.com/Roblox/roact-navigation-internal/pull/148))
+
 ### v0.5.9
 
 * Fixed stack card transparency render optimization ([#146](https://github.com/Roblox/roact-navigation-internal/pull/146))

@@ -32,8 +32,8 @@ author = "Roblox"
 content_root = "src"
 
 [dependencies]
-# adding this line will make your project depend on version 0.5.9
-RoactNavigation = "Roblox/roact-navigation-internal@0.5.9"
+# adding this line will make your project depend on version 0.5.10
+RoactNavigation = "Roblox/roact-navigation-internal@0.5.10"
 # ... the rest of your dependencies ...
 
 [dev_dependencies]
