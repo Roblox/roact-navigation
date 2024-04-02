@@ -88,8 +88,7 @@ function StackViewLayout:_renderCard(scene, navigationOptions)
 			key = "card_" .. tostring(scene.key),
 			scene = scene,
 			renderScene = self._renderScene,
-			transparent = overlayEnabled or transparent,
-			cardColor3 = cardColor3,
+			cardColor3 = if overlayEnabled or transparent then nil else cardColor3,
 		})
 	)
 end

@@ -22,15 +22,9 @@ local invariant = require(root.utils.invariant)
 		position			-- Otter motor for the position of the card.
 		scene				-- Scene that the card is to render.
 		forceHidden			-- Forcibly disable card rendering (e.g. animated off-screen).
-		transparent			-- Card allows underlying content to show through (default: false).
-		cardColor3			-- Color of the card background if it's not transparent (default: white).
+		cardColor3			-- Color of the card background if it's not transparent.
 ]]
 local StackViewCard = React.Component:extend("StackViewCard")
-
-StackViewCard.defaultProps = {
-	transparent = false,
-	cardColor3 = Color3.new(1, 1, 1),
-}
 
 function StackViewCard:init()
 	local currentNavIndex = self.props.navigation.state.index
@@ -44,7 +38,6 @@ end
 function StackViewCard:render()
 	local forceHidden = self.props.forceHidden
 	local cardColor3 = self.props.cardColor3
-	local transparent = self.props.transparent
 	local initialPosition = self.props.initialPosition
 	local renderScene = self.props.renderScene
 	local scene = self.props.scene
@@ -55,7 +48,7 @@ function StackViewCard:render()
 		Position = initialPosition,
 		Size = UDim2.new(1, 0, 1, 0),
 		BackgroundColor3 = cardColor3,
-		BackgroundTransparency = if transparent then 1 else nil,
+		BackgroundTransparency = if cardColor3 == nil then 1 else nil,
 		BorderSizePixel = 0,
 		ClipsDescendants = false,
 		Visible = not forceHidden,
