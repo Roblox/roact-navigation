@@ -5,6 +5,9 @@ ___
 
 Work in progress, to be added to next release notes.
 
+### v0.5.11
+* Will now use rotriever registry. ([#150](https://github.com/Roblox/roact-navigation-internal/issues/150))
+
 ### v0.5.10
 
 * Added "non-transparent, see-through card" support to RobloxStackView ([#148](https://github.com/Roblox/roact-navigation-internal/pull/148))
